@@ -1,17 +1,137 @@
-type Account @entity {
-  "Account address"
-  id: ID!
-  transfersTo: [Transfer!] @derivedFrom(field: "to")
-  transfersFrom: [Transfer!] @derivedFrom(field: "from")
+enum ProposalType {
+  DemocracyProposal
+  TechCommitteeProposal
+  TreasuryProposal
+  Referendum
+  CouncilMotion
+  Bounty
+  Tip
 }
 
-type Transfer @entity {
+enum ProposalStatus {
+  Noted
+  Proposed
+  Tabled
+  Started
+  Passed
+  NotPassed
+  Cancelled
+  Executed
+  Used
+  Invalid
+  Missing
+  Reaped
+  Approved
+  Disapproved
+  Closed
+  Awarded
+  Rejected
+  Retracted
+  Slashed
+  Active
+  Extended
+  Claimed
+}
+
+type Preimage @entity {
   id: ID!
+  proposer: String
+  hash: String! @index
+  proposedCall: ProposedCall
+  section: String
+  method: String
+  status: ProposalStatus!
+  createdAtBlock: Int! @index
+  createdAt: DateTime! @index
+  updatedAtBlock: Int
+  updatedAt: DateTime
+}
+
+type MotionThreshold {
+  value: Int!
+}
+
+enum ReferendumThresholdType {
+  SuperMajorityApprove
+  SuperMajorityAgainst
+  SimpleMajority
+}
+
+type ReferendumThreshold {
+  type: ReferendumThresholdType!
+}
+
+union Threshold = MotionThreshold | ReferendumThreshold
+
+type Proposal @entity {
+  id: ID!
+  type: ProposalType! @index
+  hash: String @index
+  index: Int @index
+  proposer: String
+  deposit: BigInt
+  threshold: Threshold
+  curator: String
+  payee: String
+  reward: BigInt
+  voting: [Vote!] @derivedFrom(field: "proposal")
+  preimage: Preimage
+  status: ProposalStatus!
+  statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
+  createdAtBlock: Int! @index
+  createdAt: DateTime! @index
+  endedAtBlock: Int
+  endedAt: DateTime
+  updatedAtBlock: Int
+  updatedAt: DateTime
+}
+
+type StatusHistory @entity {
+  id: ID!
+  proposal: Proposal!
+  status: ProposalStatus!
+  block: Int!
+  timestamp: DateTime!
+}
+
+type ProposedCall {
+  section: String!
+  method: String!
+  args: JSON
+  description: String!
+}
+
+enum VoteDecision {
+  yes
+  no
+  abstain
+}
+
+type StandardVoteBalance {
+  value: BigInt
+}
+
+type SplitVoteBalance {
+  aye: BigInt
+  nay: BigInt
+}
+
+union VoteBalance = StandardVoteBalance | SplitVoteBalance
+
+enum VoteType {
+  Referendum
+  Motion
+}
+
+type Vote @entity {
+  id: ID!
+  voter: String
+  proposalId: ID!
+  proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index
-  extrinsicHash: String @index
-  from: Account!
-  to: Account!
-  amount: BigInt! @index
-  fee: BigInt! # fee is calculated at the best effort and may be zero for some old extrinsics
+  decision: VoteDecision
+  balance: VoteBalance
+  lockPeriod: Int
+  type: VoteType
 }

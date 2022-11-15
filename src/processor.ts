@@ -1,127 +1,75 @@
-import {lookupArchive} from "@subsquid/archive-registry"
-import * as ss58 from "@subsquid/ss58"
-import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
-import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
-import {In} from "typeorm"
-import {Account, Transfer} from "./model"
-import {BalancesTransferEvent} from "./types/events"
+import { SubstrateProcessor } from '@subsquid/substrate-processor'
+import { TypeormDatabase } from '@subsquid/typeorm-store'
+import config from './config'
+import * as modules from './mappings'
 
+const db = new TypeormDatabase()
+const processor = new SubstrateProcessor(db)
 
-const processor = new SubstrateBatchProcessor()
-    .setBatchSize(500)
-    .setDataSource({
-        // Lookup archive by the network name in the Subsquid registry
-        archive: lookupArchive("kusama", {release: "FireSquid"})
+processor.setTypesBundle(config.typesBundle)
+processor.setBatchSize(config.batchSize || 100)
+processor.setDataSource(config.dataSource)
+processor.setBlockRange({ from: 0 })
 
-        // Use archive created by archive/docker-compose.yml
-        // archive: 'http://localhost:8888/graphql'
-    })
-    .addEvent('Balances.Transfer', {
-        data: {
-            event: {
-                args: true,
-                extrinsic: {
-                    hash: true,
-                    fee: true
-                }
-            }
-        }
-    } as const)
+processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
+processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
+processor.addEventHandler('Democracy.Started', modules.democracy.events.handleStarted)
+processor.addEventHandler('Democracy.Passed', modules.democracy.events.handlePassed)
+processor.addEventHandler('Democracy.NotPassed', modules.democracy.events.handleNotPassed)
+processor.addEventHandler('Democracy.Cancelled', modules.democracy.events.handleCancelled)
+processor.addEventHandler('Democracy.Executed', modules.democracy.events.handleExecuted)
+processor.addCallHandler('Democracy.vote', modules.democracy.extrinsics.handleVote)
 
+processor.addEventHandler('Democracy.PreimageNoted', modules.democracy.events.handlePreimageNoted)
+processor.addEventHandler('Democracy.PreimageUsed', modules.democracy.events.handlePreimageUsed)
+processor.addEventHandler('Democracy.PreimageInvalid', modules.democracy.events.handlePreimageInvalid)
+processor.addEventHandler('Democracy.PreimageMissing', modules.democracy.events.handlePreimageMissing)
+processor.addEventHandler('Democracy.PreimageReaped', modules.democracy.events.handlePreimageReaped)
 
-type Item = BatchProcessorItem<typeof processor>
-type Ctx = BatchContext<Store, Item>
+processor.addEventHandler('Council.Proposed', modules.council.events.handleProposed)
+processor.addEventHandler('Council.Approved', modules.council.events.handleApproved)
+processor.addEventHandler('Council.Dissaproved', modules.council.events.handleDisapproved)
+processor.addEventHandler('Council.Closed', modules.council.events.handleClosed)
+processor.addEventHandler('Council.Voted', modules.council.events.handleVoted)
+processor.addEventHandler('Council.Executed', modules.council.events.handleExecuted)
 
+processor.addEventHandler('TechnicalCommittee.Proposed', modules.techComittee.events.handleProposed)
+processor.addEventHandler('TechnicalCommittee.Approved', modules.techComittee.events.handleApproved)
+processor.addEventHandler('TechnicalCommittee.Dissaproved', modules.techComittee.events.handleDisapproved)
+processor.addEventHandler('TechnicalCommittee.Closed', modules.techComittee.events.handleClosed)
+processor.addEventHandler('TechnicalCommittee.Voted', modules.techComittee.events.handleVoted)
+processor.addEventHandler('TechnicalCommittee.Executed', modules.techComittee.events.handleExecuted)
 
-processor.run(new TypeormDatabase(), async ctx => {
-    let transfersData = getTransfers(ctx)
+processor.addEventHandler('Treasury.Proposed', modules.treasury.events.handleProposed)
+processor.addEventHandler('Treasury.Awarded', modules.treasury.events.handleAwarded)
+processor.addEventHandler('Treasury.Rejected', modules.treasury.events.handleRejected)
+processor.addEventHandler('Treasury.BountyProposed', modules.bounties.events.handleProposed)
+processor.addEventHandler('Treasury.BountyRejected', modules.bounties.events.handleRejected)
+processor.addEventHandler('Treasury.BountyBecameActive', modules.bounties.events.handleBecameActive)
+processor.addEventHandler('Treasury.BountyAwarded', modules.bounties.events.handleAwarded)
+processor.addEventHandler('Treasury.BountyClaimed', modules.bounties.events.handleClaimed)
+processor.addEventHandler('Treasury.BountyCanceled', modules.bounties.events.handleCanceled)
+processor.addEventHandler('Treasury.BountyExtended', modules.bounties.events.handleExtended)
+processor.addEventHandler('Treasury.NewTip', modules.tips.events.handleNewTip)
+processor.addEventHandler('Treasury.TipsClosed', modules.tips.events.handleClosed)
+processor.addEventHandler('Treasury.TipsRetracted', modules.tips.events.handleRetracted)
+processor.addEventHandler('Treasury.TipsSlashed', modules.tips.events.handleSlashed)
+processor.addCallHandler('Treasury.accept_curator', modules.bounties.extrinsic.handleAcceptCurator)
+processor.addCallHandler('Treasury.unassign_curator', modules.bounties.extrinsic.handleUnassignCurator)
 
-    let accountIds = new Set<string>()
-    for (let t of transfersData) {
-        accountIds.add(t.from)
-        accountIds.add(t.to)
-    }
+processor.addEventHandler('Tips.NewTip', modules.tips.events.handleNewTip)
+processor.addEventHandler('Tips.TipsClosed', modules.tips.events.handleClosed)
+processor.addEventHandler('Tips.TipsRetracted', modules.tips.events.handleRetracted)
+processor.addEventHandler('Tips.TipsSlashed', modules.tips.events.handleSlashed)
 
-    let accounts = await ctx.store.findBy(Account, {id: In([...accountIds])}).then(accounts => {
-        return new Map(accounts.map(a => [a.id, a]))
-    })
+processor.addEventHandler('Bounties.BountyProposed', modules.bounties.events.handleProposed)
+processor.addEventHandler('Bounties.BountyRejected', modules.bounties.events.handleRejected)
+processor.addEventHandler('Bounties.BountyBecameActive', modules.bounties.events.handleBecameActive)
+processor.addEventHandler('Bounties.BountyAwarded', modules.bounties.events.handleAwarded)
+processor.addEventHandler('Bounties.BountyClaimed', modules.bounties.events.handleClaimed)
+processor.addEventHandler('Bounties.BountyCanceled', modules.bounties.events.handleCanceled)
+processor.addEventHandler('Bounties.BountyExtended', modules.bounties.events.handleExtended)
+processor.addCallHandler('Bounties.accept_curator', modules.bounties.extrinsic.handleAcceptCurator)
+processor.addCallHandler('Bounties.unassign_curator', modules.bounties.extrinsic.handleUnassignCurator)
 
-    let transfers: Transfer[] = []
-
-    for (let t of transfersData) {
-        let {id, blockNumber, timestamp, extrinsicHash, amount, fee} = t
-
-        let from = getAccount(accounts, t.from)
-        let to = getAccount(accounts, t.to)
-
-        transfers.push(new Transfer({
-            id,
-            blockNumber,
-            timestamp,
-            extrinsicHash,
-            from,
-            to,
-            amount,
-            fee
-        }))
-    }
-
-    await ctx.store.save(Array.from(accounts.values()))
-    await ctx.store.insert(transfers)
-})
-
-
-interface TransferEvent {
-    id: string
-    blockNumber: number
-    timestamp: Date
-    extrinsicHash?: string
-    from: string
-    to: string
-    amount: bigint
-    fee?: bigint
-}
-
-
-function getTransfers(ctx: Ctx): TransferEvent[] {
-    let transfers: TransferEvent[] = []
-    for (let block of ctx.blocks) {
-        for (let item of block.items) {
-            if (item.name == "Balances.Transfer") {
-                let e = new BalancesTransferEvent(ctx, item.event)
-                let rec: {from: Uint8Array, to: Uint8Array, amount: bigint}
-                if (e.isV1020) {
-                    let [from, to, amount,] = e.asV1020
-                    rec = {from, to, amount}
-                } else if (e.isV1050) {
-                    let [from, to, amount] = e.asV1050
-                    rec = {from, to, amount}
-                } else {
-                    rec = e.asV9130
-                }
-                transfers.push({
-                    id: item.event.id,
-                    blockNumber: block.header.height,
-                    timestamp: new Date(block.header.timestamp),
-                    extrinsicHash: item.event.extrinsic?.hash,
-                    from: ss58.codec('kusama').encode(rec.from),
-                    to: ss58.codec('kusama').encode(rec.to),
-                    amount: rec.amount,
-                    fee: item.event.extrinsic?.fee || 0n
-                })
-            }
-        }
-    }
-    return transfers
-}
-
-
-function getAccount(m: Map<string, Account>, id: string): Account {
-    let acc = m.get(id)
-    if (acc == null) {
-        acc = new Account()
-        acc.id = id
-        m.set(id, acc)
-    }
-    return acc
-}
+processor.run()
