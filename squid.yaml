@@ -1,11 +1,11 @@
 manifestVersion: subsquid.io/v0.1
 namespace: squid
 
-name: balances-batch-dzlzv
+name: proposals-batch-dzlzv
 description: |-
   The very first squid from manifest
 tags:
-  - balances
+  - proposals
 
 database:
   type: pg-14
@@ -15,7 +15,7 @@ api:
   graphql-examples:
     - query: |-
         query MyQuery {
-          accountsConnection(orderBy: id_ASC) {
+          proposals(orderBy: id_ASC) {
             edges {
               node {
                   id
