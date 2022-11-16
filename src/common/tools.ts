@@ -41,7 +41,20 @@ export function getOriginAccountId(origin: any) {
             // eslint-disable-next-line sonarjs/no-nested-switch, sonarjs/no-small-switch
             switch (origin.value.__kind) {
                 case 'Signed':
-                    return ss58codec.encode(decodeHex(origin.value.value))
+                    try {
+                        return ss58codec.encode(decodeHex(origin.value.value))
+                    }
+                    catch (e) {
+                        console.log('Unexpected error continuing to next try block');
+                        
+                    }
+                    try {
+                        return ss58codec.encode(decodeHex(origin.value.value.value))
+                    }
+                    catch(e){
+                        return undefined
+                    }
+
                 default:
                     return undefined
             }
