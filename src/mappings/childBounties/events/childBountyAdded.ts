@@ -5,7 +5,6 @@ import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createChildBounty } from '../../utils/proposals'
 import { getChildBountyAddedData } from './getters'
-import { toHex, decodeHex } from '@subsquid/substrate-processor'
 
 export async function handleProposed(ctx: EventHandlerContext) {
     const { parentIndex, childIndex } = getChildBountyAddedData(ctx)
@@ -25,6 +24,6 @@ export async function handleProposed(ctx: EventHandlerContext) {
         reward: value,
         fee: fee,
         curatorDeposit: curatorDeposit,
-        description: description ? decodeHex(toHex(description)).toString() : undefined,
+        description: description,
     })
 }

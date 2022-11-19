@@ -3491,6 +3491,53 @@ export class TechnicalCommitteeProposalOfStorage {
   }
 }
 
+export class TipsReasonsStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  Simple preimage lookup from the reason's hash to the original data. Again, has an
+   *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
+   */
+  get isV9111() {
+    return this._chain.getStorageItemTypeHash('Tips', 'Reasons') === '2c57d2b4da44b4d6783b1eb7d03f42f23490455080a2c71c813169067dfe1a54'
+  }
+
+  /**
+   *  Simple preimage lookup from the reason's hash to the original data. Again, has an
+   *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
+   */
+  async getAsV9111(key: Uint8Array): Promise<Uint8Array | undefined> {
+    assert(this.isV9111)
+    return this._chain.getStorage(this.blockHash, 'Tips', 'Reasons', key)
+  }
+
+  async getManyAsV9111(keys: Uint8Array[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV9111)
+    return this._chain.queryStorage(this.blockHash, 'Tips', 'Reasons', keys.map(k => [k]))
+  }
+
+  async getAllAsV9111(): Promise<(Uint8Array)[]> {
+    assert(this.isV9111)
+    return this._chain.queryStorage(this.blockHash, 'Tips', 'Reasons')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Tips', 'Reasons') != null
+  }
+}
+
 export class TipsTipsStorage {
   private readonly _chain: Chain
   private readonly blockHash: string
@@ -3585,6 +3632,51 @@ export class TreasuryBountiesStorage {
   }
 }
 
+export class TreasuryBountyDescriptionsStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  The description of each bounty.
+   */
+  get isV2025() {
+    return this._chain.getStorageItemTypeHash('Treasury', 'BountyDescriptions') === '8aa11675e28f46f0e4b233018893c1979e42c43f64a290aecd81221cbc7f6e92'
+  }
+
+  /**
+   *  The description of each bounty.
+   */
+  async getAsV2025(key: number): Promise<Uint8Array | undefined> {
+    assert(this.isV2025)
+    return this._chain.getStorage(this.blockHash, 'Treasury', 'BountyDescriptions', key)
+  }
+
+  async getManyAsV2025(keys: number[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV2025)
+    return this._chain.queryStorage(this.blockHash, 'Treasury', 'BountyDescriptions', keys.map(k => [k]))
+  }
+
+  async getAllAsV2025(): Promise<(Uint8Array)[]> {
+    assert(this.isV2025)
+    return this._chain.queryStorage(this.blockHash, 'Treasury', 'BountyDescriptions')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Treasury', 'BountyDescriptions') != null
+  }
+}
+
 export class TreasuryProposalsStorage {
   private readonly _chain: Chain
   private readonly blockHash: string
@@ -3627,6 +3719,53 @@ export class TreasuryProposalsStorage {
    */
   get isExists(): boolean {
     return this._chain.getStorageItemTypeHash('Treasury', 'Proposals') != null
+  }
+}
+
+export class TreasuryReasonsStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  Simple preimage lookup from the reason's hash to the original data. Again, has an
+   *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
+   */
+  get isV1038() {
+    return this._chain.getStorageItemTypeHash('Treasury', 'Reasons') === '2c57d2b4da44b4d6783b1eb7d03f42f23490455080a2c71c813169067dfe1a54'
+  }
+
+  /**
+   *  Simple preimage lookup from the reason's hash to the original data. Again, has an
+   *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
+   */
+  async getAsV1038(key: Uint8Array): Promise<Uint8Array | undefined> {
+    assert(this.isV1038)
+    return this._chain.getStorage(this.blockHash, 'Treasury', 'Reasons', key)
+  }
+
+  async getManyAsV1038(keys: Uint8Array[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV1038)
+    return this._chain.queryStorage(this.blockHash, 'Treasury', 'Reasons', keys.map(k => [k]))
+  }
+
+  async getAllAsV1038(): Promise<(Uint8Array)[]> {
+    assert(this.isV1038)
+    return this._chain.queryStorage(this.blockHash, 'Treasury', 'Reasons')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Treasury', 'Reasons') != null
   }
 }
 

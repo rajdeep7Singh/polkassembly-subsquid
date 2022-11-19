@@ -5,7 +5,6 @@ import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createBounty } from '../../utils/proposals'
 import { getBountyProposedData, getBountyProposedDataOld } from './getters'
-import { toHex } from '@subsquid/substrate-processor'
 
 export async function handleProposed(ctx: EventHandlerContext) {
     const section = ctx.event.name.split('.')[0]
@@ -26,7 +25,7 @@ export async function handleProposed(ctx: EventHandlerContext) {
         status: ProposalStatus.Proposed,
         reward: value,
         deposit: bond,
-        description: description ? new TextDecoder().decode(description) : undefined,
+        description: description,
         curatorDeposit,
         fee: fee
     })
