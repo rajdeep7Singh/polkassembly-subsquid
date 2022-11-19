@@ -4,6 +4,7 @@ import { getOriginAccountId } from '../../../common/tools'
 import { Proposal, ProposalType, Tippers } from '../../../model'
 import { CallHandlerContext } from '../../types/contexts'
 import { getTipsTipData } from './getters'
+import { randomUUID } from 'crypto'
 
 export async function handleNewTipValue(ctx: CallHandlerContext) {
     if (!ctx.call.success) return
@@ -22,8 +23,9 @@ export async function handleNewTipValue(ctx: CallHandlerContext) {
         ctx.log.warn(`Origin for Tips.tip is null`)
         return
     }
-    
+
     const tipper = new Tippers({
+        id: randomUUID(),
         hash: hexHash,
         tipper: origin,
         value: tipValue,

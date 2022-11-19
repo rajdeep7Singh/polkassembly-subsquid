@@ -1,7 +1,6 @@
 import { UnknownVersionError } from '../../common/errors'
 import { TipsTipsStorage, TreasuryTipsStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
-
 interface TipStorageData {
     who: Uint8Array
     finder?: Uint8Array
@@ -28,11 +27,12 @@ async function getTreasuryStorageData(ctx: BlockContext, hash: Uint8Array): Prom
         const storageData = await storage.getAsV1038(hash)
         if (!storageData) return undefined
 
-        const { who, finder } = storageData
+        const { who, finder, reason } = storageData
         return {
             who,
             finder: finder?.[0],
             deposit: finder?.[1],
+            reason,
         }
     } else if (storage.isV2013) {
         return await storage.getAsV2013(hash)
