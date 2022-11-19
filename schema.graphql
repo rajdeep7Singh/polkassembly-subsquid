@@ -6,6 +6,7 @@ enum ProposalType {
   CouncilMotion
   Bounty
   Tip
+  ChildBounty
 }
 
 enum ProposalStatus {
@@ -25,6 +26,7 @@ enum ProposalStatus {
   Disapproved
   Closed
   Awarded
+  Added
   Rejected
   Retracted
   Slashed
@@ -74,6 +76,12 @@ type Proposal @entity {
   curator: String
   payee: String
   reward: BigInt
+  fee: BigInt
+  bond: BigInt
+  curatorDeposit: BigInt
+  description: String
+  parentBountyIndex: Int
+  proposalArguments: ProposedCall
   voting: [Vote!] @derivedFrom(field: "proposal")
   preimage: Preimage
   status: ProposalStatus!
@@ -82,8 +90,8 @@ type Proposal @entity {
   createdAt: DateTime! @index
   endedAtBlock: Int
   endedAt: DateTime
-  updatedAtBlock: Int
-  updatedAt: DateTime
+  updatedAtBlock: Int @index
+  updatedAt: DateTime @index
 }
 
 type StatusHistory @entity {
@@ -134,4 +142,13 @@ type Vote @entity {
   balance: VoteBalance
   lockPeriod: Int
   type: VoteType
+}
+
+type Tippers @entity {
+  hash: String! @index
+  tipper: String
+  value: BigInt
+  proposal: Proposal!
+  createdAtBlock: Int! @index
+  createdAt: DateTime! @index
 }

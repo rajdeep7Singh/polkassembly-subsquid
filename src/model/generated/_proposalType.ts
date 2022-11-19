@@ -6,4 +6,5 @@ export enum ProposalType {
   CouncilMotion = "CouncilMotion",
   Bounty = "Bounty",
   Tip = "Tip",
+  ChildBounty = "ChildBounty",
 }

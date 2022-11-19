@@ -109,6 +109,166 @@ export class BountiesUnassignCuratorCall {
   }
 }
 
+export class ChildBountiesAcceptCuratorCall {
+  private readonly _chain: Chain
+  private readonly call: Call
+
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'ChildBounties.accept_curator')
+    this._chain = ctx._chain
+    this.call = call
+  }
+
+  /**
+   * Accept the curator role for the child-bounty.
+   * 
+   * The dispatch origin for this call must be the curator of this
+   * child-bounty.
+   * 
+   * A deposit will be reserved from the curator and refund upon
+   * successful payout or cancellation.
+   * 
+   * Fee for curator is deducted from curator fee of parent bounty.
+   * 
+   * Parent bounty must be in active state, for this child-bounty call to
+   * work.
+   * 
+   * Child-bounty must be in "CuratorProposed" state, for processing the
+   * call. And state of child-bounty is moved to "Active" on successful
+   * call completion.
+   * 
+   * - `parent_bounty_id`: Index of parent bounty.
+   * - `child_bounty_id`: Index of child bounty.
+   */
+  get isV9190(): boolean {
+    return this._chain.getCallHash('ChildBounties.accept_curator') === '3dca7b9fd6bc92337517a800e3ddd90a757f5b4e8ccfd63c20fde7d675eed25e'
+  }
+
+  /**
+   * Accept the curator role for the child-bounty.
+   * 
+   * The dispatch origin for this call must be the curator of this
+   * child-bounty.
+   * 
+   * A deposit will be reserved from the curator and refund upon
+   * successful payout or cancellation.
+   * 
+   * Fee for curator is deducted from curator fee of parent bounty.
+   * 
+   * Parent bounty must be in active state, for this child-bounty call to
+   * work.
+   * 
+   * Child-bounty must be in "CuratorProposed" state, for processing the
+   * call. And state of child-bounty is moved to "Active" on successful
+   * call completion.
+   * 
+   * - `parent_bounty_id`: Index of parent bounty.
+   * - `child_bounty_id`: Index of child bounty.
+   */
+  get asV9190(): {parentBountyId: number, childBountyId: number} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
+}
+
+export class ChildBountiesUnassignCuratorCall {
+  private readonly _chain: Chain
+  private readonly call: Call
+
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'ChildBounties.unassign_curator')
+    this._chain = ctx._chain
+    this.call = call
+  }
+
+  /**
+   * Unassign curator from a child-bounty.
+   * 
+   * The dispatch origin for this call can be either `RejectOrigin`, or
+   * the curator of the parent bounty, or any signed origin.
+   * 
+   * For the origin other than T::RejectOrigin and the child-bounty
+   * curator, parent-bounty must be in active state, for this call to
+   * work. We allow child-bounty curator and T::RejectOrigin to execute
+   * this call irrespective of the parent-bounty state.
+   * 
+   * If this function is called by the `RejectOrigin` or the
+   * parent-bounty curator, we assume that the child-bounty curator is
+   * malicious or inactive. As a result, child-bounty curator deposit is
+   * slashed.
+   * 
+   * If the origin is the child-bounty curator, we take this as a sign
+   * that they are unable to do their job, and are willingly giving up.
+   * We could slash the deposit, but for now we allow them to unreserve
+   * their deposit and exit without issue. (We may want to change this if
+   * it is abused.)
+   * 
+   * Finally, the origin can be anyone iff the child-bounty curator is
+   * "inactive". Expiry update due of parent bounty is used to estimate
+   * inactive state of child-bounty curator.
+   * 
+   * This allows anyone in the community to call out that a child-bounty
+   * curator is not doing their due diligence, and we should pick a new
+   * one. In this case the child-bounty curator deposit is slashed.
+   * 
+   * State of child-bounty is moved to Added state on successful call
+   * completion.
+   * 
+   * - `parent_bounty_id`: Index of parent bounty.
+   * - `child_bounty_id`: Index of child bounty.
+   */
+  get isV9190(): boolean {
+    return this._chain.getCallHash('ChildBounties.unassign_curator') === '3dca7b9fd6bc92337517a800e3ddd90a757f5b4e8ccfd63c20fde7d675eed25e'
+  }
+
+  /**
+   * Unassign curator from a child-bounty.
+   * 
+   * The dispatch origin for this call can be either `RejectOrigin`, or
+   * the curator of the parent bounty, or any signed origin.
+   * 
+   * For the origin other than T::RejectOrigin and the child-bounty
+   * curator, parent-bounty must be in active state, for this call to
+   * work. We allow child-bounty curator and T::RejectOrigin to execute
+   * this call irrespective of the parent-bounty state.
+   * 
+   * If this function is called by the `RejectOrigin` or the
+   * parent-bounty curator, we assume that the child-bounty curator is
+   * malicious or inactive. As a result, child-bounty curator deposit is
+   * slashed.
+   * 
+   * If the origin is the child-bounty curator, we take this as a sign
+   * that they are unable to do their job, and are willingly giving up.
+   * We could slash the deposit, but for now we allow them to unreserve
+   * their deposit and exit without issue. (We may want to change this if
+   * it is abused.)
+   * 
+   * Finally, the origin can be anyone iff the child-bounty curator is
+   * "inactive". Expiry update due of parent bounty is used to estimate
+   * inactive state of child-bounty curator.
+   * 
+   * This allows anyone in the community to call out that a child-bounty
+   * curator is not doing their due diligence, and we should pick a new
+   * one. In this case the child-bounty curator deposit is slashed.
+   * 
+   * State of child-bounty is moved to Added state on successful call
+   * completion.
+   * 
+   * - `parent_bounty_id`: Index of parent bounty.
+   * - `child_bounty_id`: Index of child bounty.
+   */
+  get asV9190(): {parentBountyId: number, childBountyId: number} {
+    assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
+}
+
 export class DemocracyVoteCall {
   private readonly _chain: Chain
   private readonly call: Call
@@ -214,6 +374,83 @@ export class DemocracyVoteCall {
    */
   get asV9111(): {refIndex: number, vote: v9111.AccountVote} {
     assert(this.isV9111)
+    return this._chain.decodeCall(this.call)
+  }
+}
+
+export class TipsTipCall {
+  private readonly _chain: Chain
+  private readonly call: Call
+
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'Tips.tip')
+    this._chain = ctx._chain
+    this.call = call
+  }
+
+  /**
+   *  Declare a tip value for an already-open tip.
+   * 
+   *  The dispatch origin for this call must be _Signed_ and the signing account must be a
+   *  member of the `Tippers` set.
+   * 
+   *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
+   *    as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
+   *    account ID.
+   *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
+   *    value of active tippers will be given to the `who`.
+   * 
+   *  Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
+   *  has started.
+   * 
+   *  # <weight>
+   *  - Complexity: `O(T)` where `T` is the number of tippers.
+   *    decoding `Tipper` vec of length `T`, insert tip and check closing,
+   *    `T` is charged as upper bound given by `ContainsLengthBound`.
+   *    The actual cost depends on the implementation of `T::Tippers`.
+   * 
+   *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
+   *    is weighted as if almost full i.e of length `T-1`.
+   *  - DbReads: `Tippers`, `Tips`
+   *  - DbWrites: `Tips`
+   *  # </weight>
+   */
+  get isV2028(): boolean {
+    return this._chain.getCallHash('Tips.tip') === 'f3795cdab18c292963e0e30ece37a15a2900030efc315a8e3f28ba886b2b9f58'
+  }
+
+  /**
+   *  Declare a tip value for an already-open tip.
+   * 
+   *  The dispatch origin for this call must be _Signed_ and the signing account must be a
+   *  member of the `Tippers` set.
+   * 
+   *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
+   *    as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
+   *    account ID.
+   *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
+   *    value of active tippers will be given to the `who`.
+   * 
+   *  Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
+   *  has started.
+   * 
+   *  # <weight>
+   *  - Complexity: `O(T)` where `T` is the number of tippers.
+   *    decoding `Tipper` vec of length `T`, insert tip and check closing,
+   *    `T` is charged as upper bound given by `ContainsLengthBound`.
+   *    The actual cost depends on the implementation of `T::Tippers`.
+   * 
+   *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
+   *    is weighted as if almost full i.e of length `T-1`.
+   *  - DbReads: `Tippers`, `Tips`
+   *  - DbWrites: `Tips`
+   *  # </weight>
+   */
+  get asV2028(): {hash: Uint8Array, tipValue: bigint} {
+    assert(this.isV2028)
     return this._chain.decodeCall(this.call)
   }
 }

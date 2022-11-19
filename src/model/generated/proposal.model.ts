@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 import {ProposalType} from "./_proposalType"
 import {Threshold, fromJsonThreshold} from "./_threshold"
+import {ProposedCall} from "./_proposedCall"
 import {Vote} from "./vote.model"
 import {Preimage} from "./preimage.model"
 import {ProposalStatus} from "./_proposalStatus"
@@ -46,6 +47,24 @@ export class Proposal {
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
   reward!: bigint | undefined | null
 
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  fee!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  bond!: bigint | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  curatorDeposit!: bigint | undefined | null
+
+  @Column_("text", {nullable: true})
+  description!: string | undefined | null
+
+  @Column_("int4", {nullable: true})
+  parentBountyIndex!: number | undefined | null
+
+  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
+  proposalArguments!: ProposedCall | undefined | null
+
   @OneToMany_(() => Vote, e => e.proposal)
   voting!: Vote[]
 
@@ -73,9 +92,11 @@ export class Proposal {
   @Column_("timestamp with time zone", {nullable: true})
   endedAt!: Date | undefined | null
 
+  @Index_()
   @Column_("int4", {nullable: true})
   updatedAtBlock!: number | undefined | null
 
+  @Index_()
   @Column_("timestamp with time zone", {nullable: true})
   updatedAt!: Date | undefined | null
 }

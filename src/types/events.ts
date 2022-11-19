@@ -317,6 +317,122 @@ export class BountiesBountyRejectedEvent {
   }
 }
 
+export class ChildBountiesAddedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'ChildBounties.Added')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A child-bounty is added.
+   */
+  get isV9190(): boolean {
+    return this._chain.getEventHash('ChildBounties.Added') === '9fb3a6aad6bc40cae151ada4822c8213e0d9958e4af9bf7189d4ce52bd045bd3'
+  }
+
+  /**
+   * A child-bounty is added.
+   */
+  get asV9190(): {index: number, childIndex: number} {
+    assert(this.isV9190)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ChildBountiesAwardedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'ChildBounties.Awarded')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A child-bounty is awarded to a beneficiary.
+   */
+  get isV9190(): boolean {
+    return this._chain.getEventHash('ChildBounties.Awarded') === '0a085a42ecce2b9e3c0b81694d10406a346b17c1ef5e244816a4e7d7438840da'
+  }
+
+  /**
+   * A child-bounty is awarded to a beneficiary.
+   */
+  get asV9190(): {index: number, childIndex: number, beneficiary: Uint8Array} {
+    assert(this.isV9190)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ChildBountiesCanceledEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'ChildBounties.Canceled')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A child-bounty is cancelled.
+   */
+  get isV9190(): boolean {
+    return this._chain.getEventHash('ChildBounties.Canceled') === '9fb3a6aad6bc40cae151ada4822c8213e0d9958e4af9bf7189d4ce52bd045bd3'
+  }
+
+  /**
+   * A child-bounty is cancelled.
+   */
+  get asV9190(): {index: number, childIndex: number} {
+    assert(this.isV9190)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ChildBountiesClaimedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'ChildBounties.Claimed')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A child-bounty is claimed by beneficiary.
+   */
+  get isV9190(): boolean {
+    return this._chain.getEventHash('ChildBounties.Claimed') === 'dfad8943decb48ed737eb4081add3d6fcb6f4dea668600b36619e88a793cd08e'
+  }
+
+  /**
+   * A child-bounty is claimed by beneficiary.
+   */
+  get asV9190(): {index: number, childIndex: number, payout: bigint, beneficiary: Uint8Array} {
+    assert(this.isV9190)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
 export class CouncilApprovedEvent {
   private readonly _chain: Chain
   private readonly event: Event

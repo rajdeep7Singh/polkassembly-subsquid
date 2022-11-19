@@ -17,7 +17,7 @@ export async function handleProposed(ctx: EventHandlerContext) {
         return
     }
 
-    const { proposer, value, bond } = storageData
+    const { proposer, value, bond, description, curatorDeposit, fee } = storageData
 
     await createBounty(ctx, {
         index,
@@ -25,5 +25,8 @@ export async function handleProposed(ctx: EventHandlerContext) {
         status: ProposalStatus.Proposed,
         reward: value,
         deposit: bond,
+        description: description?.toString(),
+        curatorDeposit,
+        fee: fee
     })
 }

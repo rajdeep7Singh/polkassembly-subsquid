@@ -46,6 +46,14 @@ export interface DispatchError_Transactional {
   value: TransactionalError
 }
 
+export interface ChildBounty {
+  parentBounty: number
+  value: bigint
+  fee: bigint
+  curatorDeposit: bigint
+  status: ChildBountyStatus
+}
+
 export type Call = Call_System | Call_Babe | Call_Timestamp | Call_Indices | Call_Balances | Call_Authorship | Call_Staking | Call_Session | Call_Grandpa | Call_ImOnline | Call_Democracy | Call_Council | Call_TechnicalCommittee | Call_PhragmenElection | Call_TechnicalMembership | Call_Treasury | Call_Claims | Call_Utility | Call_Identity | Call_Society | Call_Recovery | Call_Vesting | Call_Scheduler | Call_Proxy | Call_Multisig | Call_Preimage | Call_Bounties | Call_ChildBounties | Call_Tips | Call_ElectionProviderMultiPhase | Call_Gilt | Call_BagsList | Call_Configuration | Call_ParasShared | Call_ParaInclusion | Call_ParaInherent | Call_Paras | Call_Initializer | Call_Dmp | Call_Ump | Call_Hrmp | Call_ParasDisputes | Call_Registrar | Call_Slots | Call_Auctions | Call_Crowdloan | Call_XcmPallet
 
 export interface Call_System {
@@ -340,6 +348,29 @@ export interface TransactionalError_LimitReached {
 
 export interface TransactionalError_NoLayer {
   __kind: 'NoLayer'
+}
+
+export type ChildBountyStatus = ChildBountyStatus_Added | ChildBountyStatus_CuratorProposed | ChildBountyStatus_Active | ChildBountyStatus_PendingPayout
+
+export interface ChildBountyStatus_Added {
+  __kind: 'Added'
+}
+
+export interface ChildBountyStatus_CuratorProposed {
+  __kind: 'CuratorProposed'
+  curator: Uint8Array
+}
+
+export interface ChildBountyStatus_Active {
+  __kind: 'Active'
+  curator: Uint8Array
+}
+
+export interface ChildBountyStatus_PendingPayout {
+  __kind: 'PendingPayout'
+  curator: Uint8Array
+  beneficiary: Uint8Array
+  unlockAt: number
 }
 
 /**

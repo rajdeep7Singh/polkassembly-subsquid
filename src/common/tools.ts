@@ -45,8 +45,7 @@ export function getOriginAccountId(origin: any) {
                         return ss58codec.encode(decodeHex(origin.value.value))
                     }
                     catch (e) {
-                        console.log('Unexpected error continuing to next try block');
-                        
+                        console.log('Unexpected error continuing to next try block', JSON.stringify(e)); 
                     }
                     try {
                         return ss58codec.encode(decodeHex(origin.value.value.value))

@@ -7,6 +7,7 @@ export type IndexProposal =
     | ProposalType.Bounty
     | ProposalType.TechCommitteeProposal
     | ProposalType.CouncilMotion
+    | ProposalType.ChildBounty
 
 export type HashProposal =
     | ProposalType.Tip
@@ -52,6 +53,7 @@ export interface TipData extends BaseProposalData {
     payee: string
     deposit?: bigint
     status: ProposalStatus
+    reason?: string
 }
 
 export interface BountyData extends BaseProposalData {
@@ -59,6 +61,19 @@ export interface BountyData extends BaseProposalData {
     proposer: string
     reward: bigint
     deposit: bigint
+    description?: string
+    curatorDeposit?: bigint
+    fee?: bigint
+}
+
+export interface ChildBountyData extends BaseProposalData {
+    index: number
+    parentBountyIndex: number
+    reward: bigint
+    curatorDeposit: bigint
+    fee: bigint
+    description?: string
+    curator?: string 
 }
 
 export interface TreasuryData extends BaseProposalData {

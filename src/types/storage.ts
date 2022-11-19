@@ -186,6 +186,141 @@ export class BountiesBountiesStorage {
   }
 }
 
+export class BountiesBountyDescriptionsStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  The description of each bounty.
+   */
+  get isV9111() {
+    return this._chain.getStorageItemTypeHash('Bounties', 'BountyDescriptions') === '8aa11675e28f46f0e4b233018893c1979e42c43f64a290aecd81221cbc7f6e92'
+  }
+
+  /**
+   *  The description of each bounty.
+   */
+  async getAsV9111(key: number): Promise<Uint8Array | undefined> {
+    assert(this.isV9111)
+    return this._chain.getStorage(this.blockHash, 'Bounties', 'BountyDescriptions', key)
+  }
+
+  async getManyAsV9111(keys: number[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV9111)
+    return this._chain.queryStorage(this.blockHash, 'Bounties', 'BountyDescriptions', keys.map(k => [k]))
+  }
+
+  async getAllAsV9111(): Promise<(Uint8Array)[]> {
+    assert(this.isV9111)
+    return this._chain.queryStorage(this.blockHash, 'Bounties', 'BountyDescriptions')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Bounties', 'BountyDescriptions') != null
+  }
+}
+
+export class ChildBountiesChildBountiesStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  Child-bounties that have been added.
+   */
+  get isV9190() {
+    return this._chain.getStorageItemTypeHash('ChildBounties', 'ChildBounties') === '27265a54e9a270a9e783aa4baa7a1318433a77722a99de466a3afe5e9d56ba7d'
+  }
+
+  /**
+   *  Child-bounties that have been added.
+   */
+  async getAsV9190(key1: number, key2: number): Promise<v9190.ChildBounty | undefined> {
+    assert(this.isV9190)
+    return this._chain.getStorage(this.blockHash, 'ChildBounties', 'ChildBounties', key1, key2)
+  }
+
+  async getManyAsV9190(keys: [number, number][]): Promise<(v9190.ChildBounty | undefined)[]> {
+    assert(this.isV9190)
+    return this._chain.queryStorage(this.blockHash, 'ChildBounties', 'ChildBounties', keys)
+  }
+
+  async getAllAsV9190(): Promise<(v9190.ChildBounty)[]> {
+    assert(this.isV9190)
+    return this._chain.queryStorage(this.blockHash, 'ChildBounties', 'ChildBounties')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('ChildBounties', 'ChildBounties') != null
+  }
+}
+
+export class ChildBountiesChildBountyDescriptionsStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  The description of each child-bounty.
+   */
+  get isV9190() {
+    return this._chain.getStorageItemTypeHash('ChildBounties', 'ChildBountyDescriptions') === '8aa11675e28f46f0e4b233018893c1979e42c43f64a290aecd81221cbc7f6e92'
+  }
+
+  /**
+   *  The description of each child-bounty.
+   */
+  async getAsV9190(key: number): Promise<Uint8Array | undefined> {
+    assert(this.isV9190)
+    return this._chain.getStorage(this.blockHash, 'ChildBounties', 'ChildBountyDescriptions', key)
+  }
+
+  async getManyAsV9190(keys: number[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV9190)
+    return this._chain.queryStorage(this.blockHash, 'ChildBounties', 'ChildBountyDescriptions', keys.map(k => [k]))
+  }
+
+  async getAllAsV9190(): Promise<(Uint8Array)[]> {
+    assert(this.isV9190)
+    return this._chain.queryStorage(this.blockHash, 'ChildBounties', 'ChildBountyDescriptions')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('ChildBounties', 'ChildBountyDescriptions') != null
+  }
+}
+
 export class CouncilMembersStorage {
   private readonly _chain: Chain
   private readonly blockHash: string

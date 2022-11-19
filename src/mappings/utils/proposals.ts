@@ -11,10 +11,12 @@ import {
     ReferendumThreshold,
     ReferendumThresholdType,
     StatusHistory,
+    Tippers,
 } from '../../model'
 import { EventHandlerContext } from '../types/contexts'
 import {
     BountyData,
+    ChildBountyData,
     CouncilMotionData,
     DemocracyProposalData,
     HashProposal,
@@ -176,6 +178,7 @@ export async function createDemocracyProposal(
         preimage,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)
@@ -221,6 +224,7 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
         status,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)
@@ -243,7 +247,7 @@ export async function createCoucilMotion(
     data: CouncilMotionData,
     type: ProposalType.CouncilMotion | ProposalType.TechCommitteeProposal = ProposalType.CouncilMotion
 ): Promise<Proposal> {
-    const { index, status, threshold, hash, proposer } = data
+    const { index, status, threshold, hash, proposer, call } = data
 
     // let group: ProposalGroup | undefined
 
@@ -279,9 +283,11 @@ export async function createCoucilMotion(
         threshold: new MotionThreshold({
             value: threshold,
         }),
+        proposalArguments: createProposedCall(call),
         preimage,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)
@@ -307,7 +313,7 @@ export async function createTechCommitteeMotion(
 }
 
 export async function createTip(ctx: EventHandlerContext, data: TipData): Promise<Proposal> {
-    const { status, hash, proposer, payee, deposit } = data
+    const { status, hash, proposer, payee, deposit, reason } = data
 
     const type = ProposalType.Tip
 
@@ -321,8 +327,10 @@ export async function createTip(ctx: EventHandlerContext, data: TipData): Promis
         payee,
         deposit,
         status,
+        description: reason,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)
@@ -341,7 +349,7 @@ export async function createTip(ctx: EventHandlerContext, data: TipData): Promis
 }
 
 export async function createBounty(ctx: EventHandlerContext, data: BountyData): Promise<Proposal> {
-    const { status, index, proposer, deposit, reward } = data
+    const { status, index, proposer, deposit, reward, curatorDeposit, description, fee } = data
 
     const type = ProposalType.Bounty
 
@@ -356,9 +364,53 @@ export async function createBounty(ctx: EventHandlerContext, data: BountyData): 
         proposer,
         deposit,
         reward,
+        curatorDeposit,
+        description,
         status,
+        fee,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
+        // group,
+    })
+
+    await ctx.store.insert(proposal)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: ctx.event.id,
+            block: proposal.createdAtBlock,
+            timestamp: proposal.createdAt,
+            status: proposal.status,
+            proposal,
+        })
+    )
+
+    return proposal
+}
+
+export async function createChildBounty(ctx: EventHandlerContext, data: ChildBountyData): Promise<Proposal> {
+    const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description } = data
+
+    const type = ProposalType.ChildBounty
+
+    const id = await getProposalId(ctx.store, type)
+
+    // const group = await getOrCreateProposalGroup(ctx, index, ProposalType.Bounty)
+
+    const proposal = new Proposal({
+        id,
+        type,
+        index,
+        reward,
+        status,
+        description,
+        fee,
+        parentBountyIndex,
+        curatorDeposit,
+        createdAtBlock: ctx.block.height,
+        createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
         // group,
     })
 
@@ -397,6 +449,7 @@ export async function createTreasury(ctx: EventHandlerContext, data: TreasuryDat
         payee,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)
@@ -433,6 +486,7 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
         method: method,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
     })
 
     await ctx.store.insert(proposal)

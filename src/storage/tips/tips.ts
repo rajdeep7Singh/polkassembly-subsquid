@@ -6,6 +6,7 @@ interface TipStorageData {
     who: Uint8Array
     finder?: Uint8Array
     deposit?: bigint
+    reason?: Uint8Array
 }
 
 async function getTipsStorageData(ctx: BlockContext, hash: Uint8Array): Promise<TipStorageData | undefined> {

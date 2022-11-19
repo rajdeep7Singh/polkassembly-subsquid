@@ -19,7 +19,7 @@ export async function handleNewTip(ctx: EventHandlerContext) {
         return
     }
 
-    const { who, deposit, finder } = storageData
+    const { who, deposit, finder, reason } = storageData
 
     await createTip(ctx, {
         hash: hexHash,
@@ -27,5 +27,6 @@ export async function handleNewTip(ctx: EventHandlerContext) {
         payee: ss58codec.encode(who),
         deposit,
         status: ProposalStatus.Proposed,
+        reason: reason?.toString(),
     })
 }
