@@ -6,7 +6,7 @@ import { BlockContext } from '../../types/support'
 interface ChildBountyBountyStorageData {
     value: bigint
     fee: bigint
-    description?: string | Uint8Array
+    description?: Uint8Array
     parentBounty: number,
     curatorDeposit: bigint,
 }
