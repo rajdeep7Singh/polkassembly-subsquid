@@ -27,6 +27,6 @@ export async function handleNewTip(ctx: EventHandlerContext) {
         payee: ss58codec.encode(who),
         deposit,
         status: ProposalStatus.Proposed,
-        reason: reason ? toHex(reason).toString() : undefined,
+        reason: reason ? new TextDecoder().decode(reason) : undefined,
     })
 }

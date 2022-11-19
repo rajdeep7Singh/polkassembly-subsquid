@@ -26,6 +26,6 @@ export async function handleProposed(ctx: EventHandlerContext) {
         reward: value,
         fee: fee,
         curatorDeposit: curatorDeposit,
-        description: description ? toHex(description).toString() : undefined,
+        description: description ? new TextDecoder().decode(description) : undefined,
     })
 }
