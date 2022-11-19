@@ -6,7 +6,6 @@ import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createTip } from '../../utils/proposals'
 import { getNewTipData, getNewTipDataOld } from './getters'
-import { hexToString } from '@polkadot/util';
 
 export async function handleNewTip(ctx: EventHandlerContext) {
     const section = ctx.event.name.split('.')[0]
