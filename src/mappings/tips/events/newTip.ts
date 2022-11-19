@@ -1,4 +1,4 @@
-import { toHex } from '@subsquid/substrate-processor'
+import { decodeHex, toHex } from '@subsquid/substrate-processor'
 import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
@@ -27,6 +27,6 @@ export async function handleNewTip(ctx: EventHandlerContext) {
         payee: ss58codec.encode(who),
         deposit,
         status: ProposalStatus.Proposed,
-        reason: reason ? new TextDecoder().decode(reason) : undefined,
+        reason: reason ? decodeHex(toHex(reason)).toString() : undefined,
     })
 }
