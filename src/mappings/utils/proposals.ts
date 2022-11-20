@@ -250,15 +250,30 @@ export async function createCoucilMotion(
     const { index, status, threshold, hash, proposer, call } = data
 
     // let group: ProposalGroup | undefined
+    let preimage = null
+
+    if (call.args){
+        if(call.args['proposalHash']){
+            const hexHash = call.args['proposalHash'] as string
+            preimage = await ctx.store.get(Preimage, {
+                where: {
+                    hash: hexHash,
+                    status: ProposalStatus.Noted,
+                },
+            })
+        }
+    }
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
-        where: {
-            hash: hash,
-            status: ProposalStatus.Noted,
-        },
-    })
+    if (!preimage) {
+        preimage = await ctx.store.get(Preimage, {
+            where: {
+                hash: hash,
+                status: ProposalStatus.Noted,
+            },
+        })
+    }
 
     // if (call.args) {
     //     if (call.args['proposalHash']) {
