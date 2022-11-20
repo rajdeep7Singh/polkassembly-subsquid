@@ -35,6 +35,8 @@ export interface ReferendumData extends BaseProposalData {
     index: number
     hash: string
     threshold: ReferendumThresholdType
+    end?: number
+    delay?: number
 }
 
 export interface CouncilMotionData extends BaseProposalData {

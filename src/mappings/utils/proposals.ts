@@ -48,7 +48,7 @@ export async function updatePreimageStatus(
     const proposal = await ctx.store.get(Preimage, { where: { hash: hash } })
 
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn( 'Preimage', `Preimage with hash ${hash} not found`,))
+        ctx.log.warn(MissingProposalRecordWarn('Preimage', `with hash ${hash} not found`,))
         return
     }
 
@@ -197,7 +197,7 @@ export async function createDemocracyProposal(
 }
 
 export async function createReferendum(ctx: EventHandlerContext, data: ReferendumData): Promise<Proposal> {
-    const { index, threshold, hash, status } = data
+    const { index, threshold, hash, status, end, delay } = data
 
     const type = ProposalType.Referendum
 
@@ -222,6 +222,8 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
         }),
         preimage,
         status,
+        end: end,
+        delay: delay,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
@@ -491,7 +493,7 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
 
     // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
 
-    const proposal = new Preimage({
+    const preimage = new Preimage({
         id,
         hash,
         proposer,
@@ -504,9 +506,16 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
         updatedAt: new Date(ctx.block.timestamp),
     })
 
-    await ctx.store.insert(proposal)
+    await ctx.store.insert(preimage)
 
-    return proposal
+    const proposal = await ctx.store.get(Proposal, { where: { hash } })
+
+    if (proposal && !proposal.preimage) {
+        proposal.preimage = preimage
+        await ctx.store.save(proposal)
+    }
+
+    return preimage
 }
 
 function createProposedCall(data: ProposedCallData): ProposedCall {

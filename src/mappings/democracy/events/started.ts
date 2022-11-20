@@ -45,7 +45,7 @@ export async function handleStarted(ctx: EventHandlerContext) {
         return
     }
 
-    const { hash } = storageData
+    const { hash, end, delay } = storageData
     const hexHash = toHex(hash)
 
     await createReferendum(ctx, {
@@ -53,5 +53,7 @@ export async function handleStarted(ctx: EventHandlerContext) {
         threshold: threshold as ReferendumThresholdType,
         status: ProposalStatus.Started,
         hash: hexHash,
+        end: end,
+        delay: delay,
     })
 }
