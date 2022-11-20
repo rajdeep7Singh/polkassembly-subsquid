@@ -508,7 +508,7 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
 
     await ctx.store.insert(preimage)
 
-    const proposal = await ctx.store.get(Proposal, { where: { hash } })
+    const proposal = await ctx.store.get(Proposal, { where: { hash }, order: { createdAt: 'DESC' } })
 
     if (proposal && !proposal.preimage) {
         proposal.preimage = preimage
