@@ -50,6 +50,7 @@ import * as v9250 from './v9250'
 import * as v9271 from './v9271'
 import * as v9291 from './v9291'
 import * as v9300 from './v9300'
+import * as v9320 from './v9320'
 
 export class BalancesAccountStorage {
   private readonly _chain: Chain
@@ -318,6 +319,53 @@ export class ChildBountiesChildBountyDescriptionsStorage {
    */
   get isExists(): boolean {
     return this._chain.getStorageItemTypeHash('ChildBounties', 'ChildBountyDescriptions') != null
+  }
+}
+
+export class ConvictionVotingVotingForStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  All voting for a particular voter in a particular voting class. We store the balance for the
+   *  number of votes that we have recorded.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('ConvictionVoting', 'VotingFor') === 'f5718a9729b93e5dd0b421ab8274a5e99a7a8bced5ee0a817ed2c995cdfb78d0'
+  }
+
+  /**
+   *  All voting for a particular voter in a particular voting class. We store the balance for the
+   *  number of votes that we have recorded.
+   */
+  async getAsV9320(key1: Uint8Array, key2: number): Promise<v9320.Type_608> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'ConvictionVoting', 'VotingFor', key1, key2)
+  }
+
+  async getManyAsV9320(keys: [Uint8Array, number][]): Promise<(v9320.Type_608)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'ConvictionVoting', 'VotingFor', keys)
+  }
+
+  async getAllAsV9320(): Promise<(v9320.Type_608)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'ConvictionVoting', 'VotingFor')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('ConvictionVoting', 'VotingFor') != null
   }
 }
 
@@ -729,6 +777,31 @@ export class CouncilProposalOfStorage {
   }
 
   /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Council', 'ProposalOf') === 'e264f3acf17bae2089248c1b5be4b79c3766ff552e8565a925e0bceaa16c973b'
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  async getAsV9320(key: Uint8Array): Promise<v9320.Call | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Council', 'ProposalOf', key)
+  }
+
+  async getManyAsV9320(keys: Uint8Array[]): Promise<(v9320.Call | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Council', 'ProposalOf', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(v9320.Call)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Council', 'ProposalOf')
+  }
+
+  /**
    * Checks whether the storage item is defined for the current chain version.
    */
   get isExists(): boolean {
@@ -915,6 +988,21 @@ export class DemocracyPublicPropsStorage {
   }
 
   /**
+   *  The public proposals. Unsorted. The second item is the proposal.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Democracy', 'PublicProps') === '3472d1c9441381a2b9709395dfc47ee60b049d41fbd71ce557eb1a61ef656bec'
+  }
+
+  /**
+   *  The public proposals. Unsorted. The second item is the proposal.
+   */
+  async getAsV9320(): Promise<[number, v9320.Bounded, Uint8Array][]> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Democracy', 'PublicProps')
+  }
+
+  /**
    * Checks whether the storage item is defined for the current chain version.
    */
   get isExists(): boolean {
@@ -1010,6 +1098,35 @@ export class DemocracyReferendumInfoOfStorage {
 
   async getAllAsV9111(): Promise<(v9111.ReferendumInfo)[]> {
     assert(this.isV9111)
+    return this._chain.queryStorage(this.blockHash, 'Democracy', 'ReferendumInfoOf')
+  }
+
+  /**
+   *  Information concerning any given referendum.
+   * 
+   *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Democracy', 'ReferendumInfoOf') === 'ba926738202889ee118b1f40d70a1edbd71f0893c703c708a73330af6ca468e1'
+  }
+
+  /**
+   *  Information concerning any given referendum.
+   * 
+   *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+   */
+  async getAsV9320(key: number): Promise<v9320.ReferendumInfo | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Democracy', 'ReferendumInfoOf', key)
+  }
+
+  async getManyAsV9320(keys: number[]): Promise<(v9320.ReferendumInfo | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Democracy', 'ReferendumInfoOf', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(v9320.ReferendumInfo)[]> {
+    assert(this.isV9320)
     return this._chain.queryStorage(this.blockHash, 'Democracy', 'ReferendumInfoOf')
   }
 
@@ -2981,6 +3098,185 @@ export class Instance2CollectiveProposalOfStorage {
   }
 }
 
+export class PreimagePreimageForStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  The preimages stored by this pallet.
+   */
+  get isV9160() {
+    return this._chain.getStorageItemTypeHash('Preimage', 'PreimageFor') === '2c57d2b4da44b4d6783b1eb7d03f42f23490455080a2c71c813169067dfe1a54'
+  }
+
+  /**
+   *  The preimages stored by this pallet.
+   */
+  async getAsV9160(key: Uint8Array): Promise<Uint8Array | undefined> {
+    assert(this.isV9160)
+    return this._chain.getStorage(this.blockHash, 'Preimage', 'PreimageFor', key)
+  }
+
+  async getManyAsV9160(keys: Uint8Array[]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV9160)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'PreimageFor', keys.map(k => [k]))
+  }
+
+  async getAllAsV9160(): Promise<(Uint8Array)[]> {
+    assert(this.isV9160)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'PreimageFor')
+  }
+
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Preimage', 'PreimageFor') === '55fa1a08a9fac4bcf15d53fce590e3fb5af7fbc408ac4b8e1ed28f5f8a242534'
+  }
+
+  async getAsV9320(key: [Uint8Array, number]): Promise<Uint8Array | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Preimage', 'PreimageFor', key)
+  }
+
+  async getManyAsV9320(keys: [Uint8Array, number][]): Promise<(Uint8Array | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'PreimageFor', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(Uint8Array)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'PreimageFor')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Preimage', 'PreimageFor') != null
+  }
+}
+
+export class PreimageStatusForStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  The request status of a given hash.
+   */
+  get isV9160() {
+    return this._chain.getStorageItemTypeHash('Preimage', 'StatusFor') === 'df89c798bcb34b24310c6affc3156d4e8562cfc149636b7239c64508bca6c7ba'
+  }
+
+  /**
+   *  The request status of a given hash.
+   */
+  async getAsV9160(key: Uint8Array): Promise<v9160.RequestStatus | undefined> {
+    assert(this.isV9160)
+    return this._chain.getStorage(this.blockHash, 'Preimage', 'StatusFor', key)
+  }
+
+  async getManyAsV9160(keys: Uint8Array[]): Promise<(v9160.RequestStatus | undefined)[]> {
+    assert(this.isV9160)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'StatusFor', keys.map(k => [k]))
+  }
+
+  async getAllAsV9160(): Promise<(v9160.RequestStatus)[]> {
+    assert(this.isV9160)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'StatusFor')
+  }
+
+  /**
+   *  The request status of a given hash.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Preimage', 'StatusFor') === '16647d6a818ed8802ff108ffe98014d8de07d069008bb466b26b7367e684d574'
+  }
+
+  /**
+   *  The request status of a given hash.
+   */
+  async getAsV9320(key: Uint8Array): Promise<v9320.RequestStatus | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Preimage', 'StatusFor', key)
+  }
+
+  async getManyAsV9320(keys: Uint8Array[]): Promise<(v9320.RequestStatus | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'StatusFor', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(v9320.RequestStatus)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Preimage', 'StatusFor')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Preimage', 'StatusFor') != null
+  }
+}
+
+export class ReferendaReferendumInfoForStorage {
+  private readonly _chain: Chain
+  private readonly blockHash: string
+
+  constructor(ctx: BlockContext)
+  constructor(ctx: ChainContext, block: Block)
+  constructor(ctx: BlockContext, block?: Block) {
+    block = block || ctx.block
+    this.blockHash = block.hash
+    this._chain = ctx._chain
+  }
+
+  /**
+   *  Information concerning any given referendum.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('Referenda', 'ReferendumInfoFor') === '33899ab47ab8fe6857d9da2d98b7b7168468bb2627a189bdae062d9c5ad90e3a'
+  }
+
+  /**
+   *  Information concerning any given referendum.
+   */
+  async getAsV9320(key: number): Promise<v9320.Type_620 | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'Referenda', 'ReferendumInfoFor', key)
+  }
+
+  async getManyAsV9320(keys: number[]): Promise<(v9320.Type_620 | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Referenda', 'ReferendumInfoFor', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(v9320.Type_620)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Referenda', 'ReferendumInfoFor')
+  }
+
+  /**
+   * Checks whether the storage item is defined for the current chain version.
+   */
+  get isExists(): boolean {
+    return this._chain.getStorageItemTypeHash('Referenda', 'ReferendumInfoFor') != null
+  }
+}
+
 export class SystemAccountStorage {
   private readonly _chain: Chain
   private readonly blockHash: string
@@ -3480,6 +3776,31 @@ export class TechnicalCommitteeProposalOfStorage {
 
   async getAllAsV9300(): Promise<(v9300.Call)[]> {
     assert(this.isV9300)
+    return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf')
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  get isV9320() {
+    return this._chain.getStorageItemTypeHash('TechnicalCommittee', 'ProposalOf') === 'e264f3acf17bae2089248c1b5be4b79c3766ff552e8565a925e0bceaa16c973b'
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  async getAsV9320(key: Uint8Array): Promise<v9320.Call | undefined> {
+    assert(this.isV9320)
+    return this._chain.getStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf', key)
+  }
+
+  async getManyAsV9320(keys: Uint8Array[]): Promise<(v9320.Call | undefined)[]> {
+    assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf', keys.map(k => [k]))
+  }
+
+  async getAllAsV9320(): Promise<(v9320.Call)[]> {
+    assert(this.isV9320)
     return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf')
   }
 

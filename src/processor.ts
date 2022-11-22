@@ -9,7 +9,7 @@ const processor = new SubstrateProcessor(db)
 processor.setTypesBundle(config.typesBundle)
 processor.setBatchSize(config.batchSize || 100)
 processor.setDataSource(config.dataSource)
-processor.setBlockRange({ from: 0})
+processor.setBlockRange({ from: 15426506, to: 15436873})
 
 processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
 processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
@@ -79,5 +79,23 @@ processor.addEventHandler('ChildBounties.Claimed', modules.childBounties.events.
 processor.addEventHandler('ChildBounties.Canceled', modules.childBounties.events.handleCancelled)
 processor.addCallHandler('ChildBounties.accept_curator', modules.childBounties.extrinsic.handleAcceptCurator)
 processor.addCallHandler('ChildBounties.unassign_curator', modules.childBounties.extrinsic.handleUnassignCurator)
+
+processor.addEventHandler('Preimage.Noted', modules.preimageV2.events.handlePreimageV2Noted)
+processor.addEventHandler('Preimage.Cleared', modules.preimageV2.events.handlePreimageV2Cleared)
+processor.addEventHandler('Preimage.Requested', modules.preimageV2.events.handlePreimageV2Requested)
+
+processor.addEventHandler('Referenda.Submitted', modules.referendumV2.events.handleSubmitted)
+processor.addEventHandler('Referenda.Rejected', modules.referendumV2.events.handleRejected)
+processor.addEventHandler('Referenda.Approved', modules.referendumV2.events.handleApproved)
+processor.addEventHandler('Referenda.Killed', modules.referendumV2.events.handleKilled)
+processor.addEventHandler('Referenda.TimedOut', modules.referendumV2.events.handleTimedOut)
+processor.addEventHandler('Referenda.DecisionDepositPlaced', modules.referendumV2.events.handleDecisionDepositPlaced)
+processor.addEventHandler('Referenda.DecisionStarted', modules.referendumV2.events.handleDecisionStarted)
+processor.addEventHandler('Referenda.Confirmed', modules.referendumV2.events.handleConfirmed)
+processor.addEventHandler('Referenda.ConfirmStarted', modules.referendumV2.events.handleConfirmStarted)
+processor.addEventHandler('Referenda.ConfirmAborted', modules.referendumV2.events.handleConfirmAborted)
+processor.addEventHandler('Referenda.Cancelled', modules.referendumV2.events.handleCancelled)
+
+processor.addCallHandler('ConvictionVoting.vote', modules.referendumV2.extrinsics.handleConvictionVote)
 
 processor.run()

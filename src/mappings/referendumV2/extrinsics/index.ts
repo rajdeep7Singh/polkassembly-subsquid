@@ -1,0 +1,1 @@
+export {handleConvictionVote} from './convictionVoting'

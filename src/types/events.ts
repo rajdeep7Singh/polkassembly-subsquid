@@ -8,6 +8,7 @@ import * as v9130 from './v9130'
 import * as v9160 from './v9160'
 import * as v9170 from './v9170'
 import * as v9190 from './v9190'
+import * as v9320 from './v9320'
 
 export class BountiesBountyAwardedEvent {
   private readonly _chain: Chain
@@ -684,6 +685,21 @@ export class CouncilExecutedEvent {
     assert(this.isV9190)
     return this._chain.decodeEvent(this.event)
   }
+
+  /**
+   * A motion was executed; result will be `Ok` if it returned without error.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Council.Executed') === 'e5b6a252102a5b07a3634397838b7b2ddcae208ae6f6ac2ab78b53c15a8d0d6d'
+  }
+
+  /**
+   * A motion was executed; result will be `Ok` if it returned without error.
+   */
+  get asV9320(): {proposalHash: Uint8Array, result: Result<null, v9320.DispatchError>} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
 }
 
 export class CouncilProposedEvent {
@@ -1341,6 +1357,415 @@ export class DemocracyTabledEvent {
     assert(this.isV9130)
     return this._chain.decodeEvent(this.event)
   }
+
+  /**
+   * A public proposal has been tabled for referendum vote.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Democracy.Tabled') === '02ae149915d453560f4d12074a380744b3bbb2fe4c235e963f440e2d79243477'
+  }
+
+  /**
+   * A public proposal has been tabled for referendum vote.
+   */
+  get asV9320(): {proposalIndex: number, deposit: bigint} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class PreimageClearedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Preimage.Cleared')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A preimage has ben cleared.
+   */
+  get isV9160(): boolean {
+    return this._chain.getEventHash('Preimage.Cleared') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+  }
+
+  /**
+   * A preimage has ben cleared.
+   */
+  get asV9160(): {hash: Uint8Array} {
+    assert(this.isV9160)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class PreimageNotedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Preimage.Noted')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A preimage has been noted.
+   */
+  get isV9160(): boolean {
+    return this._chain.getEventHash('Preimage.Noted') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+  }
+
+  /**
+   * A preimage has been noted.
+   */
+  get asV9160(): {hash: Uint8Array} {
+    assert(this.isV9160)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class PreimageRequestedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Preimage.Requested')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A preimage has been requested.
+   */
+  get isV9160(): boolean {
+    return this._chain.getEventHash('Preimage.Requested') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+  }
+
+  /**
+   * A preimage has been requested.
+   */
+  get asV9160(): {hash: Uint8Array} {
+    assert(this.isV9160)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaApprovedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Approved')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has been approved and its proposal has been scheduled.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Approved') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+  }
+
+  /**
+   * A referendum has been approved and its proposal has been scheduled.
+   */
+  get asV9320(): {index: number} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaCancelledEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Cancelled')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has been cancelled.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Cancelled') === '70d6a902ac9b2bb5bbfe0c144d90f4f6173d5a1789c49a1fde94843431be6f82'
+  }
+
+  /**
+   * A referendum has been cancelled.
+   */
+  get asV9320(): {index: number, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaConfirmAbortedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.ConfirmAborted')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.ConfirmAborted') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+  }
+
+  get asV9320(): {index: number} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaConfirmStartedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.ConfirmStarted')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.ConfirmStarted') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+  }
+
+  get asV9320(): {index: number} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaConfirmedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Confirmed')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has ended its confirmation phase and is ready for approval.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Confirmed') === '70d6a902ac9b2bb5bbfe0c144d90f4f6173d5a1789c49a1fde94843431be6f82'
+  }
+
+  /**
+   * A referendum has ended its confirmation phase and is ready for approval.
+   */
+  get asV9320(): {index: number, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaDecisionDepositPlacedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.DecisionDepositPlaced')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * The decision deposit has been placed.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.DecisionDepositPlaced') === '8d812a67c45bf964e1e2d13abd2a5d17e96af87348faff52d6eca5de04291ae9'
+  }
+
+  /**
+   * The decision deposit has been placed.
+   */
+  get asV9320(): {index: number, who: Uint8Array, amount: bigint} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaDecisionStartedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.DecisionStarted')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has moved into the deciding phase.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.DecisionStarted') === '93e86498f68feebf124dad7a87010c14ba0e2cc07333331054e866079ff834a5'
+  }
+
+  /**
+   * A referendum has moved into the deciding phase.
+   */
+  get asV9320(): {index: number, track: number, proposal: v9320.Bounded, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaKilledEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Killed')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has been killed.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Killed') === '70d6a902ac9b2bb5bbfe0c144d90f4f6173d5a1789c49a1fde94843431be6f82'
+  }
+
+  /**
+   * A referendum has been killed.
+   */
+  get asV9320(): {index: number, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaRejectedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Rejected')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A proposal has been rejected by referendum.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Rejected') === '70d6a902ac9b2bb5bbfe0c144d90f4f6173d5a1789c49a1fde94843431be6f82'
+  }
+
+  /**
+   * A proposal has been rejected by referendum.
+   */
+  get asV9320(): {index: number, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaSubmittedEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.Submitted')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has being submitted.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.Submitted') === 'dd1db40cab9e2e0c54e203f9c60347029a08160d5930b550604e5378d4c502df'
+  }
+
+  /**
+   * A referendum has being submitted.
+   */
+  get asV9320(): {index: number, track: number, proposal: v9320.Bounded} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
+}
+
+export class ReferendaTimedOutEvent {
+  private readonly _chain: Chain
+  private readonly event: Event
+
+  constructor(ctx: EventContext)
+  constructor(ctx: ChainContext, event: Event)
+  constructor(ctx: EventContext, event?: Event) {
+    event = event || ctx.event
+    assert(event.name === 'Referenda.TimedOut')
+    this._chain = ctx._chain
+    this.event = event
+  }
+
+  /**
+   * A referendum has been timed out without being decided.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('Referenda.TimedOut') === '70d6a902ac9b2bb5bbfe0c144d90f4f6173d5a1789c49a1fde94843431be6f82'
+  }
+
+  /**
+   * A referendum has been timed out without being decided.
+   */
+  get asV9320(): {index: number, tally: v9320.Tally} {
+    assert(this.isV9320)
+    return this._chain.decodeEvent(this.event)
+  }
 }
 
 export class TechnicalCommitteeApprovedEvent {
@@ -1592,6 +2017,21 @@ export class TechnicalCommitteeExecutedEvent {
    */
   get asV9190(): {proposalHash: Uint8Array, result: Result<null, v9190.DispatchError>} {
     assert(this.isV9190)
+    return this._chain.decodeEvent(this.event)
+  }
+
+  /**
+   * A motion was executed; result will be `Ok` if it returned without error.
+   */
+  get isV9320(): boolean {
+    return this._chain.getEventHash('TechnicalCommittee.Executed') === 'e5b6a252102a5b07a3634397838b7b2ddcae208ae6f6ac2ab78b53c15a8d0d6d'
+  }
+
+  /**
+   * A motion was executed; result will be `Ok` if it returned without error.
+   */
+  get asV9320(): {proposalHash: Uint8Array, result: Result<null, v9320.DispatchError>} {
+    assert(this.isV9320)
     return this._chain.decodeEvent(this.event)
   }
 }

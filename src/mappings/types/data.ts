@@ -8,6 +8,7 @@ export type IndexProposal =
     | ProposalType.TechCommitteeProposal
     | ProposalType.CouncilMotion
     | ProposalType.ChildBounty
+    | ProposalType.ReferendumV2
 
 export type HashProposal =
     | ProposalType.Tip
@@ -93,4 +94,50 @@ export interface PreimageData extends BaseProposalData {
     call?: ProposedCallData
     section?: string
     method?: string
+}
+
+export interface PreimageDataV2 extends BaseProposalData {
+    hash: string
+    proposer?: string
+    deposit?: bigint
+    call?: ProposedCallData
+    section?: string
+    method?: string
+    length?: number
+}
+
+export interface ReferendumDataV2 extends BaseProposalData {
+    index: number
+    hash: string
+    trackNumber: number
+    origin: string
+    proposer: string
+    enactmentAt?: number
+    enactmentAfter?: number
+    submittedAt: number
+    submissionDeposit: {who: Uint8Array, amount: bigint}
+    decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
+    deciding: {since: number, confirming: number | undefined} | undefined
+    tally: {ayes: bigint, nays: bigint, support: bigint}
+}
+
+export interface TallyData {
+    ayes: bigint
+    nays: bigint
+    support: bigint
+}
+
+export interface DecisionDepositData {
+    who: string
+    amount: bigint
+}
+
+export interface SubmissionDepositData {
+    who: string
+    amount: bigint
+}
+
+export interface DecidingData {
+    since: number
+    confirming: number | undefined
 }

@@ -4,18 +4,21 @@ import {ProposedCall} from "./_proposedCall"
 import {ProposalStatus} from "./_proposalStatus"
 
 @Entity_()
-export class Preimage {
-  constructor(props?: Partial<Preimage>) {
+export class PreimageV2 {
+  constructor(props?: Partial<PreimageV2>) {
     Object.assign(this, props)
   }
 
   @PrimaryColumn_()
   id!: string
 
-  @Column_("text", {nullable: true})
-  proposer!: string | undefined | null
-
   @Index_()
+  @Column_("text", {nullable: false})
+  proposer!: string
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  deposit!: bigint | undefined | null
+
   @Column_("text", {nullable: false})
   hash!: string
 
@@ -25,11 +28,14 @@ export class Preimage {
   @Column_("text", {nullable: true})
   section!: string | undefined | null
 
+  @Column_("varchar", {length: 21, nullable: false})
+  status!: ProposalStatus
+
   @Column_("text", {nullable: true})
   method!: string | undefined | null
 
-  @Column_("varchar", {length: 21, nullable: false})
-  status!: ProposalStatus
+  @Column_("int4", {nullable: false})
+  length!: number
 
   @Index_()
   @Column_("int4", {nullable: false})

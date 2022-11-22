@@ -2,6 +2,7 @@ import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result} from './support'
 import * as v1055 from './v1055'
 import * as v9111 from './v9111'
+import * as v9320 from './v9320'
 
 export class BountiesAcceptCuratorCall {
   private readonly _chain: Chain
@@ -265,6 +266,51 @@ export class ChildBountiesUnassignCuratorCall {
    */
   get asV9190(): {parentBountyId: number, childBountyId: number} {
     assert(this.isV9190)
+    return this._chain.decodeCall(this.call)
+  }
+}
+
+export class ConvictionVotingVoteCall {
+  private readonly _chain: Chain
+  private readonly call: Call
+
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'ConvictionVoting.vote')
+    this._chain = ctx._chain
+    this.call = call
+  }
+
+  /**
+   * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
+   * otherwise it is a vote to keep the status quo.
+   * 
+   * The dispatch origin of this call must be _Signed_.
+   * 
+   * - `poll_index`: The index of the poll to vote for.
+   * - `vote`: The vote configuration.
+   * 
+   * Weight: `O(R)` where R is the number of polls the voter has voted on.
+   */
+  get isV9320(): boolean {
+    return this._chain.getCallHash('ConvictionVoting.vote') === 'd10ef1b298a681ecd2445c4d8c083dbabfcf6f60a2f8103238e6ab7895b95b86'
+  }
+
+  /**
+   * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
+   * otherwise it is a vote to keep the status quo.
+   * 
+   * The dispatch origin of this call must be _Signed_.
+   * 
+   * - `poll_index`: The index of the poll to vote for.
+   * - `vote`: The vote configuration.
+   * 
+   * Weight: `O(R)` where R is the number of polls the voter has voted on.
+   */
+  get asV9320(): {pollIndex: number, vote: v9320.AccountVote} {
+    assert(this.isV9320)
     return this._chain.decodeCall(this.call)
   }
 }

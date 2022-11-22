@@ -7,6 +7,7 @@ enum ProposalType {
   Bounty
   Tip
   ChildBounty
+  ReferendumV2
 }
 
 enum ProposalStatus {
@@ -33,6 +34,17 @@ enum ProposalStatus {
   Active
   Extended
   Claimed
+  Unrequested
+  Requested
+  Submitted
+  Killed
+  Cleared
+  Deciding
+  ConfirmStarted
+  ConfirmAborted
+  Confirmed
+  DecisionDepositPlaced
+  TimedOut
 }
 
 type Preimage @entity {
@@ -86,14 +98,62 @@ type Proposal @entity {
   proposalArguments: ProposedCall
   voting: [Vote!] @derivedFrom(field: "proposal")
   preimage: Preimage
+  preimageV2: PreimageV2
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
+  trackNumber: Int
+  origin: String
+  enactmentAtBlock: Int
+  enactmentAfterBlock: Int
+  submittedAtBlock: Int
+  submissionDeposit: SubmissionDeposit
+  decisionDeposit: DecisionDeposit
+  deciding: Deciding
+  tally: Tally
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   endedAtBlock: Int
   endedAt: DateTime
   updatedAtBlock: Int @index
   updatedAt: DateTime @index
+}
+
+type Tally {
+  ayes: BigInt
+  nays: BigInt
+  support: BigInt
+}
+
+type DecisionDeposit {
+  who: String
+  amount: BigInt
+}
+
+type SubmissionDeposit {
+  who: String
+  amount: BigInt
+}
+
+type Deciding {
+  since: Int
+  confirming: Int
+}
+
+
+type PreimageV2 @entity {
+  id: ID!
+  proposer: String! @index
+  deposit: BigInt
+  hash: String!
+  proposedCall: ProposedCall
+  section: String
+  status: ProposalStatus!
+  method: String
+  length: Int!
+  createdAtBlock: Int! @index
+  createdAt: DateTime! @index
+  updatedAtBlock: Int
+  updatedAt: DateTime
 }
 
 type StatusHistory @entity {
@@ -131,6 +191,7 @@ union VoteBalance = StandardVoteBalance | SplitVoteBalance
 enum VoteType {
   Referendum
   Motion
+  ReferendumV2
 }
 
 type Vote @entity {

@@ -1,13 +1,19 @@
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
 import { MissingProposalRecordWarn } from '../../common/errors'
+import { ss58codec } from '../../common/tools'
 import {
     MotionThreshold,
     Preimage,
+    PreimageV2,
     Proposal,
     ProposalStatus,
     ProposalType,
     ProposedCall,
+    Tally,
+    DecisionDeposit,
+    SubmissionDeposit,
+    Deciding,
     ReferendumThreshold,
     ReferendumThresholdType,
     StatusHistory,
@@ -22,11 +28,17 @@ import {
     HashProposal,
     IndexProposal,
     PreimageData,
+    PreimageDataV2,
     ProposedCallData,
     ReferendumData,
+    ReferendumDataV2,
     TechCommitteeMotionData,
     TipData,
     TreasuryData,
+    DecisionDepositData,
+    SubmissionDepositData,
+    DecidingData,
+    TallyData,
 } from '../types/data'
 
 type ProposalUpdateData = Partial<
@@ -49,6 +61,30 @@ export async function updatePreimageStatus(
 
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn('Preimage', `with hash ${hash} not found`,))
+        return
+    }
+
+    Object.assign(proposal, options.data)
+    proposal.updatedAt = new Date(ctx.block.timestamp)
+    proposal.updatedAtBlock = ctx.block.height
+    proposal.status = options.status
+
+    await ctx.store.save(proposal)
+}
+
+export async function updatePreimageStatusV2(
+    ctx: EventHandlerContext,
+    hash: string,
+    options: {
+        status: ProposalStatus
+        isEnded?: boolean
+        data?: ProposalUpdateData
+    }
+) {
+    const proposal = await ctx.store.get(PreimageV2, { where: { hash: hash } })
+
+    if (!proposal) {
+        ctx.log.warn(MissingProposalRecordWarn('PreimageV2', `with hash ${hash} not found`,))
         return
     }
 
@@ -144,6 +180,12 @@ async function getProposalId(store: Store, type: ProposalType) {
 
 async function getPreimageId(store: Store) {
     const count = await store.count(Preimage)
+
+    return count.toString().padStart(8, '0')
+}
+
+async function getPreimageIdV2(store: Store) {
+    const count = await store.count(PreimageV2)
 
     return count.toString().padStart(8, '0')
 }
@@ -518,6 +560,111 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
     return preimage
 }
 
+export async function createPreimageV2(ctx: EventHandlerContext, data: PreimageDataV2): Promise<PreimageV2> {
+    const { status, hash, proposer, call, section, method, deposit, length } = data
+
+    // const type = ProposalType.Preimage
+
+    const id = await getPreimageIdV2(ctx.store)
+
+    // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
+
+    const preimage = new PreimageV2({
+        id,
+        hash,
+        proposer,
+        status,
+        proposedCall: call ? createProposedCall(call) : null,
+        deposit,
+        length,
+        section: section,
+        method: method,
+        createdAtBlock: ctx.block.height,
+        createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
+    })
+
+    await ctx.store.insert(preimage)
+
+    return preimage
+}
+
+export async function createReferendumV2(ctx: EventHandlerContext, data: ReferendumDataV2): Promise<Proposal> {
+
+    const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
+
+    const type = ProposalType.ReferendumV2
+
+    const id = await getProposalId(ctx.store, type)
+
+    const preimage = await ctx.store.get(PreimageV2, {
+        where: {
+            hash: data.hash,
+            status: ProposalStatus.Unrequested,
+        },
+    })
+
+    const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
+
+    let decDeposit = undefined
+
+    if (decisionDeposit) {
+        decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
+    }
+
+    const proposal = new Proposal({
+        id,
+        index,
+        type,
+        hash,
+        trackNumber,
+        preimageV2: preimage,
+        status,
+        proposer,
+        tally: tally ? createTally(tally) : undefined,
+        origin,
+        submissionDeposit: subDeposit ? createSubmissionDeposit(subDeposit) : undefined,
+        submittedAtBlock: submittedAt,
+        enactmentAfterBlock: enactmentAfter,
+        enactmentAtBlock: enactmentAt,
+        deciding: deciding ? createDeciding(deciding) : undefined,
+        decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
+        createdAtBlock: ctx.block.height,
+        createdAt: new Date(ctx.block.timestamp),
+        updatedAt: new Date(ctx.block.timestamp),
+    })
+
+    await ctx.store.insert(proposal)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: ctx.event.id,
+            block: proposal.createdAtBlock,
+            timestamp: proposal.createdAt,
+            status: proposal.status,
+            proposal,
+        })
+    )
+
+    return proposal
+}
+
 function createProposedCall(data: ProposedCallData): ProposedCall {
     return new ProposedCall(toJSON(data))
+}
+
+export function createTally(data: TallyData): Tally {
+    return new Tally(toJSON(data))
+}
+
+function createDeciding(data: DecidingData): Deciding {
+    return new Deciding(toJSON(data))
+}
+
+export function createDecisionDeposit(data: DecisionDepositData): DecisionDeposit {
+    return new DecisionDeposit(toJSON(data))
+}
+
+export function createSubmissionDeposit(data: SubmissionDepositData): SubmissionDeposit {
+    return new SubmissionDeposit(toJSON(data))
 }
