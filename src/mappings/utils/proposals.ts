@@ -172,7 +172,12 @@ export async function updateProposalStatus(
 
 async function getProposalId(store: Store, type: ProposalType) {
     const count = await store.count(Proposal, { where: { type } })
-
+    
+    if(type == ProposalType.ReferendumV2){
+        return `${Buffer.from(type.toLowerCase()).toString('hex')}-${count
+            .toString()
+            .padStart(8, '0')}`
+    }
     return `${Buffer.from(type.toLowerCase()).toString('hex').slice(0, 8).padEnd(8, '0')}-${count
         .toString()
         .padStart(8, '0')}`
