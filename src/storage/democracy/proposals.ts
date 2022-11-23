@@ -34,7 +34,28 @@ async function getStorageData(ctx: BlockContext): Promise<DemocracyProposalStora
                 proposer,
             }
         })
-    } else {
+    } else if(storage.isV9320){
+        const storageData = await storage.getAsV9320()
+        if (!storageData) return undefined
+
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, hash, proposer] = proposal
+            if(hash.__kind === 'Inline'){
+                return {
+                    index,
+                    hash: hash.value,
+                    proposer,
+                }
+            }else{
+                return {
+                    index,
+                    hash: hash.hash,
+                    proposer,
+                }
+            }
+        })
+
+    }else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
