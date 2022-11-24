@@ -3,6 +3,7 @@ import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
 import * as v1055 from '../../types/v1055'
 import * as v9111 from '../../types/v9111'
+import * as v9320 from '../../types/v9320'
 
 type Threshold = 'SuperMajorityApprove' | 'SuperMajorityAgainst' | 'SimpleMajority'
 
@@ -81,7 +82,39 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
                 approved,
             }
         }
-    } else {
+    }
+    else if(storage.isV9320){
+        const storageData = await storage.getAsV9320(index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            let hash
+            const { proposal, end, delay, threshold } = (storageData as v9320.ReferendumInfo_Ongoing).value
+            if(proposal.__kind == "Inline") {
+                hash = proposal.value
+            }
+            else{
+                hash = proposal.hash
+            }
+            return {
+                status,
+                hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = storageData as v9111.ReferendumInfo_Finished
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
+
+    }
+     else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }

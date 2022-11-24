@@ -9,7 +9,7 @@ const processor = new SubstrateProcessor(db)
 processor.setTypesBundle(config.typesBundle)
 processor.setBatchSize(config.batchSize || 100)
 processor.setDataSource(config.dataSource)
-processor.setBlockRange({ from: 15444806 })
+processor.setBlockRange({ from: 15464820 })
 
 processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
 processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
