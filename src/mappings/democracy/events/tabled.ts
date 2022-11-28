@@ -8,7 +8,7 @@ import { updateProposalStatus } from '../../utils/proposals'
 interface TabledEventData {
     index: number
     deposit: bigint
-    depositors: Uint8Array[]
+    depositors?: Uint8Array[]
 }
 
 function getEventData(ctx: EventContext): TabledEventData {
@@ -27,7 +27,14 @@ function getEventData(ctx: EventContext): TabledEventData {
             deposit,
             depositors,
         }
-    } else {
+    } else if (event.isV9320) {
+        const { proposalIndex: index, deposit } = event.asV9320
+        return {
+            index,
+            deposit,
+        }
+    }
+     else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
@@ -36,7 +43,7 @@ export async function handleTabled(ctx: EventHandlerContext) {
     const { index } = getEventData(ctx)
 
     await updateProposalStatus(ctx, index, ProposalType.DemocracyProposal, {
-        status: ProposalStatus.Used,
+        status: ProposalStatus.Tabled,
         isEnded: true,
     })
 }
