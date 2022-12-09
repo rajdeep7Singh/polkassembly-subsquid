@@ -13,6 +13,13 @@ type DemocracyVote =
           aye: bigint
           nay: bigint
       }
+    | {
+          type: 'SplitAbstain'
+          aye: bigint
+          nay: bigint
+          abstain: bigint
+    }
+
 
 interface DemocracyVoteCallData {
     index: number
@@ -32,7 +39,8 @@ export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
                     value: vote.vote
                 },
             }
-        } else {
+        }
+         else {
             return {
                 index: pollIndex,
                 vote: {
@@ -42,7 +50,42 @@ export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
                 },
             }
         }
-    }  else {
+    }
+    else if(event.isV9340){
+        const { pollIndex, vote } = event.asV9340
+        if (vote.__kind === 'Standard') {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'Standard',
+                    balance: vote.balance,
+                    value: vote.vote
+                },
+            }
+        }
+        else if (vote.__kind === 'Split') {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'Split',
+                    aye: vote.aye,
+                    nay: vote.nay,
+                },
+            }
+        }
+        else{
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'SplitAbstain',
+                    aye: vote.aye,
+                    nay: vote.nay,
+                    abstain: vote.abstain,
+                },
+            }
+        }
+    }  
+    else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

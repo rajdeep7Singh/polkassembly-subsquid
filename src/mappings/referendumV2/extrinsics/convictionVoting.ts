@@ -33,6 +33,10 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
         case 'Split':
             decision = VoteDecision.abstain
             break
+        
+        case 'SplitAbstain':
+            decision = VoteDecision.abstain
+            break
     }
 
     let lockPeriod: number | undefined
@@ -47,6 +51,13 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
             value: vote.balance,
         })
         lockPeriod = vote.value < 128 ? vote.value : vote.value - 128
+    }
+    else if (vote.type === 'SplitAbstain') {
+        balance = new SplitVoteBalance({
+            aye: vote.aye,
+            nay: vote.nay,
+            abstain: vote.abstain,
+        })
     }
 
     const count = await getVotesCount(ctx, proposal.id)

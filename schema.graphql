@@ -184,6 +184,7 @@ type StandardVoteBalance {
 type SplitVoteBalance {
   aye: BigInt
   nay: BigInt
+  abstain: BigInt
 }
 
 union VoteBalance = StandardVoteBalance | SplitVoteBalance

@@ -51,6 +51,7 @@ import * as v9271 from './v9271'
 import * as v9291 from './v9291'
 import * as v9300 from './v9300'
 import * as v9320 from './v9320'
+import * as v9340 from './v9340'
 
 export class BalancesAccountStorage {
   private readonly _chain: Chain
@@ -358,6 +359,33 @@ export class ConvictionVotingVotingForStorage {
 
   async getAllAsV9320(): Promise<(v9320.Type_608)[]> {
     assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'ConvictionVoting', 'VotingFor')
+  }
+
+  /**
+   *  All voting for a particular voter in a particular voting class. We store the balance for the
+   *  number of votes that we have recorded.
+   */
+  get isV9340() {
+    return this._chain.getStorageItemTypeHash('ConvictionVoting', 'VotingFor') === 'df291b3d7624eee0e92994a913b5e2134fd7795d7b03d5af2a82d38f2d2e4fd7'
+  }
+
+  /**
+   *  All voting for a particular voter in a particular voting class. We store the balance for the
+   *  number of votes that we have recorded.
+   */
+  async getAsV9340(key1: Uint8Array, key2: number): Promise<v9340.Type_608> {
+    assert(this.isV9340)
+    return this._chain.getStorage(this.blockHash, 'ConvictionVoting', 'VotingFor', key1, key2)
+  }
+
+  async getManyAsV9340(keys: [Uint8Array, number][]): Promise<(v9340.Type_608)[]> {
+    assert(this.isV9340)
+    return this._chain.queryStorage(this.blockHash, 'ConvictionVoting', 'VotingFor', keys)
+  }
+
+  async getAllAsV9340(): Promise<(v9340.Type_608)[]> {
+    assert(this.isV9340)
     return this._chain.queryStorage(this.blockHash, 'ConvictionVoting', 'VotingFor')
   }
 
@@ -798,6 +826,31 @@ export class CouncilProposalOfStorage {
 
   async getAllAsV9320(): Promise<(v9320.Call)[]> {
     assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'Council', 'ProposalOf')
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  get isV9340() {
+    return this._chain.getStorageItemTypeHash('Council', 'ProposalOf') === 'bac834a064b49e90d7838a7a187b8909126f18547277b5d8053bc5274c87c1c7'
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  async getAsV9340(key: Uint8Array): Promise<v9340.Call | undefined> {
+    assert(this.isV9340)
+    return this._chain.getStorage(this.blockHash, 'Council', 'ProposalOf', key)
+  }
+
+  async getManyAsV9340(keys: Uint8Array[]): Promise<(v9340.Call | undefined)[]> {
+    assert(this.isV9340)
+    return this._chain.queryStorage(this.blockHash, 'Council', 'ProposalOf', keys.map(k => [k]))
+  }
+
+  async getAllAsV9340(): Promise<(v9340.Call)[]> {
+    assert(this.isV9340)
     return this._chain.queryStorage(this.blockHash, 'Council', 'ProposalOf')
   }
 
@@ -3801,6 +3854,31 @@ export class TechnicalCommitteeProposalOfStorage {
 
   async getAllAsV9320(): Promise<(v9320.Call)[]> {
     assert(this.isV9320)
+    return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf')
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  get isV9340() {
+    return this._chain.getStorageItemTypeHash('TechnicalCommittee', 'ProposalOf') === 'bac834a064b49e90d7838a7a187b8909126f18547277b5d8053bc5274c87c1c7'
+  }
+
+  /**
+   *  Actual proposal for a given hash, if it's current.
+   */
+  async getAsV9340(key: Uint8Array): Promise<v9340.Call | undefined> {
+    assert(this.isV9340)
+    return this._chain.getStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf', key)
+  }
+
+  async getManyAsV9340(keys: Uint8Array[]): Promise<(v9340.Call | undefined)[]> {
+    assert(this.isV9340)
+    return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf', keys.map(k => [k]))
+  }
+
+  async getAllAsV9340(): Promise<(v9340.Call)[]> {
+    assert(this.isV9340)
     return this._chain.queryStorage(this.blockHash, 'TechnicalCommittee', 'ProposalOf')
   }
 
