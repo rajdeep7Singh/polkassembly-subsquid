@@ -51,6 +51,32 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
                 tally: storageData.value.tally
             }
         }
+    }else if(storage.isV9350){
+        const storageData = await storage.getAsV9350(index)
+        if (!storageData) return undefined
+        if(storageData.__kind === 'Ongoing') {
+            let enactmentAt = undefined
+            let enactmentAfter = undefined;
+            if(storageData.value.enactment.__kind === 'At') {
+                enactmentAt = storageData.value.enactment.value
+            }
+            else if(storageData.value.enactment.__kind === 'After') {
+                enactmentAfter = storageData.value.enactment.value
+            }
+            return {
+                index,
+                trackNumber: storageData.value.track,
+                origin: storageData.value.origin.value.__kind,
+                enactmentAt: enactmentAt,
+                enactmentAfter: enactmentAfter,
+                submittedAt: storageData.value.submitted,
+                submissionDeposit: storageData.value.submissionDeposit,
+                decisionDeposit: storageData.value.decisionDeposit,
+                deciding: storageData.value.deciding,
+                tally: storageData.value.tally
+            }
+        }
+
     }
     else {
         throw new UnknownVersionError(storage.constructor.name)
