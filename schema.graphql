@@ -45,7 +45,6 @@ enum ProposalStatus {
   Confirmed
   DecisionDepositPlaced
   TimedOut
-  Opened
 }
 
 type Preimage @entity {
