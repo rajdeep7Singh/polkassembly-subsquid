@@ -9,7 +9,7 @@ const processor = new SubstrateProcessor(db)
 processor.setTypesBundle(config.typesBundle)
 processor.setBatchSize(config.batchSize || 100)
 processor.setDataSource(config.dataSource)
-processor.setBlockRange({ from: 15680958 })
+processor.setBlockRange({ from: 0})
 
 processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
 processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
@@ -58,9 +58,9 @@ processor.addCallHandler('Treasury.accept_curator', modules.bounties.extrinsic.h
 processor.addCallHandler('Treasury.unassign_curator', modules.bounties.extrinsic.handleUnassignCurator)
 
 processor.addEventHandler('Tips.NewTip', modules.tips.events.handleNewTip)
-processor.addEventHandler('Tips.TipsClosed', modules.tips.events.handleClosed)
-processor.addEventHandler('Tips.TipsRetracted', modules.tips.events.handleRetracted)
-processor.addEventHandler('Tips.TipsSlashed', modules.tips.events.handleSlashed)
+processor.addEventHandler('Tips.TipClosed', modules.tips.events.handleClosed)
+processor.addEventHandler('Tips.TipRetracted', modules.tips.events.handleRetracted)
+processor.addEventHandler('Tips.TipSlashed', modules.tips.events.handleSlashed)
 processor.addCallHandler('Tips.tip', modules.tips.extrinsics.handleNewTipValue)
 
 processor.addEventHandler('Bounties.BountyProposed', modules.bounties.events.handleProposed)

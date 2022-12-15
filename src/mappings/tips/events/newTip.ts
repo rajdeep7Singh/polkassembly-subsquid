@@ -26,7 +26,7 @@ export async function handleNewTip(ctx: EventHandlerContext) {
         proposer: finder ? ss58codec.encode(finder) : undefined,
         payee: ss58codec.encode(who),
         deposit,
-        status: ProposalStatus.Proposed,
+        status: ProposalStatus.Opened,
         reason: reason,
     })
 }
