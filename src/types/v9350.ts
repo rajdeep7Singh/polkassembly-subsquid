@@ -277,6 +277,38 @@ export interface Call_XcmPallet {
   value: XcmPalletCall
 }
 
+export type Type_643 = Type_643_Ongoing | Type_643_Approved | Type_643_Rejected | Type_643_Cancelled | Type_643_TimedOut | Type_643_Killed
+
+export interface Type_643_Ongoing {
+  __kind: 'Ongoing'
+  value: Type_644
+}
+
+export interface Type_643_Approved {
+  __kind: 'Approved'
+  value: [number, (Deposit | undefined), (Deposit | undefined)]
+}
+
+export interface Type_643_Rejected {
+  __kind: 'Rejected'
+  value: [number, (Deposit | undefined), (Deposit | undefined)]
+}
+
+export interface Type_643_Cancelled {
+  __kind: 'Cancelled'
+  value: [number, (Deposit | undefined), (Deposit | undefined)]
+}
+
+export interface Type_643_TimedOut {
+  __kind: 'TimedOut'
+  value: [number, (Deposit | undefined), (Deposit | undefined)]
+}
+
+export interface Type_643_Killed {
+  __kind: 'Killed'
+  value: number
+}
+
 export type Type_620 = Type_620_Ongoing | Type_620_Approved | Type_620_Rejected | Type_620_Cancelled | Type_620_TimedOut | Type_620_Killed
 
 export interface Type_620_Ongoing {
@@ -7106,6 +7138,25 @@ export interface XcmPalletCall_limited_teleport_assets {
   weightLimit: V2WeightLimit
 }
 
+export interface Type_644 {
+  track: number
+  origin: OriginCaller
+  proposal: Bounded
+  enactment: DispatchTime
+  submitted: number
+  submissionDeposit: Deposit
+  decisionDeposit: (Deposit | undefined)
+  deciding: (DecidingStatus | undefined)
+  tally: Type_441
+  inQueue: boolean
+  alarm: ([number, [number, number]] | undefined)
+}
+
+export interface Deposit {
+  who: Uint8Array
+  amount: bigint
+}
+
 export interface Type_621 {
   track: number
   origin: OriginCaller
@@ -7118,11 +7169,6 @@ export interface Type_621 {
   tally: Tally
   inQueue: boolean
   alarm: ([number, [number, number]] | undefined)
-}
-
-export interface Deposit {
-  who: Uint8Array
-  amount: bigint
 }
 
 export interface EquivocationProof {
@@ -7953,6 +7999,12 @@ export interface V2WeightLimit_Limited {
 export interface DecidingStatus {
   since: number
   confirming: (number | undefined)
+}
+
+export interface Type_441 {
+  bareAyes: number
+  ayes: number
+  nays: number
 }
 
 export interface Tally {

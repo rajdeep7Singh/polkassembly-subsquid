@@ -456,6 +456,55 @@ export class DemocracyVoteCall {
   }
 }
 
+export class FellowshipCollectiveVoteCall {
+  private readonly _chain: Chain
+  private readonly call: Call
+
+  constructor(ctx: CallContext)
+  constructor(ctx: ChainContext, call: Call)
+  constructor(ctx: CallContext, call?: Call) {
+    call = call || ctx.call
+    assert(call.name === 'FellowshipCollective.vote')
+    this._chain = ctx._chain
+    this.call = call
+  }
+
+  /**
+   * Add an aye or nay vote for the sender to the given proposal.
+   * 
+   * - `origin`: Must be `Signed` by a member account.
+   * - `poll`: Index of a poll which is ongoing.
+   * - `aye`: `true` if the vote is to approve the proposal, `false` otherwise.
+   * 
+   * Transaction fees are be waived if the member is voting on any particular proposal
+   * for the first time and the call is successful. Subsequent vote changes will charge a
+   * fee.
+   * 
+   * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
+   */
+  get isV9320(): boolean {
+    return this._chain.getCallHash('FellowshipCollective.vote') === '3b92ae59b712230cb36e2d4be01eaefb25ea0777001bbd698d8598221faca7d3'
+  }
+
+  /**
+   * Add an aye or nay vote for the sender to the given proposal.
+   * 
+   * - `origin`: Must be `Signed` by a member account.
+   * - `poll`: Index of a poll which is ongoing.
+   * - `aye`: `true` if the vote is to approve the proposal, `false` otherwise.
+   * 
+   * Transaction fees are be waived if the member is voting on any particular proposal
+   * for the first time and the call is successful. Subsequent vote changes will charge a
+   * fee.
+   * 
+   * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
+   */
+  get asV9320(): {poll: number, aye: boolean} {
+    assert(this.isV9320)
+    return this._chain.decodeCall(this.call)
+  }
+}
+
 export class TipsTipCall {
   private readonly _chain: Chain
   private readonly call: Call

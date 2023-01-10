@@ -31,6 +31,7 @@
     "System.AccountNonce",
     "Balances.Account",
     "Referenda.ReferendumInfoFor",
+    "FellowshipReferenda.ReferendumInfoFor",
     "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
     "Preimage.PreimageFor"
@@ -99,6 +100,18 @@
     "Referenda.TimedOut",
     "Referenda.Cancelled",
     "Referenda.Killed",
+    "FellowshipReferenda.Submitted",
+    "FellowshipReferenda.DecisionDepositPlaced",
+    "FellowshipReferenda.DecisionStarted",
+    "FellowshipReferenda.ConfirmStarted",
+    "FellowshipReferenda.ConfirmAborted",
+    "FellowshipReferenda.Confirmed",
+    "FellowshipReferenda.Approved",
+    "FellowshipReferenda.Rejected",
+    "FellowshipReferenda.TimedOut",
+    "FellowshipReferenda.Cancelled",
+    "FellowshipReferenda.Killed",
+    "FellowshipCollective.Voted",
     "Preimage.Noted",
     "Preimage.Requested",
     "Preimage.Cleared"
@@ -112,6 +125,7 @@
     "Treasury.accept_curator",
     "Bounties.unassign_curator",
     "Treasury.unassign_curator",
-    "ConvictionVoting.vote"
+    "ConvictionVoting.vote",
+    "FellowshipCollective.vote"
   ]
 }

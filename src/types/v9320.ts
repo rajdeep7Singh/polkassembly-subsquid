@@ -58,10 +58,22 @@ export interface DispatchError_Unavailable {
   __kind: 'Unavailable'
 }
 
-export interface Tally {
-  ayes: bigint
-  nays: bigint
-  support: bigint
+export type VoteRecord = VoteRecord_Aye | VoteRecord_Nay
+
+export interface VoteRecord_Aye {
+  __kind: 'Aye'
+  value: number
+}
+
+export interface VoteRecord_Nay {
+  __kind: 'Nay'
+  value: number
+}
+
+export interface Type_441 {
+  bareAyes: number
+  ayes: number
+  nays: number
 }
 
 export type Bounded = Bounded_Legacy | Bounded_Inline | Bounded_Lookup
@@ -80,6 +92,12 @@ export interface Bounded_Lookup {
   __kind: 'Lookup'
   hash: Uint8Array
   len: number
+}
+
+export interface Tally {
+  ayes: bigint
+  nays: bigint
+  support: bigint
 }
 
 export type AccountVote = AccountVote_Standard | AccountVote_Split
@@ -391,6 +409,38 @@ export interface ReferendumInfo_Finished {
   __kind: 'Finished'
   approved: boolean
   end: number
+}
+
+export type Type_643 = Type_643_Ongoing | Type_643_Approved | Type_643_Rejected | Type_643_Cancelled | Type_643_TimedOut | Type_643_Killed
+
+export interface Type_643_Ongoing {
+  __kind: 'Ongoing'
+  value: Type_644
+}
+
+export interface Type_643_Approved {
+  __kind: 'Approved'
+  value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_643_Rejected {
+  __kind: 'Rejected'
+  value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_643_Cancelled {
+  __kind: 'Cancelled'
+  value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_643_TimedOut {
+  __kind: 'TimedOut'
+  value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_643_Killed {
+  __kind: 'Killed'
+  value: number
 }
 
 export type RequestStatus = RequestStatus_Unrequested | RequestStatus_Requested
@@ -7148,6 +7198,25 @@ export interface ReferendumStatus {
   tally: Type_580
 }
 
+export interface Type_644 {
+  track: number
+  origin: OriginCaller
+  proposal: Bounded
+  enactment: DispatchTime
+  submitted: number
+  submissionDeposit: Deposit
+  decisionDeposit: (Deposit | undefined)
+  deciding: (DecidingStatus | undefined)
+  tally: Type_441
+  inQueue: boolean
+  alarm: ([number, [number, number]] | undefined)
+}
+
+export interface Deposit {
+  who: Uint8Array
+  amount: bigint
+}
+
 export interface Type_621 {
   track: number
   origin: OriginCaller
@@ -7160,11 +7229,6 @@ export interface Type_621 {
   tally: Tally
   inQueue: boolean
   alarm: ([number, [number, number]] | undefined)
-}
-
-export interface Deposit {
-  who: Uint8Array
-  amount: bigint
 }
 
 export interface Delegations {

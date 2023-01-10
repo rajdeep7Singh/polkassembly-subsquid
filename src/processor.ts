@@ -9,7 +9,7 @@ const processor = new SubstrateProcessor(db)
 processor.setTypesBundle(config.typesBundle)
 processor.setBatchSize(config.batchSize || 100)
 processor.setDataSource(config.dataSource)
-processor.setBlockRange({ from: 15756967 })
+processor.setBlockRange({ from: 0})
 
 processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
 processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
@@ -97,5 +97,18 @@ processor.addEventHandler('Referenda.ConfirmAborted', modules.referendumV2.event
 processor.addEventHandler('Referenda.Cancelled', modules.referendumV2.events.handleCancelled)
 
 processor.addCallHandler('ConvictionVoting.vote', modules.referendumV2.extrinsics.handleConvictionVote)
+
+processor.addEventHandler('FellowshipReferenda.Submitted', modules.fellowshipReferendum.events.handleSubmitted)
+processor.addEventHandler('FellowshipReferenda.Rejected', modules.fellowshipReferendum.events.handleRejected)
+processor.addEventHandler('FellowshipReferenda.Approved', modules.fellowshipReferendum.events.handleApproved)
+processor.addEventHandler('FellowshipReferenda.Killed', modules.fellowshipReferendum.events.handleKilled)
+processor.addEventHandler('FellowshipReferenda.TimedOut', modules.fellowshipReferendum.events.handleTimedOut)
+processor.addEventHandler('FellowshipReferenda.DecisionDepositPlaced', modules.fellowshipReferendum.events.handleDecisionDepositPlaced)
+processor.addEventHandler('FellowshipReferenda.DecisionStarted', modules.fellowshipReferendum.events.handleDecisionStarted)
+processor.addEventHandler('FellowshipReferenda.Confirmed', modules.fellowshipReferendum.events.handleConfirmed)
+processor.addEventHandler('FellowshipReferenda.ConfirmStarted', modules.fellowshipReferendum.events.handleConfirmStarted)
+processor.addEventHandler('FellowshipReferenda.ConfirmAborted', modules.fellowshipReferendum.events.handleConfirmAborted)
+processor.addEventHandler('FellowshipReferenda.Cancelled', modules.fellowshipReferendum.events.handleCancelled)
+processor.addEventHandler('FellowshipCollective.Voted', modules.fellowshipReferendum.events.handleFellowshipVotes)
 
 processor.run()

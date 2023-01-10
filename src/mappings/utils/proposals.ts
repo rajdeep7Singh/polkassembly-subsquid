@@ -594,11 +594,9 @@ export async function createPreimageV2(ctx: EventHandlerContext, data: PreimageD
     return preimage
 }
 
-export async function createReferendumV2(ctx: EventHandlerContext, data: ReferendumDataV2): Promise<Proposal> {
+export async function createReferendumV2(ctx: EventHandlerContext, data: ReferendumDataV2, type: ProposalType): Promise<Proposal> {
 
     const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
-
-    const type = ProposalType.ReferendumV2
 
     const id = await getProposalId(ctx.store, type)
 

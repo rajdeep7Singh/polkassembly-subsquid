@@ -4,7 +4,7 @@ import { BlockContext, EventContext } from '../../../types/support'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { createReferendumV2 } from '../../utils/proposals'
 import { getEventData } from './getters'
-import { ReferendaReferendumInfoForStorage } from "../../../types/storage";
+import { FellowshipReferendaReferendumInfoForStorage } from "../../../types/storage";
 import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
 import { OriginCaller } from '../../../types/v9320'
@@ -19,12 +19,12 @@ interface ReferendumInfo {
     submissionDeposit: {who: Uint8Array, amount: bigint}
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
     deciding: {since: number, confirming: number | undefined} | undefined
-    tally: {ayes: bigint, nays: bigint, support: bigint}
+    tally: {ayes: bigint | number, nays: bigint | number, support?: bigint | number, bareAyes?: bigint | number}
 }
 
 
 export async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumInfo | undefined> {
-    const storage = new ReferendaReferendumInfoForStorage(ctx)
+    const storage = new FellowshipReferendaReferendumInfoForStorage(ctx)
 
     if (storage.isV9320) {
         const storageData = await storage.getAsV9320(index)
@@ -109,5 +109,6 @@ export async function handleSubmitted(ctx: EventHandlerContext) {
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
         enactmentAfter: storageData.enactmentAfter 
-    }, ProposalType.ReferendumV2)
+    }, ProposalType.FellowshipReferendum
+    )
 }

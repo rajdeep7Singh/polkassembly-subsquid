@@ -9,6 +9,7 @@ export type IndexProposal =
     | ProposalType.CouncilMotion
     | ProposalType.ChildBounty
     | ProposalType.ReferendumV2
+    | ProposalType.FellowshipReferendum
 
 export type HashProposal =
     | ProposalType.Tip
@@ -118,15 +119,16 @@ export interface ReferendumDataV2 extends BaseProposalData {
     submissionDeposit: {who: Uint8Array, amount: bigint}
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
     deciding: {since: number, confirming: number | undefined} | undefined
-    tally: {ayes: bigint, nays: bigint, support: bigint}
+    tally: {ayes: bigint | number, nays: bigint | number, support?: bigint | number, bareAyegs?: bigint | number}
 }
 
 export interface TallyData {
-    ayes: bigint
-    nays: bigint
-    support: bigint
-}
+    ayes: bigint | number
+    nays: bigint | number
+    support?: bigint | number
+    bareAyes?: bigint | number
 
+}
 export interface DecisionDepositData {
     who: string
     amount: bigint

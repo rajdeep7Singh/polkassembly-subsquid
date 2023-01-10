@@ -8,6 +8,7 @@ enum ProposalType {
   Tip
   ChildBounty
   ReferendumV2
+  FellowshipReferendum
 }
 
 enum ProposalStatus {
@@ -123,6 +124,7 @@ type Tally {
   ayes: BigInt
   nays: BigInt
   support: BigInt
+  bareAyes: BigInt
 }
 
 type DecisionDeposit {
@@ -194,6 +196,7 @@ enum VoteType {
   Referendum
   Motion
   ReferendumV2
+  Fellowship
 }
 
 type Vote @entity {
