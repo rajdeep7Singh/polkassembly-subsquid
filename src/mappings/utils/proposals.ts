@@ -660,7 +660,7 @@ export function createTally(data: TallyData): Tally {
     return new Tally(toJSON(data))
 }
 
-function createDeciding(data: DecidingData): Deciding {
+export function createDeciding(data: DecidingData): Deciding {
     return new Deciding(toJSON(data))
 }
 

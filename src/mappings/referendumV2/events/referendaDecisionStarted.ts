@@ -1,6 +1,6 @@
 import { ProposalStatus, ProposalType } from '../../../model'
 import { EventHandlerContext } from '../../types/contexts'
-import { updateProposalStatus } from '../../utils/proposals'
+import { createDeciding, updateProposalStatus } from '../../utils/proposals'
 import { getDecisionStartedData } from './getters'
 import {createTally} from '../../utils/proposals'
 import { toHex } from '@subsquid/substrate-processor'
@@ -10,13 +10,16 @@ export async function handleDecisionStarted(ctx: EventHandlerContext) {
 
     const tallyData = createTally(tally)
 
+    const deciding = createDeciding({confirming: undefined, since: ctx.block.height})
+
     await updateProposalStatus(ctx, index, ProposalType.ReferendumV2, {
         isEnded: true,
         status: ProposalStatus.Deciding,
         data: {
             tally: tallyData,
             trackNumber: track,
-            hash: toHex(hash)
+            hash: toHex(hash),
+            deciding: deciding
         }
     })
 }
