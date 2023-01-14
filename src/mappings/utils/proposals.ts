@@ -1,5 +1,6 @@
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
+import { Any } from 'typeorm'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import {
@@ -18,6 +19,7 @@ import {
     ReferendumThresholdType,
     StatusHistory,
     Tippers,
+    ProposalGroup,
 } from '../../model'
 import { EventHandlerContext } from '../types/contexts'
 import {
@@ -170,6 +172,117 @@ export async function updateProposalStatus(
     )
 }
 
+async function getOrCreateProposalGroup(
+    ctx: EventHandlerContext,
+    index: number,
+    type: ProposalType,
+    parentId: number,
+    parentType: ProposalType
+): Promise<ProposalGroup>
+ {
+    const condition: FindOneOptions<ProposalGroup>['where'] = {}
+    switch (type) {
+        case ProposalType.Bounty:
+            condition.bountyIndex = index as number
+            break
+        case ProposalType.TreasuryProposal:
+            condition.treasuryIndex = index as number
+            break
+        case ProposalType.Referendum:
+            condition.referendumIndex = index as number
+            break
+        case ProposalType.DemocracyProposal:
+            condition.democracyProposalIndex = index as number
+            break
+        case ProposalType.CouncilMotion:
+            condition.councilMotionIndex = index as number
+            break
+        case ProposalType.TechCommitteeProposal:
+            condition.techCommitteeProposalIndex = index as number
+            break
+        default:
+            throw new Error(`Unknown proposal type ${type}`)
+    }
+    let link = await ctx.store.get(ProposalGroup, { where: condition })
+    if(link){
+        switch (parentType) {
+            case ProposalType.Bounty:
+                link.bountyIndex = parentId as number
+                break
+            case ProposalType.TreasuryProposal:
+                link.treasuryIndex = parentId as number
+                break
+            case ProposalType.Referendum:
+                link.referendumIndex = parentId as number
+                break
+            case ProposalType.DemocracyProposal:
+                link.democracyProposalIndex = parentId as number
+                break
+            case ProposalType.CouncilMotion:
+                link.councilMotionIndex = parentId as number
+                break
+            case ProposalType.TechCommitteeProposal:
+                link.techCommitteeProposalIndex = parentId as number
+                break
+            default:
+                throw new Error(`Unknown proposal type ${type}`)
+        }
+        await ctx.store.save(link)
+    }
+    if (!link) {
+        const id = await ctx.store.count(ProposalGroup)
+        link = new ProposalGroup({
+            id: id.toString(),
+        })
+        switch (type) {
+            case ProposalType.Bounty:
+                link.bountyIndex = index as number
+                break
+            case ProposalType.TreasuryProposal:
+                link.treasuryIndex = index as number
+                break
+            case ProposalType.Referendum:
+                link.referendumIndex = index as number
+                break
+            case ProposalType.DemocracyProposal:
+                link.democracyProposalIndex = index as number
+                break
+            case ProposalType.CouncilMotion:
+                link.councilMotionIndex = index as number
+                break
+            case ProposalType.TechCommitteeProposal:
+                link.techCommitteeProposalIndex = index as number
+                break
+            default:
+                throw new Error(`Unknown proposal type ${type}`)
+        }
+        switch (parentType) {
+            case ProposalType.Bounty:
+                link.bountyIndex = parentId as number
+                break
+            case ProposalType.TreasuryProposal:
+                link.treasuryIndex = parentId as number
+                break
+            case ProposalType.Referendum:
+                link.referendumIndex = parentId as number
+                break
+            case ProposalType.DemocracyProposal:
+                link.democracyProposalIndex = parentId as number
+                break
+            case ProposalType.CouncilMotion:
+                link.councilMotionIndex = parentId as number
+                break
+            case ProposalType.TechCommitteeProposal:
+                link.techCommitteeProposalIndex = parentId as number
+                break
+            default:
+                throw new Error(`Unknown proposal type ${type}`)
+        }
+        await ctx.store.insert(link)
+    }
+    return link
+}
+
 async function getProposalId(store: Store, type: ProposalType) {
     const count = await store.count(Proposal, { where: { type } })
     
@@ -205,13 +318,14 @@ export async function createDemocracyProposal(
 
     const id = await getProposalId(ctx.store, type)
 
-    // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
-
     const preimage = await ctx.store.get(Preimage, {
         where: {
             hash: hash,
             status: ProposalStatus.Noted,
         },
+        order: {
+            createdAtBlock: 'DESC'
+        }
     })
 
     const proposal = new Proposal({
@@ -248,6 +362,8 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
 
     const type = ProposalType.Referendum
 
+    let group: ProposalGroup | undefined
+
     const id = await getProposalId(ctx.store, type)
 
     const preimage = await ctx.store.get(Preimage, {
@@ -255,9 +371,49 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
             hash: hash,
             status: ProposalStatus.Noted,
         },
+        order: {
+            createdAtBlock: 'DESC'
+        }
     })
 
-    // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
+    if(hash){
+        const associatedProposal = await ctx.store.get(Proposal, {
+            where: {
+                hash: hash,
+                status: ProposalStatus.Executed,
+                type: ProposalType.CouncilMotion,
+            },
+            order: {
+                createdAtBlock: 'DESC'
+            }
+        }) || await ctx.store.get(Proposal, {
+            where: {
+                hash: hash,
+                status: ProposalStatus.Tabled,
+                updatedAtBlock: ctx.block.height,
+                type: ProposalType.DemocracyProposal,
+            },
+            order: {
+                createdAtBlock: 'DESC'
+            }
+        }) || await ctx.store.get(Proposal, {
+            where: {
+                proposalArgumentHash: hash,
+                status: ProposalStatus.Executed,
+                type: ProposalType.CouncilMotion,
+            },
+            order: {
+                createdAtBlock: 'DESC'
+            }
+        })
+        if(associatedProposal && associatedProposal.index && associatedProposal.type){
+            group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
+            associatedProposal.group = group
+            await ctx.store.save(associatedProposal)
+
+        }
+    }
+
 
     const proposal = new Proposal({
         id,
@@ -271,6 +427,7 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
         status,
         end: end,
         delay: delay,
+        group: group,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
@@ -298,17 +455,21 @@ export async function createCoucilMotion(
 ): Promise<Proposal> {
     const { index, status, threshold, hash, proposer, call } = data
 
-    // let group: ProposalGroup | undefined
+    let group: ProposalGroup | undefined
     let preimage = null
+    let hexHash = null;
 
     if (call.args){
         if(call.args['proposalHash']){
-            const hexHash = call.args['proposalHash'] as string
+            hexHash = call.args['proposalHash'] as string
             preimage = await ctx.store.get(Preimage, {
                 where: {
                     hash: hexHash,
                     status: ProposalStatus.Noted,
                 },
+                order: {
+                    createdAtBlock: 'DESC'
+                }
             })
         }
     }
@@ -321,21 +482,72 @@ export async function createCoucilMotion(
                 hash: hash,
                 status: ProposalStatus.Noted,
             },
+            order: {
+                createdAtBlock: 'DESC'
+            }
         })
     }
 
-    // if (call.args) {
-    //     if (call.args['proposalHash']) {
-    //         const hexHash = call.args['proposalHash'] as string
-            // group = await getOrCreateProposalGroup(ctx, hexHash, ProposalType.Preimage)
-    //     } else if (call.args['bountyId']) {
-    //         const index = call.args['bountyId'] as number
-    //         // group = await getOrCreateProposalGroup(ctx, index, ProposalType.Bounty)
-    //     } else if (call.args['proposalId']) {
-    //         const index = call.args['proposalId'] as number
-    //         // group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal)
-    //     }
-    // }
+    if (call.args) {
+        if (call.args['bountyId']) {
+            const bountyIndex = call.args['bountyId'] as number
+            group = await getOrCreateProposalGroup(ctx, bountyIndex, ProposalType.Bounty, index, type)
+            const associatedBounty = await ctx.store.get(Proposal, {
+                where: {
+                    index: bountyIndex,
+                    type: ProposalType.Bounty,
+                },
+                order: {
+                    createdAtBlock: 'DESC'
+                }
+            })
+            if (associatedBounty) {
+                associatedBounty.group = group
+                await ctx.store.save(associatedBounty)
+            }
+        } else if (call.args['proposalId'] || call.args['proposal_index'] || call.args['proposal_id']) {
+            const proposalId = call.args['proposalId'] as number || call.args['proposal_index'] as number || call.args['proposal_id'] as number
+            group = await getOrCreateProposalGroup(ctx, proposalId, ProposalType.TreasuryProposal, index, type)
+            const associatedTreasuryProposal = await ctx.store.get(Proposal, {
+                where: {
+                    index: proposalId,
+                    type: ProposalType.TreasuryProposal,
+                },
+                order: {
+                    createdAtBlock: 'DESC'
+                }
+            })
+            if (associatedTreasuryProposal) {
+                associatedTreasuryProposal.group = group
+                await ctx.store.save(associatedTreasuryProposal)
+            }
+        }
+        else if (call.args['proposalHash'] && type === ProposalType.TechCommitteeProposal) {
+            const motionHash = call.args['proposalHash'] as string
+            const counciMotion = await ctx.store.get(Proposal, {
+                where: {
+                    hash: motionHash,
+                    type: ProposalType.CouncilMotion,
+                },
+                order: {
+                    createdAtBlock: 'DESC'
+                }
+            }) || await ctx.store.get(Proposal, {
+                where: {
+                    proposalArgumentHash: motionHash,
+                    type: ProposalType.CouncilMotion,
+                },
+                order: {
+                    createdAtBlock: 'DESC'
+                }
+            })
+            if (counciMotion && counciMotion.index) {
+                group = await getOrCreateProposalGroup(ctx, counciMotion.index, ProposalType.CouncilMotion, index, type)
+                counciMotion.group = group
+                await ctx.store.save(counciMotion)
+            }
+        }
+    }
 
     const proposal = new Proposal({
         id,
@@ -348,7 +560,9 @@ export async function createCoucilMotion(
             value: threshold,
         }),
         proposalArguments: createProposedCall(call),
+        proposalArgumentHash: hexHash,
         preimage,
+        group: group,
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
@@ -435,7 +649,6 @@ export async function createBounty(ctx: EventHandlerContext, data: BountyData): 
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
-        // group,
     })
 
     await ctx.store.insert(proposal)
@@ -475,7 +688,6 @@ export async function createChildBounty(ctx: EventHandlerContext, data: ChildBou
         createdAtBlock: ctx.block.height,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
-        // group,
     })
 
     await ctx.store.insert(proposal)
@@ -512,6 +724,7 @@ export async function createTreasury(ctx: EventHandlerContext, data: TreasuryDat
         status,
         payee,
         createdAtBlock: ctx.block.height,
+        // group: group,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
     })
@@ -605,6 +818,7 @@ export async function createReferendumV2(ctx: EventHandlerContext, data: Referen
             hash: data.hash,
             status: ProposalStatus.Unrequested,
         },
+        order: { createdAtBlock: 'DESC' },
     })
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}

@@ -12,6 +12,7 @@ import {SubmissionDeposit} from "./_submissionDeposit"
 import {DecisionDeposit} from "./_decisionDeposit"
 import {Deciding} from "./_deciding"
 import {Tally} from "./_tally"
+import {ProposalGroup} from "./proposalGroup.model"
 
 @Entity_()
 export class Proposal {
@@ -76,6 +77,9 @@ export class Proposal {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
   proposalArguments!: ProposedCall | undefined | null
 
+  @Column_("text", {nullable: true})
+  proposalArgumentHash!: string | undefined | null
+
   @OneToMany_(() => Vote, e => e.proposal)
   voting!: Vote[]
 
@@ -119,6 +123,10 @@ export class Proposal {
 
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tally(undefined, obj)}, nullable: true})
   tally!: Tally | undefined | null
+
+  @Index_()
+  @ManyToOne_(() => ProposalGroup, {nullable: true})
+  group!: ProposalGroup | undefined | null
 
   @Index_()
   @Column_("int4", {nullable: false})

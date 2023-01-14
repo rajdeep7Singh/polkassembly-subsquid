@@ -98,6 +98,7 @@ type Proposal @entity {
   description: String
   parentBountyIndex: Int
   proposalArguments: ProposedCall
+  proposalArgumentHash: String
   voting: [Vote!] @derivedFrom(field: "proposal")
   preimage: Preimage
   preimageV2: PreimageV2
@@ -112,6 +113,7 @@ type Proposal @entity {
   decisionDeposit: DecisionDeposit
   deciding: Deciding
   tally: Tally
+  group: ProposalGroup
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   endedAtBlock: Int
@@ -220,4 +222,16 @@ type Tippers @entity {
   proposal: Proposal!
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
+}
+
+type ProposalGroup @entity {
+  id: ID!
+  treasuryIndex: Int @index
+  bountyIndex: Int @index
+  tipHash: String @index
+  councilMotionIndex: Int @index
+  democracyProposalIndex: Int @index
+  referendumIndex: Int @index
+  techCommitteeProposalIndex: Int @index
+  proposals: [Proposal] @derivedFrom(field: "group")
 }
