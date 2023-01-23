@@ -100,6 +100,63 @@ export interface Tally {
   support: bigint
 }
 
+export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
+
+export interface MultiAddress_Id {
+  __kind: 'Id'
+  value: Uint8Array
+}
+
+export interface MultiAddress_Index {
+  __kind: 'Index'
+  value: null
+}
+
+export interface MultiAddress_Raw {
+  __kind: 'Raw'
+  value: Uint8Array
+}
+
+export interface MultiAddress_Address32 {
+  __kind: 'Address32'
+  value: Uint8Array
+}
+
+export interface MultiAddress_Address20 {
+  __kind: 'Address20'
+  value: Uint8Array
+}
+
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+  __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+  __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+  __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+  __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+  __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+  __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+  __kind: 'Locked6x'
+}
+
 export type AccountVote = AccountVote_Standard | AccountVote_Split
 
 export interface AccountVote_Standard {
@@ -7236,36 +7293,6 @@ export interface Delegations {
   capital: bigint
 }
 
-export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
-
-export interface Conviction_None {
-  __kind: 'None'
-}
-
-export interface Conviction_Locked1x {
-  __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-  __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-  __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-  __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-  __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-  __kind: 'Locked6x'
-}
-
 export interface EquivocationProof {
   offender: Uint8Array
   slot: bigint
@@ -7285,33 +7312,6 @@ export interface NextConfigDescriptor_V1 {
   __kind: 'V1'
   c: [bigint, bigint]
   allowedSlots: AllowedSlots
-}
-
-export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
-
-export interface MultiAddress_Id {
-  __kind: 'Id'
-  value: Uint8Array
-}
-
-export interface MultiAddress_Index {
-  __kind: 'Index'
-  value: null
-}
-
-export interface MultiAddress_Raw {
-  __kind: 'Raw'
-  value: Uint8Array
-}
-
-export interface MultiAddress_Address32 {
-  __kind: 'Address32'
-  value: Uint8Array
-}
-
-export interface MultiAddress_Address20 {
-  __kind: 'Address20'
-  value: Uint8Array
 }
 
 export interface Header {

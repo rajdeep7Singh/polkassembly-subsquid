@@ -118,6 +118,10 @@
   ],
   "calls": [
     "Democracy.vote",
+    "Democracy.remove_vote",
+    "Democracy.remove_other_vote",
+    "Democracy.delegate",
+    "Democracy.undelegate",
     "Tips.tip",
     "Bounties.accept_curator",
     "ChildBounties.accept_curator",
@@ -126,6 +130,10 @@
     "Bounties.unassign_curator",
     "Treasury.unassign_curator",
     "ConvictionVoting.vote",
+    "ConvictionVoting.delegate",
+    "ConvictionVoting.undelegate",
+    "ConvictionVoting.remove_vote",
+    "ConvictionVoting.remove_other_vote",
     "FellowshipCollective.vote"
   ]
 }

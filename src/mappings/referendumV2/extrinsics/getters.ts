@@ -1,6 +1,9 @@
-import { UnknownVersionError } from '../../../common/errors'
-import { ConvictionVotingVoteCall } from '../../../types/calls'
-import { CallContext } from '../../types/contexts'
+import { IsNull } from 'typeorm'
+import { TooManyOpenVotes, UnknownVersionError } from '../../../common/errors'
+import { ConvictionVote, VotingDelegation } from '../../../model'
+import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
+import { CallContext, CallHandlerContext } from '../../types/contexts'
+import { convictionToLockPeriod } from './helpers'
 
 type DemocracyVote =
     | {
@@ -86,6 +89,84 @@ export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
         }
     }  
     else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export interface ConvictionVoteDelegateCallData {
+    track: number
+    to: any
+    lockPeriod: number
+    balance?: bigint
+}
+
+export function getDelegateData(ctx: CallContext): ConvictionVoteDelegateCallData {
+    const event = new ConvictionVotingDelegateCall(ctx)
+   
+    if (event.isV9320) {
+        //{ class, to, conviction, balance}
+        const eventData = event.asV9320
+        return {
+            track: eventData.class,
+            to: eventData.to.value,
+            lockPeriod:convictionToLockPeriod(eventData.conviction.__kind),
+            balance: eventData.balance
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+export interface ConvictionVoteUndelegateCallData {
+    track: number
+}
+
+export function getUndelegateData(ctx: CallContext): ConvictionVoteUndelegateCallData {
+    const event = new ConvictionVotingUndelegateCall(ctx)
+   
+    if (event.isV9320) {
+        const eventData = event.asV9320
+        return {
+            track: eventData.class
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export interface ConvictionVotingRemoveVoteCallData {
+    index: number
+    track: number | undefined
+}
+
+export function getRemoveVoteData(ctx: CallContext): ConvictionVotingRemoveVoteCallData {
+    const event = new ConvictionVotingRemoveVoteCall(ctx)
+    if (event.isV9320) {
+        const eventData = event.asV9320
+        return {
+            index: eventData.index,
+            track: eventData.class
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export interface ConvictionVotingRemoveOtherVoteCallData {
+    index: number
+    track: number | undefined
+    target: Uint8Array | null
+}
+
+export function getRemoveOtherVoteData(ctx: CallContext): ConvictionVotingRemoveOtherVoteCallData {
+    const event = new ConvictionVotingRemoveOtherVoteCall(ctx)
+    if (event.isV9320) {
+        const eventData = event.asV9320
+        return {
+            index: eventData.index,
+            track: eventData.class,
+            target: eventData.target.value
+        }
+    } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

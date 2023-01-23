@@ -100,6 +100,7 @@ type Proposal @entity {
   proposalArguments: ProposedCall
   proposalArgumentHash: String
   voting: [Vote!] @derivedFrom(field: "proposal")
+  convictionVoting: [ConvictionVote!] @derivedFrom(field: "proposal")
   preimage: Preimage
   preimageV2: PreimageV2
   status: ProposalStatus!
@@ -180,6 +181,8 @@ enum VoteDecision {
   yes
   no
   abstain
+  split
+  splitAbstain
 }
 
 type StandardVoteBalance {
@@ -205,6 +208,7 @@ type Vote @entity {
   id: ID!
   voter: String
   proposalId: ID!
+  proposalIndex: Int! @index
   proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index
@@ -234,4 +238,35 @@ type ProposalGroup @entity {
   referendumIndex: Int @index
   techCommitteeProposalIndex: Int @index
   proposals: [Proposal] @derivedFrom(field: "group")
+}
+
+type ConvictionVote @entity {
+  id: ID!
+  voter: String
+  proposalId: ID!
+  proposalIndex: Int! @index
+  proposal: Proposal!
+  createdAtBlock: Int! @index
+  removedAtBlock: Int @index
+  createdAt: DateTime! @index
+  removedAt: DateTime @index
+  decision: VoteDecision!
+  balance: VoteBalance!
+  lockPeriod: String
+  delegatedTo: String 
+  isDelegated: Boolean
+  type: VoteType!
+}
+
+type VotingDelegation @entity {
+  id: ID!
+  from: String! @index
+  to: String! @index
+  balance: BigInt
+  lockPeriod: Int!
+  track: Int
+  createdAt: DateTime!
+  createdAtBlock: Int! @index
+  endedAt: DateTime
+  endedAtBlock: Int
 }

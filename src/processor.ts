@@ -97,6 +97,10 @@ processor.addEventHandler('Referenda.ConfirmAborted', modules.referendumV2.event
 processor.addEventHandler('Referenda.Cancelled', modules.referendumV2.events.handleCancelled)
 
 processor.addCallHandler('ConvictionVoting.vote', modules.referendumV2.extrinsics.handleConvictionVote)
+processor.addCallHandler('ConvictionVoting.delegate', modules.referendumV2.extrinsics.handleDelegate)
+processor.addCallHandler('ConvictionVoting.undelegate', modules.referendumV2.extrinsics.handleUndelegate)
+processor.addCallHandler('ConvictionVoting.remove_vote', modules.referendumV2.extrinsics.handleRemoveVote)
+processor.addCallHandler('ConvictionVoting.remove_other_vote', modules.referendumV2.extrinsics.handleRemoveOtherVote)
 
 processor.addEventHandler('FellowshipReferenda.Submitted', modules.fellowshipReferendum.events.handleSubmitted)
 processor.addEventHandler('FellowshipReferenda.Rejected', modules.fellowshipReferendum.events.handleRejected)

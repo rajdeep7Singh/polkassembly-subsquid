@@ -6,8 +6,8 @@ import {VoteBalance, fromJsonVoteBalance} from "./_voteBalance"
 import {VoteType} from "./_voteType"
 
 @Entity_()
-export class Vote {
-  constructor(props?: Partial<Vote>) {
+export class ConvictionVote {
+  constructor(props?: Partial<ConvictionVote>) {
     Object.assign(this, props)
   }
 
@@ -30,21 +30,35 @@ export class Vote {
 
   @Index_()
   @Column_("int4", {nullable: false})
-  blockNumber!: number
+  createdAtBlock!: number
+
+  @Index_()
+  @Column_("int4", {nullable: true})
+  removedAtBlock!: number | undefined | null
 
   @Index_()
   @Column_("timestamp with time zone", {nullable: false})
-  timestamp!: Date
+  createdAt!: Date
 
-  @Column_("varchar", {length: 12, nullable: true})
-  decision!: VoteDecision | undefined | null
+  @Index_()
+  @Column_("timestamp with time zone", {nullable: true})
+  removedAt!: Date | undefined | null
 
-  @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : fromJsonVoteBalance(obj)}, nullable: true})
-  balance!: VoteBalance | undefined | null
+  @Column_("varchar", {length: 12, nullable: false})
+  decision!: VoteDecision
+
+  @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => fromJsonVoteBalance(obj)}, nullable: false})
+  balance!: VoteBalance
 
   @Column_("int4", {nullable: true})
   lockPeriod!: number | undefined | null
 
-  @Column_("varchar", {length: 12, nullable: true})
-  type!: VoteType | undefined | null
+  @Column_("text", {nullable: true})
+  delegatedTo!: string | undefined | null
+
+  @Column_("bool", {nullable: true})
+  isDelegated!: boolean | undefined | null
+
+  @Column_("varchar", {length: 12, nullable: false})
+  type!: VoteType
 }

@@ -4,6 +4,7 @@ import {ProposalType} from "./_proposalType"
 import {Threshold, fromJsonThreshold} from "./_threshold"
 import {ProposedCall} from "./_proposedCall"
 import {Vote} from "./vote.model"
+import {ConvictionVote} from "./convictionVote.model"
 import {Preimage} from "./preimage.model"
 import {PreimageV2} from "./preimageV2.model"
 import {ProposalStatus} from "./_proposalStatus"
@@ -82,6 +83,9 @@ export class Proposal {
 
   @OneToMany_(() => Vote, e => e.proposal)
   voting!: Vote[]
+
+  @OneToMany_(() => ConvictionVote, e => e.proposal)
+  convictionVoting!: ConvictionVote[]
 
   @Index_()
   @ManyToOne_(() => Preimage, {nullable: true})

@@ -61,3 +61,7 @@ export function getOriginAccountId(origin: any) {
             return undefined
     }
 }
+
+export function encodeId(id: string | Uint8Array) {
+    return ss58codec.encode(typeof id === 'string' ? decodeHex(id) : id)
+}
