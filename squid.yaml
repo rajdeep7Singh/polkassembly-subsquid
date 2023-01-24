@@ -1,35 +1,15 @@
 manifestVersion: subsquid.io/v0.1
-namespace: squid
-
-name: proposals-polkassembly
+name: harvester
+version: 3
 description: |-
-  The very first squid from manifest
-tags:
-  - proposals
+  Kusama's governance proposals
 
-database:
-  type: pg-14
+build:
 
-api:
-  cmd: [ "npx", "squid-graphql-server" ]
-  graphql-examples:
-    - query: |-
-        query MyQuery {
-          proposals(orderBy: id_ASC) {
-            edges {
-              node {
-                  id
-              }
-            }
-          }
-        }
-      variables: {} # optional
-processor:
-  init:
-    - name: db-migrate
-      cmd: [ "npx" ,"sqd", "db", "migrate" ]
-
-#  secrets:
-#    - name: SECRET_ENV_NAME
-
-  cmd: [ "node", "lib/processor" ]
+deploy:
+  addons:
+    postgres:
+  processor:
+    cmd: [ "node", "lib/processor" ] 
+  api:
+    cmd: [ "npx", "squid-graphql-server" ]
