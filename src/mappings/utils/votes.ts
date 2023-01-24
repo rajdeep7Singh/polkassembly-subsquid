@@ -1,10 +1,10 @@
 import { ConvictionVote, Vote } from '../../model'
 import { CommonHandlerContext } from '../types/contexts'
 
-const proposals = new Map<string, number>()
+const proposalsVotes = new Map<string, number>()
 
 export async function getVotesCount(ctx: CommonHandlerContext, proposalId: string) {
-    let count = proposals.get(proposalId)
+    let count = proposalsVotes.get(proposalId)
     if (count == null) {
         count = await ctx.store.count(Vote, {
             where: {
@@ -12,9 +12,11 @@ export async function getVotesCount(ctx: CommonHandlerContext, proposalId: strin
             },
         })
     }
-    proposals.set(proposalId, count + 1)
+    proposalsVotes.set(proposalId, count + 1)
     return count
 }
+
+const proposals = new Map<string, number>()
 
 export async function getConvictionVotesCount(ctx: CommonHandlerContext, proposalId: string) {
     let count = proposals.get(proposalId)
