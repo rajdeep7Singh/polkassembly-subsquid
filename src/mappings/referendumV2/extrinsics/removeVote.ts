@@ -11,7 +11,7 @@ export async function handleRemoveVote(ctx: CallHandlerContext): Promise<void> {
     if (!(ctx.call as any).success) return
     const { index } = getRemoveVoteData(ctx)
     const referendum = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
-    if (!referendum || !referendum.index || !referendum.trackNumber) {
+    if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
         return
     }

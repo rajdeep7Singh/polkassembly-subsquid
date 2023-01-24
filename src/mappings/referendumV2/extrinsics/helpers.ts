@@ -70,7 +70,7 @@ export async function removeDelegatedVotesOngoingReferenda(ctx: CallHandlerConte
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const ongoingReferendum = ongoingReferenda[i]
-        if(!ongoingReferendum.index) {
+        if(ongoingReferendum.index === undefined || ongoingReferendum.index === null) {
             continue
         }
         await removeDelegatedVotesReferendum(ctx, block, blockTime, ongoingReferendum.index, nestedDelegations)

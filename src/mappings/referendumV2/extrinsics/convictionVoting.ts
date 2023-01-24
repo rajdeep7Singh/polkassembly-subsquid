@@ -24,8 +24,8 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
     const { index, vote } = getVoteData(ctx)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
-    if (!proposal || !proposal.trackNumber) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
+    if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
         return
     }
 
@@ -100,6 +100,7 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
             lockPeriod,
             proposal,
             balance,
+            isDelegated: false,
             createdAt: new Date(ctx.block.timestamp),
             type: VoteType.ReferendumV2,
         })

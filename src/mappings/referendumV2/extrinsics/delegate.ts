@@ -28,7 +28,7 @@ export async function handleDelegate(ctx: CallHandlerContext): Promise<void> {
         //remove votes for ongoing referenda
         for (let i = 0; i < ongoingReferenda.length; i++) {
             const referendum = ongoingReferenda[i]
-            if(referendum.index){
+            if(referendum.index || referendum.index === 0){
                 await removeVote(ctx, from, referendum.index, ctx.block.height, ctx.block.timestamp, false, true, delegation.to)
             }
         }
@@ -51,7 +51,7 @@ export async function handleDelegate(ctx: CallHandlerContext): Promise<void> {
     // add votes for ongoing referenda for this track
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
-        if(!referendum || !referendum.index){
+        if(!referendum || referendum.index === undefined || referendum.index === null){
             continue
         }
         const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull() } })

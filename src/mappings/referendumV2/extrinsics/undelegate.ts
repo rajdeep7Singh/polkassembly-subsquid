@@ -31,7 +31,7 @@ export async function handleUndelegate(ctx: CallHandlerContext): Promise<void> {
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
-        if(!referendum.index){
+        if(!referendum || referendum.index == undefined || referendum.index == null){
             continue
         }
         await removeVote(ctx, from, referendum.index, ctx.block.height, ctx.block.timestamp, false, true, delegation.to)
