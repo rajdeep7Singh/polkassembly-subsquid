@@ -1,13 +1,12 @@
-module.exports = class Data1674514814037 {
-  name = 'Data1674514814037'
+module.exports = class Data1674551607661 {
+  name = 'Data1674551607661'
 
   async up(db) {
     await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "proposed_call" jsonb, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_c6e9bc6f69c924e85a44174d35" ON "preimage" ("hash") `)
     await db.query(`CREATE INDEX "IDX_8961b767f111466724025930b0" ON "preimage" ("created_at_block") `)
     await db.query(`CREATE INDEX "IDX_146c48e4f4bf54acb708686897" ON "preimage" ("created_at") `)
-    await db.query(`CREATE TABLE "vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "proposal_index" integer NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "decision" character varying(12), "balance" jsonb, "lock_period" integer, "type" character varying(12), CONSTRAINT "PK_2d5932d46afe39c8176f9d4be72" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE INDEX "IDX_97f6fbfcfca3eade2429f6ada9" ON "vote" ("proposal_index") `)
+    await db.query(`CREATE TABLE "vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "decision" character varying(12), "balance" jsonb, "lock_period" integer, "type" character varying(12), CONSTRAINT "PK_2d5932d46afe39c8176f9d4be72" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_db85a3f8526cbaa2865faf8637" ON "vote" ("proposal_id") `)
     await db.query(`CREATE INDEX "IDX_6d54f04fc9dd3a4c15cb607c9e" ON "vote" ("block_number") `)
     await db.query(`CREATE INDEX "IDX_8d701dbd422ac5e3e1d7a9a0d1" ON "vote" ("timestamp") `)
@@ -67,7 +66,6 @@ module.exports = class Data1674514814037 {
     await db.query(`DROP INDEX "public"."IDX_8961b767f111466724025930b0"`)
     await db.query(`DROP INDEX "public"."IDX_146c48e4f4bf54acb708686897"`)
     await db.query(`DROP TABLE "vote"`)
-    await db.query(`DROP INDEX "public"."IDX_97f6fbfcfca3eade2429f6ada9"`)
     await db.query(`DROP INDEX "public"."IDX_db85a3f8526cbaa2865faf8637"`)
     await db.query(`DROP INDEX "public"."IDX_6d54f04fc9dd3a4c15cb607c9e"`)
     await db.query(`DROP INDEX "public"."IDX_8d701dbd422ac5e3e1d7a9a0d1"`)
