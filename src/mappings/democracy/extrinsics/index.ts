@@ -1,1 +1,1 @@
-export { handleVote } from './vote'
+// export { handleVote } from './vote'

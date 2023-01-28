@@ -23,8 +23,8 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: EventContext): ReferendumEventData {
     const event = new FellowshipReferendaSubmittedEvent(ctx)
-    if (event.isV9320) {
-        const {index, track, proposal } = event.asV9320
+    if (event.isV121) {
+        const {index, track, proposal } = event.asV121
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -49,8 +49,8 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: EventContext): ReferendaData {
     const event = new FellowshipReferendaCancelledEvent(ctx)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV121) {
+        const { index, tally } = event.asV121
         return {
             index,
             tally
@@ -66,8 +66,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: EventContext): ReferendaIndexData {
     const event = new FellowshipReferendaApprovedEvent(ctx)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV121) {
+        const { index } = event.asV121
         return {
             index
         }
@@ -78,8 +78,8 @@ export function getApprovedData(ctx: EventContext): ReferendaIndexData {
 
 export function getKilledData(ctx: EventContext): ReferendaData {
     const event = new FellowshipReferendaKilledEvent(ctx)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV121) {
+        const { index, tally } = event.asV121
         return {
             index,
             tally
@@ -91,8 +91,8 @@ export function getKilledData(ctx: EventContext): ReferendaData {
 
 export function getTimedOutData(ctx: EventContext): ReferendaIndexData {
     const event = new FellowshipReferendaTimedOutEvent(ctx)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV121) {
+        const { index } = event.asV121
         return {
             index
         }
@@ -103,8 +103,8 @@ export function getTimedOutData(ctx: EventContext): ReferendaIndexData {
 
 export function getRejectedData(ctx: EventContext): ReferendaData {
     const event = new FellowshipReferendaRejectedEvent(ctx)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV121) {
+        const { index, tally } = event.asV121
         return {
             index,
             tally
@@ -116,8 +116,8 @@ export function getRejectedData(ctx: EventContext): ReferendaData {
 
 export function getConfirmAbortedData(ctx: EventContext): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmAbortedEvent(ctx)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV121) {
+        const { index } = event.asV121
         return {
             index
         }
@@ -128,8 +128,8 @@ export function getConfirmAbortedData(ctx: EventContext): ReferendaIndexData {
 
 export function getConfirmedData(ctx: EventContext): ReferendaData {
     const event = new FellowshipReferendaConfirmedEvent(ctx)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV121) {
+        const { index, tally } = event.asV121
         return {
             index,
             tally
@@ -141,8 +141,8 @@ export function getConfirmedData(ctx: EventContext): ReferendaData {
 
 export function getConfirmStartedData(ctx: EventContext): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmStartedEvent(ctx)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV121) {
+        const { index } = event.asV121
         return {
             index,
         }
@@ -159,8 +159,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: EventContext): ReferendaDepositData {
     const event = new FellowshipReferendaDecisionDepositPlacedEvent(ctx)
-    if (event.isV9320) {
-        const { index, who, amount } = event.asV9320
+    if (event.isV121) {
+        const { index, who, amount } = event.asV121
         return {
             index,
             who,
@@ -180,9 +180,9 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: EventContext): ReferendaDecisionStartedData {
     const event = new FellowshipReferendaDecisionStartedEvent(ctx)
-    if (event.isV9320) {
+    if (event.isV121) {
         let hash = undefined;
-        const { index, track, proposal, tally} = event.asV9320
+        const { index, track, proposal, tally} = event.asV121
         if(proposal.__kind == "Inline") {
             hash = proposal.value
         }
@@ -211,8 +211,8 @@ interface FellowshipCollectiveVoteData {
 
 export function getFellowshipVoteData(ctx: EventContext): FellowshipCollectiveVoteData {
     const event = new FellowshipCollectiveVotedEvent(ctx)
-    if (event.isV9320) {
-        const { who, poll, vote, tally  } = event.asV9320
+    if (event.isV121) {
+        const { who, poll, vote, tally  } = event.asV121
         const decision = vote.__kind == "Aye" ? VoteDecision.yes : VoteDecision.no
         const amount = vote.value
         return {

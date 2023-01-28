@@ -1,18 +1,18 @@
-import {lookupArchive} from "@subsquid/archive-registry"
+// import {lookupArchive} from "@subsquid/archive-registry"
 import { ProcessorConfig } from './common/processorConfig'
 import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'vara',
+        prefix: 'vara',
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: 'https://squid-archive.vara-network.io/graphql',
+        chain: 'wss://archive-rpc.vara-network.io',
     },
     typesBundle: 'kusama',
-    batchSize: 500,
+    batchSize: 1000,
     blockRange: {
         from: 0,
     },

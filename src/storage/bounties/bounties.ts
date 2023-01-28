@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { UnknownVersionError } from '../../common/errors'
-import { BountiesBountiesStorage, BountiesBountyDescriptionsStorage, TreasuryBountiesStorage, TreasuryBountyDescriptionsStorage } from '../../types/storage'
+import { BountiesBountiesStorage, BountiesBountyDescriptionsStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
 
 interface BountyStorageData {
@@ -15,26 +15,15 @@ async function getBountyStorageData(ctx: BlockContext, index: number): Promise<B
     const storage = new BountiesBountiesStorage(ctx)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.getAsV9111(index)
-    } else {
-        throw new UnknownVersionError(storage.constructor.name)
-    }
-}
-
-async function getTreasuryStorageData(ctx: BlockContext, index: number): Promise<BountyStorageData | undefined> {
-    const storage = new TreasuryBountiesStorage(ctx)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV2025) {
-        return await storage.getAsV2025(index)
+    if (storage.isV110) {
+        return await storage.getAsV110(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
 
 export async function getBounties(ctx: BlockContext, index: number) {
-    let bountyInfo =  (await getBountyStorageData(ctx, index)) || (await getTreasuryStorageData(ctx, index))
+    let bountyInfo =  (await getBountyStorageData(ctx, index))
     if(!bountyInfo) return undefined;
     let description = await getDescription(ctx, index).then((r) => r || '');
     return {
@@ -48,24 +37,13 @@ async function getBountyDescriptionStorageData(ctx: BlockContext, index: number)
     const storage = new BountiesBountyDescriptionsStorage(ctx)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.getAsV9111(index).then((r) => Buffer.from(r || []).toString('utf8'))
-    } else {
-        throw new UnknownVersionError(storage.constructor.name)
-    }
-}
-
-async function getTreasuryDescriptionStorageData(ctx: BlockContext, index: number): Promise<string | undefined> {
-    const storage = new TreasuryBountyDescriptionsStorage(ctx)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV2025) {
-        return await storage.getAsV2025(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV110) {
+        return await storage.getAsV110(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
 
 async function getDescription(ctx: BlockContext, index: number) {
-    return (await getBountyDescriptionStorageData(ctx, index)) || (await getTreasuryDescriptionStorageData(ctx, index))
+    return (await getBountyDescriptionStorageData(ctx, index))
 }

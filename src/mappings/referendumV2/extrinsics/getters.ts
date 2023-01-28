@@ -31,8 +31,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
     const event = new ConvictionVotingVoteCall(ctx)
-    if (event.isV9320) {
-        const { pollIndex, vote } = event.asV9320
+    if (event.isV110) {
+        const { pollIndex, vote } = event.asV110
         if(vote.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -54,8 +54,8 @@ export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
             }
         }
     }
-    else if(event.isV9340){
-        const { pollIndex, vote } = event.asV9340
+    else if(event.isV120){
+        const { pollIndex, vote } = event.asV120
         if (vote.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -103,9 +103,9 @@ export interface ConvictionVoteDelegateCallData {
 export function getDelegateData(ctx: CallContext): ConvictionVoteDelegateCallData {
     const event = new ConvictionVotingDelegateCall(ctx)
    
-    if (event.isV9320) {
+    if (event.isV110) {
         //{ class, to, conviction, balance}
-        const eventData = event.asV9320
+        const eventData = event.asV110
         return {
             track: eventData.class,
             to: eventData.to.value,
@@ -123,8 +123,8 @@ export interface ConvictionVoteUndelegateCallData {
 export function getUndelegateData(ctx: CallContext): ConvictionVoteUndelegateCallData {
     const event = new ConvictionVotingUndelegateCall(ctx)
    
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV110) {
+        const eventData = event.asV110
         return {
             track: eventData.class
         }
@@ -140,8 +140,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: CallContext): ConvictionVotingRemoveVoteCallData {
     const event = new ConvictionVotingRemoveVoteCall(ctx)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV110) {
+        const eventData = event.asV110
         return {
             index: eventData.index,
             track: eventData.class
@@ -159,8 +159,8 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 
 export function getRemoveOtherVoteData(ctx: CallContext): ConvictionVotingRemoveOtherVoteCallData {
     const event = new ConvictionVotingRemoveOtherVoteCall(ctx)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV110) {
+        const eventData = event.asV110
         return {
             index: eventData.index,
             track: eventData.class,

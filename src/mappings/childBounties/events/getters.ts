@@ -16,8 +16,8 @@ interface ChildBountyAwardedData {
 
 export function getChildBountyAwardedData(ctx: EventContext): ChildBountyAwardedData {
     const event = new ChildBountiesAwardedEvent(ctx)
-    if (event.isV9190) {
-        const { index, childIndex, beneficiary } = event.asV9190
+    if (event.isV110) {
+        const { index, childIndex, beneficiary } = event.asV110
         return {
             parentIndex: index,
             childIndex,
@@ -35,8 +35,8 @@ interface ChildBountyCancelledData {
 
 export function getChildBountyCancelledData(ctx: EventContext): ChildBountyCancelledData {
     const event = new ChildBountiesCanceledEvent(ctx)
-    if (event.isV9190) {
-        const { index, childIndex } = event.asV9190
+    if (event.isV110) {
+        const { index, childIndex } = event.asV110
         return {
             parentIndex: index,
             childIndex
@@ -55,8 +55,8 @@ interface ChildBountyClaimedData {
 
 export function getChildBountyClaimedData(ctx: EventContext): ChildBountyClaimedData {
     const event = new ChildBountiesClaimedEvent(ctx)
-    if (event.isV9190) {
-        const { index, childIndex, payout, beneficiary } = event.asV9190
+    if (event.isV110) {
+        const { index, childIndex, payout, beneficiary } = event.asV110
         return {
             parentIndex: index,
             childIndex,
@@ -75,8 +75,8 @@ interface ChildBountyAddedData {
 
 export function getChildBountyAddedData(ctx: EventContext): ChildBountyAddedData {
     const event = new ChildBountiesAddedEvent(ctx)
-    if (event.isV9190) {
-        const { index, childIndex } = event.asV9190
+    if (event.isV110) {
+        const { index, childIndex } = event.asV110
         return {
             parentIndex: index,
             childIndex

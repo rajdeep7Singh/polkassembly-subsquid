@@ -7,7 +7,7 @@ import { PreimagePreimageForStorage, PreimageStatusForStorage } from '../../../t
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec, parseProposalCall } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v9111'
+import { Call } from '../../../types/v121'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 
@@ -29,28 +29,16 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
     const storage = new PreimagePreimageForStorage(ctx)
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash)
 
-    console.log('storagev', storage.isExists)
-
-    if (storage.isV9160) {
-        const storageData = await storage.getAsV9160(hash)
+    if(!preimageStatus?.len){
+        return undefined
+    }
+    if (storage.isV110) {
+        const storageData = await storage.getAsV110([hash, preimageStatus?.len])
         if (!storageData) return undefined
 
         return {
             data: storageData,
             ...preimageStatus
-        }
-    }
-    else if(storage.isV9320) {
-        if(preimageStatus && preimageStatus.len){
-            const storageData = await storage.getAsV9320([hash, preimageStatus.len])
-            if (!storageData) return undefined
-            return {
-                data: storageData,
-                ...preimageStatus
-            }
-        }
-        else {
-            throw new UnknownVersionError(storage.constructor.name)
         }
     }
     else {
@@ -66,22 +54,13 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx)
-    if (preimageStorage.isV9160) {
-        const storageData = await preimageStorage.getAsV9160(hash)
-        if (!storageData) return undefined
-        return {
-            status: storageData.__kind,
-            value: storageData.value,
-            len: undefined
-        }
-    }
-    else if(preimageStorage.isV9320) {
-        const storageData = await preimageStorage.getAsV9320(hash)
+    if (preimageStorage.isV110) {
+        const storageData = await preimageStorage.getAsV110(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.deposit,
-            len: storageData.len
+            len: undefined
         }
     }
     else {

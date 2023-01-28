@@ -14,8 +14,8 @@ async function getChildBountyStorageData(ctx: BlockContext, parentBountyId: numb
     const storage = new ChildBountiesChildBountiesStorage(ctx)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9190) {
-        return await storage.getAsV9190(parentBountyId, index)
+    if (storage.isV110) {
+        return await storage.getAsV110(parentBountyId, index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -40,8 +40,8 @@ async function getChildBountyStorageReasonData(ctx: BlockContext, index: number)
     const storage = new ChildBountiesChildBountyDescriptionsStorage(ctx)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9190) {
-        return await storage.getAsV9190(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV110) {
+        return await storage.getAsV110(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

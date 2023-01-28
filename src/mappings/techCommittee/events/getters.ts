@@ -12,10 +12,8 @@ import { EventContext } from '../../types/contexts'
 
 export function getApprovedData(ctx: EventContext): Uint8Array {
     const event = new TechnicalCommitteeApprovedEvent(ctx)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    if (event.isV110) {
+        return event.asV110.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -23,10 +21,8 @@ export function getApprovedData(ctx: EventContext): Uint8Array {
 
 export function getClosedData(ctx: EventContext): Uint8Array {
     const event = new TechnicalCommitteeClosedEvent(ctx)
-    if (event.isV1050) {
-        return event.asV1050[0]
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    if (event.isV110) {
+        return event.asV110.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -34,10 +30,8 @@ export function getClosedData(ctx: EventContext): Uint8Array {
 
 export function getDissaprovedData(ctx: EventContext): Uint8Array {
     const event = new TechnicalCommitteeDisapprovedEvent(ctx)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    if (event.isV110) {
+        return event.asV110.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -45,12 +39,8 @@ export function getDissaprovedData(ctx: EventContext): Uint8Array {
 
 export function getExecutedData(ctx: EventContext): Uint8Array {
     const event = new TechnicalCommitteeExecutedEvent(ctx)
-    if (event.isV1020) {
-        return event.asV1020[0]
-    } else if (event.isV2005) {
-        return event.asV2005[0]
-    } else if (event.isV9111) {
-        return event.asV9111[0]
+    if (event.isV110) {
+        return event.asV110.proposalHash
     } else {
         const data = ctx._chain.decodeEvent(ctx.event)
         assert(Buffer.isBuffer(data.proposalHash))
@@ -67,16 +57,8 @@ export interface ProposedData {
 
 export function getProposedData(ctx: EventContext): ProposedData {
     const event = new TechnicalCommitteeProposedEvent(ctx)
-    if (event.isV1020) {
-        const [proposer, index, hash, threshold] = event.asV1020
-        return {
-            proposer,
-            index,
-            hash,
-            threshold,
-        }
-    } else if (event.isV9130) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV9130
+    if (event.isV110) {
+        const { account, proposalIndex, proposalHash, threshold } = event.asV110
         return {
             proposer: account,
             index: proposalIndex,
@@ -96,15 +78,8 @@ export interface VotedData {
 
 export function getVotedData(ctx: EventContext): VotedData {
     const event = new TechnicalCommitteeVotedEvent(ctx)
-    if (event.isV1020) {
-        const [voter, hash, decision] = event.asV1020
-        return {
-            voter,
-            hash,
-            decision,
-        }
-    } else if (event.isV9130) {
-        const { account, proposalHash, voted } = event.asV9130
+    if (event.isV110) {
+        const { account, proposalHash, voted } = event.asV110
         return {
             voter: account,
             hash: proposalHash,
