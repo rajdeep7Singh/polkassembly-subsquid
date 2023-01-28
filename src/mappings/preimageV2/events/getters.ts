@@ -12,8 +12,8 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: EventContext): PreimageNotedData {
     const event = new PreimageNotedEvent(ctx)
-    if (event.isV9160) {
-        const { hash } = event.asV9160
+    if (event.isV1900) {
+        const { hash } = event.asV1900
         return {
             hash
         }
@@ -28,8 +28,8 @@ export interface PreimageRequestedData {
 
 export function getPreimageRequestedData(ctx: EventContext): PreimageRequestedData {
     const event = new PreimageRequestedEvent(ctx)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV1900) {
+        const {hash} = event.asV1900
         return {
             hash
         }
@@ -44,8 +44,8 @@ export interface PreimageClearedData {
 
 export function getPreimageClearedData(ctx: EventContext): PreimageClearedData {
     const event = new PreimageClearedEvent(ctx)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV1900) {
+        const {hash} = event.asV1900
         return {
             hash
         }

@@ -6,11 +6,12 @@ import { IsNull } from 'typeorm'
 import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
 import { getConvictionVotesCount } from '../../utils/votes'
+import { toHex } from '@subsquid/substrate-processor'
 
 export async function handleDelegate(ctx: CallHandlerContext): Promise<void> {
     if (!(ctx.call as any).success) return
     const { to, lockPeriod, balance, track } = getDelegateData(ctx)
-    const toWallet = ss58codec.encode(to)
+    const toWallet = toHex(to)
     const from = getOriginAccountId(ctx.call.origin)
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
 

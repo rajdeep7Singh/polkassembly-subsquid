@@ -1,3 +1,4 @@
+import { toHex } from '@subsquid/substrate-processor'
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
 import { Any } from 'typeorm'
@@ -821,12 +822,12 @@ export async function createReferendumV2(ctx: EventHandlerContext, data: Referen
         order: { createdAtBlock: 'DESC' },
     })
 
-    const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
+    const subDeposit = {who: toHex(submissionDeposit.who), amount: submissionDeposit.amount}
 
     let decDeposit = undefined
 
     if (decisionDeposit) {
-        decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
+        decDeposit = {who: toHex(decisionDeposit.who), amount: decisionDeposit.amount}
     }
 
     const proposal = new Proposal({

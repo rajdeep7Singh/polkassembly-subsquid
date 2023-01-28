@@ -6,6 +6,7 @@ import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createTreasury } from '../../utils/proposals'
 import { getProposedData } from './getters'
+import { toHex } from '@subsquid/substrate-processor'
 
 export async function handleProposed(ctx: EventHandlerContext) {
     const { index } = getProposedData(ctx)
@@ -20,10 +21,10 @@ export async function handleProposed(ctx: EventHandlerContext) {
 
     await createTreasury(ctx, {
         index,
-        proposer: ss58codec.encode(proposer),
+        proposer: toHex(proposer),
         status: ProposalStatus.Proposed,
         reward: value,
         deposit: bond,
-        payee: ss58codec.encode(beneficiary),
+        payee: toHex(beneficiary),
     })
 }

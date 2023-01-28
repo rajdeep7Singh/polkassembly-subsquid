@@ -5,6 +5,7 @@ import { Parser } from './parser'
 import { Codec } from '@subsquid/scale-codec'
 import config from '../config'
 import { decodeHex } from '@subsquid/util-internal-hex'
+import { toHex } from '@subsquid/substrate-processor'
 
 export const ss58codec = ss58.codec(config.chain.prefix)
 
@@ -42,13 +43,13 @@ export function getOriginAccountId(origin: any) {
             switch (origin.value.__kind) {
                 case 'Signed':
                     try {
-                        return ss58codec.encode(decodeHex(origin.value.value))
+                        return toHex(decodeHex(origin.value.value))
                     }
                     catch (e) {
                         console.log('Unexpected error continuing to next try block', JSON.stringify(e)); 
                     }
                     try {
-                        return ss58codec.encode(decodeHex(origin.value.value.value))
+                        return toHex(decodeHex(origin.value.value.value))
                     }
                     catch(e){
                         return undefined
@@ -63,5 +64,5 @@ export function getOriginAccountId(origin: any) {
 }
 
 export function encodeId(id: string | Uint8Array) {
-    return ss58codec.encode(typeof id === 'string' ? decodeHex(id) : id)
+    return toHex(typeof id === 'string' ? decodeHex(id) : id)
 }

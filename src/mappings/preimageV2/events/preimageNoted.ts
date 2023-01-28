@@ -7,7 +7,7 @@ import { PreimagePreimageForStorage, PreimageStatusForStorage } from '../../../t
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec, parseProposalCall } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v9111'
+import { Call } from '../../../types/v1502'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 
@@ -29,10 +29,8 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
     const storage = new PreimagePreimageForStorage(ctx)
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash)
 
-    console.log('storagev', storage.isExists)
-
-    if (storage.isV9160) {
-        const storageData = await storage.getAsV9160(hash)
+    if (storage.isV1900) {
+        const storageData = await storage.getAsV1900(hash)
         if (!storageData) return undefined
 
         return {
@@ -40,9 +38,9 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
             ...preimageStatus
         }
     }
-    else if(storage.isV9320) {
+    else if(storage.isV2000) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await storage.getAsV9320([hash, preimageStatus.len])
+            const storageData = await storage.getAsV2000([hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -66,8 +64,8 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx)
-    if (preimageStorage.isV9160) {
-        const storageData = await preimageStorage.getAsV9160(hash)
+    if (preimageStorage.isV1900) {
+        const storageData = await preimageStorage.getAsV1900(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -75,8 +73,8 @@ export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array)
             len: undefined
         }
     }
-    else if(preimageStorage.isV9320) {
-        const storageData = await preimageStorage.getAsV9320(hash)
+    else if(preimageStorage.isV2000) {
+        const storageData = await preimageStorage.getAsV2000(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -125,7 +123,7 @@ export async function handlePreimageV2Noted(ctx: EventHandlerContext) {
 
     const value = storageData.value as [Uint8Array, bigint]
 
-    const proposer =  storageData.value ? ss58codec.encode(value[0] as Uint8Array) : undefined
+    const proposer =  storageData.value ? toHex(value[0] as Uint8Array) : undefined
     const deposit = storageData.value ? value[1] : undefined
 
     await createPreimageV2(ctx, {

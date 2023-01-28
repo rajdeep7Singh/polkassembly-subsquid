@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'moonbase',
+        prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: lookupArchive("moonbase", {release: "FireSquid"}),
+        chain: 'wss://wss.api.moonbase.moonbeam.network',
     },
-    typesBundle: 'kusama',
+    typesBundle: 'moonbase',
     batchSize: 500,
     blockRange: {
         from: 0,

@@ -31,8 +31,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
     const event = new ConvictionVotingVoteCall(ctx)
-    if (event.isV9320) {
-        const { pollIndex, vote } = event.asV9320
+    if (event.isV1900) {
+        const { pollIndex, vote } = event.asV1900
         if(vote.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -53,41 +53,7 @@ export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
                 },
             }
         }
-    }
-    else if(event.isV9340){
-        const { pollIndex, vote } = event.asV9340
-        if (vote.__kind === 'Standard') {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Standard',
-                    balance: vote.balance,
-                    value: vote.vote
-                },
-            }
-        }
-        else if (vote.__kind === 'Split') {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Split',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                },
-            }
-        }
-        else{
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'SplitAbstain',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                    abstain: vote.abstain,
-                },
-            }
-        }
-    }  
+    } 
     else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -103,12 +69,12 @@ export interface ConvictionVoteDelegateCallData {
 export function getDelegateData(ctx: CallContext): ConvictionVoteDelegateCallData {
     const event = new ConvictionVotingDelegateCall(ctx)
    
-    if (event.isV9320) {
+    if (event.isV1900) {
         //{ class, to, conviction, balance}
-        const eventData = event.asV9320
+        const eventData = event.asV1900
         return {
             track: eventData.class,
-            to: eventData.to.value,
+            to: eventData.to,
             lockPeriod:convictionToLockPeriod(eventData.conviction.__kind),
             balance: eventData.balance
         }
@@ -123,8 +89,8 @@ export interface ConvictionVoteUndelegateCallData {
 export function getUndelegateData(ctx: CallContext): ConvictionVoteUndelegateCallData {
     const event = new ConvictionVotingUndelegateCall(ctx)
    
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV1900) {
+        const eventData = event.asV1900
         return {
             track: eventData.class
         }
@@ -140,8 +106,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: CallContext): ConvictionVotingRemoveVoteCallData {
     const event = new ConvictionVotingRemoveVoteCall(ctx)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV1900) {
+        const eventData = event.asV1900
         return {
             index: eventData.index,
             track: eventData.class
@@ -159,12 +125,12 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 
 export function getRemoveOtherVoteData(ctx: CallContext): ConvictionVotingRemoveOtherVoteCallData {
     const event = new ConvictionVotingRemoveOtherVoteCall(ctx)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV1900) {
+        const eventData = event.asV1900
         return {
             index: eventData.index,
             track: eventData.class,
-            target: eventData.target.value
+            target: eventData.target
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)

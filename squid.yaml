@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name: harvester
-version: 3
+name: polkassembly-moonbase
+version: 1
 description: |-
-  Kusama's governance proposals
+  Moonbase's governance proposals
 
 build:
 

@@ -6,6 +6,7 @@ import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { CallHandlerContext } from '../../types/contexts'
+import { toHex } from '@subsquid/substrate-processor'
 
 export async function handleRemoveOtherVote(ctx: CallHandlerContext): Promise<void> {
     if (!(ctx.call as any).success) return
@@ -22,7 +23,7 @@ export async function handleRemoveOtherVote(ctx: CallHandlerContext): Promise<vo
     if (!target){
         return
     } 
-    const wallet = ss58codec.encode(target)
+    const wallet = toHex(target)
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
     if (votes.length > 1) {
         ctx.log.warn(TooManyOpenVotes(ctx.block.height, index, wallet))

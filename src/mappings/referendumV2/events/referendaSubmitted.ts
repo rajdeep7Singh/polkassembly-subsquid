@@ -7,7 +7,6 @@ import { getEventData } from './getters'
 import { ReferendaReferendumInfoForStorage } from "../../../types/storage";
 import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
-import { OriginCaller } from '../../../types/v9320'
 
 interface ReferendumInfo {
     index: number
@@ -26,8 +25,8 @@ interface ReferendumInfo {
 export async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumInfo | undefined> {
     const storage = new ReferendaReferendumInfoForStorage(ctx)
 
-    if (storage.isV9320) {
-        const storageData = await storage.getAsV9320(index)
+    if (storage.isV1900) {
+        const storageData = await storage.getAsV1900(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -51,8 +50,34 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
                 tally: storageData.value.tally
             }
         }
-    }else if(storage.isV9350){
-        const storageData = await storage.getAsV9350(index)
+    }else if(storage.isV2000){
+        const storageData = await storage.getAsV2000(index)
+        if (!storageData) return undefined
+        if(storageData.__kind === 'Ongoing') {
+            let enactmentAt = undefined
+            let enactmentAfter = undefined;
+            if(storageData.value.enactment.__kind === 'At') {
+                enactmentAt = storageData.value.enactment.value
+            }
+            else if(storageData.value.enactment.__kind === 'After') {
+                enactmentAfter = storageData.value.enactment.value
+            }
+            return {
+                index,
+                trackNumber: storageData.value.track,
+                origin: storageData.value.origin.value.__kind,
+                enactmentAt: enactmentAt,
+                enactmentAfter: enactmentAfter,
+                submittedAt: storageData.value.submitted,
+                submissionDeposit: storageData.value.submissionDeposit,
+                decisionDeposit: storageData.value.decisionDeposit,
+                deciding: storageData.value.deciding,
+                tally: storageData.value.tally
+            }
+        }
+
+    }else if(storage.isV2100){
+        const storageData = await storage.getAsV2100(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -99,7 +124,7 @@ export async function handleSubmitted(ctx: EventHandlerContext) {
         index,
         status: ProposalStatus.Submitted,
         hash: hexHash,
-        proposer: ss58codec.encode(storageData.submissionDeposit.who),
+        proposer: toHex(storageData.submissionDeposit.who),
         submissionDeposit: storageData.submissionDeposit,
         decisionDeposit: storageData.decisionDeposit,
         deciding: storageData.deciding,
