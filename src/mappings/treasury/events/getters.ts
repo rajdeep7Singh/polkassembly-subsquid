@@ -8,7 +8,7 @@ interface ProposedData {
 
 export function getProposedData(ctx: EventContext): ProposedData {
     const event = new TreasuryProposedEvent(ctx)
-    if (event.asV47) {
+    if (event.isV47) {
         const index = event.asV47
         return {
             index,

@@ -29,6 +29,23 @@ export function getEventData(ctx: EventContext): ReferendumEventData {
             track,
             hash: proposalHash
         }
+    }else if (event.isV2000) {
+        const {index, track, proposal } = event.asV2000
+        let proposalHash = undefined;
+        if(proposal.__kind == 'Legacy'){
+            proposalHash = proposal.hash
+        }
+        else if(proposal.__kind == 'Inline'){
+            proposalHash = proposal.value
+        }
+        else{
+            proposalHash = proposal.hash
+        }
+        return {
+            index,
+            track,
+            hash: proposalHash
+        }
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -182,7 +199,25 @@ export function getDecisionStartedData(ctx: EventContext): ReferendaDecisionStar
             tally,
             hash: proposalHash
         }
-    } else {
+    }else if (event.isV2000) {
+        let proposalHash = undefined;
+        const { index, track, proposal, tally} = event.asV2000
+        if(proposal.__kind == 'Legacy'){
+            proposalHash = proposal.hash
+        }
+        else if(proposal.__kind == 'Inline'){
+            proposalHash = proposal.value
+        }
+        else{
+            proposalHash = proposal.hash
+        }
+        return {
+            index,
+            track,
+            tally,
+            hash: proposalHash
+        }
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
