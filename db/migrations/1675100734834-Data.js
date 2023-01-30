@@ -1,8 +1,8 @@
-module.exports = class Data1674551607661 {
-  name = 'Data1674551607661'
+module.exports = class Data1675100734834 {
+  name = 'Data1675100734834'
 
   async up(db) {
-    await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "proposed_call" jsonb, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "proposed_call" jsonb, "length" integer, "deposit" numeric, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_c6e9bc6f69c924e85a44174d35" ON "preimage" ("hash") `)
     await db.query(`CREATE INDEX "IDX_8961b767f111466724025930b0" ON "preimage" ("created_at_block") `)
     await db.query(`CREATE INDEX "IDX_146c48e4f4bf54acb708686897" ON "preimage" ("created_at") `)
@@ -17,10 +17,6 @@ module.exports = class Data1674551607661 {
     await db.query(`CREATE INDEX "IDX_d40fe23017f305946e4137a0ca" ON "conviction_vote" ("removed_at_block") `)
     await db.query(`CREATE INDEX "IDX_7ebef7a70a6079540e6fcd27ba" ON "conviction_vote" ("created_at") `)
     await db.query(`CREATE INDEX "IDX_1287f72c099fd073dbf2eb1e5a" ON "conviction_vote" ("removed_at") `)
-    await db.query(`CREATE TABLE "preimage_v2" ("id" character varying NOT NULL, "proposer" text NOT NULL, "deposit" numeric, "hash" text NOT NULL, "proposed_call" jsonb, "section" text, "status" character varying(21) NOT NULL, "method" text, "length" integer NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_daba661a07b099878fb64cc36c0" PRIMARY KEY ("id"))`)
-    await db.query(`CREATE INDEX "IDX_4812f27e1600eb6946815b57e9" ON "preimage_v2" ("proposer") `)
-    await db.query(`CREATE INDEX "IDX_dbdd11f7a3997d04330d1136d9" ON "preimage_v2" ("created_at_block") `)
-    await db.query(`CREATE INDEX "IDX_9437cabaf63ca23dc48c320788" ON "preimage_v2" ("created_at") `)
     await db.query(`CREATE TABLE "status_history" ("id" character varying NOT NULL, "status" character varying(21) NOT NULL, "block" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "proposal_id" character varying, CONSTRAINT "PK_271a5228edb4eeb41bc01d58fac" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_6ecfec106cbaabdc5ac1bb4fbf" ON "status_history" ("proposal_id") `)
     await db.query(`CREATE TABLE "proposal_group" ("id" character varying NOT NULL, "treasury_index" integer, "bounty_index" integer, "tip_hash" text, "council_motion_index" integer, "democracy_proposal_index" integer, "referendum_index" integer, "tech_committee_proposal_index" integer, CONSTRAINT "PK_a55a5b4a31bbfc52ae411bdc438" PRIMARY KEY ("id"))`)
@@ -31,12 +27,11 @@ module.exports = class Data1674551607661 {
     await db.query(`CREATE INDEX "IDX_3f1ba701fccaf5b13ced74cd16" ON "proposal_group" ("democracy_proposal_index") `)
     await db.query(`CREATE INDEX "IDX_3a114e3ca12714d11774e1e2f6" ON "proposal_group" ("referendum_index") `)
     await db.query(`CREATE INDEX "IDX_f4d34c395f41cff06ca4cdaf87" ON "proposal_group" ("tech_committee_proposal_index") `)
-    await db.query(`CREATE TABLE "proposal" ("id" character varying NOT NULL, "type" character varying(21) NOT NULL, "hash" text, "index" integer, "proposer" text, "deposit" numeric, "threshold" jsonb, "end" integer, "delay" integer, "curator" text, "payee" text, "reward" numeric, "fee" numeric, "bond" numeric, "curator_deposit" numeric, "description" text, "parent_bounty_index" integer, "proposal_arguments" jsonb, "proposal_argument_hash" text, "status" character varying(21) NOT NULL, "track_number" integer, "origin" text, "enactment_at_block" integer, "enactment_after_block" integer, "submitted_at_block" integer, "submission_deposit" jsonb, "decision_deposit" jsonb, "deciding" jsonb, "tally" jsonb, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "ended_at_block" integer, "ended_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, "preimage_id" character varying, "preimage_v2_id" character varying, "group_id" character varying, CONSTRAINT "PK_ca872ecfe4fef5720d2d39e4275" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "proposal" ("id" character varying NOT NULL, "type" character varying(21) NOT NULL, "hash" text, "index" integer, "proposer" text, "deposit" numeric, "threshold" jsonb, "end" integer, "delay" integer, "curator" text, "payee" text, "reward" numeric, "fee" numeric, "bond" numeric, "curator_deposit" numeric, "description" text, "parent_bounty_index" integer, "proposal_arguments" jsonb, "proposal_argument_hash" text, "status" character varying(21) NOT NULL, "track_number" integer, "origin" text, "enactment_at_block" integer, "enactment_after_block" integer, "submitted_at_block" integer, "submission_deposit" jsonb, "decision_deposit" jsonb, "deciding" jsonb, "tally" jsonb, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "ended_at_block" integer, "ended_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, "preimage_id" character varying, "group_id" character varying, CONSTRAINT "PK_ca872ecfe4fef5720d2d39e4275" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_788a2da76636d59b8803d21968" ON "proposal" ("type") `)
     await db.query(`CREATE INDEX "IDX_8a5d128863df341f83f7ae4974" ON "proposal" ("hash") `)
     await db.query(`CREATE INDEX "IDX_081891a0598db72dd59758cfae" ON "proposal" ("index") `)
     await db.query(`CREATE INDEX "IDX_73ae2cd51401d164204182bd69" ON "proposal" ("preimage_id") `)
-    await db.query(`CREATE INDEX "IDX_ce4a7a6a411ac7397e2055e335" ON "proposal" ("preimage_v2_id") `)
     await db.query(`CREATE INDEX "IDX_a55a5b4a31bbfc52ae411bdc43" ON "proposal" ("group_id") `)
     await db.query(`CREATE INDEX "IDX_f165403894de704708157f7cdb" ON "proposal" ("created_at_block") `)
     await db.query(`CREATE INDEX "IDX_92d4592195fbffd27d2079c0d5" ON "proposal" ("created_at") `)
@@ -55,7 +50,6 @@ module.exports = class Data1674551607661 {
     await db.query(`ALTER TABLE "conviction_vote" ADD CONSTRAINT "FK_410db8207bfa4aec346ca941e47" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     await db.query(`ALTER TABLE "status_history" ADD CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_73ae2cd51401d164204182bd690" FOREIGN KEY ("preimage_id") REFERENCES "preimage"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
-    await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_ce4a7a6a411ac7397e2055e3352" FOREIGN KEY ("preimage_v2_id") REFERENCES "preimage_v2"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438" FOREIGN KEY ("group_id") REFERENCES "proposal_group"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     await db.query(`ALTER TABLE "tippers" ADD CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
   }
@@ -76,10 +70,6 @@ module.exports = class Data1674551607661 {
     await db.query(`DROP INDEX "public"."IDX_d40fe23017f305946e4137a0ca"`)
     await db.query(`DROP INDEX "public"."IDX_7ebef7a70a6079540e6fcd27ba"`)
     await db.query(`DROP INDEX "public"."IDX_1287f72c099fd073dbf2eb1e5a"`)
-    await db.query(`DROP TABLE "preimage_v2"`)
-    await db.query(`DROP INDEX "public"."IDX_4812f27e1600eb6946815b57e9"`)
-    await db.query(`DROP INDEX "public"."IDX_dbdd11f7a3997d04330d1136d9"`)
-    await db.query(`DROP INDEX "public"."IDX_9437cabaf63ca23dc48c320788"`)
     await db.query(`DROP TABLE "status_history"`)
     await db.query(`DROP INDEX "public"."IDX_6ecfec106cbaabdc5ac1bb4fbf"`)
     await db.query(`DROP TABLE "proposal_group"`)
@@ -95,7 +85,6 @@ module.exports = class Data1674551607661 {
     await db.query(`DROP INDEX "public"."IDX_8a5d128863df341f83f7ae4974"`)
     await db.query(`DROP INDEX "public"."IDX_081891a0598db72dd59758cfae"`)
     await db.query(`DROP INDEX "public"."IDX_73ae2cd51401d164204182bd69"`)
-    await db.query(`DROP INDEX "public"."IDX_ce4a7a6a411ac7397e2055e335"`)
     await db.query(`DROP INDEX "public"."IDX_a55a5b4a31bbfc52ae411bdc43"`)
     await db.query(`DROP INDEX "public"."IDX_f165403894de704708157f7cdb"`)
     await db.query(`DROP INDEX "public"."IDX_92d4592195fbffd27d2079c0d5"`)
@@ -114,7 +103,6 @@ module.exports = class Data1674551607661 {
     await db.query(`ALTER TABLE "conviction_vote" DROP CONSTRAINT "FK_410db8207bfa4aec346ca941e47"`)
     await db.query(`ALTER TABLE "status_history" DROP CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4"`)
     await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_73ae2cd51401d164204182bd690"`)
-    await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_ce4a7a6a411ac7397e2055e3352"`)
     await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438"`)
     await db.query(`ALTER TABLE "tippers" DROP CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b"`)
   }

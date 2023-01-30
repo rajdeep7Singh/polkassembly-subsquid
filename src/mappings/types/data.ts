@@ -90,15 +90,6 @@ export interface TreasuryData extends BaseProposalData {
 
 export interface PreimageData extends BaseProposalData {
     hash: string
-    proposer: string
-    deposit: bigint
-    call?: ProposedCallData
-    section?: string
-    method?: string
-}
-
-export interface PreimageDataV2 extends BaseProposalData {
-    hash: string
     proposer?: string
     deposit?: bigint
     call?: ProposedCallData
@@ -106,6 +97,16 @@ export interface PreimageDataV2 extends BaseProposalData {
     method?: string
     length?: number
 }
+
+// export interface PreimageDataV2 extends BaseProposalData {
+//     hash: string
+//     proposer?: string
+//     deposit?: bigint
+//     call?: ProposedCallData
+//     section?: string
+//     method?: string
+//     length?: number
+// }
 
 export interface ReferendumDataV2 extends BaseProposalData {
     index: number

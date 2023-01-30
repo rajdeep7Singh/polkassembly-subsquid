@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
-name: harvester
-version: 3
+name: polkassembly-kusama
+version: 1
 description: |-
   Kusama's governance proposals
 
@@ -13,3 +13,14 @@ deploy:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server" ]
+
+scale:
+  addons:
+     postgres:
+         storage: 50G
+         profile: medium
+  processor:
+     profile: medium
+  api:
+     profile: large
+     replicas: 3
