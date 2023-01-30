@@ -133,7 +133,7 @@ export async function handlePreimageV2Noted(ctx: EventHandlerContext) {
         call: decodedCall,
         section: decodedCall?.section,
         method: decodedCall?.method,
-        status: ProposalStatus.Unrequested,
+        status: ProposalStatus.Noted,
         length: storageData.len,
     })
 }

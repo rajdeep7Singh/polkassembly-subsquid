@@ -815,7 +815,7 @@ export async function createReferendumV2(ctx: EventHandlerContext, data: Referen
     const preimage = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
-            status: ProposalStatus.Unrequested,
+            status: ProposalStatus.Noted,
         },
         order: { createdAtBlock: 'DESC' },
     })
