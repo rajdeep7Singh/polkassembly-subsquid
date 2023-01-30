@@ -7,7 +7,6 @@ import { ss58codec } from '../../common/tools'
 import {
     MotionThreshold,
     Preimage,
-    PreimageV2,
     Proposal,
     ProposalStatus,
     ProposalType,
@@ -31,7 +30,6 @@ import {
     HashProposal,
     IndexProposal,
     PreimageData,
-    PreimageDataV2,
     ProposedCallData,
     ReferendumData,
     ReferendumDataV2,
@@ -84,10 +82,10 @@ export async function updatePreimageStatusV2(
         data?: ProposalUpdateData
     }
 ) {
-    const proposal = await ctx.store.get(PreimageV2, { where: { hash: hash } })
+    const proposal = await ctx.store.get(Preimage, { where: { hash: hash } , order: { createdAtBlock: 'DESC' }})
 
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn('PreimageV2', `with hash ${hash} not found`,))
+        ctx.log.warn(MissingProposalRecordWarn('Preimage', `with hash ${hash} not found`,))
         return
     }
 
@@ -303,11 +301,11 @@ async function getPreimageId(store: Store) {
     return count.toString().padStart(8, '0')
 }
 
-async function getPreimageIdV2(store: Store) {
-    const count = await store.count(PreimageV2)
+// async function getPreimageIdV2(store: Store) {
+//     const count = await store.count(PreimageV2)
 
-    return count.toString().padStart(8, '0')
-}
+//     return count.toString().padStart(8, '0')
+// }
 
 export async function createDemocracyProposal(
     ctx: EventHandlerContext,
@@ -779,16 +777,16 @@ export async function createPreimage(ctx: EventHandlerContext, data: PreimageDat
     return preimage
 }
 
-export async function createPreimageV2(ctx: EventHandlerContext, data: PreimageDataV2): Promise<PreimageV2> {
+export async function createPreimageV2(ctx: EventHandlerContext, data: PreimageData): Promise<Preimage> {
     const { status, hash, proposer, call, section, method, deposit, length } = data
 
     // const type = ProposalType.Preimage
 
-    const id = await getPreimageIdV2(ctx.store)
+    const id = await getPreimageId(ctx.store)
 
     // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
 
-    const preimage = new PreimageV2({
+    const preimage = new Preimage({
         id,
         hash,
         proposer,
@@ -814,7 +812,7 @@ export async function createReferendumV2(ctx: EventHandlerContext, data: Referen
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(PreimageV2, {
+    const preimage = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
             status: ProposalStatus.Unrequested,
@@ -836,7 +834,7 @@ export async function createReferendumV2(ctx: EventHandlerContext, data: Referen
         type,
         hash,
         trackNumber,
-        preimageV2: preimage,
+        preimage: preimage,
         status,
         proposer,
         tally: tally ? createTally(tally) : undefined,

@@ -6,7 +6,6 @@ import {ProposedCall} from "./_proposedCall"
 import {Vote} from "./vote.model"
 import {ConvictionVote} from "./convictionVote.model"
 import {Preimage} from "./preimage.model"
-import {PreimageV2} from "./preimageV2.model"
 import {ProposalStatus} from "./_proposalStatus"
 import {StatusHistory} from "./statusHistory.model"
 import {SubmissionDeposit} from "./_submissionDeposit"
@@ -90,10 +89,6 @@ export class Proposal {
   @Index_()
   @ManyToOne_(() => Preimage, {nullable: true})
   preimage!: Preimage | undefined | null
-
-  @Index_()
-  @ManyToOne_(() => PreimageV2, {nullable: true})
-  preimageV2!: PreimageV2 | undefined | null
 
   @Column_("varchar", {length: 21, nullable: false})
   status!: ProposalStatus

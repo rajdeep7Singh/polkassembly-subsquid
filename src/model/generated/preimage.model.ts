@@ -22,6 +22,12 @@ export class Preimage {
   @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
   proposedCall!: ProposedCall | undefined | null
 
+  @Column_("int4", {nullable: true})
+  length!: number | undefined | null
+
+  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+  deposit!: bigint | undefined | null
+
   @Column_("text", {nullable: true})
   section!: string | undefined | null
 
