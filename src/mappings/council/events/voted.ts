@@ -5,6 +5,7 @@ import { ss58codec } from '../../../common/tools'
 import { Proposal, ProposalType, Vote, VoteDecision, VoteType } from '../../../model'
 import { getVotesCount } from '../../utils/votes'
 import { getVotedData } from './getters'
+import { randomUUID } from 'crypto'
 
 export async function handleVoted(
     ctx: EventHandlerContext<{
@@ -29,7 +30,7 @@ export async function handleVoted(
 
     await ctx.store.insert(
         new Vote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
+            id: randomUUID(),
             voter: ss58codec.encode(voter),
             blockNumber: ctx.block.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,

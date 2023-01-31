@@ -17,6 +17,7 @@ import { getVoteData } from './getters'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
+import { randomUUID } from 'crypto'
 
 export async function handleConvictionVote(ctx: CallHandlerContext) {
     if (!ctx.call.success) return
@@ -91,7 +92,7 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
 
     await ctx.store.insert(
         new ConvictionVote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
+            id: randomUUID(),
             voter: ctx.call.origin ? getOriginAccountId(ctx.call.origin) : null,
             createdAtBlock: ctx.block.height,
             proposalIndex: index,

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { ss58codec } from '../../../common/tools'
 import { Proposal, ProposalType, StandardVoteBalance, Vote, VoteType } from '../../../model'
@@ -18,7 +19,7 @@ export async function handleFellowshipVotes(ctx: EventHandlerContext) {
 
     await ctx.store.insert(
         new Vote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
+            id: randomUUID(),
             voter: ss58codec.encode(accountId),
             blockNumber: ctx.block.height,
             decision: decision,

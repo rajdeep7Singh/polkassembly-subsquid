@@ -6,6 +6,7 @@ import { IsNull } from 'typeorm'
 import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
 import { getConvictionVotesCount } from '../../utils/votes'
+import { randomUUID } from 'crypto'
 
 export async function handleDelegate(ctx: CallHandlerContext): Promise<void> {
     if (!(ctx.call as any).success) return
@@ -73,7 +74,7 @@ export async function handleDelegate(ctx: CallHandlerContext): Promise<void> {
         console.log('count', count)
         await ctx.store.insert(
             new ConvictionVote({
-                id: `${referendum.id}-${count.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 proposalIndex: referendum.index,
                 voter,
                 createdAtBlock: ctx.block.height,

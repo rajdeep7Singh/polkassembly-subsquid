@@ -1,4 +1,5 @@
 import { SubstrateBlock } from '@subsquid/substrate-processor'
+import { randomUUID } from 'crypto'
 import { IsNull } from 'typeorm'
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { ConvictionVote, Proposal, ProposalType, StandardVoteBalance, VoteType, VotingDelegation } from '../../../model'
@@ -31,7 +32,7 @@ export async function addDelegatedVotesReferendumV2(ctx: CallHandlerContext, toW
         })
         await ctx.store.insert(
             new ConvictionVote({
-                id: `${referendum.id}-${count.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 proposalIndex: referendum.index,
                 voter: delegation.from,
                 createdAtBlock: block,
@@ -145,7 +146,7 @@ export async function addDelegatedVotesReferendum(ctx: CallHandlerContext, toWal
         })
         await ctx.store.insert(
             new ConvictionVote({
-                id: `${referendum.id}-${count.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 proposalIndex: referendum.index,
                 voter: delegation.from,
                 createdAtBlock: block,
