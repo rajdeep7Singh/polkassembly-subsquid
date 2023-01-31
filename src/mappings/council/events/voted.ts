@@ -5,16 +5,16 @@ import { ss58codec } from '../../../common/tools'
 import { Proposal, ProposalType, Vote, VoteDecision, VoteType } from '../../../model'
 import { getVotesCount } from '../../utils/votes'
 import { getVotedData } from './getters'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
+import { randomUUID } from 'crypto'
 
-export async function handleVoted(
-    ctx: EventHandlerContext<{
-        event: {
-            name: true
-            args: true
-        }
-    }>
-) {
-    const { voter, hash, decision } = getVotedData(ctx)
+
+export async function handleVoted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Council.Voted', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { voter, hash, decision } = getVotedData(ctx, item.event)
 
     const hexHash = toHex(hash)
     const proposal = await ctx.store.get(Proposal, {
@@ -29,12 +29,12 @@ export async function handleVoted(
 
     await ctx.store.insert(
         new Vote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
+            id: randomUUID(),
             voter: ss58codec.encode(voter),
-            blockNumber: ctx.block.height,
+            blockNumber: header.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
             proposal,
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(header.timestamp),
             type: VoteType.Motion,
         })
     )

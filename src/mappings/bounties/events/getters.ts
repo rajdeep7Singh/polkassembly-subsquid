@@ -9,14 +9,17 @@ import {
     BountiesBountyRejectedEvent
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
+import { Event } from '../../../types/support'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface BountyAwardedData {
     index: number
     beneficiary: Uint8Array
 }
 
-export function getBountyAwardedData(ctx: EventContext): BountyAwardedData {
-    const event = new BountiesBountyAwardedEvent(ctx)
+export function getBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
+    const event = new BountiesBountyAwardedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index, beneficiary } = event.asV110
         return {
@@ -32,8 +35,8 @@ interface BountyBacameActiveData {
     index: number
 }
 
-export function getBountyBacameActiveData(ctx: EventContext): BountyBacameActiveData {
-    const event = new BountiesBountyBecameActiveEvent(ctx)
+export function getBountyBacameActiveData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
+    const event = new BountiesBountyBecameActiveEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index } = event.asV110
         return {
@@ -48,8 +51,8 @@ interface BountyCanceledData {
     index: number
 }
 
-export function getBountyCanceledData(ctx: EventContext): BountyCanceledData {
-    const event = new BountiesBountyCanceledEvent(ctx)
+export function getBountyCanceledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
+    const event = new BountiesBountyCanceledEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index } = event.asV110
         return {
@@ -67,8 +70,8 @@ interface BountyClaimedData {
 }
 
 
-export function getBountyClaimedData(ctx: EventContext): BountyClaimedData {
-    const event = new BountiesBountyClaimedEvent(ctx)
+export function getBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
+    const event = new BountiesBountyClaimedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index, payout, beneficiary } = event.asV110
         return {
@@ -85,8 +88,8 @@ interface BountyExtendedData {
     index: number
 }
 
-export function getBountyExtendedData(ctx: EventContext): BountyExtendedData {
-    const event = new BountiesBountyExtendedEvent(ctx)
+export function getBountyExtendedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
+    const event = new BountiesBountyExtendedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index } = event.asV110
         return {
@@ -101,8 +104,8 @@ interface BountyProposedData {
     index: number
 }
 
-export function getBountyProposedData(ctx: EventContext): BountyProposedData {
-    const event = new BountiesBountyProposedEvent(ctx)
+export function getBountyProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
+    const event = new BountiesBountyProposedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index } = event.asV110
         return {
@@ -117,8 +120,8 @@ interface BountyRejectedData {
     index: number
 }
 
-export function getBountyRejectedData(ctx: EventContext): BountyRejectedData {
-    const event = new BountiesBountyRejectedEvent(ctx)
+export function getBountyRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
+    const event = new BountiesBountyRejectedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { index } = event.asV110
         return {

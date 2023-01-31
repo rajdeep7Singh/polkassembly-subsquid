@@ -13,6 +13,9 @@ import { UnknownVersionError } from '../../../common/errors'
 import { EventContext } from '../../../types/support'
 import { TallyData } from '../../types/data'
 import { VoteDecision } from '../../../model'
+import { Event } from '../../../types/support'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ReferendumEventData {
     index: number
@@ -21,8 +24,8 @@ interface ReferendumEventData {
 }
 
 
-export function getEventData(ctx: EventContext): ReferendumEventData {
-    const event = new FellowshipReferendaSubmittedEvent(ctx)
+export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
+    const event = new FellowshipReferendaSubmittedEvent(ctx, itemEvent)
     if (event.isV121) {
         const {index, track, proposal } = event.asV121
         let hash = null;
@@ -47,8 +50,8 @@ export interface ReferendaData {
     index: number,
 }
 
-export function getCancelledData(ctx: EventContext): ReferendaData {
-    const event = new FellowshipReferendaCancelledEvent(ctx)
+export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
+    const event = new FellowshipReferendaCancelledEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index, tally } = event.asV121
         return {
@@ -64,8 +67,8 @@ export interface ReferendaIndexData {
     index: number
 }
 
-export function getApprovedData(ctx: EventContext): ReferendaIndexData {
-    const event = new FellowshipReferendaApprovedEvent(ctx)
+export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
+    const event = new FellowshipReferendaApprovedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index } = event.asV121
         return {
@@ -76,8 +79,8 @@ export function getApprovedData(ctx: EventContext): ReferendaIndexData {
     }
 }
 
-export function getKilledData(ctx: EventContext): ReferendaData {
-    const event = new FellowshipReferendaKilledEvent(ctx)
+export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
+    const event = new FellowshipReferendaKilledEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index, tally } = event.asV121
         return {
@@ -89,8 +92,8 @@ export function getKilledData(ctx: EventContext): ReferendaData {
     }
 }
 
-export function getTimedOutData(ctx: EventContext): ReferendaIndexData {
-    const event = new FellowshipReferendaTimedOutEvent(ctx)
+export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
+    const event = new FellowshipReferendaTimedOutEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index } = event.asV121
         return {
@@ -101,8 +104,8 @@ export function getTimedOutData(ctx: EventContext): ReferendaIndexData {
     }
 }
 
-export function getRejectedData(ctx: EventContext): ReferendaData {
-    const event = new FellowshipReferendaRejectedEvent(ctx)
+export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
+    const event = new FellowshipReferendaRejectedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index, tally } = event.asV121
         return {
@@ -114,8 +117,8 @@ export function getRejectedData(ctx: EventContext): ReferendaData {
     }
 }
 
-export function getConfirmAbortedData(ctx: EventContext): ReferendaIndexData {
-    const event = new FellowshipReferendaConfirmAbortedEvent(ctx)
+export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
+    const event = new FellowshipReferendaConfirmAbortedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index } = event.asV121
         return {
@@ -126,8 +129,8 @@ export function getConfirmAbortedData(ctx: EventContext): ReferendaIndexData {
     }
 }
 
-export function getConfirmedData(ctx: EventContext): ReferendaData {
-    const event = new FellowshipReferendaConfirmedEvent(ctx)
+export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
+    const event = new FellowshipReferendaConfirmedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index, tally } = event.asV121
         return {
@@ -139,8 +142,8 @@ export function getConfirmedData(ctx: EventContext): ReferendaData {
     }
 }
 
-export function getConfirmStartedData(ctx: EventContext): ReferendaIndexData {
-    const event = new FellowshipReferendaConfirmStartedEvent(ctx)
+export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
+    const event = new FellowshipReferendaConfirmStartedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index } = event.asV121
         return {
@@ -157,8 +160,8 @@ export interface ReferendaDepositData {
     amount: bigint,
 }
 
-export function getDecisionDepositPlacedData(ctx: EventContext): ReferendaDepositData {
-    const event = new FellowshipReferendaDecisionDepositPlacedEvent(ctx)
+export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
+    const event = new FellowshipReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { index, who, amount } = event.asV121
         return {
@@ -178,8 +181,8 @@ export interface ReferendaDecisionStartedData {
     hash: Uint8Array,
 }
 
-export function getDecisionStartedData(ctx: EventContext): ReferendaDecisionStartedData {
-    const event = new FellowshipReferendaDecisionStartedEvent(ctx)
+export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
+    const event = new FellowshipReferendaDecisionStartedEvent(ctx, itemEvent)
     if (event.isV121) {
         let hash = undefined;
         const { index, track, proposal, tally} = event.asV121
@@ -209,8 +212,8 @@ interface FellowshipCollectiveVoteData {
 
 }
 
-export function getFellowshipVoteData(ctx: EventContext): FellowshipCollectiveVoteData {
-    const event = new FellowshipCollectiveVotedEvent(ctx)
+export function getFellowshipVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event): FellowshipCollectiveVoteData {
+    const event = new FellowshipCollectiveVotedEvent(ctx, itemEvent)
     if (event.isV121) {
         const { who, poll, vote, tally  } = event.asV121
         const decision = vote.__kind == "Aye" ? VoteDecision.yes : VoteDecision.no

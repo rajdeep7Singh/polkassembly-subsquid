@@ -7,6 +7,9 @@ import { getEventData } from './getters'
 import { ReferendaReferendumInfoForStorage } from "../../../types/storage";
 import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ReferendumInfo {
     index: number
@@ -22,11 +25,11 @@ interface ReferendumInfo {
 }
 
 
-export async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumInfo | undefined> {
-    const storage = new ReferendaReferendumInfoForStorage(ctx)
+export async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumInfo | undefined> {
+    const storage = new ReferendaReferendumInfoForStorage(ctx, block)
 
     if (storage.isV110) {
-        const storageData = await storage.getAsV110(index)
+        const storageData = await storage.asV110.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -51,7 +54,7 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
             }
         }
     }else if(storage.isV120){
-        const storageData = await storage.getAsV120(index)
+        const storageData = await storage.asV120.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -77,7 +80,34 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
         }
 
     } else if(storage.isV121){
-        const storageData = await storage.getAsV121(index)
+        const storageData = await storage.asV121.get(index)
+        if (!storageData) return undefined
+        if(storageData.__kind === 'Ongoing') {
+            let enactmentAt = undefined
+            let enactmentAfter = undefined;
+            if(storageData.value.enactment.__kind === 'At') {
+                enactmentAt = storageData.value.enactment.value
+            }
+            else if(storageData.value.enactment.__kind === 'After') {
+                enactmentAfter = storageData.value.enactment.value
+            }
+            return {
+                index,
+                trackNumber: storageData.value.track,
+                origin: storageData.value.origin.value.__kind,
+                enactmentAt: enactmentAt,
+                enactmentAfter: enactmentAfter,
+                submittedAt: storageData.value.submitted,
+                submissionDeposit: storageData.value.submissionDeposit,
+                decisionDeposit: storageData.value.decisionDeposit,
+                deciding: storageData.value.deciding,
+                tally: storageData.value.tally
+            }
+        }
+
+    }
+    else if(storage.isV140){
+        const storageData = await storage.asV140.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -109,10 +139,12 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
 }
 
 
-export async function handleSubmitted(ctx: EventHandlerContext) {
-    const { index, hash } = getEventData(ctx)
+export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Referenda.Submitted', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, hash } = getEventData(ctx, item.event)
 
-    const storageData = await getStorageData(ctx, index)
+    const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.ReferendumV2, index))
         return
@@ -120,7 +152,7 @@ export async function handleSubmitted(ctx: EventHandlerContext) {
 
     const hexHash = toHex(hash)
 
-    await createReferendumV2(ctx, {
+    await createReferendumV2(ctx, header, {
         index,
         status: ProposalStatus.Submitted,
         hash: hexHash,

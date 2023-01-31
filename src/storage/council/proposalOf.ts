@@ -1,17 +1,20 @@
 import { CouncilProposalOfStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
 import { Call } from '../../types/v110'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 type CouncilProposalStorageData = Call
 
 async function getCoucilStorageData(
-    ctx: BlockContext,
-    hash: Uint8Array
+    ctx: BatchContext<Store, unknown>,
+    hash: Uint8Array,
+    block: SubstrateBlock
 ): Promise<CouncilProposalStorageData | undefined> {
-    const storage = new CouncilProposalOfStorage(ctx)
+    const storage = new CouncilProposalOfStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    return ctx._chain.getStorage(ctx.block.hash, 'Council', 'ProposalOf', hash)
+    return ctx._chain.getStorage(block.hash, 'Council', 'ProposalOf', hash)
 
     // if (storage.isV9111) {
     //     return (await storage.getAsV9111(hash)) as Call
@@ -32,9 +35,8 @@ async function getCoucilStorageData(
     // }
 }
 
-export async function getProposalOf(
-    ctx: BlockContext,
-    hash: Uint8Array
+export async function getProposalOf
+    (ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
 ): Promise<CouncilProposalStorageData | undefined> {
-    return (await getCoucilStorageData(ctx, hash))
+    return (await getCoucilStorageData(ctx, hash, block))
 }

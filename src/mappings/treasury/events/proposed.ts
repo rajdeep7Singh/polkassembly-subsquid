@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createTreasury } from '../../utils/proposals'
 import { getProposedData } from './getters'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
 
-export async function handleProposed(ctx: EventHandlerContext) {
-    const { index } = getProposedData(ctx)
+export async function handleProposed(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Treasury.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index } = getProposedData(ctx, item.event)
 
-    const storageData = await storage.treasury.getProposals(ctx, index)
+    const storageData = await storage.treasury.getProposals(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.TreasuryProposal, index))
         return
@@ -18,7 +22,7 @@ export async function handleProposed(ctx: EventHandlerContext) {
 
     const { proposer, beneficiary, value, bond } = storageData
 
-    await createTreasury(ctx, {
+    await createTreasury(ctx, header, {
         index,
         proposer: ss58codec.encode(proposer),
         status: ProposalStatus.Proposed,

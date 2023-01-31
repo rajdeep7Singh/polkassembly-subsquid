@@ -8,10 +8,14 @@ import {
     CouncilProposedEvent,
     CouncilVotedEvent,
 } from '../../../types/events'
-import { EventContext } from '../../types/contexts'
+import { Event } from '../../../types/support'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
-export function getApprovedData(ctx: EventContext): Uint8Array {
-    const event = new CouncilApprovedEvent(ctx)
+
+
+export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+    const event = new CouncilApprovedEvent(ctx, itemEvent)
     if (event.isV110) {
         return event.asV110.proposalHash
     } else {
@@ -19,8 +23,8 @@ export function getApprovedData(ctx: EventContext): Uint8Array {
     }
 }
 
-export function getClosedData(ctx: EventContext): Uint8Array {
-    const event = new CouncilClosedEvent(ctx)
+export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+    const event = new CouncilClosedEvent(ctx, itemEvent)
     if (event.isV110) {
         return event.asV110.proposalHash
     } else {
@@ -28,8 +32,8 @@ export function getClosedData(ctx: EventContext): Uint8Array {
     }
 }
 
-export function getDissaprovedData(ctx: EventContext): Uint8Array {
-    const event = new CouncilDisapprovedEvent(ctx)
+export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+    const event = new CouncilDisapprovedEvent(ctx, itemEvent)
     if (event.isV110) {
         return event.asV110.proposalHash
     } else {
@@ -37,12 +41,12 @@ export function getDissaprovedData(ctx: EventContext): Uint8Array {
     }
 }
 
-export function getExecutedData(ctx: EventContext): Uint8Array {
-    const event = new CouncilExecutedEvent(ctx)
+export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+    const event = new CouncilExecutedEvent(ctx, itemEvent)
     if (event.isV110) {
         return event.asV110.proposalHash
     } else {
-        const data = ctx._chain.decodeEvent(ctx.event)
+        const data = ctx._chain.decodeEvent(itemEvent)
         assert(Buffer.isBuffer(data.proposalHash))
         return data.proposalHash
     }
@@ -55,8 +59,8 @@ export interface ProposedData {
     threshold: number
 }
 
-export function getProposedData(ctx: EventContext): ProposedData {
-    const event = new CouncilProposedEvent(ctx)
+export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
+    const event = new CouncilProposedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { account, proposalIndex, proposalHash, threshold } = event.asV110
         return {
@@ -76,8 +80,8 @@ export interface VotedData {
     decision: boolean
 }
 
-export function getVotedData(ctx: EventContext): VotedData {
-    const event = new CouncilVotedEvent(ctx)
+export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
+    const event = new CouncilVotedEvent(ctx, itemEvent)
     if (event.isV110) {
         const { account, proposalHash, voted } = event.asV110
         return {

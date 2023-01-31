@@ -1,118 +1,300 @@
-import { SubstrateProcessor } from '@subsquid/substrate-processor'
+import { lookupArchive } from '@subsquid/archive-registry'
+import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
-import config from './config'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
 
 const db = new TypeormDatabase()
-const processor = new SubstrateProcessor(db)
 
-processor.setTypesBundle(config.typesBundle)
-processor.setBatchSize(config.batchSize || 100)
-processor.setDataSource(config.dataSource)
-processor.setBlockRange({ from: 0})
+const processor = new SubstrateBatchProcessor()
+    .setDataSource({
+        chain: 'wss://archive-rpc.vara-network.io',
+        archive: lookupArchive('vara', { release: 'FireSquid' }),
+    })
+    .setBlockRange({from: 0})
+    .addEvent('Council.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Council.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Council.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Council.Closed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Council.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Council.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Closed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('TechnicalCommittee.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const) 
+    .addEvent('Treasury.BountyRejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyBecameActive', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyAwarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyClaimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyExtended', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyRejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyBecameActive', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyAwarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyClaimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Bounties.BountyExtended', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('ChildBounties.Added', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('ChildBounties.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('ChildBounties.Claimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('ChildBounties.Canceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Preimage.Noted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Preimage.Cleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Preimage.Requested', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    
+    .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Bounties.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Bounties.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ChildBounties.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ChildBounties.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
 
-// processor.addEventHandler('Democracy.Proposed', modules.democracy.events.handleProposed)
-// processor.addEventHandler('Democracy.Tabled', modules.democracy.events.handleTabled)
-// processor.addEventHandler('Democracy.Started', modules.democracy.events.handleStarted)
-// processor.addEventHandler('Democracy.Passed', modules.democracy.events.handlePassed)
-// processor.addEventHandler('Democracy.NotPassed', modules.democracy.events.handleNotPassed)
-// processor.addEventHandler('Democracy.Cancelled', modules.democracy.events.handleCancelled)
-// processor.addEventHandler('Democracy.Executed', modules.democracy.events.handleExecuted)
-// processor.addCallHandler('Democracy.vote', modules.democracy.extrinsics.handleVote)
-
-// processor.addEventHandler('Democracy.PreimageNoted', modules.democracy.events.handlePreimageNoted)
-// processor.addEventHandler('Democracy.PreimageUsed', modules.democracy.events.handlePreimageUsed)
-// processor.addEventHandler('Democracy.PreimageInvalid', modules.democracy.events.handlePreimageInvalid)
-// processor.addEventHandler('Democracy.PreimageMissing', modules.democracy.events.handlePreimageMissing)
-// processor.addEventHandler('Democracy.PreimageReaped', modules.democracy.events.handlePreimageReaped)
-
-processor.addEventHandler('Council.Proposed', modules.council.events.handleProposed)
-processor.addEventHandler('Council.Approved', modules.council.events.handleApproved)
-processor.addEventHandler('Council.Dissaproved', modules.council.events.handleDisapproved)
-processor.addEventHandler('Council.Closed', modules.council.events.handleClosed)
-processor.addEventHandler('Council.Voted', modules.council.events.handleVoted)
-processor.addEventHandler('Council.Executed', modules.council.events.handleExecuted)
-
-processor.addEventHandler('TechnicalCommittee.Proposed', modules.techComittee.events.handleProposed)
-processor.addEventHandler('TechnicalCommittee.Approved', modules.techComittee.events.handleApproved)
-processor.addEventHandler('TechnicalCommittee.Dissaproved', modules.techComittee.events.handleDisapproved)
-processor.addEventHandler('TechnicalCommittee.Closed', modules.techComittee.events.handleClosed)
-processor.addEventHandler('TechnicalCommittee.Voted', modules.techComittee.events.handleVoted)
-processor.addEventHandler('TechnicalCommittee.Executed', modules.techComittee.events.handleExecuted)
-
-processor.addEventHandler('Treasury.Proposed', modules.treasury.events.handleProposed)
-processor.addEventHandler('Treasury.Awarded', modules.treasury.events.handleAwarded)
-processor.addEventHandler('Treasury.Rejected', modules.treasury.events.handleRejected)
-processor.addEventHandler('Treasury.BountyProposed', modules.bounties.events.handleProposed)
-processor.addEventHandler('Treasury.BountyRejected', modules.bounties.events.handleRejected)
-processor.addEventHandler('Treasury.BountyBecameActive', modules.bounties.events.handleBecameActive)
-processor.addEventHandler('Treasury.BountyAwarded', modules.bounties.events.handleAwarded)
-processor.addEventHandler('Treasury.BountyClaimed', modules.bounties.events.handleClaimed)
-processor.addEventHandler('Treasury.BountyCanceled', modules.bounties.events.handleCanceled)
-processor.addEventHandler('Treasury.BountyExtended', modules.bounties.events.handleExtended)
-// processor.addEventHandler('Treasury.NewTip', modules.tips.events.handleNewTip)
-// processor.addEventHandler('Treasury.TipsClosed', modules.tips.events.handleClosed)
-// processor.addEventHandler('Treasury.TipsRetracted', modules.tips.events.handleRetracted)
-// processor.addEventHandler('Treasury.TipsSlashed', modules.tips.events.handleSlashed)
-// processor.addCallHandler('Treasury.accept_curator', modules.bounties.extrinsic.handleAcceptCurator)
-// processor.addCallHandler('Treasury.unassign_curator', modules.bounties.extrinsic.handleUnassignCurator)
-
-// processor.addEventHandler('Tips.NewTip', modules.tips.events.handleNewTip)
-// processor.addEventHandler('Tips.TipClosed', modules.tips.events.handleClosed)
-// processor.addEventHandler('Tips.TipRetracted', modules.tips.events.handleRetracted)
-// processor.addEventHandler('Tips.TipSlashed', modules.tips.events.handleSlashed)
-// processor.addCallHandler('Tips.tip', modules.tips.extrinsics.handleNewTipValue)
-
-processor.addEventHandler('Bounties.BountyProposed', modules.bounties.events.handleProposed)
-processor.addEventHandler('Bounties.BountyRejected', modules.bounties.events.handleRejected)
-processor.addEventHandler('Bounties.BountyBecameActive', modules.bounties.events.handleBecameActive)
-processor.addEventHandler('Bounties.BountyAwarded', modules.bounties.events.handleAwarded)
-processor.addEventHandler('Bounties.BountyClaimed', modules.bounties.events.handleClaimed)
-processor.addEventHandler('Bounties.BountyCanceled', modules.bounties.events.handleCanceled)
-processor.addEventHandler('Bounties.BountyExtended', modules.bounties.events.handleExtended)
-processor.addCallHandler('Bounties.accept_curator', modules.bounties.extrinsic.handleAcceptCurator)
-processor.addCallHandler('Bounties.unassign_curator', modules.bounties.extrinsic.handleUnassignCurator)
-
-processor.addEventHandler('ChildBounties.Added', modules.childBounties.events.handleProposed)
-processor.addEventHandler('ChildBounties.Awarded', modules.childBounties.events.handleAwarded)
-processor.addEventHandler('ChildBounties.Claimed', modules.childBounties.events.handleClaimed)
-processor.addEventHandler('ChildBounties.Canceled', modules.childBounties.events.handleCancelled)
-processor.addCallHandler('ChildBounties.accept_curator', modules.childBounties.extrinsic.handleAcceptCurator)
-processor.addCallHandler('ChildBounties.unassign_curator', modules.childBounties.extrinsic.handleUnassignCurator)
-
-processor.addEventHandler('Preimage.Noted', modules.preimageV2.events.handlePreimageV2Noted)
-processor.addEventHandler('Preimage.Cleared', modules.preimageV2.events.handlePreimageV2Cleared)
-processor.addEventHandler('Preimage.Requested', modules.preimageV2.events.handlePreimageV2Requested)
-
-processor.addEventHandler('Referenda.Submitted', modules.referendumV2.events.handleSubmitted)
-processor.addEventHandler('Referenda.Rejected', modules.referendumV2.events.handleRejected)
-processor.addEventHandler('Referenda.Approved', modules.referendumV2.events.handleApproved)
-processor.addEventHandler('Referenda.Killed', modules.referendumV2.events.handleKilled)
-processor.addEventHandler('Referenda.TimedOut', modules.referendumV2.events.handleTimedOut)
-processor.addEventHandler('Referenda.DecisionDepositPlaced', modules.referendumV2.events.handleDecisionDepositPlaced)
-processor.addEventHandler('Referenda.DecisionStarted', modules.referendumV2.events.handleDecisionStarted)
-processor.addEventHandler('Referenda.Confirmed', modules.referendumV2.events.handleConfirmed)
-processor.addEventHandler('Referenda.ConfirmStarted', modules.referendumV2.events.handleConfirmStarted)
-processor.addEventHandler('Referenda.ConfirmAborted', modules.referendumV2.events.handleConfirmAborted)
-processor.addEventHandler('Referenda.Cancelled', modules.referendumV2.events.handleCancelled)
-
-processor.addCallHandler('ConvictionVoting.vote', modules.referendumV2.extrinsics.handleConvictionVote)
-processor.addCallHandler('ConvictionVoting.delegate', modules.referendumV2.extrinsics.handleDelegate)
-processor.addCallHandler('ConvictionVoting.undelegate', modules.referendumV2.extrinsics.handleUndelegate)
-processor.addCallHandler('ConvictionVoting.remove_vote', modules.referendumV2.extrinsics.handleRemoveVote)
-processor.addCallHandler('ConvictionVoting.remove_other_vote', modules.referendumV2.extrinsics.handleRemoveOtherVote)
-
-processor.addEventHandler('FellowshipReferenda.Submitted', modules.fellowshipReferendum.events.handleSubmitted)
-processor.addEventHandler('FellowshipReferenda.Rejected', modules.fellowshipReferendum.events.handleRejected)
-processor.addEventHandler('FellowshipReferenda.Approved', modules.fellowshipReferendum.events.handleApproved)
-processor.addEventHandler('FellowshipReferenda.Killed', modules.fellowshipReferendum.events.handleKilled)
-processor.addEventHandler('FellowshipReferenda.TimedOut', modules.fellowshipReferendum.events.handleTimedOut)
-processor.addEventHandler('FellowshipReferenda.DecisionDepositPlaced', modules.fellowshipReferendum.events.handleDecisionDepositPlaced)
-processor.addEventHandler('FellowshipReferenda.DecisionStarted', modules.fellowshipReferendum.events.handleDecisionStarted)
-processor.addEventHandler('FellowshipReferenda.Confirmed', modules.fellowshipReferendum.events.handleConfirmed)
-processor.addEventHandler('FellowshipReferenda.ConfirmStarted', modules.fellowshipReferendum.events.handleConfirmStarted)
-processor.addEventHandler('FellowshipReferenda.ConfirmAborted', modules.fellowshipReferendum.events.handleConfirmAborted)
-processor.addEventHandler('FellowshipReferenda.Cancelled', modules.fellowshipReferendum.events.handleCancelled)
-processor.addEventHandler('FellowshipCollective.Voted', modules.fellowshipReferendum.events.handleFellowshipVotes)
-
-processor.run()
+processor.run(new TypeormDatabase(), async (ctx) => {
+    for (let block of ctx.blocks) {
+        for (let item of block.items) {
+            if (item.kind === 'call') {
+                if (item.name == 'ConvictionVoting.vote'){
+                    await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.delegate'){
+                    await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.undelegate'){
+                    await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.remove_vote'){
+                    await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.remove_other_vote'){
+                    await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.accept_curator'){
+                    await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.unassign_curator'){
+                    await modules.bounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.accept_curator'){
+                    await modules.childBounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.unassign_curator'){
+                    await modules.childBounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
+                }
+            }
+            if (item.kind === 'event'){
+                if (item.name == 'Council.Proposed'){
+                    await modules.council.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'Council.Voted'){
+                    await modules.council.events.handleVoted(ctx, item, block.header)
+                }
+                if (item.name == 'Council.Closed'){
+                    await modules.council.events.handleClosed(ctx, item, block.header)
+                }
+                if (item.name == 'Council.Disapproved'){
+                    await modules.council.events.handleDisapproved(ctx, item, block.header)
+                }
+                if (item.name == 'Council.Executed'){
+                    await modules.council.events.handleExecuted(ctx, item, block.header)
+                }
+                if (item.name == 'Council.Approved'){
+                    await modules.council.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Proposed'){
+                    await modules.techComittee.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Approved'){
+                    await modules.techComittee.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Disapproved'){
+                    await modules.techComittee.events.handleDisapproved(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Closed'){
+                    await modules.techComittee.events.handleClosed(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Voted'){
+                    await modules.techComittee.events.handleVoted(ctx, item, block.header)
+                }
+                if (item.name == 'TechnicalCommittee.Executed'){
+                    await modules.techComittee.events.handleExecuted(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.Proposed'){
+                    await modules.treasury.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.Awarded'){
+                    await modules.treasury.events.handleAwarded(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.Rejected'){
+                    await modules.treasury.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyProposed'){
+                    await modules.bounties.events.handleProposedOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyRejected'){
+                    await modules.bounties.events.handleRejectedOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyBecameActive'){
+                    await modules.bounties.events.handleBecameActiveOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyAwarded'){
+                    await modules.bounties.events.handleAwardedOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyClaimed'){
+                    await modules.bounties.events.handleClaimedOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyCanceled'){
+                    await modules.bounties.events.handleCanceledOld(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyExtended'){
+                    await modules.bounties.events.handleExtendedOld(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyProposed'){
+                    await modules.bounties.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyRejected'){
+                    await modules.bounties.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyBecameActive'){
+                    await modules.bounties.events.handleBecameActive(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyAwarded'){
+                    await modules.bounties.events.handleAwarded(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyClaimed'){
+                    await modules.bounties.events.handleClaimed(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyCanceled'){
+                    await modules.bounties.events.handleCanceled(ctx, item, block.header)
+                }
+                if (item.name == 'Bounties.BountyExtended'){
+                    await modules.bounties.events.handleExtended(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.Added'){
+                    await modules.childBounties.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.Awarded'){
+                    await modules.childBounties.events.handleAwarded(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.Claimed'){
+                    await modules.childBounties.events.handleClaimed(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.Canceled'){
+                    await modules.childBounties.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Noted'){
+                    await modules.preimageV2.events.handlePreimageV2Noted(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Cleared'){
+                    await modules.preimageV2.events.handlePreimageV2Cleared(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Requested'){
+                    await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Submitted'){
+                    await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Approved'){
+                    await modules.referendumV2.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Cancelled'){
+                    await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.ConfirmAborted'){
+                    await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Confirmed'){
+                    await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.ConfirmStarted'){
+                    await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.DecisionDepositPlaced'){
+                    await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.DecisionStarted'){
+                    await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Killed'){
+                    await modules.referendumV2.events.handleKilled(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Rejected'){
+                    await modules.referendumV2.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.TimedOut'){
+                    await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Submitted'){
+                    await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Approved'){
+                    await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Cancelled'){
+                    await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.ConfirmAborted'){
+                    await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Confirmed'){
+                    await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.ConfirmStarted'){
+                    await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
+                    await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.DecisionStarted'){
+                    await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Killed'){
+                    await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Rejected'){
+                    await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.TimedOut'){
+                    await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipCollective.Voted'){
+                    await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
+                }
+            }
+        }
+    }
+    
+});

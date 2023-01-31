@@ -10,6 +10,9 @@ import { Chain } from '@subsquid/substrate-processor/lib/chain'
 import { Call } from '../../../types/v121'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
 
 type ProposalCall = Call
 
@@ -25,15 +28,15 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
     return chain.scaleCodec.decodeBinary(chain.description.call, data)
 }
 
-async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStorageData | undefined> {
-    const storage = new PreimagePreimageForStorage(ctx)
-    const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash)
+async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
+    const storage = new PreimagePreimageForStorage(ctx, block)
+    const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
 
     if(!preimageStatus?.len){
         return undefined
     }
     if (storage.isV110) {
-        const storageData = await storage.getAsV110([hash, preimageStatus?.len])
+        const storageData = await storage.asV110.get([hash, preimageStatus?.len])
         if (!storageData) return undefined
 
         return {
@@ -52,15 +55,15 @@ interface PreimageStatusStorageData{
     len?: number
 }
 
-export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStatusStorageData | undefined> {
-    const preimageStorage = new PreimageStatusForStorage(ctx)
+export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
+    const preimageStorage = new PreimageStatusForStorage(ctx, block)
     if (preimageStorage.isV110) {
-        const storageData = await preimageStorage.getAsV110(hash)
+        const storageData = await preimageStorage.asV110.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.deposit,
-            len: undefined
+            len: storageData.len
         }
     }
     else {
@@ -68,11 +71,13 @@ export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array)
     }
 }
 
-export async function handlePreimageV2Noted(ctx: EventHandlerContext) {
-    const { hash } = getPreimageNotedData(ctx)
+export async function handlePreimageV2Noted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Preimage.Noted', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { hash } = getPreimageNotedData(ctx, item.event)
     const hexHash = toHex(hash)
 
-    const storageData = await getStorageData(ctx, hash)
+    const storageData = await getStorageData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('PreimageV2', hexHash))
         return
@@ -99,7 +104,7 @@ export async function handlePreimageV2Noted(ctx: EventHandlerContext) {
             args: args as Record<string, unknown>,
         }
     } catch (e) {
-        ctx.log.warn(`Failed to decode ProposedCall of Preimage ${hexHash} at block ${ctx.block.height}:\n ${e}`)
+        ctx.log.warn(`Failed to decode ProposedCall of Preimage ${hexHash} at block ${header.height}:\n ${e}`)
     }
 
     const value = storageData.value as [Uint8Array, bigint]
@@ -107,14 +112,14 @@ export async function handlePreimageV2Noted(ctx: EventHandlerContext) {
     const proposer =  storageData.value ? ss58codec.encode(value[0] as Uint8Array) : undefined
     const deposit = storageData.value ? value[1] : undefined
 
-    await createPreimageV2(ctx, {
+    await createPreimageV2(ctx, header, {
         hash: hexHash,
         proposer,
         deposit,
         call: decodedCall,
         section: decodedCall?.section,
         method: decodedCall?.method,
-        status: ProposalStatus.Unrequested,
+        status: ProposalStatus.Noted,
         length: storageData.len,
     })
 }

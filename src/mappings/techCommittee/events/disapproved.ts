@@ -4,12 +4,18 @@ import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDissaprovedData } from './getters'
 
-export async function handleDisapproved(ctx: EventHandlerContext) {
-    const hash = getDissaprovedData(ctx)
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
+
+export async function handleDisapproved(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'TechnicalCommittee.Disapproved', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const hash = getDissaprovedData(ctx, item.event)
 
     const hexHash = toHex(hash)
 
-    await updateProposalStatus(ctx, hexHash, ProposalType.TechCommitteeProposal, {
+    await updateProposalStatus(ctx, header, hexHash, ProposalType.TechCommitteeProposal, {
         isEnded: true,
         status: ProposalStatus.Disapproved,
     })

@@ -53,10 +53,12 @@ type Preimage @entity {
   id: ID!
   proposer: String
   hash: String! @index
+  deposit: BigInt
   proposedCall: ProposedCall
   section: String
   method: String
   status: ProposalStatus!
+  length: Int!
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   updatedAtBlock: Int
@@ -102,7 +104,6 @@ type Proposal @entity {
   voting: [Vote!] @derivedFrom(field: "proposal")
   convictionVoting: [ConvictionVote!] @derivedFrom(field: "proposal")
   preimage: Preimage
-  preimageV2: PreimageV2
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
   trackNumber: Int
@@ -143,23 +144,6 @@ type SubmissionDeposit {
 type Deciding {
   since: Int
   confirming: Int
-}
-
-
-type PreimageV2 @entity {
-  id: ID!
-  proposer: String! @index
-  deposit: BigInt
-  hash: String!
-  proposedCall: ProposedCall
-  section: String
-  status: ProposalStatus!
-  method: String
-  length: Int!
-  createdAtBlock: Int! @index
-  createdAt: DateTime! @index
-  updatedAtBlock: Int
-  updatedAt: DateTime
 }
 
 type StatusHistory @entity {

@@ -3,14 +3,16 @@ import {
     BountiesAcceptCuratorCall,
     BountiesUnassignCuratorCall,
 } from '../../../types/calls'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 import { CallContext } from '../../types/contexts'
 
 interface AccepterCuratorData {
     index: number
 }
 
-export function getAccepterCuratorData(ctx: CallContext): AccepterCuratorData {
-    const call = new BountiesAcceptCuratorCall(ctx)
+export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
+    const call = new BountiesAcceptCuratorCall(ctx, itemCall)
     if (call.isV110) {
         const { bountyId } = call.asV110
         return {
@@ -25,8 +27,8 @@ interface UnassingCuratorData {
     index: number
 }
 
-export function getUnassingCuratorData(ctx: CallContext): UnassingCuratorData {
-    const call = new BountiesUnassignCuratorCall(ctx)
+export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
+    const call = new BountiesUnassignCuratorCall(ctx, itemCall)
     if (call.isV110) {
         const { bountyId } = call.asV110
         return {

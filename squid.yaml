@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
-name: harvester
-version: 3
+name: vara-polkassembly
+version: 1
 description: |-
   Kusama's governance proposals
 

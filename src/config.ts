@@ -8,10 +8,10 @@ const config: ProcessorConfig<Store> = {
         prefix: 'vara',
     },
     dataSource: {
-        archive: 'https://squid-archive.vara-network.io/graphql',
+        archive: 'https://app.subsquid.io/archives/vara/subsquid',
         chain: 'wss://archive-rpc.vara-network.io',
     },
-    typesBundle: 'kusama',
+    typesBundle: '',
     batchSize: 1000,
     blockRange: {
         from: 0,

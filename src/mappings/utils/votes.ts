@@ -1,9 +1,11 @@
 import { ConvictionVote, Vote } from '../../model'
 import { CommonHandlerContext } from '../types/contexts'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 const proposalsVotes = new Map<string, number>()
 
-export async function getVotesCount(ctx: CommonHandlerContext, proposalId: string) {
+export async function getVotesCount(ctx: BatchContext<Store, unknown>, proposalId: string) {
     let count = proposalsVotes.get(proposalId)
     if (count == null) {
         count = await ctx.store.count(Vote, {
@@ -18,7 +20,7 @@ export async function getVotesCount(ctx: CommonHandlerContext, proposalId: strin
 
 const proposals = new Map<string, number>()
 
-export async function getConvictionVotesCount(ctx: CommonHandlerContext, proposalId: string) {
+export async function getConvictionVotesCount(ctx: BatchContext<Store, unknown>, proposalId: string) {
     let count = proposals.get(proposalId)
     if (count == null) {
         count = await ctx.store.count(ConvictionVote, {
