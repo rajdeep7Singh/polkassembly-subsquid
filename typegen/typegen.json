@@ -49,6 +49,8 @@
     "Democracy.PreimageInvalid",
     "Democracy.PreimageMissing",
     "Democracy.PreimageReaped",
+    "Democracy.Voted",
+    "Democracy.Seconded",
     "Council.Proposed",
     "Council.Voted",
     "Council.Approved",
@@ -114,7 +116,10 @@
     "FellowshipCollective.Voted",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared"
+    "Preimage.Cleared",
+    "Scheduler.Scheduled",
+    "Scheduler.Dispatched",
+    "Treasury.SpendApproved"
   ],
   "calls": [
     "Democracy.vote",
@@ -123,6 +128,7 @@
     "Democracy.delegate",
     "Democracy.undelegate",
     "Tips.tip",
+    "Treasury.tip",
     "Bounties.accept_curator",
     "ChildBounties.accept_curator",
     "ChildBounties.unassign_curator",

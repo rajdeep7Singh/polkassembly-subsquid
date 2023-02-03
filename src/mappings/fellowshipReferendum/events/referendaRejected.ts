@@ -1,15 +1,20 @@
+
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getRejectedData } from './getters'
 import {createTally} from '../../utils/proposals'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
 
-export async function handleRejected(ctx: EventHandlerContext) {
-    const { index, tally } = getRejectedData(ctx)
+export async function handleRejected(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'FellowshipReferenda.Rejected', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, tally } = getRejectedData(ctx, item.event)
 
     const tallyData = createTally(tally)
 
-    await updateProposalStatus(ctx, index, ProposalType.FellowshipReferendum, {
+    await updateProposalStatus(ctx, header, index, ProposalType.FellowshipReferendum, {
         isEnded: true,
         status: ProposalStatus.Rejected,
         data: {

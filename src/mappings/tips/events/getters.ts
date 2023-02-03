@@ -9,14 +9,17 @@ import {
     TreasuryTipRetractedEvent,
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
+import { Event } from '../../../types/support'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ClosedData {
     hash: Uint8Array
     reward: bigint
 }
 
-export function getClosedDataOld(ctx: EventContext): ClosedData {
-    const event = new TreasuryTipClosedEvent(ctx)
+export function getClosedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
+    const event = new TreasuryTipClosedEvent(ctx, itemEvent)
     if (event.isV1038) {
         const [hash, , reward] = event.asV1038
         return {
@@ -28,8 +31,8 @@ export function getClosedDataOld(ctx: EventContext): ClosedData {
     }
 }
 
-export function getClosedData(ctx: EventContext): ClosedData {
-    const event = new TipsTipClosedEvent(ctx)
+export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
+    const event = new TipsTipClosedEvent(ctx, itemEvent)
     if (event.isV2028) {
         const [hash, , reward] = event.asV2028
         return {
@@ -51,8 +54,8 @@ interface NewTipData {
     hash: Uint8Array
 }
 
-export function getNewTipDataOld(ctx: EventContext): NewTipData {
-    const event = new TreasuryNewTipEvent(ctx)
+export function getNewTipDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
+    const event = new TreasuryNewTipEvent(ctx, itemEvent)
     if (event.isV1038) {
         const hash = event.asV1038
         return {
@@ -63,8 +66,8 @@ export function getNewTipDataOld(ctx: EventContext): NewTipData {
     }
 }
 
-export function getNewTipData(ctx: EventContext): NewTipData {
-    const event = new TipsNewTipEvent(ctx)
+export function getNewTipData(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
+    const event = new TipsNewTipEvent(ctx, itemEvent)
     if (event.isV2028) {
         const hash = event.asV2028
         return {
@@ -84,8 +87,8 @@ interface RectractedData {
     hash: Uint8Array
 }
 
-export function getRectractedDataOld(ctx: EventContext): RectractedData {
-    const event = new TreasuryTipRetractedEvent(ctx)
+export function getRectractedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
+    const event = new TreasuryTipRetractedEvent(ctx, itemEvent)
     if (event.isV1038) {
         const hash = event.asV1038
         return {
@@ -96,8 +99,8 @@ export function getRectractedDataOld(ctx: EventContext): RectractedData {
     }
 }
 
-export function getRectractedData(ctx: EventContext): RectractedData {
-    const event = new TipsTipRetractedEvent(ctx)
+export function getRectractedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
+    const event = new TipsTipRetractedEvent(ctx, itemEvent)
     if (event.isV2028) {
         const hash = event.asV2028
         return {
@@ -117,8 +120,8 @@ interface SlashedData {
     hash: Uint8Array
 }
 
-export function getSlashedData(ctx: EventContext): SlashedData {
-    const event = new TipsTipSlashedEvent(ctx)
+export function getSlashedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SlashedData {
+    const event = new TipsTipSlashedEvent(ctx, itemEvent)
     if (event.isV2028) {
         const [hash] = event.asV2028
         return {

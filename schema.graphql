@@ -54,7 +54,7 @@ type Preimage @entity {
   proposer: String
   hash: String! @index
   deposit: BigInt
-  length: Int!
+  length: Int
   proposedCall: ProposedCall
   section: String
   method: String
@@ -115,6 +115,8 @@ type Proposal @entity {
   decisionDeposit: DecisionDeposit
   deciding: Deciding
   tally: Tally
+  executeAtBlockNumber: Int
+  executedAt: DateTime
   group: ProposalGroup
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
@@ -186,6 +188,7 @@ enum VoteType {
   Motion
   ReferendumV2
   Fellowship
+  DemocracyProposal
 }
 
 type Vote @entity {
@@ -220,6 +223,7 @@ type ProposalGroup @entity {
   democracyProposalIndex: Int @index
   referendumIndex: Int @index
   techCommitteeProposalIndex: Int @index
+  referendumV2Index: Int @index
   proposals: [Proposal] @derivedFrom(field: "group")
 }
 

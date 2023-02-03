@@ -5,14 +5,14 @@ import {
     TreasuryAcceptCuratorCall,
     TreasuryUnassignCuratorCall,
 } from '../../../types/calls'
-import { CallContext } from '../../types/contexts'
-
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 interface AccepterCuratorData {
     index: number
 }
 
-export function getAccepterCuratorDataOld(ctx: CallContext): AccepterCuratorData {
-    const call = new TreasuryAcceptCuratorCall(ctx)
+export function getAccepterCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
+    const call = new TreasuryAcceptCuratorCall(ctx, itemCall)
     if (call.isV2025) {
         const { bountyId } = call.asV2025
         return {
@@ -23,8 +23,8 @@ export function getAccepterCuratorDataOld(ctx: CallContext): AccepterCuratorData
     }
 }
 
-export function getAccepterCuratorData(ctx: CallContext): AccepterCuratorData {
-    const call = new BountiesAcceptCuratorCall(ctx)
+export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
+    const call = new BountiesAcceptCuratorCall(ctx, itemCall)
     if (call.isV2028) {
         const { bountyId } = call.asV2028
         return {
@@ -39,8 +39,8 @@ interface UnassingCuratorData {
     index: number
 }
 
-export function getUnassingCuratorDataOld(ctx: CallContext): UnassingCuratorData {
-    const call = new TreasuryUnassignCuratorCall(ctx)
+export function getUnassingCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
+    const call = new TreasuryUnassignCuratorCall(ctx, itemCall)
     if (call.isV2025) {
         const { bountyId } = call.asV2025
         return {
@@ -51,8 +51,8 @@ export function getUnassingCuratorDataOld(ctx: CallContext): UnassingCuratorData
     }
 }
 
-export function getUnassingCuratorData(ctx: CallContext): UnassingCuratorData {
-    const call = new BountiesUnassignCuratorCall(ctx)
+export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
+    const call = new BountiesUnassignCuratorCall(ctx, itemCall)
     if (call.isV2028) {
         const { bountyId } = call.asV2028
         return {

@@ -3,6 +3,8 @@ import {
     ChildBountiesAcceptCuratorCall,
     ChildBountiesUnassignCuratorCall,
 } from '../../../types/calls'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 import { CallContext } from '../../types/contexts'
 
 interface AccepterCuratorData {
@@ -10,8 +12,8 @@ interface AccepterCuratorData {
     childBountyId: number,
 }
 
-export function getAccepterCuratorData(ctx: CallContext): AccepterCuratorData {
-    const call = new ChildBountiesAcceptCuratorCall(ctx)
+export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
+    const call = new ChildBountiesAcceptCuratorCall(ctx, itemCall)
     if (call.isV9190) {
         const { parentBountyId, childBountyId } = call.asV9190
         return {
@@ -28,8 +30,8 @@ interface UnassingCuratorData {
     childBountyId: number
 }
 
-export function getUnassingCuratorData(ctx: CallContext): UnassingCuratorData {
-    const call = new ChildBountiesUnassignCuratorCall(ctx)
+export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
+    const call = new ChildBountiesUnassignCuratorCall(ctx, itemCall)
     if (call.isV9190) {
         const {parentBountyId, childBountyId} = call.asV9190
         return {

@@ -5,27 +5,32 @@ import { IsNull } from 'typeorm'
 import { removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { Proposal, ProposalType } from '../../../model'
 import { getUndelegateData } from './getters'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
+import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import {
     VotingDelegation
 } from '../../../model'
 
-export async function handleUndelegate(ctx: CallHandlerContext): Promise<void> {
-    if (!(ctx.call as any).success) return
-    const from = getOriginAccountId(ctx.call.origin)
-    const { track } = getUndelegateData(ctx)
+export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
+    item: CallItem<'ConvictionVoting.undelegate', { call: { args: true; origin: true } }>,
+    header: SubstrateBlock): Promise<void> {
+    if (!(item.call as any).success) return
+    const from = getOriginAccountId(item.call.origin)
+    const { track } = getUndelegateData(ctx, item.call)
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
     if (delegations.length > 1) {
         //should never be the case
-        ctx.log.warn(TooManyOpenDelegations(ctx.block.height, track, from))
+        ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
     }
     else if (delegations.length === 0) {
         //should never be the case
-        ctx.log.warn(NoDelegationFound(ctx.block.height, track, from))
+        ctx.log.warn(NoDelegationFound(header.height, track, from))
         return
     }
     const delegation = delegations[0]
-    delegation.endedAtBlock = ctx.block.height
-    delegation.endedAt = new Date(ctx.block.timestamp)
+    delegation.endedAtBlock = header.height
+    delegation.endedAt = new Date(header.timestamp)
     await ctx.store.save(delegation)
     //remove currently delegated votes from ongoing referenda for this wallet
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
@@ -34,7 +39,7 @@ export async function handleUndelegate(ctx: CallHandlerContext): Promise<void> {
         if(!referendum || referendum.index == undefined || referendum.index == null){
             continue
         }
-        await removeVote(ctx, from, referendum.index, ctx.block.height, ctx.block.timestamp, false, true, delegation.to)
+        await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
     }
-    await removeDelegatedVotesOngoingReferenda(ctx, from, ctx.block.height, ctx.block.timestamp, track)
+    await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 }

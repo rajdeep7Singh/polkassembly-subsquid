@@ -1,6 +1,8 @@
 import { IsNull } from 'typeorm'
 import { TooManyOpenVotes, UnknownVersionError } from '../../../common/errors'
 import { ConvictionVote, VotingDelegation } from '../../../model'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
 import { CallContext, CallHandlerContext } from '../../types/contexts'
 import { convictionToLockPeriod } from './helpers'
@@ -29,8 +31,8 @@ interface DemocracyVoteCallData {
     vote: DemocracyVote
 }
 
-export function getVoteData(ctx: CallContext): DemocracyVoteCallData {
-    const event = new ConvictionVotingVoteCall(ctx)
+export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
+    const event = new ConvictionVotingVoteCall(ctx, itemCall)
     if (event.isV9320) {
         const { pollIndex, vote } = event.asV9320
         if(vote.__kind === 'Standard') {
@@ -100,8 +102,8 @@ export interface ConvictionVoteDelegateCallData {
     balance?: bigint
 }
 
-export function getDelegateData(ctx: CallContext): ConvictionVoteDelegateCallData {
-    const event = new ConvictionVotingDelegateCall(ctx)
+export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
+    const event = new ConvictionVotingDelegateCall(ctx, itemCall)
    
     if (event.isV9320) {
         //{ class, to, conviction, balance}
@@ -120,8 +122,8 @@ export interface ConvictionVoteUndelegateCallData {
     track: number
 }
 
-export function getUndelegateData(ctx: CallContext): ConvictionVoteUndelegateCallData {
-    const event = new ConvictionVotingUndelegateCall(ctx)
+export function getUndelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteUndelegateCallData {
+    const event = new ConvictionVotingUndelegateCall(ctx, itemCall)
    
     if (event.isV9320) {
         const eventData = event.asV9320
@@ -138,8 +140,8 @@ export interface ConvictionVotingRemoveVoteCallData {
     track: number | undefined
 }
 
-export function getRemoveVoteData(ctx: CallContext): ConvictionVotingRemoveVoteCallData {
-    const event = new ConvictionVotingRemoveVoteCall(ctx)
+export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
+    const event = new ConvictionVotingRemoveVoteCall(ctx, itemCall)
     if (event.isV9320) {
         const eventData = event.asV9320
         return {
@@ -157,8 +159,8 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
     target: Uint8Array | null
 }
 
-export function getRemoveOtherVoteData(ctx: CallContext): ConvictionVotingRemoveOtherVoteCallData {
-    const event = new ConvictionVotingRemoveOtherVoteCall(ctx)
+export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
+    const event = new ConvictionVotingRemoveOtherVoteCall(ctx, itemCall)
     if (event.isV9320) {
         const eventData = event.asV9320
         return {

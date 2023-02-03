@@ -7,6 +7,9 @@ import {
     ChildBountiesClaimedEvent,
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
+import { Event } from '../../../types/support'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ChildBountyAwardedData {
     parentIndex: number
@@ -14,8 +17,8 @@ interface ChildBountyAwardedData {
     beneficiary: Uint8Array
 }
 
-export function getChildBountyAwardedData(ctx: EventContext): ChildBountyAwardedData {
-    const event = new ChildBountiesAwardedEvent(ctx)
+export function getChildBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAwardedData {
+    const event = new ChildBountiesAwardedEvent(ctx, itemEvent)
     if (event.isV9190) {
         const { index, childIndex, beneficiary } = event.asV9190
         return {
@@ -33,8 +36,8 @@ interface ChildBountyCancelledData {
     childIndex: number,
 }
 
-export function getChildBountyCancelledData(ctx: EventContext): ChildBountyCancelledData {
-    const event = new ChildBountiesCanceledEvent(ctx)
+export function getChildBountyCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyCancelledData {
+    const event = new ChildBountiesCanceledEvent(ctx, itemEvent)
     if (event.isV9190) {
         const { index, childIndex } = event.asV9190
         return {
@@ -53,8 +56,8 @@ interface ChildBountyClaimedData {
     beneficiary: Uint8Array
 }
 
-export function getChildBountyClaimedData(ctx: EventContext): ChildBountyClaimedData {
-    const event = new ChildBountiesClaimedEvent(ctx)
+export function getChildBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyClaimedData {
+    const event = new ChildBountiesClaimedEvent(ctx, itemEvent)
     if (event.isV9190) {
         const { index, childIndex, payout, beneficiary } = event.asV9190
         return {
@@ -73,8 +76,8 @@ interface ChildBountyAddedData {
     childIndex: number
 }
 
-export function getChildBountyAddedData(ctx: EventContext): ChildBountyAddedData {
-    const event = new ChildBountiesAddedEvent(ctx)
+export function getChildBountyAddedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAddedData {
+    const event = new ChildBountiesAddedEvent(ctx, itemEvent)
     if (event.isV9190) {
         const { index, childIndex } = event.asV9190
         return {

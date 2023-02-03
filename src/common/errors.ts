@@ -29,3 +29,7 @@ export function TooManyOpenVotes(block: number, index: number,  wallet?: string)
 export function NoOpenVoteFound(block: number, index: number, wallet?: string) {
     return `No active vote found for referendum ${index} and wallet ${wallet} at block ${block}`
 }
+
+export function NoReferendaFoundForExecution(proposal: ProposalType, block: number){
+    return `No Confirmed ${proposal} found at block ${block} that is scheduled for execution`
+}

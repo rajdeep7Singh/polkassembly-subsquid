@@ -10,6 +10,10 @@ import { Chain } from '@subsquid/substrate-processor/lib/chain'
 import { Call } from '../../../types/v9111'
 import { createPreimage } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
+import { Event } from '../../../types/support'
 
 type ProposalCall = Call
 
@@ -25,10 +29,10 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
     return chain.scaleCodec.decodeBinary(chain.description.call, data)
 }
 
-async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStorageData | undefined> {
-    const storage = new DemocracyPreimagesStorage(ctx)
+async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
+    const storage = new DemocracyPreimagesStorage(ctx, block)
     if (storage.isV1022) {
-        const storageData = await storage.getAsV1022(hash)
+        const storageData = await storage.asV1022.get(hash)
         if (!storageData) return undefined
 
         const [data, provider, deposit, block] = storageData
@@ -40,7 +44,7 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
             block,
         }
     } else if (storage.isV1058) {
-        const storageData = await storage.getAsV1058(hash)
+        const storageData = await storage.asV1058.get(hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData.value
@@ -52,7 +56,7 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
             block: since,
         }
     } else if (storage.isV9111) {
-        const storageData = await storage.getAsV9111(hash)
+        const storageData = await storage.asV9111.get(hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData
@@ -68,11 +72,13 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
     }
 }
 
-export async function handlePreimageNoted(ctx: EventHandlerContext) {
-    const { hash, provider, deposit } = getPreimageNotedData(ctx)
+export async function handlePreimageNoted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Democracy.PreimageNoted', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { hash, provider, deposit } = getPreimageNotedData(ctx, item.event)
     const hexHash = toHex(hash)
 
-    const storageData = await getStorageData(ctx, hash)
+    const storageData = await getStorageData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('Preimage', hexHash))
         return
@@ -99,12 +105,12 @@ export async function handlePreimageNoted(ctx: EventHandlerContext) {
             args: args as Record<string, unknown>,
         }
     } catch (e) {
-        ctx.log.warn(`Failed to decode ProposedCall of Preimage ${hexHash} at block ${ctx.block.height}:\n ${e}`)
+        ctx.log.warn(`Failed to decode ProposedCall of Preimage ${hexHash} at block ${header.height}:\n ${e}`)
     }
 
     const proposer = ss58codec.encode(provider)
 
-    await createPreimage(ctx, {
+    await createPreimage(ctx, header, {
         hash: hexHash,
         proposer,
         deposit,
