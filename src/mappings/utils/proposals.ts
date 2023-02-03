@@ -240,7 +240,7 @@ async function getOrCreateProposalGroup(
                 link.techCommitteeProposalIndex = parentId as number
                 break
             case ProposalType.ReferendumV2:
-                condition.referendumV2Index = index as number
+                link.referendumV2Index = parentId as number
                 break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
