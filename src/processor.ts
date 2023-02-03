@@ -18,6 +18,7 @@ processor.addEventHandler('Democracy.Passed', modules.democracy.events.handlePas
 processor.addEventHandler('Democracy.NotPassed', modules.democracy.events.handleNotPassed)
 processor.addEventHandler('Democracy.Cancelled', modules.democracy.events.handleCancelled)
 processor.addEventHandler('Democracy.Executed', modules.democracy.events.handleExecuted)
+processor.addEventHandler('Democracy.Seconded', modules.democracy.events.handleDemocracySeconds)
 processor.addCallHandler('Democracy.vote', modules.democracy.extrinsics.handleVote)
 
 processor.addEventHandler('Democracy.PreimageNoted', modules.democracy.events.handlePreimageNoted)
@@ -43,6 +44,7 @@ processor.addEventHandler('Democracy.PreimageReaped', modules.democracy.events.h
 processor.addEventHandler('Treasury.Proposed', modules.treasury.events.handleProposed)
 processor.addEventHandler('Treasury.Awarded', modules.treasury.events.handleAwarded)
 processor.addEventHandler('Treasury.Rejected', modules.treasury.events.handleRejected)
+processor.addEventHandler('Treasury.SpendApproved', modules.treasury.events.handleSpendApproved)
 // processor.addEventHandler('Treasury.BountyProposed', modules.bounties.events.handleProposed)
 // processor.addEventHandler('Treasury.BountyRejected', modules.bounties.events.handleRejected)
 // processor.addEventHandler('Treasury.BountyBecameActive', modules.bounties.events.handleBecameActive)
@@ -95,6 +97,7 @@ processor.addEventHandler('Referenda.Confirmed', modules.referendumV2.events.han
 processor.addEventHandler('Referenda.ConfirmStarted', modules.referendumV2.events.handleConfirmStarted)
 processor.addEventHandler('Referenda.ConfirmAborted', modules.referendumV2.events.handleConfirmAborted)
 processor.addEventHandler('Referenda.Cancelled', modules.referendumV2.events.handleCancelled)
+processor.addEventHandler('Scheduler.Dispatched', modules.referendumV2.events.handleReferendumV2Execution)
 
 processor.addCallHandler('ConvictionVoting.vote', modules.referendumV2.extrinsics.handleConvictionVote)
 processor.addCallHandler('ConvictionVoting.delegate', modules.referendumV2.extrinsics.handleDelegate)

@@ -110,6 +110,8 @@ type Proposal @entity {
   origin: String
   enactmentAtBlock: Int
   enactmentAfterBlock: Int
+  executeAtBlockNumber: Int @index
+  executedAt: DateTime @index
   submittedAtBlock: Int
   submissionDeposit: SubmissionDeposit
   decisionDeposit: DecisionDeposit
@@ -186,6 +188,7 @@ enum VoteType {
   Motion
   ReferendumV2
   Fellowship
+  DemocracyProposal
 }
 
 type Vote @entity {
@@ -219,6 +222,7 @@ type ProposalGroup @entity {
   councilMotionIndex: Int @index
   democracyProposalIndex: Int @index
   referendumIndex: Int @index
+  referendumV2Index: Int @index
   techCommitteeProposalIndex: Int @index
   proposals: [Proposal] @derivedFrom(field: "group")
 }

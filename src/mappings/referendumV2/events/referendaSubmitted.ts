@@ -26,7 +26,7 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
     const storage = new ReferendaReferendumInfoForStorage(ctx)
 
     if (storage.isV1900) {
-        const storageData = await storage.getAsV1900(index)
+        const storageData = await storage.asV1900.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -51,7 +51,7 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
             }
         }
     }else if(storage.isV2000){
-        const storageData = await storage.getAsV2000(index)
+        const storageData = await storage.asV2000.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined
@@ -77,7 +77,7 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
         }
 
     }else if(storage.isV2100){
-        const storageData = await storage.getAsV2100(index)
+        const storageData = await storage.asV2100.get(index)
         if (!storageData) return undefined
         if(storageData.__kind === 'Ongoing') {
             let enactmentAt = undefined

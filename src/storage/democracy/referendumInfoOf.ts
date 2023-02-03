@@ -27,7 +27,7 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumStorageData | undefined> {
     const storage = new DemocracyReferendumInfoOfStorage(ctx)
     if (storage.isV40) {
-        const storageData = await storage.getAsV40(index)
+        const storageData = await storage.asV40.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
@@ -49,7 +49,7 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
             }
         }
     } else if (storage.isV900) {
-        const storageData = await storage.getAsV900(index)
+        const storageData = await storage.asV900.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
@@ -72,7 +72,7 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
         }
     }
     else if(storage.isV2000){
-        const storageData = await storage.getAsV2000(index)
+        const storageData = await storage.asV2000.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData

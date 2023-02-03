@@ -1,5 +1,5 @@
 import { UnknownVersionError } from '../../../common/errors'
-import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent } from '../../../types/events'
+import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent, TreasurySpendApprovedEvent } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
 
 interface ProposedData {
@@ -63,4 +63,27 @@ export function getAwarderData(ctx: EventContext): AwarderData {
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
+}
+
+interface SpendApprovedData {
+    proposalIndex: number
+    amount: bigint
+    beneficiary: Uint8Array
+
+}
+
+export function getSpendApprovedData(ctx: EventContext): SpendApprovedData {
+    const event = new TreasurySpendApprovedEvent(ctx)
+    if (event.isV1800) {
+        const { proposalIndex, amount, beneficiary}= event.asV1800
+        return {
+            proposalIndex,
+            amount,
+            beneficiary
+        }
+    }
+    else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+
 }

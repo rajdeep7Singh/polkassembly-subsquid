@@ -14,7 +14,7 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Treasur
     if (!storage.isExists) return undefined
 
     if (storage.isV47) {
-        return await storage.getAsV47(index)
+        return await storage.asV47.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

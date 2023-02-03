@@ -199,6 +199,9 @@ async function getOrCreateProposalGroup(
         case ProposalType.TechCommitteeProposal:
             condition.techCommitteeProposalIndex = index as number
             break
+        case ProposalType.ReferendumV2:
+            condition.referendumV2Index = index as number
+            break
         default:
             throw new Error(`Unknown proposal type ${type}`)
     }
@@ -222,6 +225,9 @@ async function getOrCreateProposalGroup(
                 break
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = parentId as number
+                break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = index as number
                 break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
@@ -252,6 +258,9 @@ async function getOrCreateProposalGroup(
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = index as number
                 break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = index as number
+                break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
         }
@@ -273,6 +282,9 @@ async function getOrCreateProposalGroup(
                 break
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = parentId as number
+                break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = parentId as number
                 break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
@@ -365,15 +377,8 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
-        where: {
-            hash: hash,
-            status: ProposalStatus.Noted,
-        },
-        order: {
-            createdAtBlock: 'DESC'
-        }
-    })
+    let preimage = null;
+    let proposer = null;
 
     if(hash){
         const associatedProposal = await ctx.store.get(Proposal, {
@@ -409,8 +414,24 @@ export async function createReferendum(ctx: EventHandlerContext, data: Referendu
             group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
             associatedProposal.group = group
             await ctx.store.save(associatedProposal)
+            await ctx.store.save(associatedProposal)
+            if(!preimage && associatedProposal.preimage){
+                preimage = associatedProposal.preimage
+                proposer = associatedProposal.proposer
+            }
 
         }
+    }
+
+    if (!preimage) {
+        preimage = await ctx.store.get(Preimage, {
+            where: {
+                hash: hash,
+            },
+            order: {
+                createdAtBlock: 'DESC'
+            }
+        })
     }
 
 
@@ -711,8 +732,34 @@ export async function createTreasury(ctx: EventHandlerContext, data: TreasuryDat
 
     const id = await getProposalId(ctx.store, type)
 
-    // const group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal)
+    let group = null;
 
+
+    if(status === ProposalStatus.Approved) {
+        const referendumV2 = await ctx.store.get(Proposal, {
+            where: {
+                type: ProposalType.ReferendumV2,
+                executeAtBlockNumber: ctx.block.height,
+                status: ProposalStatus.Confirmed,
+                proposer: proposer,
+            }
+        }) || await ctx.store.get(Proposal, {
+            where: {
+                type: ProposalType.ReferendumV2,
+                executeAtBlockNumber: ctx.block.height,
+                status: ProposalStatus.Executed,
+                proposer: proposer,
+            }
+        })
+        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index) {
+            group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
+            if(group) {
+                referendumV2.group = group
+                await ctx.store.save(referendumV2)
+            }
+
+        }
+    }
     const proposal = new Proposal({
         id,
         type,
@@ -723,7 +770,7 @@ export async function createTreasury(ctx: EventHandlerContext, data: TreasuryDat
         status,
         payee,
         createdAtBlock: ctx.block.height,
-        // group: group,
+        group: group,
         createdAt: new Date(ctx.block.timestamp),
         updatedAt: new Date(ctx.block.timestamp),
     })

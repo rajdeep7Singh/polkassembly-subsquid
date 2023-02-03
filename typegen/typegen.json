@@ -27,6 +27,7 @@
     "Democracy.NotPassed",
     "Democracy.Cancelled",
     "Democracy.Executed",
+    "Democracy.Seconded",
     "Democracy.PreimageNoted",
     "Democracy.PreimageUsed",
     "Democracy.PreimageInvalid",
@@ -35,6 +36,7 @@
     "Treasury.Proposed",
     "Treasury.Awarded",
     "Treasury.Rejected",
+    "Treasury.SpendApproved",
     "Referenda.Submitted",
     "Referenda.DecisionDepositPlaced",
     "Referenda.DecisionStarted",
@@ -48,7 +50,8 @@
     "Referenda.Killed",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared"
+    "Preimage.Cleared",
+    "Scheduler.Dispatched"
   ],
   "calls": [
     "Democracy.vote",

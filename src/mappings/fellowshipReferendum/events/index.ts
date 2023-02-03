@@ -10,3 +10,4 @@
 // export {handleConfirmed} from './referendaConfirmed'
 // export {handleRejected} from './referendaRejected'
 // export {handleFellowshipVotes} from './fellowshipVote'
+// export {handleFellowshipReferendumExecution} from './referendaExecution'

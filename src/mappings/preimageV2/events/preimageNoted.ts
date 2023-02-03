@@ -30,7 +30,7 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash)
 
     if (storage.isV1900) {
-        const storageData = await storage.getAsV1900(hash)
+        const storageData = await storage.asV1900.get(hash)
         if (!storageData) return undefined
 
         return {
@@ -40,7 +40,7 @@ async function getStorageData(ctx: BlockContext, hash: Uint8Array): Promise<Prei
     }
     else if(storage.isV2000) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await storage.getAsV2000([hash, preimageStatus.len])
+            const storageData = await storage.asV2000.get([hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -65,7 +65,7 @@ interface PreimageStatusStorageData{
 export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx)
     if (preimageStorage.isV1900) {
-        const storageData = await preimageStorage.getAsV1900(hash)
+        const storageData = await preimageStorage.asV1900.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -74,7 +74,7 @@ export async function getPreimageStatusData(ctx: BlockContext, hash: Uint8Array)
         }
     }
     else if(preimageStorage.isV2000) {
-        const storageData = await preimageStorage.getAsV2000(hash)
+        const storageData = await preimageStorage.asV2000.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,

@@ -9,6 +9,7 @@ import {
     DemocracyPreimageNotedEvent,
     DemocracyPreimageReapedEvent,
     DemocracyPreimageUsedEvent,
+    DemocracySecondedEvent,
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
 
@@ -192,6 +193,37 @@ export function getPreimageUsedData(ctx: EventContext): PreimageUsedData {
             deposit,
         }
     } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+interface DemocracySecondedData {
+    accountId: Uint8Array
+    refIndex: number
+}
+
+export function getDemocracySecondedData(ctx: EventContext): DemocracySecondedData {
+    const event = new DemocracySecondedEvent(ctx)
+    if (event.isV1001) {
+        const [seconder, propIndex] = event.asV1001
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    } else if (event.isV1200) {
+        const { who: seconder, proposalIndex: propIndex } = event.asV1200
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    } else if (event.isV1300) {
+        const { seconder, propIndex } = event.asV1300
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    }
+    else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
