@@ -879,7 +879,6 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
     const preimage = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
-            status: ProposalStatus.Noted,
         },
         order: { createdAtBlock: 'DESC' },
     })
