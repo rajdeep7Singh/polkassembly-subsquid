@@ -5,13 +5,17 @@ import {
     PreimageClearedEvent
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Event } from '../../../types/support'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface PreimageNotedData {
     hash: Uint8Array
 }
 
-export function getPreimageNotedData(ctx: EventContext): PreimageNotedData {
-    const event = new PreimageNotedEvent(ctx)
+export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
+    const event = new PreimageNotedEvent(ctx, itemEvent)
     if (event.isV1900) {
         const { hash } = event.asV1900
         return {
@@ -26,8 +30,8 @@ export interface PreimageRequestedData {
     hash: Uint8Array
 }
 
-export function getPreimageRequestedData(ctx: EventContext): PreimageRequestedData {
-    const event = new PreimageRequestedEvent(ctx)
+export function getPreimageRequestedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageRequestedData {
+    const event = new PreimageRequestedEvent(ctx, itemEvent)
     if (event.isV1900) {
         const {hash} = event.asV1900
         return {
@@ -42,8 +46,8 @@ export interface PreimageClearedData {
     hash: Uint8Array
 }
 
-export function getPreimageClearedData(ctx: EventContext): PreimageClearedData {
-    const event = new PreimageClearedEvent(ctx)
+export function getPreimageClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageClearedData {
+    const event = new PreimageClearedEvent(ctx, itemEvent)
     if (event.isV1900) {
         const {hash} = event.asV1900
         return {

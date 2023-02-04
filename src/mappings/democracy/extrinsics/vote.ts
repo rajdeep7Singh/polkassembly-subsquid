@@ -11,13 +11,18 @@ import {
     VoteType,
 } from '../../../model'
 import { getOriginAccountId } from '../../../common/tools'
-import { getVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
+import { randomUUID } from 'crypto'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
+import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 
-export async function handleVote(ctx: CallHandlerContext) {
-    if (!ctx.call.success) return
+export async function handleVote(ctx: BatchContext<Store, unknown>,
+    item: CallItem<'Democracy.vote', { call: { args: true; origin: true } }>,
+    header: SubstrateBlock) {
+    if (!item.call.success) return
 
-    const { index, vote } = getVoteData(ctx)
+    const { index, vote } = getVoteData(ctx, item.call)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Referendum } })
     if (!proposal) {
@@ -49,18 +54,18 @@ export async function handleVote(ctx: CallHandlerContext) {
         lockPeriod = vote.value < 128 ? vote.value : vote.value - 128
     }
 
-    const count = await getVotesCount(ctx, proposal.id)
+    // const count = await getVotesCount(ctx, proposal.id)
 
     await ctx.store.insert(
         new Vote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
-            voter: ctx.call.origin ? getOriginAccountId(ctx.call.origin) : null,
-            blockNumber: ctx.block.height,
+            id: randomUUID(),
+            voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+            blockNumber: header.height,
             decision,
             lockPeriod,
             proposal,
             balance,
-            timestamp: new Date(ctx.block.timestamp),
+            timestamp: new Date(header.timestamp),
             type: VoteType.Referendum,
         })
     )

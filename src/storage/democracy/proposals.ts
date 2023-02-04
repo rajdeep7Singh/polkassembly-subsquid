@@ -1,6 +1,8 @@
 import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyPublicPropsStorage } from '../../types/storage'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface DemocracyProposalStorageData {
     index: number
@@ -8,53 +10,46 @@ interface DemocracyProposalStorageData {
     proposer: Uint8Array
 }
 
-async function getStorageData(ctx: BlockContext): Promise<DemocracyProposalStorageData[] | undefined> {
-    const storage = new DemocracyPublicPropsStorage(ctx)
+async function getStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<DemocracyProposalStorageData[] | undefined> {
+    const storage = new DemocracyPublicPropsStorage(ctx, block)
     if (storage.isV40) {
         const storageData = await storage.asV40.get()
         if (!storageData) return undefined
 
-        return storageData.map((proposal): DemocracyProposalStorageData => {
-            const [index, hash, proposer] = proposal
+        return storageData.map((proposal: any): DemocracyProposalStorageData => {
+            const [index, , proposer] = proposal
             return {
                 index,
-                hash: hash,
+                hash: new Uint8Array(32).fill(0),
                 proposer,
             }
         })
-    } else if (storage.isV2000) {
+    } else if(storage.isV2000){
         const storageData = await storage.asV2000.get()
         if (!storageData) return undefined
 
         return storageData.map((proposal): DemocracyProposalStorageData => {
-            const [index, bounded, proposer] = proposal
-            if(bounded.__kind === 'Inline'){
+            const [index, hash, proposer] = proposal
+            if(hash.__kind === 'Inline'){
                 return {
                     index,
-                    hash: bounded.value,
+                    hash: hash.value,
                     proposer,
                 }
-            }
-            else if (bounded.__kind === 'Legacy'){
+            }else{
                 return {
                     index,
-                    hash: bounded.hash,
-                    proposer,
-                }
-            }
-            else{
-                return {
-                    index,
-                    hash: bounded.hash,
+                    hash: hash.hash,
                     proposer,
                 }
             }
         })
+
     }else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
 
-export async function getProposals(ctx: BlockContext) {
-    return await getStorageData(ctx)
+export async function getProposals(ctx: BatchContext<Store, unknown>, block: SubstrateBlock) {
+    return await getStorageData(ctx, block)
 }

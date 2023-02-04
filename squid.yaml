@@ -1,5 +1,5 @@
 manifestVersion: subsquid.io/v0.1
-name: polkassembly-moonbase
+name: moonbase-polkassembly
 version: 1
 description: |-
   Moonbase's governance proposals

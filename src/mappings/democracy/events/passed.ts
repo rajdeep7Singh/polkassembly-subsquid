@@ -3,11 +3,17 @@ import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getPassedData } from './getters'
 
-export async function handlePassed(ctx: EventHandlerContext) {
-    const index = getPassedData(ctx)
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
 
-    await updateProposalStatus(ctx, index, ProposalType.Referendum, {
+export async function handlePassed(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Democracy.Passed', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const index = getPassedData(ctx, item.event)
+
+    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
         isEnded: true,
-        status: ProposalStatus.Passed,
+        status: ProposalStatus.Executed,
     })
 }

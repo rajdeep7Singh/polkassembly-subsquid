@@ -5,16 +5,19 @@ import { EventContext } from '../../../types/support'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
-import { EventHandlerContext } from '../../types/contexts'
 import { createDemocracyProposal } from '../../utils/proposals'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
+import { Event } from '../../../types/support'
 
 interface DemocracyProposalEventData {
     index: number
     deposit: bigint
 }
 
-function getEventData(ctx: EventContext): DemocracyProposalEventData {
-    const event = new DemocracyProposedEvent(ctx)
+function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracyProposalEventData {
+    const event = new DemocracyProposedEvent(ctx, itemEvent)
     if (event.isV40) {
         const [index, deposit] = event.asV40
         return {
@@ -32,12 +35,14 @@ function getEventData(ctx: EventContext): DemocracyProposalEventData {
     }
 }
 
-export async function handleProposed(ctx: EventHandlerContext) {
-    const { index, deposit } = getEventData(ctx)
+export async function handleProposed(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Democracy.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, deposit } = getEventData(ctx, item.event)
 
-    const storageData = await storage.democracy.getProposals(ctx)
+    const storageData = await storage.democracy.getProposals(ctx, header)
     if (!storageData) {
-        ctx.log.warn(`Storage doesn't exist for democracy proposals at block ${ctx.block.height}`)
+        ctx.log.warn(`Storage doesn't exist for democracy proposals at block ${header.height}`)
         return
     }
 
@@ -49,7 +54,7 @@ export async function handleProposed(ctx: EventHandlerContext) {
     const { hash, proposer } = proposalData
     const hexHash = toHex(hash)
 
-    await createDemocracyProposal(ctx, {
+    await createDemocracyProposal(ctx, header, {
         hash: hexHash,
         index,
         proposer: toHex(proposer),

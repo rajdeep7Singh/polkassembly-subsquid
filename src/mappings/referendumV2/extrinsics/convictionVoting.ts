@@ -11,17 +11,23 @@ import {
     VoteDecision,
     VoteType,
 } from '../../../model'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { getOriginAccountId } from '../../../common/tools'
 import { getVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
+import { Store } from '@subsquid/typeorm-store'
+import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
+import { randomUUID } from 'crypto'
 
-export async function handleConvictionVote(ctx: CallHandlerContext) {
-    if (!ctx.call.success) return
+export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
+    item: CallItem<'ConvictionVoting.vote', { call: { args: true; origin: true } }>,
+    header: SubstrateBlock) {
+    if (!(item.call as any).success) return
 
-    const { index, vote } = getVoteData(ctx)
+    const { index, vote } = getVoteData(ctx, item.call)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
@@ -29,7 +35,7 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
         return
     }
 
-    const from = getOriginAccountId(ctx.call.origin)
+    const from = getOriginAccountId(item.call.origin)
 
     if(!from){
         ctx.log.warn('No from address found for Conviction.vote call')
@@ -39,18 +45,18 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull() } })
     if (votes.length > 1) {
         //should never be the case
-        ctx.log.warn(TooManyOpenVotes(ctx.block.height, index, from))
+        ctx.log.warn(TooManyOpenVotes(header.height, index, from))
     }
 
     if (votes.length > 0) {
         const vote = votes[0]
-        vote.removedAtBlock = ctx.block.height
-        vote.removedAt = new Date(ctx.block.timestamp)
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
         await ctx.store.save(vote)
     }
 
     const nestedDelegations = await getAllNestedDelegations(ctx, from, proposal.trackNumber)
-    await removeDelegatedVotesReferendum(ctx, ctx.block.height, ctx.block.timestamp, index, nestedDelegations)
+    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 
     let decision: VoteDecision
     switch (vote.type) {
@@ -87,13 +93,13 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
         })
     }
 
-    const count = await getVotesCount(ctx, proposal.id)
+    // const count = await getVotesCount(ctx, proposal.id)
 
     await ctx.store.insert(
         new ConvictionVote({
-            id: `${proposal.id}-${count.toString().padStart(8, '0')}`,
-            voter: ctx.call.origin ? getOriginAccountId(ctx.call.origin) : null,
-            createdAtBlock: ctx.block.height,
+            id: randomUUID(),
+            voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+            createdAtBlock: header.height,
             proposalIndex: index,
             proposalId: proposal.id,
             decision,
@@ -101,10 +107,10 @@ export async function handleConvictionVote(ctx: CallHandlerContext) {
             proposal,
             balance,
             isDelegated: false,
-            createdAt: new Date(ctx.block.timestamp),
+            createdAt: new Date(header.timestamp),
             type: VoteType.ReferendumV2,
         })
     )
-    await addDelegatedVotesReferendumV2(ctx, from, ctx.block.height, ctx.block.timestamp, proposal, nestedDelegations, proposal.trackNumber)
+    await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
 
 }

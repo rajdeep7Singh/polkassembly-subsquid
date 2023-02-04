@@ -6,14 +6,18 @@ import { EventContext } from '../../../types/support'
 import { ProposalStatus, ProposalType, ReferendumThresholdType } from '../../../model'
 import { storage } from '../../../storage'
 import { createReferendum } from '../../utils/proposals'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
+import { Event } from '../../../types/support'
 
 interface ReferendumEventData {
     index: number
     threshold: string
 }
 
-function getEventData(ctx: EventContext): ReferendumEventData {
-    const event = new DemocracyStartedEvent(ctx)
+function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
+    const event = new DemocracyStartedEvent(ctx, itemEvent)
     if (event.isV40) {
         const [index, threshold] = event.asV40
         return {
@@ -31,24 +35,26 @@ function getEventData(ctx: EventContext): ReferendumEventData {
     }
 }
 
-export async function handleStarted(ctx: EventHandlerContext) {
-    const { index, threshold } = getEventData(ctx)
+export async function handleStarted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Democracy.Started', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, threshold } = getEventData(ctx, item.event)
 
-    const storageData = await storage.democracy.getReferendumInfoOf(ctx, index)
+    const storageData = await storage.democracy.getReferendumInfoOf(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.Referendum, index))
         return
     }
 
     if (storageData.status === 'Finished') {
-        ctx.log.warn(`Referendum with index ${index} has already finished at block ${ctx.block.height}`)
+        ctx.log.warn(`Referendum with index ${index} has already finished at block ${header.height}`)
         return
     }
 
     const { hash, end, delay } = storageData
     const hexHash = toHex(hash)
 
-    await createReferendum(ctx, {
+    await createReferendum(ctx, header, {
         index,
         threshold: threshold as ReferendumThresholdType,
         status: ProposalStatus.Started,

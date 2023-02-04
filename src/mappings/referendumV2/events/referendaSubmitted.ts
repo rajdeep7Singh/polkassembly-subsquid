@@ -7,6 +7,9 @@ import { getEventData } from './getters'
 import { ReferendaReferendumInfoForStorage } from "../../../types/storage";
 import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ReferendumInfo {
     index: number
@@ -22,8 +25,8 @@ interface ReferendumInfo {
 }
 
 
-export async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumInfo | undefined> {
-    const storage = new ReferendaReferendumInfoForStorage(ctx)
+export async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumInfo | undefined> {
+    const storage = new ReferendaReferendumInfoForStorage(ctx, block)
 
     if (storage.isV1900) {
         const storageData = await storage.asV1900.get(index)
@@ -109,10 +112,12 @@ export async function getStorageData(ctx: BlockContext, index: number): Promise<
 }
 
 
-export async function handleSubmitted(ctx: EventHandlerContext) {
-    const { index, hash } = getEventData(ctx)
+export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Referenda.Submitted', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, hash } = getEventData(ctx, item.event)
 
-    const storageData = await getStorageData(ctx, index)
+    const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.ReferendumV2, index))
         return
@@ -120,7 +125,7 @@ export async function handleSubmitted(ctx: EventHandlerContext) {
 
     const hexHash = toHex(hash)
 
-    await createReferendumV2(ctx, {
+    await createReferendumV2(ctx, header, {
         index,
         status: ProposalStatus.Submitted,
         hash: hexHash,

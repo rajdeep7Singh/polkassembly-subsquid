@@ -4,6 +4,8 @@ import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
 import * as v40 from '../../types/v40'
 import * as v900 from '../../types/v900'
 import * as v2000 from '../../types/v2000'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 type Threshold = 'SuperMajorityApprove' | 'SuperMajorityAgainst' | 'SimpleMajority'
 
@@ -24,8 +26,8 @@ type OngoingReferendumData = {
 type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function getStorageData(ctx: BlockContext, index: number): Promise<ReferendumStorageData | undefined> {
-    const storage = new DemocracyReferendumInfoOfStorage(ctx)
+async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
+    const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
     if (storage.isV40) {
         const storageData = await storage.asV40.get(index)
         if (!storageData) return undefined
@@ -41,7 +43,7 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
                 threshold: threshold.__kind,
             }
         } else {
-            const { approved, end } = (storageData as v40.ReferendumInfo_Finished).value
+            const { end, approved } = (storageData as v40.ReferendumInfo_Finished).value
             return {
                 status,
                 end,
@@ -63,15 +65,14 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = storageData as v900.ReferendumInfo_Finished
+            const { end, approved } = (storageData as v900.ReferendumInfo_Finished)
             return {
                 status,
                 end,
                 approved,
             }
         }
-    }
-    else if(storage.isV2000){
+    }else if(storage.isV2000){
         const storageData = await storage.asV2000.get(index)
         if (!storageData) return undefined
 
@@ -107,6 +108,6 @@ async function getStorageData(ctx: BlockContext, index: number): Promise<Referen
     }
 }
 
-export async function getReferendumInfoOf(ctx: BlockContext, index: number) {
-    return await getStorageData(ctx, index)
+export async function getReferendumInfoOf(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
+    return await getStorageData(ctx, index, block)
 }

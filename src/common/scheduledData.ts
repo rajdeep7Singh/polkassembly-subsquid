@@ -2,7 +2,9 @@ import { UnknownVersionError } from '../common/errors'
 import {
     SchedulerDispatchedEvent
 } from '../types/events'
-import { EventHandlerContext } from '../mappings/types/contexts'
+import { Event } from '../types/support'
+import { BatchContext } from '@subsquid/substrate-processor'
+import { Store } from '@subsquid/typeorm-store'
 
 interface ScheduledData {
     blockNumber: number
@@ -30,9 +32,27 @@ interface ScheduledData {
 //     }
 // }
 
-export function getDispatchedEventData(ctx: EventHandlerContext): ScheduledData | undefined {
-    const event = new SchedulerDispatchedEvent(ctx)
-    if (event.isV1300) {
+export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData | undefined {
+    const event = new SchedulerDispatchedEvent(ctx, itemEvent)
+    if (event.isV40) {
+        const [[block, number], hash, result] = event.asV40
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: block
+            }
+        }
+        return undefined
+    }
+    else if (event.isV900) {
+        const [[block, number], hash, result] = event.asV900
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: block
+            }
+        }
+        return undefined
+    }
+    else if (event.isV1300) {
         const { task, id, result } = event.asV1300
         if(result.__kind == 'Ok'){
             return {
