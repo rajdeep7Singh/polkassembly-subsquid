@@ -218,8 +218,8 @@ export function getDemocracySecondedData(ctx: BatchContext<Store, unknown>, item
             accountId: seconder,
             refIndex: propIndex
         }
-    } else if (event.isV1001) {
-        const [seconder, propIndex] = event.asV1001
+    } else if (event.isV1300) {
+        const { seconder, propIndex } = event.asV1300
         return {
             accountId: seconder,
             refIndex: propIndex

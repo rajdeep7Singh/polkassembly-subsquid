@@ -197,7 +197,22 @@ export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEv
             tally,
             hash: proposalHash
         }
-    } else {
+    } else if (event.isV2000) {
+        const { index, track, proposal, tally} = event.asV2000
+        let hash = null;
+        if(proposal.__kind == "Inline") {
+            hash = proposal.value
+        }
+        else{
+            hash = proposal.hash
+        }
+        return {
+            index,
+            tally,
+            track,
+            hash
+        }
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
