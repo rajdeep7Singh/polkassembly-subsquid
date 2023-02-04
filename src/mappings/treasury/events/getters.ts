@@ -1,5 +1,5 @@
 import { UnknownVersionError } from '../../../common/errors'
-import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent } from '../../../types/events'
+import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent, TreasurySpendApprovedEvent } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
 import { Event } from '../../../types/support'
 import { BatchContext } from '@subsquid/substrate-processor'
@@ -51,4 +51,27 @@ export function getAwarderData(ctx: BatchContext<Store, unknown>, itemEvent: Eve
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
+}
+
+interface SpendApprovedData {
+    proposalIndex: number
+    amount: bigint
+    beneficiary: Uint8Array
+
+}
+
+export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
+    const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
+    if (event.isV110) {
+        const { proposalIndex, amount, beneficiary}= event.asV110
+        return {
+            proposalIndex,
+            amount,
+            beneficiary
+        }
+    }
+    else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+
 }

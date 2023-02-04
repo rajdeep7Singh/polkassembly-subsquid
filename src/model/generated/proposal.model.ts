@@ -109,6 +109,12 @@ export class Proposal {
     enactmentAfterBlock!: number | undefined | null
 
     @Column_("int4", {nullable: true})
+    executeAtBlockNumber!: number | undefined | null
+
+    @Column_("timestamp with time zone", {nullable: true})
+    executedAt!: Date | undefined | null
+
+    @Column_("int4", {nullable: true})
     submittedAtBlock!: number | undefined | null
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new SubmissionDeposit(undefined, obj)}, nullable: true})

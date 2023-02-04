@@ -1,18 +1,14 @@
 import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
-import { BatchContext } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
-
-const db = new TypeormDatabase()
 
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://archive-rpc.vara-network.io',
         archive: lookupArchive('vara', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 0})
+    .setBlockRange({ from: 0 })
     .addEvent('Council.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Council.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Council.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -28,7 +24,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Treasury.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const) 
+    .addEvent('Treasury.SpendApproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.BountyRejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.BountyBecameActive', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.BountyAwarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -72,7 +69,9 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    
+
+    .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+
     .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
@@ -87,214 +86,221 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     for (let block of ctx.blocks) {
         for (let item of block.items) {
             if (item.kind === 'call') {
-                if (item.name == 'ConvictionVoting.vote'){
+                if (item.name == 'ConvictionVoting.vote') {
                     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
                 }
-                if (item.name == 'ConvictionVoting.delegate'){
+                if (item.name == 'ConvictionVoting.delegate') {
                     await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
                 }
-                if (item.name == 'ConvictionVoting.undelegate'){
+                if (item.name == 'ConvictionVoting.undelegate') {
                     await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
                 }
-                if (item.name == 'ConvictionVoting.remove_vote'){
+                if (item.name == 'ConvictionVoting.remove_vote') {
                     await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
                 }
-                if (item.name == 'ConvictionVoting.remove_other_vote'){
+                if (item.name == 'ConvictionVoting.remove_other_vote') {
                     await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.accept_curator'){
+                if (item.name == 'Bounties.accept_curator') {
                     await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.unassign_curator'){
+                if (item.name == 'Bounties.unassign_curator') {
                     await modules.bounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.accept_curator'){
+                if (item.name == 'ChildBounties.accept_curator') {
                     await modules.childBounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.unassign_curator'){
+                if (item.name == 'ChildBounties.unassign_curator') {
                     await modules.childBounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
                 }
             }
-            if (item.kind === 'event'){
-                if (item.name == 'Council.Proposed'){
+            if (item.kind === 'event') {
+                if (item.name == 'Council.Proposed') {
                     await modules.council.events.handleProposed(ctx, item, block.header)
                 }
-                if (item.name == 'Council.Voted'){
+                if (item.name == 'Council.Voted') {
                     await modules.council.events.handleVoted(ctx, item, block.header)
                 }
-                if (item.name == 'Council.Closed'){
+                if (item.name == 'Council.Closed') {
                     await modules.council.events.handleClosed(ctx, item, block.header)
                 }
-                if (item.name == 'Council.Disapproved'){
+                if (item.name == 'Council.Disapproved') {
                     await modules.council.events.handleDisapproved(ctx, item, block.header)
                 }
-                if (item.name == 'Council.Executed'){
+                if (item.name == 'Council.Executed') {
                     await modules.council.events.handleExecuted(ctx, item, block.header)
                 }
-                if (item.name == 'Council.Approved'){
+                if (item.name == 'Council.Approved') {
                     await modules.council.events.handleApproved(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Proposed'){
+                if (item.name == 'TechnicalCommittee.Proposed') {
                     await modules.techComittee.events.handleProposed(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Approved'){
+                if (item.name == 'TechnicalCommittee.Approved') {
                     await modules.techComittee.events.handleApproved(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Disapproved'){
+                if (item.name == 'TechnicalCommittee.Disapproved') {
                     await modules.techComittee.events.handleDisapproved(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Closed'){
+                if (item.name == 'TechnicalCommittee.Closed') {
                     await modules.techComittee.events.handleClosed(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Voted'){
+                if (item.name == 'TechnicalCommittee.Voted') {
                     await modules.techComittee.events.handleVoted(ctx, item, block.header)
                 }
-                if (item.name == 'TechnicalCommittee.Executed'){
+                if (item.name == 'TechnicalCommittee.Executed') {
                     await modules.techComittee.events.handleExecuted(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.Proposed'){
+                if (item.name == 'Treasury.Proposed') {
                     await modules.treasury.events.handleProposed(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.Awarded'){
+                if (item.name == 'Treasury.Awarded') {
                     await modules.treasury.events.handleAwarded(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.Rejected'){
+                if (item.name == 'Treasury.Rejected') {
                     await modules.treasury.events.handleRejected(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyProposed'){
+                if (item.name == 'Treasury.SpendApproved'){
+                    await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
+                }
+                if (item.name == 'Treasury.BountyProposed') {
                     await modules.bounties.events.handleProposedOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyRejected'){
+                if (item.name == 'Treasury.BountyRejected') {
                     await modules.bounties.events.handleRejectedOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyBecameActive'){
+                if (item.name == 'Treasury.BountyBecameActive') {
                     await modules.bounties.events.handleBecameActiveOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyAwarded'){
+                if (item.name == 'Treasury.BountyAwarded') {
                     await modules.bounties.events.handleAwardedOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyClaimed'){
+                if (item.name == 'Treasury.BountyClaimed') {
                     await modules.bounties.events.handleClaimedOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyCanceled'){
+                if (item.name == 'Treasury.BountyCanceled') {
                     await modules.bounties.events.handleCanceledOld(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyExtended'){
+                if (item.name == 'Treasury.BountyExtended') {
                     await modules.bounties.events.handleExtendedOld(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyProposed'){
+                if (item.name == 'Bounties.BountyProposed') {
                     await modules.bounties.events.handleProposed(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyRejected'){
+                if (item.name == 'Bounties.BountyRejected') {
                     await modules.bounties.events.handleRejected(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyBecameActive'){
+                if (item.name == 'Bounties.BountyBecameActive') {
                     await modules.bounties.events.handleBecameActive(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyAwarded'){
+                if (item.name == 'Bounties.BountyAwarded') {
                     await modules.bounties.events.handleAwarded(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyClaimed'){
+                if (item.name == 'Bounties.BountyClaimed') {
                     await modules.bounties.events.handleClaimed(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyCanceled'){
+                if (item.name == 'Bounties.BountyCanceled') {
                     await modules.bounties.events.handleCanceled(ctx, item, block.header)
                 }
-                if (item.name == 'Bounties.BountyExtended'){
+                if (item.name == 'Bounties.BountyExtended') {
                     await modules.bounties.events.handleExtended(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.Added'){
+                if (item.name == 'ChildBounties.Added') {
                     await modules.childBounties.events.handleProposed(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.Awarded'){
+                if (item.name == 'ChildBounties.Awarded') {
                     await modules.childBounties.events.handleAwarded(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.Claimed'){
+                if (item.name == 'ChildBounties.Claimed') {
                     await modules.childBounties.events.handleClaimed(ctx, item, block.header)
                 }
-                if (item.name == 'ChildBounties.Canceled'){
+                if (item.name == 'ChildBounties.Canceled') {
                     await modules.childBounties.events.handleCancelled(ctx, item, block.header)
                 }
-                if (item.name == 'Preimage.Noted'){
+                if (item.name == 'Preimage.Noted') {
                     await modules.preimageV2.events.handlePreimageV2Noted(ctx, item, block.header)
                 }
-                if (item.name == 'Preimage.Cleared'){
+                if (item.name == 'Preimage.Cleared') {
                     await modules.preimageV2.events.handlePreimageV2Cleared(ctx, item, block.header)
                 }
-                if (item.name == 'Preimage.Requested'){
+                if (item.name == 'Preimage.Requested') {
                     await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Submitted'){
+                if (item.name == 'Referenda.Submitted') {
                     await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Approved'){
+                if (item.name == 'Referenda.Approved') {
                     await modules.referendumV2.events.handleApproved(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Cancelled'){
+                if (item.name == 'Referenda.Cancelled') {
                     await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.ConfirmAborted'){
+                if (item.name == 'Referenda.ConfirmAborted') {
                     await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Confirmed'){
+                if (item.name == 'Referenda.Confirmed') {
                     await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.ConfirmStarted'){
+                if (item.name == 'Referenda.ConfirmStarted') {
                     await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.DecisionDepositPlaced'){
+                if (item.name == 'Referenda.DecisionDepositPlaced') {
                     await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.DecisionStarted'){
+                if (item.name == 'Referenda.DecisionStarted') {
                     await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Killed'){
+                if (item.name == 'Referenda.Killed') {
                     await modules.referendumV2.events.handleKilled(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.Rejected'){
+                if (item.name == 'Referenda.Rejected') {
                     await modules.referendumV2.events.handleRejected(ctx, item, block.header)
                 }
-                if (item.name == 'Referenda.TimedOut'){
+                if (item.name == 'Referenda.TimedOut') {
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Submitted'){
+                if (item.name == 'FellowshipReferenda.Submitted') {
                     await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Approved'){
+                if (item.name == 'FellowshipReferenda.Approved') {
                     await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Cancelled'){
+                if (item.name == 'FellowshipReferenda.Cancelled') {
                     await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.ConfirmAborted'){
+                if (item.name == 'FellowshipReferenda.ConfirmAborted') {
                     await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Confirmed'){
+                if (item.name == 'FellowshipReferenda.Confirmed') {
                     await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.ConfirmStarted'){
+                if (item.name == 'FellowshipReferenda.ConfirmStarted') {
                     await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
+                if (item.name == 'FellowshipReferenda.DecisionDepositPlaced') {
                     await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.DecisionStarted'){
+                if (item.name == 'FellowshipReferenda.DecisionStarted') {
                     await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Killed'){
+                if (item.name == 'FellowshipReferenda.Killed') {
                     await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.Rejected'){
+                if (item.name == 'FellowshipReferenda.Rejected') {
                     await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipReferenda.TimedOut'){
+                if (item.name == 'FellowshipReferenda.TimedOut') {
                     await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
                 }
-                if (item.name == 'FellowshipCollective.Voted'){
+                if (item.name == 'FellowshipCollective.Voted') {
                     await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
+                }
+                if(item.name == 'Scheduler.Dispatched'){
+                    await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
+                    await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
                 }
             }
         }
     }
-    
+
 });

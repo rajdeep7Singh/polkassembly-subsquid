@@ -1406,6 +1406,35 @@ export class ReferendaTimedOutEvent {
     }
 }
 
+export class SchedulerDispatchedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Scheduler.Dispatched')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV110(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === 'b67102cc706599639b8e52e776b81c51142dad43652e91e7e72197b7df9a63f4'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV110(): {task: [number, number], id: (Uint8Array | undefined), result: v110.Type_65} {
+        assert(this.isV110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class TechnicalCommitteeApprovedEvent {
     private readonly _chain: Chain
     private readonly event: Event
@@ -1666,6 +1695,35 @@ export class TreasuryRejectedEvent {
      * A proposal was rejected; funds were slashed.
      */
     get asV110(): {proposalIndex: number, slashed: bigint} {
+        assert(this.isV110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TreasurySpendApprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Treasury.SpendApproved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A new spend proposal has been approved.
+     */
+    get isV110(): boolean {
+        return this._chain.getEventHash('Treasury.SpendApproved') === 'fce90c02bffde89fb0e8723868aa8e94bfe9c1c48c5af8c34efd8ff5173184f9'
+    }
+
+    /**
+     * A new spend proposal has been approved.
+     */
+    get asV110(): {proposalIndex: number, amount: bigint, beneficiary: Uint8Array} {
         assert(this.isV110)
         return this._chain.decodeEvent(this.event)
     }

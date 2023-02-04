@@ -4,6 +4,7 @@ import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import { Event } from '../../types/support'
+import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
     MotionThreshold,
@@ -22,7 +23,6 @@ import {
     Tippers,
     ProposalGroup,
 } from '../../model'
-import { EventHandlerContext } from '../types/contexts'
 import {
     BountyData,
     ChildBountyData,
@@ -165,6 +165,13 @@ export async function updateProposalStatus(
         proposal.endedAt = proposal.updatedAt
     }
 
+    if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.Confirmed && proposal.origin){
+        proposal.executeAtBlockNumber = header.height + referendumV2EnactmentBlocks[proposal.origin]
+    }
+    if(type == ProposalType.FellowshipReferendum && options.status == ProposalStatus.Confirmed && proposal.trackNumber){
+        proposal.executeAtBlockNumber = header.height + fellowshipEnactmentBlocks[proposal.trackNumber]
+    }
+
     await ctx.store.save(proposal)
 
     await ctx.store.insert(
@@ -206,6 +213,9 @@ async function getOrCreateProposalGroup(
         case ProposalType.TechCommitteeProposal:
             condition.techCommitteeProposalIndex = index as number
             break
+        case ProposalType.ReferendumV2:
+            condition.referendumV2Index = index as number
+            break
         default:
             throw new Error(`Unknown proposal type ${type}`)
     }
@@ -229,6 +239,9 @@ async function getOrCreateProposalGroup(
                 break
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = parentId as number
+                break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = parentId as number
                 break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
@@ -259,6 +272,9 @@ async function getOrCreateProposalGroup(
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = index as number
                 break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = index as number
+                break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
         }
@@ -280,6 +296,9 @@ async function getOrCreateProposalGroup(
                 break
             case ProposalType.TechCommitteeProposal:
                 link.techCommitteeProposalIndex = parentId as number
+                break
+            case ProposalType.ReferendumV2:
+                link.referendumV2Index = parentId as number
                 break
             default:
                 throw new Error(`Unknown proposal type ${type}`)
@@ -373,15 +392,8 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
-        where: {
-            hash: hash,
-            status: ProposalStatus.Noted,
-        },
-        order: {
-            createdAtBlock: 'DESC'
-        }
-    })
+    let preimage = null;
+    let proposer = null;
 
     if(hash){
         const associatedProposal = await ctx.store.get(Proposal, {
@@ -417,8 +429,23 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
             group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
             associatedProposal.group = group
             await ctx.store.save(associatedProposal)
+            if(!preimage && associatedProposal.preimage){
+                preimage = associatedProposal.preimage
+                proposer = associatedProposal.proposer
+            }
 
         }
+    }
+
+    if (!preimage) {
+        preimage = await ctx.store.get(Preimage, {
+            where: {
+                hash: hash,
+            },
+            order: {
+                createdAtBlock: 'DESC'
+            }
+        })
     }
 
 
@@ -427,6 +454,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
         index,
         type,
         hash,
+        proposer,
         threshold: new ReferendumThreshold({
             type: threshold as ReferendumThresholdType,
         }),
@@ -721,7 +749,33 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
 
     const id = await getProposalId(ctx.store, type)
 
-    // const group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal)
+    let group = null;
+
+    if(status === ProposalStatus.Approved) {
+        const referendumV2 = await ctx.store.get(Proposal, {
+            where: {
+                type: ProposalType.ReferendumV2,
+                executeAtBlockNumber: header.height,
+                status: ProposalStatus.Confirmed,
+                proposer: proposer,
+            }
+        }) || await ctx.store.get(Proposal, {
+            where: {
+                type: ProposalType.ReferendumV2,
+                executeAtBlockNumber: header.height,
+                status: ProposalStatus.Executed,
+                proposer: proposer,
+            }
+        })
+        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index) {
+            group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
+            if(group) {
+                referendumV2.group = group
+                await ctx.store.save(referendumV2)
+            }
+
+        }
+    }
 
     const proposal = new Proposal({
         id,
@@ -733,7 +787,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
         status,
         payee,
         createdAtBlock: header.height,
-        // group: group,
+        group: group,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
     })

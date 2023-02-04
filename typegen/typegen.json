@@ -81,7 +81,9 @@
     "FellowshipCollective.Voted",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared"
+    "Preimage.Cleared",
+    "Scheduler.Dispatched",
+    "Treasury.SpendApproved"
   ],
   "calls": [
     "Democracy.vote",
