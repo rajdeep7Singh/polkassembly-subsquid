@@ -7,6 +7,7 @@ import treasury from './treasury'
 // import childBounties from './childBounties'
 import preimageV2 from './preimageV2'
 import referendumV2 from './referendumV2'
+import ethereum from './ethereum'
 // import fellowshipReferendum from './fellowshipReferendum'
 
-export { democracy, treasury, preimageV2, referendumV2 }
+export { democracy, treasury, preimageV2, referendumV2, ethereum }

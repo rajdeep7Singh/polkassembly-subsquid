@@ -51,7 +51,8 @@
     "Preimage.Noted",
     "Preimage.Requested",
     "Preimage.Cleared",
-    "Scheduler.Dispatched"
+    "Scheduler.Dispatched",
+    "Ethereum.Executed"
   ],
   "calls": [
     "Democracy.vote",
@@ -63,6 +64,7 @@
     "ConvictionVoting.delegate",
     "ConvictionVoting.undelegate",
     "ConvictionVoting.remove_vote",
-    "ConvictionVoting.remove_other_vote"
+    "ConvictionVoting.remove_other_vote",
+    "Ethereum.transact"
   ]
 }

@@ -27,3 +27,20 @@ export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }
+
+export async function handlePrecompiledRemoveVote(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any) : Promise<void> {
+    const [ index ] = data
+    const referendum = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
+    if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
+        return
+    }
+    if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
+        //ref already ended probably removing vote for democracy_unlock
+        return
+    }
+    const wallet = originAccountId
+    await removeVote(ctx, wallet, index, header.height, header.timestamp, true)
+    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
+    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
+}

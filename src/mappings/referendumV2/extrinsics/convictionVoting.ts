@@ -114,3 +114,52 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
 
 }
+
+export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, aye: boolean = true, originAccountId: string) {
+    const [ index, amount, conviction ] = data
+
+    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
+    if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
+        return
+    }
+    const from = originAccountId
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull() } })
+    if (votes.length > 1) {
+        //should never be the case
+        ctx.log.warn(TooManyOpenVotes(header.height, index, from))
+    }
+
+    if (votes.length > 0) {
+        const vote = votes[0]
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
+        await ctx.store.save(vote)
+    }
+
+    const decision: VoteDecision = aye ? VoteDecision.yes : VoteDecision.no
+
+    const nestedDelegations = await getAllNestedDelegations(ctx, from, proposal.trackNumber)
+    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
+
+    await ctx.store.insert(
+        new ConvictionVote({
+            id: randomUUID(),
+            voter: from,
+            createdAtBlock: header.height,
+            proposalIndex: index,
+            proposalId: proposal.id,
+            decision,
+            lockPeriod: conviction,
+            proposal,
+            balance: new StandardVoteBalance({
+                value: amount
+            }),
+            isDelegated: false,
+            createdAt: new Date(header.timestamp),
+            type: VoteType.ReferendumV2,
+        })
+    )
+    await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
+
+}

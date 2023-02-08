@@ -3,7 +3,7 @@ import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
-
+import { getTransaction } from '@subsquid/frontier'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
@@ -11,7 +11,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://wss.api.moonbase.moonbeam.network',
         archive: lookupArchive('moonbase', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 0})
+    .setBlockRange({from: 3709340, to: 3709340})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -25,6 +25,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Democracy.PreimageInvalid', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageMissing', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageReaped', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Ethereum.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addEvent('Treasury.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -56,8 +57,12 @@ const processor = new SubstrateBatchProcessor()
     .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
 
+    .addEthereumTransaction('0x0000000000000000000000000000000000000812')
+
     processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let block of ctx.blocks) {
+            const recievedTxns: Record<string, any> = {};
+            const executedTxns: Record<string, boolean> = {};
             for (let item of block.items) {
                 if (item.kind === 'call') {
                     if (item.name == 'ConvictionVoting.vote'){
@@ -77,6 +82,12 @@ const processor = new SubstrateBatchProcessor()
                     }
                     if (item.name == 'Democracy.vote'){
                         await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                    }
+                    if(item.name == 'Ethereum.transact'){
+                        const tx = getTransaction(ctx, item.call)
+                        const hash = tx.hash
+                        recievedTxns[hash] = [item, block.header]
+                        // await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, item, block.header)
                     }
                 }
                 if (item.kind === 'event'){
@@ -119,7 +130,6 @@ const processor = new SubstrateBatchProcessor()
                     if (item.name == 'Democracy.PreimageReaped'){
                         await modules.democracy.events.handlePreimageReaped(ctx, item, block.header)
                     }
-
                     if (item.name == 'Treasury.Proposed'){
                         await modules.treasury.events.handleProposed(ctx, item, block.header)
                     }
@@ -174,12 +184,20 @@ const processor = new SubstrateBatchProcessor()
                     if (item.name == 'Referenda.TimedOut'){
                         await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
                     }
-                    // if(item.name == 'Scheduler.Scheduled'){
-                    //     await modules.fellowshipReferendum.events.   (ctx, item, block.header)
-                    //     await modules.referendumV2.events.handleReferendumV2ExecutionSchedule(ctx, item, block.header)
-                    // }
                     if(item.name == 'Scheduler.Dispatched'){
                         await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
+                    }
+                    if (item.name === "Ethereum.Executed") {
+                        const txHash = item?.event?.args?.transactionHash;
+                        executedTxns[txHash] = true;
+                        // await modules.ethereum.events.handleExecuted(ctx, item, block.header)
+                    }
+                }
+            }
+            for (let hash in recievedTxns){
+                if(executedTxns[hash]){
+                    if(recievedTxns[hash] && recievedTxns[hash][0] && recievedTxns[hash][1]){
+                        await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, recievedTxns[hash][0], recievedTxns[hash][1])
                     }
                 }
             }

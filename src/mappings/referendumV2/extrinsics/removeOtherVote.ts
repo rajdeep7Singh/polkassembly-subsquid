@@ -43,3 +43,34 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }
+
+export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any): Promise<void> {
+    const [ wallet, track, index ] = data
+
+    const referendum = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2} })
+    if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
+        return
+    }
+    if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
+        //ref already ended probably removing vote for democracy_unlock
+        return
+    }
+    if (!wallet){
+        return
+    } 
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+    if (votes.length > 1) {
+        ctx.log.warn(TooManyOpenVotes(header.height, index, wallet))
+    }
+    else if (votes.length === 0) {
+        ctx.log.warn(NoOpenVoteFound(header.height, index, wallet))
+        return
+    }
+    const vote = votes[0]
+    vote.removedAtBlock = header.height
+    vote.removedAt = new Date(header.timestamp)
+    await ctx.store.save(vote)
+    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
+    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
+}

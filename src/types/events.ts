@@ -7,6 +7,8 @@ import * as v1200 from './v1200'
 import * as v1300 from './v1300'
 import * as v1400 from './v1400'
 import * as v1603 from './v1603'
+import * as v1700 from './v1700'
+import * as v1800 from './v1800'
 import * as v1900 from './v1900'
 import * as v2000 from './v2000'
 
@@ -691,6 +693,95 @@ export class DemocracyTabledEvent {
      */
     get asV2000(): {proposalIndex: number, deposit: bigint} {
         assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class EthereumExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Ethereum.Executed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get isV40(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '0c7eb5ef81fb6e87c05b96ed25f52c62fffc067198343642f01289fbb0011fce'
+    }
+
+    /**
+     *  An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get asV40(): [Uint8Array, Uint8Array, Uint8Array, v40.ExitReason] {
+        assert(this.isV40)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get isV1200(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '4548a1e2cc89d3c4c1d89f3020a6fb505032fdfd5236d5749c897815fb7db5de'
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get asV1200(): [Uint8Array, Uint8Array, Uint8Array, v1200.ExitReason] {
+        assert(this.isV1200)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get isV1400(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '19a41316cbc97760af789cb1da772172d6a9f09521ee0e5e8f18125c1db318df'
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get asV1400(): [Uint8Array, Uint8Array, Uint8Array, v1400.ExitReason] {
+        assert(this.isV1400)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get isV1700(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '42c632fb85f0ab54f0811a41be276501476d6d3e1e0169c6a6db6afdd63e7893'
+    }
+
+    /**
+     * An ethereum transaction was successfully executed. [from, to/contract_address, transaction_hash, exit_reason]
+     */
+    get asV1700(): [Uint8Array, Uint8Array, Uint8Array, v1700.ExitReason] {
+        assert(this.isV1700)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An ethereum transaction was successfully executed.
+     */
+    get isV1800(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '85a0045758a84a2cd09a563b9e9fc2194e6054385c70290178792fb71cd20021'
+    }
+
+    /**
+     * An ethereum transaction was successfully executed.
+     */
+    get asV1800(): {from: Uint8Array, to: Uint8Array, transactionHash: Uint8Array, exitReason: v1800.ExitReason} {
+        assert(this.isV1800)
         return this._chain.decodeEvent(this.event)
     }
 }
