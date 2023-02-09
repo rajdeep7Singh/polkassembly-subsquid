@@ -1,14 +1,58 @@
 import type {Result, Option} from './support'
 
-export type Type_33 = Type_33_Ok | Type_33_Err
+export type Type_43 = Type_43_Ok | Type_43_Err
 
-export interface Type_33_Ok {
+export interface Type_43_Ok {
     __kind: 'Ok'
 }
 
-export interface Type_33_Err {
+export interface Type_43_Err {
     __kind: 'Err'
     value: DispatchError
+}
+
+export type VoteThreshold = VoteThreshold_SuperMajorityApprove | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SimpleMajority
+
+export interface VoteThreshold_SuperMajorityApprove {
+    __kind: 'SuperMajorityApprove'
+}
+
+export interface VoteThreshold_SuperMajorityAgainst {
+    __kind: 'SuperMajorityAgainst'
+}
+
+export interface VoteThreshold_SimpleMajority {
+    __kind: 'SimpleMajority'
+}
+
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
 }
 
 export type AccountVote = AccountVote_Standard | AccountVote_Split
@@ -23,6 +67,13 @@ export interface AccountVote_Split {
     __kind: 'Split'
     aye: bigint
     nay: bigint
+}
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    miscFrozen: bigint
+    feeFrozen: bigint
 }
 
 export type PreimageStatus = PreimageStatus_Missing | PreimageStatus_Available
@@ -52,6 +103,21 @@ export interface ReferendumInfo_Finished {
     __kind: 'Finished'
     approved: boolean
     end: number
+}
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
+}
+
+export interface Proposal {
+    proposer: Uint8Array
+    value: bigint
+    beneficiary: Uint8Array
+    bond: bigint
 }
 
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
@@ -142,20 +208,6 @@ export interface ArithmeticError_Overflow {
 
 export interface ArithmeticError_DivisionByZero {
     __kind: 'DivisionByZero'
-}
-
-export type VoteThreshold = VoteThreshold_SuperMajorityApprove | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SimpleMajority
-
-export interface VoteThreshold_SuperMajorityApprove {
-    __kind: 'SuperMajorityApprove'
-}
-
-export interface VoteThreshold_SuperMajorityAgainst {
-    __kind: 'SuperMajorityAgainst'
-}
-
-export interface VoteThreshold_SimpleMajority {
-    __kind: 'SimpleMajority'
 }
 
 export interface Tally {

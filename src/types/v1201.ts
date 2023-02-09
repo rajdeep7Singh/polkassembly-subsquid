@@ -1,17 +1,31 @@
 import type {Result, Option} from './support'
 
-export type Type_29 = Type_29_Ok | Type_29_Err
+export type Type_41 = Type_41_Ok | Type_41_Err
 
-export interface Type_29_Ok {
+export interface Type_41_Ok {
     __kind: 'Ok'
 }
 
-export interface Type_29_Err {
+export interface Type_41_Err {
     __kind: 'Err'
     value: DispatchError
 }
 
-export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_TooManyConsumers | DispatchError_Token | DispatchError_Arithmetic | DispatchError_Transactional
+export type VoteThreshold = VoteThreshold_SuperMajorityApprove | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SimpleMajority
+
+export interface VoteThreshold_SuperMajorityApprove {
+    __kind: 'SuperMajorityApprove'
+}
+
+export interface VoteThreshold_SuperMajorityAgainst {
+    __kind: 'SuperMajorityAgainst'
+}
+
+export interface VoteThreshold_SimpleMajority {
+    __kind: 'SimpleMajority'
+}
+
+export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
 
 export interface DispatchError_Other {
     __kind: 'Other'
@@ -27,7 +41,8 @@ export interface DispatchError_BadOrigin {
 
 export interface DispatchError_Module {
     __kind: 'Module'
-    value: ModuleError
+    index: number
+    error: number
 }
 
 export interface DispatchError_ConsumerRemaining {
@@ -38,10 +53,6 @@ export interface DispatchError_NoProviders {
     __kind: 'NoProviders'
 }
 
-export interface DispatchError_TooManyConsumers {
-    __kind: 'TooManyConsumers'
-}
-
 export interface DispatchError_Token {
     __kind: 'Token'
     value: TokenError
@@ -50,16 +61,6 @@ export interface DispatchError_Token {
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
     value: ArithmeticError
-}
-
-export interface DispatchError_Transactional {
-    __kind: 'Transactional'
-    value: TransactionalError
-}
-
-export interface ModuleError {
-    index: number
-    error: Uint8Array
 }
 
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
@@ -104,14 +105,4 @@ export interface ArithmeticError_Overflow {
 
 export interface ArithmeticError_DivisionByZero {
     __kind: 'DivisionByZero'
-}
-
-export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
-
-export interface TransactionalError_LimitReached {
-    __kind: 'LimitReached'
-}
-
-export interface TransactionalError_NoLayer {
-    __kind: 'NoLayer'
 }

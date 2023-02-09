@@ -1,12 +1,12 @@
 import type {Result, Option} from './support'
 
-export type Type_41 = Type_41_Ok | Type_41_Err
+export type Type_42 = Type_42_Ok | Type_42_Err
 
-export interface Type_41_Ok {
+export interface Type_42_Ok {
     __kind: 'Ok'
 }
 
-export interface Type_41_Err {
+export interface Type_42_Err {
     __kind: 'Err'
     value: DispatchError
 }
@@ -27,8 +27,7 @@ export interface DispatchError_BadOrigin {
 
 export interface DispatchError_Module {
     __kind: 'Module'
-    index: number
-    error: number
+    value: ModuleError
 }
 
 export interface DispatchError_ConsumerRemaining {
@@ -51,6 +50,11 @@ export interface DispatchError_Token {
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
     value: ArithmeticError
+}
+
+export interface ModuleError {
+    index: number
+    error: number
 }
 
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported

@@ -2,7 +2,6 @@ import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
 import { TreasuryProposalsStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
 
 interface TreasuryProposalStorageData {
     proposer: Uint8Array
@@ -15,8 +14,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
     const storage = new TreasuryProposalsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV47) {
-        return await storage.asV47.get(index)
+    if (storage.isV900) {
+        return await storage.asV900.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

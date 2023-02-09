@@ -1,21 +1,16 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://moonbase.archive.subsquid.io/graphql",
-  "typesBundle": "moonbase",
+  "specVersions": "https://moonbeam.archive.subsquid.io/graphql",
+  "typesBundle": "moonbeam",
   "storage": [
-    "Instance1Collective.Members",
-    "Instance1Collective.ProposalCount",
     "Democracy.PublicPropCount",
     "Balances.TotalIssuance",
     "Democracy.Preimages",
     "Democracy.PublicProps",
     "Democracy.ReferendumInfoOf",
-    "Instance1Collective.ProposalOf",
     "Treasury.Proposals",
     "System.Account",
     "Balances.Account",
-    "Referenda.ReferendumInfoFor",
-    "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
     "Preimage.PreimageFor"
   ],
@@ -36,35 +31,15 @@
     "Treasury.Proposed",
     "Treasury.Awarded",
     "Treasury.Rejected",
-    "Treasury.SpendApproved",
-    "Referenda.Submitted",
-    "Referenda.DecisionDepositPlaced",
-    "Referenda.DecisionStarted",
-    "Referenda.ConfirmStarted",
-    "Referenda.ConfirmAborted",
-    "Referenda.Confirmed",
-    "Referenda.Approved",
-    "Referenda.Rejected",
-    "Referenda.TimedOut",
-    "Referenda.Cancelled",
-    "Referenda.Killed",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared",
-    "Scheduler.Dispatched",
-    "Ethereum.Executed"
+    "Preimage.Cleared"
   ],
   "calls": [
     "Democracy.vote",
     "Democracy.remove_vote",
     "Democracy.remove_other_vote",
     "Democracy.delegate",
-    "Democracy.undelegate",
-    "ConvictionVoting.vote",
-    "ConvictionVoting.delegate",
-    "ConvictionVoting.undelegate",
-    "ConvictionVoting.remove_vote",
-    "ConvictionVoting.remove_other_vote",
-    "Ethereum.transact"
+    "Democracy.undelegate"
   ]
 }

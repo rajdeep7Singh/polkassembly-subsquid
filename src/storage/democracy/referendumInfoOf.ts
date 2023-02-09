@@ -1,7 +1,6 @@
 import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
-import * as v40 from '../../types/v40'
 import * as v900 from '../../types/v900'
 import * as v2000 from '../../types/v2000'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -28,29 +27,7 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
     const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
-    if (storage.isV40) {
-        const storageData = await storage.asV40.get(index)
-        if (!storageData) return undefined
-
-        const { __kind: status } = storageData
-        if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v40.ReferendumInfo_Ongoing).value
-            return {
-                status,
-                hash,
-                end,
-                delay,
-                threshold: threshold.__kind,
-            }
-        } else {
-            const { end, approved } = (storageData as v40.ReferendumInfo_Finished).value
-            return {
-                status,
-                end,
-                approved,
-            }
-        }
-    } else if (storage.isV900) {
+    if (storage.isV900) {
         const storageData = await storage.asV900.get(index)
         if (!storageData) return undefined
 
