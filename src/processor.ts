@@ -11,7 +11,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://wss.api.moonbase.moonbeam.network',
         archive: lookupArchive('moonbase', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 3709340, to: 3709340})
+    .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
