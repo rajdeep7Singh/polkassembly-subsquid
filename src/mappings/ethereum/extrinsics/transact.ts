@@ -65,7 +65,7 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             const decoded = functions.voteNo.decode(tx.input)
             if(decoded){
                 flag = true
-                await handleConvictionVotesFromPrecompile(ctx, item.call, header, decoded, true, originAccountId, txnHash)
+                await handleConvictionVotesFromPrecompile(ctx, item.call, header, decoded, false, originAccountId, txnHash)
                 flag = true
             }
         }
