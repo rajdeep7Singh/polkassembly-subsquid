@@ -43,8 +43,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
             deposit,
             block: since,
         }
-    } else if (storage.isV40) {
-        const storageData = await storage.asV40.get(hash)
+    } else if (storage.isV49) {
+        const storageData = await storage.asV49.get(hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData.value

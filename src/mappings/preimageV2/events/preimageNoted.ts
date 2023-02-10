@@ -30,16 +30,7 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
     const storage = new PreimagePreimageForStorage(ctx, block)
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
 
-    if (storage.isV1900) {
-        const storageData = await storage.asV1900.get(hash)
-        if (!storageData) return undefined
-
-        return {
-            data: storageData,
-            ...preimageStatus
-        }
-    }
-    else if(storage.isV2000) {
+    if(storage.isV2000) {
         if(preimageStatus && preimageStatus.len){
             const storageData = await storage.asV2000.get([hash, preimageStatus.len])
             if (!storageData) return undefined
@@ -65,16 +56,7 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx, block)
-    if (preimageStorage.isV1900) {
-        const storageData = await preimageStorage.asV1900.get(hash)
-        if (!storageData) return undefined
-        return {
-            status: storageData.__kind,
-            value: storageData.value,
-            len: undefined
-        }
-    }
-    else if(preimageStorage.isV2000) {
+    if(preimageStorage.isV2000) {
         const storageData = await preimageStorage.asV2000.get(hash)
         if (!storageData) return undefined
         return {

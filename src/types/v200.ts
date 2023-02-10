@@ -1,15 +1,15 @@
 import type {Result, Option} from './support'
 
-export type Proposal = Proposal_System | Proposal_Utility | Proposal_Timestamp | Proposal_Balances | Proposal_ParachainSystem | Proposal_EVM | Proposal_Ethereum | Proposal_ParachainStaking | Proposal_Scheduler | Proposal_Democracy | Proposal_CouncilCollective | Proposal_TechComitteeCollective | Proposal_Treasury | Proposal_AuthorInherent | Proposal_AuthorFilter | Proposal_CrowdloanRewards | Proposal_AuthorMapping | Proposal_Proxy
+export type Proposal = Proposal_System | Proposal_ParachainSystem | Proposal_Timestamp | Proposal_Balances | Proposal_ParachainStaking | Proposal_AuthorInherent | Proposal_AuthorFilter | Proposal_AuthorMapping | Proposal_Utility | Proposal_Proxy | Proposal_EVM | Proposal_Ethereum | Proposal_Scheduler | Proposal_Democracy | Proposal_CouncilCollective | Proposal_TechComitteeCollective | Proposal_Treasury | Proposal_CrowdloanRewards
 
 export interface Proposal_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Proposal_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
+export interface Proposal_ParachainSystem {
+    __kind: 'ParachainSystem'
+    value: ParachainSystemCall
 }
 
 export interface Proposal_Timestamp {
@@ -22,9 +22,34 @@ export interface Proposal_Balances {
     value: BalancesCall
 }
 
-export interface Proposal_ParachainSystem {
-    __kind: 'ParachainSystem'
-    value: ParachainSystemCall
+export interface Proposal_ParachainStaking {
+    __kind: 'ParachainStaking'
+    value: ParachainStakingCall
+}
+
+export interface Proposal_AuthorInherent {
+    __kind: 'AuthorInherent'
+    value: AuthorInherentCall
+}
+
+export interface Proposal_AuthorFilter {
+    __kind: 'AuthorFilter'
+    value: AuthorFilterCall
+}
+
+export interface Proposal_AuthorMapping {
+    __kind: 'AuthorMapping'
+    value: AuthorMappingCall
+}
+
+export interface Proposal_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Proposal_Proxy {
+    __kind: 'Proxy'
+    value: ProxyCall
 }
 
 export interface Proposal_EVM {
@@ -35,11 +60,6 @@ export interface Proposal_EVM {
 export interface Proposal_Ethereum {
     __kind: 'Ethereum'
     value: EthereumCall
-}
-
-export interface Proposal_ParachainStaking {
-    __kind: 'ParachainStaking'
-    value: ParachainStakingCall
 }
 
 export interface Proposal_Scheduler {
@@ -67,29 +87,9 @@ export interface Proposal_Treasury {
     value: TreasuryCall
 }
 
-export interface Proposal_AuthorInherent {
-    __kind: 'AuthorInherent'
-    value: AuthorInherentCall
-}
-
-export interface Proposal_AuthorFilter {
-    __kind: 'AuthorFilter'
-    value: AuthorFilterCall
-}
-
 export interface Proposal_CrowdloanRewards {
     __kind: 'CrowdloanRewards'
     value: CrowdloanRewardsCall
-}
-
-export interface Proposal_AuthorMapping {
-    __kind: 'AuthorMapping'
-    value: AuthorMappingCall
-}
-
-export interface Proposal_Proxy {
-    __kind: 'Proxy'
-    value: ProxyCall
 }
 
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
@@ -240,72 +240,50 @@ export interface SystemCall_remark_with_event {
     remark: Uint8Array
 }
 
-export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all
+export type ParachainSystemCall = ParachainSystemCall_set_upgrade_block | ParachainSystemCall_set_validation_data | ParachainSystemCall_sudo_send_upward_message | ParachainSystemCall_authorize_upgrade | ParachainSystemCall_enact_authorized_upgrade
 
 /**
- *  Send a batch of dispatch calls.
+ *  Force an already scheduled validation function upgrade to happen on a particular block.
  * 
- *  May be called from any origin.
- * 
- *  - `calls`: The calls to be dispatched from the same origin.
- * 
- *  If origin is root then call are dispatch without checking origin filter. (This includes
- *  bypassing `frame_system::Config::BaseCallFilter`).
- * 
- *  # <weight>
- *  - Complexity: O(C) where C is the number of calls to be batched.
- *  # </weight>
- * 
- *  This will return `Ok` in all circumstances. To determine the success of the batch, an
- *  event is deposited. If a call failed and the batch was interrupted, then the
- *  `BatchInterrupted` event is deposited, along with the number of successful calls made
- *  and the error of the failed call. If all were successful, then the `BatchCompleted`
- *  event is deposited.
+ *  Note that coordinating this block for the upgrade has to happen independently on the
+ *  relay chain and this parachain. Synchronizing the block for the upgrade is sensitive,
+ *  and this bypasses all checks and and normal protocols. Very easy to brick your chain
+ *  if done wrong.
  */
-export interface UtilityCall_batch {
-    __kind: 'batch'
-    calls: Type_35[]
+export interface ParachainSystemCall_set_upgrade_block {
+    __kind: 'set_upgrade_block'
+    relayChainBlock: number
 }
 
 /**
- *  Send a call through an indexed pseudonym of the sender.
+ *  Set the current validation data.
  * 
- *  Filter from origin are passed along. The call will be dispatched with an origin which
- *  use the same filter as the origin of this call.
+ *  This should be invoked exactly once per block. It will panic at the finalization
+ *  phase if the call was not invoked.
  * 
- *  NOTE: If you need to ensure that any account-based filtering is not honored (i.e.
- *  because you expect `proxy` to have been used prior in the call stack and you do not want
- *  the call restrictions to apply to any sub-accounts), then use `as_multi_threshold_1`
- *  in the Multisig pallet instead.
+ *  The dispatch origin for this call must be `Inherent`
  * 
- *  NOTE: Prior to version *12, this was called `as_limited_sub`.
- * 
- *  The dispatch origin for this call must be _Signed_.
+ *  As a side effect, this function upgrades the current validation function
+ *  if the appropriate time has come.
  */
-export interface UtilityCall_as_derivative {
-    __kind: 'as_derivative'
-    index: number
-    call: Type_35
+export interface ParachainSystemCall_set_validation_data {
+    __kind: 'set_validation_data'
+    data: ParachainInherentData
 }
 
-/**
- *  Send a batch of dispatch calls and atomically execute them.
- *  The whole transaction will rollback and fail if any of the calls failed.
- * 
- *  May be called from any origin.
- * 
- *  - `calls`: The calls to be dispatched from the same origin.
- * 
- *  If origin is root then call are dispatch without checking origin filter. (This includes
- *  bypassing `frame_system::Config::BaseCallFilter`).
- * 
- *  # <weight>
- *  - Complexity: O(C) where C is the number of calls to be batched.
- *  # </weight>
- */
-export interface UtilityCall_batch_all {
-    __kind: 'batch_all'
-    calls: Type_35[]
+export interface ParachainSystemCall_sudo_send_upward_message {
+    __kind: 'sudo_send_upward_message'
+    message: Uint8Array
+}
+
+export interface ParachainSystemCall_authorize_upgrade {
+    __kind: 'authorize_upgrade'
+    codeHash: Uint8Array
+}
+
+export interface ParachainSystemCall_enact_authorized_upgrade {
+    __kind: 'enact_authorized_upgrade'
+    code: Uint8Array
 }
 
 export type TimestampCall = TimestampCall_set
@@ -454,115 +432,6 @@ export interface BalancesCall_transfer_all {
     __kind: 'transfer_all'
     dest: Uint8Array
     keepAlive: boolean
-}
-
-export type ParachainSystemCall = ParachainSystemCall_set_upgrade_block | ParachainSystemCall_set_validation_data | ParachainSystemCall_sudo_send_upward_message | ParachainSystemCall_authorize_upgrade | ParachainSystemCall_enact_authorized_upgrade
-
-/**
- *  Force an already scheduled validation function upgrade to happen on a particular block.
- * 
- *  Note that coordinating this block for the upgrade has to happen independently on the
- *  relay chain and this parachain. Synchronizing the block for the upgrade is sensitive,
- *  and this bypasses all checks and and normal protocols. Very easy to brick your chain
- *  if done wrong.
- */
-export interface ParachainSystemCall_set_upgrade_block {
-    __kind: 'set_upgrade_block'
-    relayChainBlock: number
-}
-
-/**
- *  Set the current validation data.
- * 
- *  This should be invoked exactly once per block. It will panic at the finalization
- *  phase if the call was not invoked.
- * 
- *  The dispatch origin for this call must be `Inherent`
- * 
- *  As a side effect, this function upgrades the current validation function
- *  if the appropriate time has come.
- */
-export interface ParachainSystemCall_set_validation_data {
-    __kind: 'set_validation_data'
-    data: ParachainInherentData
-}
-
-export interface ParachainSystemCall_sudo_send_upward_message {
-    __kind: 'sudo_send_upward_message'
-    message: Uint8Array
-}
-
-export interface ParachainSystemCall_authorize_upgrade {
-    __kind: 'authorize_upgrade'
-    codeHash: Uint8Array
-}
-
-export interface ParachainSystemCall_enact_authorized_upgrade {
-    __kind: 'enact_authorized_upgrade'
-    code: Uint8Array
-}
-
-export type EVMCall = EVMCall_withdraw | EVMCall_call | EVMCall_create | EVMCall_create2
-
-/**
- *  Withdraw balance from EVM into currency/balances pallet.
- */
-export interface EVMCall_withdraw {
-    __kind: 'withdraw'
-    address: Uint8Array
-    value: bigint
-}
-
-/**
- *  Issue an EVM call operation. This is similar to a message call transaction in Ethereum.
- */
-export interface EVMCall_call {
-    __kind: 'call'
-    source: Uint8Array
-    target: Uint8Array
-    input: Uint8Array
-    value: bigint
-    gasLimit: bigint
-    gasPrice: bigint
-    nonce: (bigint | undefined)
-}
-
-/**
- *  Issue an EVM create operation. This is similar to a contract creation transaction in
- *  Ethereum.
- */
-export interface EVMCall_create {
-    __kind: 'create'
-    source: Uint8Array
-    init: Uint8Array
-    value: bigint
-    gasLimit: bigint
-    gasPrice: bigint
-    nonce: (bigint | undefined)
-}
-
-/**
- *  Issue an EVM create2 operation.
- */
-export interface EVMCall_create2 {
-    __kind: 'create2'
-    source: Uint8Array
-    init: Uint8Array
-    salt: Uint8Array
-    value: bigint
-    gasLimit: bigint
-    gasPrice: bigint
-    nonce: (bigint | undefined)
-}
-
-export type EthereumCall = EthereumCall_transact
-
-/**
- *  Transact an Ethereum transaction.
- */
-export interface EthereumCall_transact {
-    __kind: 'transact'
-    transaction: EthTransaction
 }
 
 export type ParachainStakingCall = ParachainStakingCall_set_staking_expectations | ParachainStakingCall_set_inflation | ParachainStakingCall_set_parachain_bond_account | ParachainStakingCall_set_parachain_bond_reserve_percent | ParachainStakingCall_set_total_selected | ParachainStakingCall_set_collator_commission | ParachainStakingCall_set_blocks_per_round | ParachainStakingCall_join_candidates | ParachainStakingCall_leave_candidates | ParachainStakingCall_go_offline | ParachainStakingCall_go_online | ParachainStakingCall_candidate_bond_more | ParachainStakingCall_candidate_bond_less | ParachainStakingCall_nominate | ParachainStakingCall_leave_nominators | ParachainStakingCall_revoke_nomination | ParachainStakingCall_nominator_bond_more | ParachainStakingCall_nominator_bond_less
@@ -725,6 +594,444 @@ export interface ParachainStakingCall_nominator_bond_less {
     less: bigint
 }
 
+export type AuthorInherentCall = AuthorInherentCall_set_author
+
+/**
+ *  Inherent to set the author of a block
+ */
+export interface AuthorInherentCall_set_author {
+    __kind: 'set_author'
+    author: Uint8Array
+}
+
+export type AuthorFilterCall = AuthorFilterCall_set_eligible
+
+/**
+ *  Update the eligible ratio. Intended to be called by governance.
+ */
+export interface AuthorFilterCall_set_eligible {
+    __kind: 'set_eligible'
+    new: number
+}
+
+export type AuthorMappingCall = AuthorMappingCall_add_association | AuthorMappingCall_update_association | AuthorMappingCall_clear_association
+
+/**
+ *  Register your AuthorId onchain so blocks you author are associated with your account.
+ * 
+ *  Users who have been (or will soon be) elected active collators in staking,
+ *  should submit this extrinsic to have their blocks accepted and earn rewards.
+ */
+export interface AuthorMappingCall_add_association {
+    __kind: 'add_association'
+    authorId: Uint8Array
+}
+
+/**
+ *  Change your AuthorId.
+ * 
+ *  This is useful for normal key rotation or for when switching from one physical collator
+ *  machine to another. No new security deposit is required.
+ */
+export interface AuthorMappingCall_update_association {
+    __kind: 'update_association'
+    oldAuthorId: Uint8Array
+    newAuthorId: Uint8Array
+}
+
+/**
+ *  Clear your AuthorId.
+ * 
+ *  This is useful when you are no longer an author and would like to re-claim your security
+ *  deposit.
+ */
+export interface AuthorMappingCall_clear_association {
+    __kind: 'clear_association'
+    authorId: Uint8Array
+}
+
+export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | UtilityCall_batch_all
+
+/**
+ *  Send a batch of dispatch calls.
+ * 
+ *  May be called from any origin.
+ * 
+ *  - `calls`: The calls to be dispatched from the same origin.
+ * 
+ *  If origin is root then call are dispatch without checking origin filter. (This includes
+ *  bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ *  # <weight>
+ *  - Complexity: O(C) where C is the number of calls to be batched.
+ *  # </weight>
+ * 
+ *  This will return `Ok` in all circumstances. To determine the success of the batch, an
+ *  event is deposited. If a call failed and the batch was interrupted, then the
+ *  `BatchInterrupted` event is deposited, along with the number of successful calls made
+ *  and the error of the failed call. If all were successful, then the `BatchCompleted`
+ *  event is deposited.
+ */
+export interface UtilityCall_batch {
+    __kind: 'batch'
+    calls: Type_71[]
+}
+
+/**
+ *  Send a call through an indexed pseudonym of the sender.
+ * 
+ *  Filter from origin are passed along. The call will be dispatched with an origin which
+ *  use the same filter as the origin of this call.
+ * 
+ *  NOTE: If you need to ensure that any account-based filtering is not honored (i.e.
+ *  because you expect `proxy` to have been used prior in the call stack and you do not want
+ *  the call restrictions to apply to any sub-accounts), then use `as_multi_threshold_1`
+ *  in the Multisig pallet instead.
+ * 
+ *  NOTE: Prior to version *12, this was called `as_limited_sub`.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ */
+export interface UtilityCall_as_derivative {
+    __kind: 'as_derivative'
+    index: number
+    call: Type_71
+}
+
+/**
+ *  Send a batch of dispatch calls and atomically execute them.
+ *  The whole transaction will rollback and fail if any of the calls failed.
+ * 
+ *  May be called from any origin.
+ * 
+ *  - `calls`: The calls to be dispatched from the same origin.
+ * 
+ *  If origin is root then call are dispatch without checking origin filter. (This includes
+ *  bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ *  # <weight>
+ *  - Complexity: O(C) where C is the number of calls to be batched.
+ *  # </weight>
+ */
+export interface UtilityCall_batch_all {
+    __kind: 'batch_all'
+    calls: Type_71[]
+}
+
+export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
+
+/**
+ *  Dispatch the given `call` from an account that the sender is authorised for through
+ *  `add_proxy`.
+ * 
+ *  Removes any corresponding announcement(s).
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
+ *  - `call`: The call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ */
+export interface ProxyCall_proxy {
+    __kind: 'proxy'
+    real: Uint8Array
+    forceProxyType: (ProxyType | undefined)
+    call: Type_71
+}
+
+/**
+ *  Register a proxy account for the sender that is able to make calls on its behalf.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `proxy`: The account that the `caller` would like to make a proxy.
+ *  - `proxy_type`: The permissions allowed for this proxy account.
+ *  - `delay`: The announcement period required of the initial proxy. Will generally be
+ *  zero.
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ */
+export interface ProxyCall_add_proxy {
+    __kind: 'add_proxy'
+    delegate: Uint8Array
+    proxyType: ProxyType
+    delay: number
+}
+
+/**
+ *  Unregister a proxy account for the sender.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `proxy`: The account that the `caller` would like to remove as a proxy.
+ *  - `proxy_type`: The permissions currently enabled for the removed proxy account.
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ */
+export interface ProxyCall_remove_proxy {
+    __kind: 'remove_proxy'
+    delegate: Uint8Array
+    proxyType: ProxyType
+    delay: number
+}
+
+/**
+ *  Unregister all proxy accounts for the sender.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  WARNING: This may be called on accounts created by `anonymous`, however if done, then
+ *  the unreserved fees will be inaccessible. **All access to this account will be lost.**
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ */
+export interface ProxyCall_remove_proxies {
+    __kind: 'remove_proxies'
+}
+
+/**
+ *  Spawn a fresh new account that is guaranteed to be otherwise inaccessible, and
+ *  initialize it with a proxy of `proxy_type` for `origin` sender.
+ * 
+ *  Requires a `Signed` origin.
+ * 
+ *  - `proxy_type`: The type of the proxy that the sender will be registered as over the
+ *  new account. This will almost always be the most permissive `ProxyType` possible to
+ *  allow for maximum flexibility.
+ *  - `index`: A disambiguation index, in case this is called multiple times in the same
+ *  transaction (e.g. with `utility::batch`). Unless you're using `batch` you probably just
+ *  want to use `0`.
+ *  - `delay`: The announcement period required of the initial proxy. Will generally be
+ *  zero.
+ * 
+ *  Fails with `Duplicate` if this has already been called in this transaction, from the
+ *  same sender, with the same parameters.
+ * 
+ *  Fails if there are insufficient funds to pay for deposit.
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ *  TODO: Might be over counting 1 read
+ */
+export interface ProxyCall_anonymous {
+    __kind: 'anonymous'
+    proxyType: ProxyType
+    delay: number
+    index: number
+}
+
+/**
+ *  Removes a previously spawned anonymous proxy.
+ * 
+ *  WARNING: **All access to this account will be lost.** Any funds held in it will be
+ *  inaccessible.
+ * 
+ *  Requires a `Signed` origin, and the sender account must have been created by a call to
+ *  `anonymous` with corresponding parameters.
+ * 
+ *  - `spawner`: The account that originally called `anonymous` to create this account.
+ *  - `index`: The disambiguation index originally passed to `anonymous`. Probably `0`.
+ *  - `proxy_type`: The proxy type originally passed to `anonymous`.
+ *  - `height`: The height of the chain when the call to `anonymous` was processed.
+ *  - `ext_index`: The extrinsic index in which the call to `anonymous` was processed.
+ * 
+ *  Fails with `NoPermission` in case the caller is not a previously created anonymous
+ *  account whose `anonymous` call has corresponding parameters.
+ * 
+ *  # <weight>
+ *  Weight is a function of the number of proxies the user has (P).
+ *  # </weight>
+ */
+export interface ProxyCall_kill_anonymous {
+    __kind: 'kill_anonymous'
+    spawner: Uint8Array
+    proxyType: ProxyType
+    index: number
+    height: number
+    extIndex: number
+}
+
+/**
+ *  Publish the hash of a proxy-call that will be made in the future.
+ * 
+ *  This must be called some number of blocks before the corresponding `proxy` is attempted
+ *  if the delay associated with the proxy relationship is greater than zero.
+ * 
+ *  No more than `MaxPending` announcements may be made at any one time.
+ * 
+ *  This will take a deposit of `AnnouncementDepositFactor` as well as
+ *  `AnnouncementDepositBase` if there are no other pending announcements.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and a proxy of `real`.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_announce {
+    __kind: 'announce'
+    real: Uint8Array
+    callHash: Uint8Array
+}
+
+/**
+ *  Remove a given announcement.
+ * 
+ *  May be called by a proxy account to remove a call they previously announced and return
+ *  the deposit.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_remove_announcement {
+    __kind: 'remove_announcement'
+    real: Uint8Array
+    callHash: Uint8Array
+}
+
+/**
+ *  Remove the given announcement of a delegate.
+ * 
+ *  May be called by a target (proxied) account to remove a call that one of their delegates
+ *  (`delegate`) has announced they want to execute. The deposit is returned.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `delegate`: The account that previously announced the call.
+ *  - `call_hash`: The hash of the call to be made.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_reject_announcement {
+    __kind: 'reject_announcement'
+    delegate: Uint8Array
+    callHash: Uint8Array
+}
+
+/**
+ *  Dispatch the given `call` from an account that the sender is authorized for through
+ *  `add_proxy`.
+ * 
+ *  Removes any corresponding announcement(s).
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
+ *  - `call`: The call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_proxy_announced {
+    __kind: 'proxy_announced'
+    delegate: Uint8Array
+    real: Uint8Array
+    forceProxyType: (ProxyType | undefined)
+    call: Type_71
+}
+
+export type EVMCall = EVMCall_withdraw | EVMCall_call | EVMCall_create | EVMCall_create2
+
+/**
+ *  Withdraw balance from EVM into currency/balances pallet.
+ */
+export interface EVMCall_withdraw {
+    __kind: 'withdraw'
+    address: Uint8Array
+    value: bigint
+}
+
+/**
+ *  Issue an EVM call operation. This is similar to a message call transaction in Ethereum.
+ */
+export interface EVMCall_call {
+    __kind: 'call'
+    source: Uint8Array
+    target: Uint8Array
+    input: Uint8Array
+    value: bigint
+    gasLimit: bigint
+    gasPrice: bigint
+    nonce: (bigint | undefined)
+}
+
+/**
+ *  Issue an EVM create operation. This is similar to a contract creation transaction in
+ *  Ethereum.
+ */
+export interface EVMCall_create {
+    __kind: 'create'
+    source: Uint8Array
+    init: Uint8Array
+    value: bigint
+    gasLimit: bigint
+    gasPrice: bigint
+    nonce: (bigint | undefined)
+}
+
+/**
+ *  Issue an EVM create2 operation.
+ */
+export interface EVMCall_create2 {
+    __kind: 'create2'
+    source: Uint8Array
+    init: Uint8Array
+    salt: Uint8Array
+    value: bigint
+    gasLimit: bigint
+    gasPrice: bigint
+    nonce: (bigint | undefined)
+}
+
+export type EthereumCall = EthereumCall_transact
+
+/**
+ *  Transact an Ethereum transaction.
+ */
+export interface EthereumCall_transact {
+    __kind: 'transact'
+    transaction: EthTransaction
+}
+
 export type SchedulerCall = SchedulerCall_schedule | SchedulerCall_cancel | SchedulerCall_schedule_named | SchedulerCall_cancel_named | SchedulerCall_schedule_after | SchedulerCall_schedule_named_after
 
 /**
@@ -744,7 +1051,7 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_35
+    call: Type_71
 }
 
 /**
@@ -783,7 +1090,7 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_35
+    call: Type_71
 }
 
 /**
@@ -815,7 +1122,7 @@ export interface SchedulerCall_schedule_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_35
+    call: Type_71
 }
 
 /**
@@ -831,7 +1138,7 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_35
+    call: Type_71
 }
 
 export type DemocracyCall = DemocracyCall_propose | DemocracyCall_second | DemocracyCall_vote | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_majority | DemocracyCall_external_propose_default | DemocracyCall_fast_track | DemocracyCall_veto_external | DemocracyCall_cancel_referendum | DemocracyCall_cancel_queued | DemocracyCall_delegate | DemocracyCall_undelegate | DemocracyCall_clear_public_proposals | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_reap_preimage | DemocracyCall_unlock | DemocracyCall_remove_vote | DemocracyCall_remove_other_vote | DemocracyCall_enact_proposal | DemocracyCall_blacklist | DemocracyCall_cancel_proposal
@@ -1671,26 +1978,6 @@ export interface TreasuryCall_approve_proposal {
     proposalId: number
 }
 
-export type AuthorInherentCall = AuthorInherentCall_set_author
-
-/**
- *  Inherent to set the author of a block
- */
-export interface AuthorInherentCall_set_author {
-    __kind: 'set_author'
-    author: Uint8Array
-}
-
-export type AuthorFilterCall = AuthorFilterCall_set_eligible
-
-/**
- *  Update the eligible ratio. Intended to be called by governance.
- */
-export interface AuthorFilterCall_set_eligible {
-    __kind: 'set_eligible'
-    new: number
-}
-
 export type CrowdloanRewardsCall = CrowdloanRewardsCall_associate_native_identity | CrowdloanRewardsCall_claim | CrowdloanRewardsCall_update_reward_address | CrowdloanRewardsCall_complete_initialization | CrowdloanRewardsCall_initialize_reward_vec
 
 /**
@@ -1749,388 +2036,9 @@ export interface CrowdloanRewardsCall_initialize_reward_vec {
     rewards: [Uint8Array, (Uint8Array | undefined), bigint][]
 }
 
-export type AuthorMappingCall = AuthorMappingCall_add_association | AuthorMappingCall_update_association | AuthorMappingCall_clear_association
-
-/**
- *  Register your AuthorId onchain so blocks you author are associated with your account.
- * 
- *  Users who have been (or will soon be) elected active collators in staking,
- *  should submit this extrinsic to have their blocks accepted and earn rewards.
- */
-export interface AuthorMappingCall_add_association {
-    __kind: 'add_association'
-    authorId: Uint8Array
-}
-
-/**
- *  Change your AuthorId.
- * 
- *  This is useful for normal key rotation or for when switching from one physical collator
- *  machine to another. No new security deposit is required.
- */
-export interface AuthorMappingCall_update_association {
-    __kind: 'update_association'
-    oldAuthorId: Uint8Array
-    newAuthorId: Uint8Array
-}
-
-/**
- *  Clear your AuthorId.
- * 
- *  This is useful when you are no longer an author and would like to re-claim your security
- *  deposit.
- */
-export interface AuthorMappingCall_clear_association {
-    __kind: 'clear_association'
-    authorId: Uint8Array
-}
-
-export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
-
-/**
- *  Dispatch the given `call` from an account that the sender is authorised for through
- *  `add_proxy`.
- * 
- *  Removes any corresponding announcement(s).
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `real`: The account that the proxy will make a call on behalf of.
- *  - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
- *  - `call`: The call to be made by the `real` account.
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- */
-export interface ProxyCall_proxy {
-    __kind: 'proxy'
-    real: Uint8Array
-    forceProxyType: (ProxyType | undefined)
-    call: Type_35
-}
-
-/**
- *  Register a proxy account for the sender that is able to make calls on its behalf.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `proxy`: The account that the `caller` would like to make a proxy.
- *  - `proxy_type`: The permissions allowed for this proxy account.
- *  - `delay`: The announcement period required of the initial proxy. Will generally be
- *  zero.
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- */
-export interface ProxyCall_add_proxy {
-    __kind: 'add_proxy'
-    delegate: Uint8Array
-    proxyType: ProxyType
-    delay: number
-}
-
-/**
- *  Unregister a proxy account for the sender.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `proxy`: The account that the `caller` would like to remove as a proxy.
- *  - `proxy_type`: The permissions currently enabled for the removed proxy account.
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- */
-export interface ProxyCall_remove_proxy {
-    __kind: 'remove_proxy'
-    delegate: Uint8Array
-    proxyType: ProxyType
-    delay: number
-}
-
-/**
- *  Unregister all proxy accounts for the sender.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  WARNING: This may be called on accounts created by `anonymous`, however if done, then
- *  the unreserved fees will be inaccessible. **All access to this account will be lost.**
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- */
-export interface ProxyCall_remove_proxies {
-    __kind: 'remove_proxies'
-}
-
-/**
- *  Spawn a fresh new account that is guaranteed to be otherwise inaccessible, and
- *  initialize it with a proxy of `proxy_type` for `origin` sender.
- * 
- *  Requires a `Signed` origin.
- * 
- *  - `proxy_type`: The type of the proxy that the sender will be registered as over the
- *  new account. This will almost always be the most permissive `ProxyType` possible to
- *  allow for maximum flexibility.
- *  - `index`: A disambiguation index, in case this is called multiple times in the same
- *  transaction (e.g. with `utility::batch`). Unless you're using `batch` you probably just
- *  want to use `0`.
- *  - `delay`: The announcement period required of the initial proxy. Will generally be
- *  zero.
- * 
- *  Fails with `Duplicate` if this has already been called in this transaction, from the
- *  same sender, with the same parameters.
- * 
- *  Fails if there are insufficient funds to pay for deposit.
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- *  TODO: Might be over counting 1 read
- */
-export interface ProxyCall_anonymous {
-    __kind: 'anonymous'
-    proxyType: ProxyType
-    delay: number
-    index: number
-}
-
-/**
- *  Removes a previously spawned anonymous proxy.
- * 
- *  WARNING: **All access to this account will be lost.** Any funds held in it will be
- *  inaccessible.
- * 
- *  Requires a `Signed` origin, and the sender account must have been created by a call to
- *  `anonymous` with corresponding parameters.
- * 
- *  - `spawner`: The account that originally called `anonymous` to create this account.
- *  - `index`: The disambiguation index originally passed to `anonymous`. Probably `0`.
- *  - `proxy_type`: The proxy type originally passed to `anonymous`.
- *  - `height`: The height of the chain when the call to `anonymous` was processed.
- *  - `ext_index`: The extrinsic index in which the call to `anonymous` was processed.
- * 
- *  Fails with `NoPermission` in case the caller is not a previously created anonymous
- *  account whose `anonymous` call has corresponding parameters.
- * 
- *  # <weight>
- *  Weight is a function of the number of proxies the user has (P).
- *  # </weight>
- */
-export interface ProxyCall_kill_anonymous {
-    __kind: 'kill_anonymous'
-    spawner: Uint8Array
-    proxyType: ProxyType
-    index: number
-    height: number
-    extIndex: number
-}
-
-/**
- *  Publish the hash of a proxy-call that will be made in the future.
- * 
- *  This must be called some number of blocks before the corresponding `proxy` is attempted
- *  if the delay associated with the proxy relationship is greater than zero.
- * 
- *  No more than `MaxPending` announcements may be made at any one time.
- * 
- *  This will take a deposit of `AnnouncementDepositFactor` as well as
- *  `AnnouncementDepositBase` if there are no other pending announcements.
- * 
- *  The dispatch origin for this call must be _Signed_ and a proxy of `real`.
- * 
- *  Parameters:
- *  - `real`: The account that the proxy will make a call on behalf of.
- *  - `call_hash`: The hash of the call to be made by the `real` account.
- * 
- *  # <weight>
- *  Weight is a function of:
- *  - A: the number of announcements made.
- *  - P: the number of proxies the user has.
- *  # </weight>
- */
-export interface ProxyCall_announce {
-    __kind: 'announce'
-    real: Uint8Array
-    callHash: Uint8Array
-}
-
-/**
- *  Remove a given announcement.
- * 
- *  May be called by a proxy account to remove a call they previously announced and return
- *  the deposit.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `real`: The account that the proxy will make a call on behalf of.
- *  - `call_hash`: The hash of the call to be made by the `real` account.
- * 
- *  # <weight>
- *  Weight is a function of:
- *  - A: the number of announcements made.
- *  - P: the number of proxies the user has.
- *  # </weight>
- */
-export interface ProxyCall_remove_announcement {
-    __kind: 'remove_announcement'
-    real: Uint8Array
-    callHash: Uint8Array
-}
-
-/**
- *  Remove the given announcement of a delegate.
- * 
- *  May be called by a target (proxied) account to remove a call that one of their delegates
- *  (`delegate`) has announced they want to execute. The deposit is returned.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `delegate`: The account that previously announced the call.
- *  - `call_hash`: The hash of the call to be made.
- * 
- *  # <weight>
- *  Weight is a function of:
- *  - A: the number of announcements made.
- *  - P: the number of proxies the user has.
- *  # </weight>
- */
-export interface ProxyCall_reject_announcement {
-    __kind: 'reject_announcement'
-    delegate: Uint8Array
-    callHash: Uint8Array
-}
-
-/**
- *  Dispatch the given `call` from an account that the sender is authorized for through
- *  `add_proxy`.
- * 
- *  Removes any corresponding announcement(s).
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Parameters:
- *  - `real`: The account that the proxy will make a call on behalf of.
- *  - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
- *  - `call`: The call to be made by the `real` account.
- * 
- *  # <weight>
- *  Weight is a function of:
- *  - A: the number of announcements made.
- *  - P: the number of proxies the user has.
- *  # </weight>
- */
-export interface ProxyCall_proxy_announced {
-    __kind: 'proxy_announced'
-    delegate: Uint8Array
-    real: Uint8Array
-    forceProxyType: (ProxyType | undefined)
-    call: Type_35
-}
-
 export interface ChangesTrieConfiguration {
     digestInterval: number
     digestLevels: number
-}
-
-export type Type_35 = Type_35_System | Type_35_Utility | Type_35_Timestamp | Type_35_Balances | Type_35_ParachainSystem | Type_35_EVM | Type_35_Ethereum | Type_35_ParachainStaking | Type_35_Scheduler | Type_35_Democracy | Type_35_CouncilCollective | Type_35_TechComitteeCollective | Type_35_Treasury | Type_35_AuthorInherent | Type_35_AuthorFilter | Type_35_CrowdloanRewards | Type_35_AuthorMapping | Type_35_Proxy
-
-export interface Type_35_System {
-    __kind: 'System'
-    value: SystemCall
-}
-
-export interface Type_35_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
-}
-
-export interface Type_35_Timestamp {
-    __kind: 'Timestamp'
-    value: TimestampCall
-}
-
-export interface Type_35_Balances {
-    __kind: 'Balances'
-    value: BalancesCall
-}
-
-export interface Type_35_ParachainSystem {
-    __kind: 'ParachainSystem'
-    value: ParachainSystemCall
-}
-
-export interface Type_35_EVM {
-    __kind: 'EVM'
-    value: EVMCall
-}
-
-export interface Type_35_Ethereum {
-    __kind: 'Ethereum'
-    value: EthereumCall
-}
-
-export interface Type_35_ParachainStaking {
-    __kind: 'ParachainStaking'
-    value: ParachainStakingCall
-}
-
-export interface Type_35_Scheduler {
-    __kind: 'Scheduler'
-    value: SchedulerCall
-}
-
-export interface Type_35_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
-}
-
-export interface Type_35_CouncilCollective {
-    __kind: 'CouncilCollective'
-    value: CouncilCollectiveCall
-}
-
-export interface Type_35_TechComitteeCollective {
-    __kind: 'TechComitteeCollective'
-    value: TechComitteeCollectiveCall
-}
-
-export interface Type_35_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryCall
-}
-
-export interface Type_35_AuthorInherent {
-    __kind: 'AuthorInherent'
-    value: AuthorInherentCall
-}
-
-export interface Type_35_AuthorFilter {
-    __kind: 'AuthorFilter'
-    value: AuthorFilterCall
-}
-
-export interface Type_35_CrowdloanRewards {
-    __kind: 'CrowdloanRewards'
-    value: CrowdloanRewardsCall
-}
-
-export interface Type_35_AuthorMapping {
-    __kind: 'AuthorMapping'
-    value: AuthorMappingCall
-}
-
-export interface Type_35_Proxy {
-    __kind: 'Proxy'
-    value: ProxyCall
 }
 
 export interface ParachainInherentData {
@@ -2138,6 +2046,134 @@ export interface ParachainInherentData {
     relayChainState: StorageProof
     downwardMessages: InboundDownwardMessage[]
     horizontalMessages: [number, InboundHrmpMessage[]][]
+}
+
+export interface Range {
+    min: bigint
+    ideal: bigint
+    max: bigint
+}
+
+export type Type_71 = Type_71_System | Type_71_ParachainSystem | Type_71_Timestamp | Type_71_Balances | Type_71_ParachainStaking | Type_71_AuthorInherent | Type_71_AuthorFilter | Type_71_AuthorMapping | Type_71_Utility | Type_71_Proxy | Type_71_EVM | Type_71_Ethereum | Type_71_Scheduler | Type_71_Democracy | Type_71_CouncilCollective | Type_71_TechComitteeCollective | Type_71_Treasury | Type_71_CrowdloanRewards
+
+export interface Type_71_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Type_71_ParachainSystem {
+    __kind: 'ParachainSystem'
+    value: ParachainSystemCall
+}
+
+export interface Type_71_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Type_71_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Type_71_ParachainStaking {
+    __kind: 'ParachainStaking'
+    value: ParachainStakingCall
+}
+
+export interface Type_71_AuthorInherent {
+    __kind: 'AuthorInherent'
+    value: AuthorInherentCall
+}
+
+export interface Type_71_AuthorFilter {
+    __kind: 'AuthorFilter'
+    value: AuthorFilterCall
+}
+
+export interface Type_71_AuthorMapping {
+    __kind: 'AuthorMapping'
+    value: AuthorMappingCall
+}
+
+export interface Type_71_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Type_71_Proxy {
+    __kind: 'Proxy'
+    value: ProxyCall
+}
+
+export interface Type_71_EVM {
+    __kind: 'EVM'
+    value: EVMCall
+}
+
+export interface Type_71_Ethereum {
+    __kind: 'Ethereum'
+    value: EthereumCall
+}
+
+export interface Type_71_Scheduler {
+    __kind: 'Scheduler'
+    value: SchedulerCall
+}
+
+export interface Type_71_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Type_71_CouncilCollective {
+    __kind: 'CouncilCollective'
+    value: CouncilCollectiveCall
+}
+
+export interface Type_71_TechComitteeCollective {
+    __kind: 'TechComitteeCollective'
+    value: TechComitteeCollectiveCall
+}
+
+export interface Type_71_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Type_71_CrowdloanRewards {
+    __kind: 'CrowdloanRewards'
+    value: CrowdloanRewardsCall
+}
+
+export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_Governance | ProxyType_Staking | ProxyType_CancelProxy | ProxyType_Balances | ProxyType_AuthorMapping
+
+export interface ProxyType_Any {
+    __kind: 'Any'
+}
+
+export interface ProxyType_NonTransfer {
+    __kind: 'NonTransfer'
+}
+
+export interface ProxyType_Governance {
+    __kind: 'Governance'
+}
+
+export interface ProxyType_Staking {
+    __kind: 'Staking'
+}
+
+export interface ProxyType_CancelProxy {
+    __kind: 'CancelProxy'
+}
+
+export interface ProxyType_Balances {
+    __kind: 'Balances'
+}
+
+export interface ProxyType_AuthorMapping {
+    __kind: 'AuthorMapping'
 }
 
 export interface EthTransaction {
@@ -2148,12 +2184,6 @@ export interface EthTransaction {
     value: bigint
     input: Uint8Array
     signature: EthTransactionSignature
-}
-
-export interface Range {
-    min: bigint
-    ideal: bigint
-    max: bigint
 }
 
 export type AccountVote = AccountVote_Standard | AccountVote_Split
@@ -2213,36 +2243,6 @@ export interface MultiSignature_Sr25519 {
 export interface MultiSignature_Ecdsa {
     __kind: 'Ecdsa'
     value: Uint8Array
-}
-
-export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_Governance | ProxyType_Staking | ProxyType_CancelProxy | ProxyType_Balances | ProxyType_AuthorMapping
-
-export interface ProxyType_Any {
-    __kind: 'Any'
-}
-
-export interface ProxyType_NonTransfer {
-    __kind: 'NonTransfer'
-}
-
-export interface ProxyType_Governance {
-    __kind: 'Governance'
-}
-
-export interface ProxyType_Staking {
-    __kind: 'Staking'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
-export interface ProxyType_Balances {
-    __kind: 'Balances'
-}
-
-export interface ProxyType_AuthorMapping {
-    __kind: 'AuthorMapping'
 }
 
 export interface PersistedValidationData {

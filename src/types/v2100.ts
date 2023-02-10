@@ -1,111 +1,9 @@
 import type {Result, Option} from './support'
 
-export type Type_556 = Type_556_Ongoing | Type_556_Approved | Type_556_Rejected | Type_556_Cancelled | Type_556_TimedOut | Type_556_Killed
-
-export interface Type_556_Ongoing {
-    __kind: 'Ongoing'
-    value: Type_557
-}
-
-export interface Type_556_Approved {
-    __kind: 'Approved'
-    value: [number, Deposit, (Deposit | undefined)]
-}
-
-export interface Type_556_Rejected {
-    __kind: 'Rejected'
-    value: [number, Deposit, (Deposit | undefined)]
-}
-
-export interface Type_556_Cancelled {
-    __kind: 'Cancelled'
-    value: [number, Deposit, (Deposit | undefined)]
-}
-
-export interface Type_556_TimedOut {
-    __kind: 'TimedOut'
-    value: [number, Deposit, (Deposit | undefined)]
-}
-
-export interface Type_556_Killed {
-    __kind: 'Killed'
-    value: number
-}
-
-export interface Type_557 {
-    track: number
-    origin: OriginCaller
-    proposal: Bounded
-    enactment: DispatchTime
-    submitted: number
-    submissionDeposit: Deposit
-    decisionDeposit: (Deposit | undefined)
-    deciding: (DecidingStatus | undefined)
-    tally: Tally
-    inQueue: boolean
-    alarm: ([number, [number, number]] | undefined)
-}
-
-export interface Deposit {
-    who: Uint8Array
-    amount: bigint
-}
-
-export type OriginCaller = OriginCaller_system | OriginCaller_Ethereum | OriginCaller_CouncilCollective | OriginCaller_TechCommitteeCollective | OriginCaller_CumulusXcm | OriginCaller_PolkadotXcm | OriginCaller_EthereumXcm | OriginCaller_TreasuryCouncilCollective | OriginCaller_Origins | OriginCaller_OpenTechCommitteeCollective | OriginCaller_Void
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
-
-export interface OriginCaller_Ethereum {
-    __kind: 'Ethereum'
-    value: Type_153
-}
-
-export interface OriginCaller_CouncilCollective {
-    __kind: 'CouncilCollective'
-    value: Type_154
-}
-
-export interface OriginCaller_TechCommitteeCollective {
-    __kind: 'TechCommitteeCollective'
-    value: Type_155
-}
-
-export interface OriginCaller_CumulusXcm {
-    __kind: 'CumulusXcm'
-    value: Origin
-}
-
-export interface OriginCaller_PolkadotXcm {
-    __kind: 'PolkadotXcm'
-    value: Type_157
-}
-
-export interface OriginCaller_EthereumXcm {
-    __kind: 'EthereumXcm'
-    value: Type_158
-}
-
-export interface OriginCaller_TreasuryCouncilCollective {
-    __kind: 'TreasuryCouncilCollective'
-    value: Type_159
-}
-
-export interface OriginCaller_Origins {
-    __kind: 'Origins'
-    value: Type_160
-}
-
-export interface OriginCaller_OpenTechCommitteeCollective {
-    __kind: 'OpenTechCommitteeCollective'
-    value: Type_161
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
+export interface Tally {
+    ayes: bigint
+    nays: bigint
+    support: bigint
 }
 
 export type Bounded = Bounded_Legacy | Bounded_Inline | Bounded_Lookup
@@ -126,6 +24,184 @@ export interface Bounded_Lookup {
     len: number
 }
 
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export type AccountVote = AccountVote_Standard | AccountVote_Split
+
+export interface AccountVote_Standard {
+    __kind: 'Standard'
+    vote: number
+    balance: bigint
+}
+
+export interface AccountVote_Split {
+    __kind: 'Split'
+    aye: bigint
+    nay: bigint
+}
+
+export type Type_468 = Type_468_Casting | Type_468_Delegating
+
+export interface Type_468_Casting {
+    __kind: 'Casting'
+    value: Casting
+}
+
+export interface Type_468_Delegating {
+    __kind: 'Delegating'
+    value: Delegating
+}
+
+export type Type_480 = Type_480_Ongoing | Type_480_Approved | Type_480_Rejected | Type_480_Cancelled | Type_480_TimedOut | Type_480_Killed
+
+export interface Type_480_Ongoing {
+    __kind: 'Ongoing'
+    value: Type_481
+}
+
+export interface Type_480_Approved {
+    __kind: 'Approved'
+    value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_480_Rejected {
+    __kind: 'Rejected'
+    value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_480_Cancelled {
+    __kind: 'Cancelled'
+    value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_480_TimedOut {
+    __kind: 'TimedOut'
+    value: [number, Deposit, (Deposit | undefined)]
+}
+
+export interface Type_480_Killed {
+    __kind: 'Killed'
+    value: number
+}
+
+export interface Casting {
+    votes: [number, AccountVote][]
+    delegations: Type_473
+    prior: [number, bigint]
+}
+
+export interface Delegating {
+    balance: bigint
+    target: Uint8Array
+    conviction: Conviction
+    delegations: Type_473
+    prior: [number, bigint]
+}
+
+export interface Type_481 {
+    track: number
+    origin: OriginCaller
+    proposal: Bounded
+    enactment: DispatchTime
+    submitted: number
+    submissionDeposit: Deposit
+    decisionDeposit: (Deposit | undefined)
+    deciding: (DecidingStatus | undefined)
+    tally: Tally
+    inQueue: boolean
+    alarm: ([number, [number, number]] | undefined)
+}
+
+export interface Deposit {
+    who: Uint8Array
+    amount: bigint
+}
+
+export interface Type_473 {
+    votes: bigint
+    capital: bigint
+}
+
+export type OriginCaller = OriginCaller_system | OriginCaller_Ethereum | OriginCaller_Origins | OriginCaller_CouncilCollective | OriginCaller_TechCommitteeCollective | OriginCaller_TreasuryCouncilCollective | OriginCaller_OpenTechCommitteeCollective | OriginCaller_CumulusXcm | OriginCaller_PolkadotXcm | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Ethereum {
+    __kind: 'Ethereum'
+    value: Type_116
+}
+
+export interface OriginCaller_Origins {
+    __kind: 'Origins'
+    value: Origin
+}
+
+export interface OriginCaller_CouncilCollective {
+    __kind: 'CouncilCollective'
+    value: Type_118
+}
+
+export interface OriginCaller_TechCommitteeCollective {
+    __kind: 'TechCommitteeCollective'
+    value: Type_119
+}
+
+export interface OriginCaller_TreasuryCouncilCollective {
+    __kind: 'TreasuryCouncilCollective'
+    value: Type_120
+}
+
+export interface OriginCaller_OpenTechCommitteeCollective {
+    __kind: 'OpenTechCommitteeCollective'
+    value: Type_121
+}
+
+export interface OriginCaller_CumulusXcm {
+    __kind: 'CumulusXcm'
+    value: Type_122
+}
+
+export interface OriginCaller_PolkadotXcm {
+    __kind: 'PolkadotXcm'
+    value: Type_123
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export type DispatchTime = DispatchTime_At | DispatchTime_After
 
 export interface DispatchTime_At {
@@ -143,12 +219,6 @@ export interface DecidingStatus {
     confirming: (number | undefined)
 }
 
-export interface Tally {
-    ayes: bigint
-    nays: bigint
-    support: bigint
-}
-
 export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
 
 export interface RawOrigin_Root {
@@ -164,123 +234,116 @@ export interface RawOrigin_None {
     __kind: 'None'
 }
 
-export type Type_153 = Type_153_EthereumTransaction
+export type Type_116 = Type_116_EthereumTransaction
 
-export interface Type_153_EthereumTransaction {
+export interface Type_116_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: Uint8Array
 }
 
-export type Type_154 = Type_154_Members | Type_154_Member | Type_154__Phantom
+export type Origin = Origin_WhitelistedCaller | Origin_GeneralAdmin | Origin_ReferendumCanceller | Origin_ReferendumKiller
 
-export interface Type_154_Members {
+export interface Origin_WhitelistedCaller {
+    __kind: 'WhitelistedCaller'
+}
+
+export interface Origin_GeneralAdmin {
+    __kind: 'GeneralAdmin'
+}
+
+export interface Origin_ReferendumCanceller {
+    __kind: 'ReferendumCanceller'
+}
+
+export interface Origin_ReferendumKiller {
+    __kind: 'ReferendumKiller'
+}
+
+export type Type_118 = Type_118_Members | Type_118_Member | Type_118__Phantom
+
+export interface Type_118_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_154_Member {
+export interface Type_118_Member {
     __kind: 'Member'
     value: Uint8Array
 }
 
-export interface Type_154__Phantom {
+export interface Type_118__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_155 = Type_155_Members | Type_155_Member | Type_155__Phantom
+export type Type_119 = Type_119_Members | Type_119_Member | Type_119__Phantom
 
-export interface Type_155_Members {
+export interface Type_119_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_155_Member {
+export interface Type_119_Member {
     __kind: 'Member'
     value: Uint8Array
 }
 
-export interface Type_155__Phantom {
+export interface Type_119__Phantom {
     __kind: '_Phantom'
 }
 
-export type Origin = Origin_Relay | Origin_SiblingParachain
+export type Type_120 = Type_120_Members | Type_120_Member | Type_120__Phantom
 
-export interface Origin_Relay {
+export interface Type_120_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_120_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_120__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Type_121 = Type_121_Members | Type_121_Member | Type_121__Phantom
+
+export interface Type_121_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_121_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_121__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Type_122 = Type_122_Relay | Type_122_SiblingParachain
+
+export interface Type_122_Relay {
     __kind: 'Relay'
 }
 
-export interface Origin_SiblingParachain {
+export interface Type_122_SiblingParachain {
     __kind: 'SiblingParachain'
     value: number
 }
 
-export type Type_157 = Type_157_Xcm | Type_157_Response
+export type Type_123 = Type_123_Xcm | Type_123_Response
 
-export interface Type_157_Xcm {
+export interface Type_123_Xcm {
     __kind: 'Xcm'
     value: V1MultiLocation
 }
 
-export interface Type_157_Response {
+export interface Type_123_Response {
     __kind: 'Response'
     value: V1MultiLocation
-}
-
-export type Type_158 = Type_158_XcmEthereumTransaction
-
-export interface Type_158_XcmEthereumTransaction {
-    __kind: 'XcmEthereumTransaction'
-    value: Uint8Array
-}
-
-export type Type_159 = Type_159_Members | Type_159_Member | Type_159__Phantom
-
-export interface Type_159_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface Type_159_Member {
-    __kind: 'Member'
-    value: Uint8Array
-}
-
-export interface Type_159__Phantom {
-    __kind: '_Phantom'
-}
-
-export type Type_160 = Type_160_WhitelistedCaller | Type_160_GeneralAdmin | Type_160_ReferendumCanceller | Type_160_ReferendumKiller
-
-export interface Type_160_WhitelistedCaller {
-    __kind: 'WhitelistedCaller'
-}
-
-export interface Type_160_GeneralAdmin {
-    __kind: 'GeneralAdmin'
-}
-
-export interface Type_160_ReferendumCanceller {
-    __kind: 'ReferendumCanceller'
-}
-
-export interface Type_160_ReferendumKiller {
-    __kind: 'ReferendumKiller'
-}
-
-export type Type_161 = Type_161_Members | Type_161_Member | Type_161__Phantom
-
-export interface Type_161_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface Type_161_Member {
-    __kind: 'Member'
-    value: Uint8Array
-}
-
-export interface Type_161__Phantom {
-    __kind: '_Phantom'
 }
 
 export type Void = never

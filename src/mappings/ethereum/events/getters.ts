@@ -13,8 +13,8 @@ interface EthExecuted {
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): EthExecuted {
     const event = new EthereumExecutedEvent(ctx, itemEvent)
-    if (event.isV40) {
-        const [from, to, transactionHash, exitReason] = event.asV40
+    if (event.isV49) {
+        const [from, to, transactionHash, exitReason] = event.asV49
         if (exitReason.__kind == 'Succeed') {
             return {
                 success: true,
@@ -27,8 +27,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 txnHash: transactionHash
             }
         }
-    } else if (event.isV1200) {
-        const [from, to, transactionHash, exitReason] = event.asV1200
+    } else if (event.isV1201) {
+        const [from, to, transactionHash, exitReason] = event.asV1201
         if (exitReason.__kind == 'Succeed') {
             return {
                 success: true,
@@ -41,8 +41,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 txnHash: transactionHash
             }
         }
-    } else if (event.isV1400) {
-        const [from, to, transactionHash, exitReason] = event.asV1400
+    } else if (event.isV1401) {
+        const [from, to, transactionHash, exitReason] = event.asV1401
         if (exitReason.__kind == 'Succeed') {
             return {
                 success: true,
@@ -55,8 +55,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 txnHash: transactionHash
             }
         }
-    } else if (event.isV1700) {
-        const [from, to, transactionHash, exitReason] = event.asV1700
+    } else if (event.isV1701) {
+        const [from, to, transactionHash, exitReason] = event.asV1701
         if (exitReason.__kind == 'Succeed') {
             return {
                 success: true,
@@ -69,8 +69,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 txnHash: transactionHash
             }
         }
-    } else if (event.isV1800) {
-        const { from, to, transactionHash, exitReason } = event.asV1800
+    } else if (event.isV1801) {
+        const { from, to, transactionHash, exitReason } = event.asV1801
         if (exitReason.__kind == 'Succeed') {
             return {
                 success: true,

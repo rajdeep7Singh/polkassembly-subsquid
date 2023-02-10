@@ -34,8 +34,8 @@ interface ScheduledData {
 
 export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData | undefined {
     const event = new SchedulerDispatchedEvent(ctx, itemEvent)
-    if (event.isV40) {
-        const [[block, number], hash, result] = event.asV40
+    if (event.isV49) {
+        const [[block, number], hash, result] = event.asV49
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: block
@@ -60,16 +60,16 @@ export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEv
             }
         }
         return undefined
-    } else if (event.isV1400) {
-        const { task, id, result } = event.asV1400
+    } else if (event.isV1401) {
+        const { task, id, result } = event.asV1401
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[0]
             }
         }
         return undefined
-    } else if (event.isV1603) {
-        const { task, id, result } = event.asV1603
+    } else if (event.isV1605) {
+        const { task, id, result } = event.asV1605
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[0]

@@ -1,7 +1,7 @@
 import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
-import * as v40 from '../../types/v40'
+import * as v49 from '../../types/v49'
 import * as v900 from '../../types/v900'
 import * as v2000 from '../../types/v2000'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -28,13 +28,13 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
     const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
-    if (storage.isV40) {
-        const storageData = await storage.asV40.get(index)
+    if (storage.isV49) {
+        const storageData = await storage.asV49.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v40.ReferendumInfo_Ongoing).value
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v49.ReferendumInfo_Ongoing).value
             return {
                 status,
                 hash,
@@ -43,7 +43,7 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = (storageData as v40.ReferendumInfo_Finished).value
+            const { end, approved } = (storageData as v49.ReferendumInfo_Finished).value
             return {
                 status,
                 end,

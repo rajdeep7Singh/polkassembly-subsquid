@@ -1,17 +1,6 @@
 import type {Result, Option} from './support'
 
-export type DispatchResult = DispatchResult_Ok | DispatchResult_Err
-
-export interface DispatchResult_Ok {
-    __kind: 'Ok'
-}
-
-export interface DispatchResult_Err {
-    __kind: 'Err'
-    value: DispatchError
-}
-
-export type Proposal = Proposal_System | Proposal_ParachainSystem | Proposal_Timestamp | Proposal_Balances | Proposal_ParachainStaking | Proposal_AuthorInherent | Proposal_AuthorFilter | Proposal_AuthorMapping | Proposal_Utility | Proposal_Proxy | Proposal_MaintenanceMode | Proposal_Identity | Proposal_EVM | Proposal_Ethereum | Proposal_Scheduler | Proposal_Democracy | Proposal_CouncilCollective | Proposal_TechComitteeCollective | Proposal_Treasury | Proposal_CrowdloanRewards
+export type Proposal = Proposal_System | Proposal_ParachainSystem | Proposal_RandomnessCollectiveFlip | Proposal_Timestamp | Proposal_Balances | Proposal_ParachainStaking | Proposal_AuthorInherent | Proposal_AuthorFilter | Proposal_AuthorMapping | Proposal_Utility | Proposal_Proxy | Proposal_Sudo | Proposal_EVM | Proposal_Ethereum | Proposal_Scheduler | Proposal_Democracy | Proposal_CouncilCollective | Proposal_TechComitteeCollective | Proposal_Treasury | Proposal_CrowdloanRewards
 
 export interface Proposal_System {
     __kind: 'System'
@@ -21,6 +10,11 @@ export interface Proposal_System {
 export interface Proposal_ParachainSystem {
     __kind: 'ParachainSystem'
     value: ParachainSystemCall
+}
+
+export interface Proposal_RandomnessCollectiveFlip {
+    __kind: 'RandomnessCollectiveFlip'
+    value: RandomnessCollectiveFlipCall
 }
 
 export interface Proposal_Timestamp {
@@ -63,14 +57,9 @@ export interface Proposal_Proxy {
     value: ProxyCall
 }
 
-export interface Proposal_MaintenanceMode {
-    __kind: 'MaintenanceMode'
-    value: MaintenanceModeCall
-}
-
-export interface Proposal_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
+export interface Proposal_Sudo {
+    __kind: 'Sudo'
+    value: SudoCall
 }
 
 export interface Proposal_EVM {
@@ -111,43 +100,6 @@ export interface Proposal_Treasury {
 export interface Proposal_CrowdloanRewards {
     __kind: 'CrowdloanRewards'
     value: CrowdloanRewardsCall
-}
-
-export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
-
-export interface DispatchError_Other {
-    __kind: 'Other'
-}
-
-export interface DispatchError_CannotLookup {
-    __kind: 'CannotLookup'
-}
-
-export interface DispatchError_BadOrigin {
-    __kind: 'BadOrigin'
-}
-
-export interface DispatchError_Module {
-    __kind: 'Module'
-    value: DispatchErrorModule
-}
-
-export interface DispatchError_ConsumerRemaining {
-    __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_NoProviders {
-    __kind: 'NoProviders'
-}
-
-export interface DispatchError_Token {
-    __kind: 'Token'
-    value: TokenError
-}
-
-export interface DispatchError_Arithmetic {
-    __kind: 'Arithmetic'
-    value: ArithmeticError
 }
 
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
@@ -344,6 +296,8 @@ export interface ParachainSystemCall_enact_authorized_upgrade {
     code: Uint8Array
 }
 
+export type RandomnessCollectiveFlipCall = never
+
 export type TimestampCall = TimestampCall_set
 
 /**
@@ -368,7 +322,7 @@ export interface TimestampCall_set {
     now: bigint
 }
 
-export type BalancesCall = BalancesCall_transfer | BalancesCall_set_balance | BalancesCall_force_transfer | BalancesCall_transfer_keep_alive | BalancesCall_transfer_all
+export type BalancesCall = BalancesCall_transfer | BalancesCall_set_balance | BalancesCall_force_transfer | BalancesCall_transfer_keep_alive
 
 /**
  *  Transfer some liquid free balance to another account.
@@ -466,32 +420,6 @@ export interface BalancesCall_transfer_keep_alive {
     value: bigint
 }
 
-/**
- *  Transfer the entire transferable balance from the caller account.
- * 
- *  NOTE: This function only attempts to transfer _transferable_ balances. This means that
- *  any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
- *  transferred by this function. To ensure that this function results in a killed account,
- *  you might need to prepare the account by removing any reference counters, storage
- *  deposits, etc...
- * 
- *  The dispatch origin of this call must be Signed.
- * 
- *  - `dest`: The recipient of the transfer.
- *  - `keep_alive`: A boolean to determine if the `transfer_all` operation should send all
- *    of the funds the account has, causing the sender account to be killed (false), or
- *    transfer everything except at least the existential deposit, which will guarantee to
- *    keep the sender account alive (true).
- *    # <weight>
- *  - O(1). Just like transfer, but reading the user's transferable balance first.
- *    #</weight>
- */
-export interface BalancesCall_transfer_all {
-    __kind: 'transfer_all'
-    dest: Uint8Array
-    keepAlive: boolean
-}
-
 export type ParachainStakingCall = ParachainStakingCall_set_staking_expectations | ParachainStakingCall_set_inflation | ParachainStakingCall_set_parachain_bond_account | ParachainStakingCall_set_parachain_bond_reserve_percent | ParachainStakingCall_set_total_selected | ParachainStakingCall_set_collator_commission | ParachainStakingCall_set_blocks_per_round | ParachainStakingCall_join_candidates | ParachainStakingCall_leave_candidates | ParachainStakingCall_go_offline | ParachainStakingCall_go_online | ParachainStakingCall_candidate_bond_more | ParachainStakingCall_candidate_bond_less | ParachainStakingCall_nominate | ParachainStakingCall_leave_nominators | ParachainStakingCall_revoke_nomination | ParachainStakingCall_nominator_bond_more | ParachainStakingCall_nominator_bond_less
 
 /**
@@ -567,7 +495,7 @@ export interface ParachainStakingCall_join_candidates {
 /**
  *  Request to leave the set of candidates. If successful, the account is immediately
  *  removed from the candidate pool to prevent selection as a collator, but unbonding is
- *  executed with a delay of `T::LeaveCandidates` rounds.
+ *  executed with a delay of `BondDuration` rounds.
  */
 export interface ParachainStakingCall_leave_candidates {
     __kind: 'leave_candidates'
@@ -617,8 +545,7 @@ export interface ParachainStakingCall_nominate {
 }
 
 /**
- *  Request to leave the set of nominators. If successful, the nominator is scheduled
- *  to exit
+ *  Leave the set of nominators and, by implication, revoke all ongoing nominations
  */
 export interface ParachainStakingCall_leave_nominators {
     __kind: 'leave_nominators'
@@ -626,8 +553,7 @@ export interface ParachainStakingCall_leave_nominators {
 }
 
 /**
- *  Request to revoke an existing nomination. If successful, the nomination is scheduled
- *  to exit
+ *  Revoke an existing nomination
  */
 export interface ParachainStakingCall_revoke_nomination {
     __kind: 'revoke_nomination'
@@ -715,8 +641,7 @@ export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | Utilit
  * 
  *  May be called from any origin.
  * 
- *  - `calls`: The calls to be dispatched from the same origin. The number of call must not
- *    exceed the constant: `batched_calls_limit` (available in constant metadata).
+ *  - `calls`: The calls to be dispatched from the same origin.
  * 
  *  If origin is root then call are dispatch without checking origin filter. (This includes
  *  bypassing `frame_system::Config::BaseCallFilter`).
@@ -733,7 +658,7 @@ export type UtilityCall = UtilityCall_batch | UtilityCall_as_derivative | Utilit
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_71[]
+    calls: Type_72[]
 }
 
 /**
@@ -754,7 +679,7 @@ export interface UtilityCall_batch {
 export interface UtilityCall_as_derivative {
     __kind: 'as_derivative'
     index: number
-    call: Type_71
+    call: Type_72
 }
 
 /**
@@ -763,8 +688,7 @@ export interface UtilityCall_as_derivative {
  * 
  *  May be called from any origin.
  * 
- *  - `calls`: The calls to be dispatched from the same origin. The number of call must not
- *    exceed the constant: `batched_calls_limit` (available in constant metadata).
+ *  - `calls`: The calls to be dispatched from the same origin.
  * 
  *  If origin is root then call are dispatch without checking origin filter. (This includes
  *  bypassing `frame_system::Config::BaseCallFilter`).
@@ -775,7 +699,7 @@ export interface UtilityCall_as_derivative {
  */
 export interface UtilityCall_batch_all {
     __kind: 'batch_all'
-    calls: Type_71[]
+    calls: Type_72[]
 }
 
 export type ProxyCall = ProxyCall_proxy | ProxyCall_add_proxy | ProxyCall_remove_proxy | ProxyCall_remove_proxies | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_announce | ProxyCall_remove_announcement | ProxyCall_reject_announcement | ProxyCall_proxy_announced
@@ -801,7 +725,7 @@ export interface ProxyCall_proxy {
     __kind: 'proxy'
     real: Uint8Array
     forceProxyType: (ProxyType | undefined)
-    call: Type_71
+    call: Type_72
 }
 
 /**
@@ -1026,360 +950,79 @@ export interface ProxyCall_proxy_announced {
     delegate: Uint8Array
     real: Uint8Array
     forceProxyType: (ProxyType | undefined)
-    call: Type_71
+    call: Type_72
 }
 
-export type MaintenanceModeCall = MaintenanceModeCall_enter_maintenance_mode | MaintenanceModeCall_resume_normal_operation
+export type SudoCall = SudoCall_sudo | SudoCall_sudo_unchecked_weight | SudoCall_set_key | SudoCall_sudo_as
 
 /**
- *  Place the chain in maintenance mode
- * 
- *  Weight cost is:
- *  * One DB read to ensure we're not already in maintenance mode
- *  * Two DB writes - 1 for the mode and 1 for the event
- */
-export interface MaintenanceModeCall_enter_maintenance_mode {
-    __kind: 'enter_maintenance_mode'
-}
-
-/**
- *  Return the chain to normal operating mode
- * 
- *  Weight cost is:
- *  * One DB read to ensure we're in maintenance mode
- *  * Two DB writes - 1 for the mode and 1 for the event
- */
-export interface MaintenanceModeCall_resume_normal_operation {
-    __kind: 'resume_normal_operation'
-}
-
-export type IdentityCall = IdentityCall_add_registrar | IdentityCall_set_identity | IdentityCall_set_subs | IdentityCall_clear_identity | IdentityCall_request_judgement | IdentityCall_cancel_request | IdentityCall_set_fee | IdentityCall_set_account_id | IdentityCall_set_fields | IdentityCall_provide_judgement | IdentityCall_kill_identity | IdentityCall_add_sub | IdentityCall_rename_sub | IdentityCall_remove_sub | IdentityCall_quit_sub
-
-/**
- *  Add a registrar to the system.
- * 
- *  The dispatch origin for this call must be `T::RegistrarOrigin`.
- * 
- *  - `account`: the account of the registrar.
- * 
- *  Emits `RegistrarAdded` if successful.
- * 
- *  # <weight>
- *  - `O(R)` where `R` registrar-count (governance-bounded and code-bounded).
- *  - One storage mutation (codec `O(R)`).
- *  - One event.
- *  # </weight>
- */
-export interface IdentityCall_add_registrar {
-    __kind: 'add_registrar'
-    account: Uint8Array
-}
-
-/**
- *  Set an account's identity information and reserve the appropriate deposit.
- * 
- *  If the account already has identity information, the deposit is taken as part payment
- *  for the new deposit.
+ *  Authenticates the sudo key and dispatches a function call with `Root` origin.
  * 
  *  The dispatch origin for this call must be _Signed_.
  * 
- *  - `info`: The identity information.
- * 
- *  Emits `IdentitySet` if successful.
- * 
  *  # <weight>
- *  - `O(X + X' + R)`
- *    - where `X` additional-field-count (deposit-bounded and code-bounded)
- *    - where `R` judgements-count (registrar-count-bounded)
- *  - One balance reserve operation.
- *  - One storage mutation (codec-read `O(X' + R)`, codec-write `O(X + R)`).
- *  - One event.
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB write (event).
+ *  - Weight of derivative `call` execution + 10,000.
  *  # </weight>
  */
-export interface IdentityCall_set_identity {
-    __kind: 'set_identity'
-    info: IdentityInfo
+export interface SudoCall_sudo {
+    __kind: 'sudo'
+    call: Type_72
 }
 
 /**
- *  Set the sub-accounts of the sender.
+ *  Authenticates the sudo key and dispatches a function call with `Root` origin.
+ *  This function does not check the weight of the call, and instead allows the
+ *  Sudo user to specify the weight of the call.
  * 
- *  Payment: Any aggregate balance reserved by previous `set_subs` calls will be returned
- *  and an amount `SubAccountDeposit` will be reserved for each item in `subs`.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  identity.
- * 
- *  - `subs`: The identity's (new) sub-accounts.
+ *  The dispatch origin for this call must be _Signed_.
  * 
  *  # <weight>
- *  - `O(P + S)`
- *    - where `P` old-subs-count (hard- and deposit-bounded).
- *    - where `S` subs-count (hard- and deposit-bounded).
- *  - At most one balance operations.
- *  - DB:
- *    - `P + S` storage mutations (codec complexity `O(1)`)
- *    - One storage read (codec complexity `O(P)`).
- *    - One storage write (codec complexity `O(S)`).
- *    - One storage-exists (`IdentityOf::contains_key`).
+ *  - O(1).
+ *  - The weight of this call is defined by the caller.
  *  # </weight>
  */
-export interface IdentityCall_set_subs {
-    __kind: 'set_subs'
-    subs: [Uint8Array, Data][]
+export interface SudoCall_sudo_unchecked_weight {
+    __kind: 'sudo_unchecked_weight'
+    call: Type_72
+    weight: bigint
 }
 
 /**
- *  Clear an account's identity info and all sub-accounts and return all deposits.
+ *  Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo key.
  * 
- *  Payment: All reserved balances on the account are returned.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  identity.
- * 
- *  Emits `IdentityCleared` if successful.
+ *  The dispatch origin for this call must be _Signed_.
  * 
  *  # <weight>
- *  - `O(R + S + X)`
- *    - where `R` registrar-count (governance-bounded).
- *    - where `S` subs-count (hard- and deposit-bounded).
- *    - where `X` additional-field-count (deposit-bounded and code-bounded).
- *  - One balance-unreserve operation.
- *  - `2` storage reads and `S + 2` storage deletions.
- *  - One event.
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB change.
  *  # </weight>
  */
-export interface IdentityCall_clear_identity {
-    __kind: 'clear_identity'
-}
-
-/**
- *  Request a judgement from a registrar.
- * 
- *  Payment: At most `max_fee` will be reserved for payment to the registrar if judgement
- *  given.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a
- *  registered identity.
- * 
- *  - `reg_index`: The index of the registrar whose judgement is requested.
- *  - `max_fee`: The maximum fee that may be paid. This should just be auto-populated as:
- * 
- *  ```nocompile
- *  Self::registrars().get(reg_index).unwrap().fee
- *  ```
- * 
- *  Emits `JudgementRequested` if successful.
- * 
- *  # <weight>
- *  - `O(R + X)`.
- *  - One balance-reserve operation.
- *  - Storage: 1 read `O(R)`, 1 mutate `O(X + R)`.
- *  - One event.
- *  # </weight>
- */
-export interface IdentityCall_request_judgement {
-    __kind: 'request_judgement'
-    regIndex: number
-    maxFee: bigint
-}
-
-/**
- *  Cancel a previous request.
- * 
- *  Payment: A previously reserved deposit is returned on success.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a
- *  registered identity.
- * 
- *  - `reg_index`: The index of the registrar whose judgement is no longer requested.
- * 
- *  Emits `JudgementUnrequested` if successful.
- * 
- *  # <weight>
- *  - `O(R + X)`.
- *  - One balance-reserve operation.
- *  - One storage mutation `O(R + X)`.
- *  - One event
- *  # </weight>
- */
-export interface IdentityCall_cancel_request {
-    __kind: 'cancel_request'
-    regIndex: number
-}
-
-/**
- *  Set the fee required for a judgement to be requested from a registrar.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must be the account
- *  of the registrar whose index is `index`.
- * 
- *  - `index`: the index of the registrar whose fee is to be set.
- *  - `fee`: the new fee.
- * 
- *  # <weight>
- *  - `O(R)`.
- *  - One storage mutation `O(R)`.
- *  - Benchmark: 7.315 + R * 0.329 µs (min squares analysis)
- *  # </weight>
- */
-export interface IdentityCall_set_fee {
-    __kind: 'set_fee'
-    index: number
-    fee: bigint
-}
-
-/**
- *  Change the account associated with a registrar.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must be the account
- *  of the registrar whose index is `index`.
- * 
- *  - `index`: the index of the registrar whose fee is to be set.
- *  - `new`: the new account ID.
- * 
- *  # <weight>
- *  - `O(R)`.
- *  - One storage mutation `O(R)`.
- *  - Benchmark: 8.823 + R * 0.32 µs (min squares analysis)
- *  # </weight>
- */
-export interface IdentityCall_set_account_id {
-    __kind: 'set_account_id'
-    index: number
+export interface SudoCall_set_key {
+    __kind: 'set_key'
     new: Uint8Array
 }
 
 /**
- *  Set the field information for a registrar.
+ *  Authenticates the sudo key and dispatches a function call with `Signed` origin from
+ *  a given account.
  * 
- *  The dispatch origin for this call must be _Signed_ and the sender must be the account
- *  of the registrar whose index is `index`.
- * 
- *  - `index`: the index of the registrar whose fee is to be set.
- *  - `fields`: the fields that the registrar concerns themselves with.
+ *  The dispatch origin for this call must be _Signed_.
  * 
  *  # <weight>
- *  - `O(R)`.
- *  - One storage mutation `O(R)`.
- *  - Benchmark: 7.464 + R * 0.325 µs (min squares analysis)
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB write (event).
+ *  - Weight of derivative `call` execution + 10,000.
  *  # </weight>
  */
-export interface IdentityCall_set_fields {
-    __kind: 'set_fields'
-    index: number
-    fields: bigint
-}
-
-/**
- *  Provide a judgement for an account's identity.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must be the account
- *  of the registrar whose index is `reg_index`.
- * 
- *  - `reg_index`: the index of the registrar whose judgement is being made.
- *  - `target`: the account whose identity the judgement is upon. This must be an account
- *    with a registered identity.
- *  - `judgement`: the judgement of the registrar of index `reg_index` about `target`.
- * 
- *  Emits `JudgementGiven` if successful.
- * 
- *  # <weight>
- *  - `O(R + X)`.
- *  - One balance-transfer operation.
- *  - Up to one account-lookup operation.
- *  - Storage: 1 read `O(R)`, 1 mutate `O(R + X)`.
- *  - One event.
- *  # </weight>
- */
-export interface IdentityCall_provide_judgement {
-    __kind: 'provide_judgement'
-    regIndex: number
-    target: Uint8Array
-    judgement: IdentityJudgement
-}
-
-/**
- *  Remove an account's identity and sub-account information and slash the deposits.
- * 
- *  Payment: Reserved balances from `set_subs` and `set_identity` are slashed and handled by
- *  `Slash`. Verification request deposits are not returned; they should be cancelled
- *  manually using `cancel_request`.
- * 
- *  The dispatch origin for this call must match `T::ForceOrigin`.
- * 
- *  - `target`: the account whose identity the judgement is upon. This must be an account
- *    with a registered identity.
- * 
- *  Emits `IdentityKilled` if successful.
- * 
- *  # <weight>
- *  - `O(R + S + X)`.
- *  - One balance-reserve operation.
- *  - `S + 2` storage mutations.
- *  - One event.
- *  # </weight>
- */
-export interface IdentityCall_kill_identity {
-    __kind: 'kill_identity'
-    target: Uint8Array
-}
-
-/**
- *  Add the given account to the sender's subs.
- * 
- *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
- *  to the sender.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  sub identity of `sub`.
- */
-export interface IdentityCall_add_sub {
-    __kind: 'add_sub'
-    sub: Uint8Array
-    data: Data
-}
-
-/**
- *  Alter the associated name of the given sub-account.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  sub identity of `sub`.
- */
-export interface IdentityCall_rename_sub {
-    __kind: 'rename_sub'
-    sub: Uint8Array
-    data: Data
-}
-
-/**
- *  Remove the given account from the sender's subs.
- * 
- *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
- *  to the sender.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  sub identity of `sub`.
- */
-export interface IdentityCall_remove_sub {
-    __kind: 'remove_sub'
-    sub: Uint8Array
-}
-
-/**
- *  Remove the sender as a sub-account.
- * 
- *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
- *  to the sender (*not* the original depositor).
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
- *  super-identity.
- * 
- *  NOTE: This should not normally be used, but is provided in the case that the non-
- *  controller of an account is maliciously registered as a sub-account.
- */
-export interface IdentityCall_quit_sub {
-    __kind: 'quit_sub'
+export interface SudoCall_sudo_as {
+    __kind: 'sudo_as'
+    who: Uint8Array
+    call: Type_72
 }
 
 export type EVMCall = EVMCall_withdraw | EVMCall_call | EVMCall_create | EVMCall_create2
@@ -1464,7 +1107,7 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_71
+    call: Type_72
 }
 
 /**
@@ -1503,7 +1146,7 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_71
+    call: Type_72
 }
 
 /**
@@ -1535,14 +1178,14 @@ export interface SchedulerCall_schedule_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_71
+    call: Type_72
 }
 
 /**
  *  Schedule a named task after a delay.
  * 
  *  # <weight>
- *  Same as [`schedule_named`](Self::schedule_named).
+ *  Same as [`schedule_named`].
  *  # </weight>
  */
 export interface SchedulerCall_schedule_named_after {
@@ -1551,7 +1194,7 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic: ([number, number] | undefined)
     priority: number
-    call: Type_71
+    call: Type_72
 }
 
 export type DemocracyCall = DemocracyCall_propose | DemocracyCall_second | DemocracyCall_vote | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_majority | DemocracyCall_external_propose_default | DemocracyCall_fast_track | DemocracyCall_veto_external | DemocracyCall_cancel_referendum | DemocracyCall_cancel_queued | DemocracyCall_delegate | DemocracyCall_undelegate | DemocracyCall_clear_public_proposals | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_reap_preimage | DemocracyCall_unlock | DemocracyCall_remove_vote | DemocracyCall_remove_other_vote | DemocracyCall_enact_proposal | DemocracyCall_blacklist | DemocracyCall_cancel_proposal
@@ -2391,14 +2034,20 @@ export interface TreasuryCall_approve_proposal {
     proposalId: number
 }
 
-export type CrowdloanRewardsCall = CrowdloanRewardsCall_associate_native_identity | CrowdloanRewardsCall_change_association_with_relay_keys | CrowdloanRewardsCall_claim | CrowdloanRewardsCall_update_reward_address | CrowdloanRewardsCall_complete_initialization | CrowdloanRewardsCall_initialize_reward_vec
+export type CrowdloanRewardsCall = CrowdloanRewardsCall_associate_native_identity | CrowdloanRewardsCall_claim | CrowdloanRewardsCall_update_reward_address | CrowdloanRewardsCall_initialize_reward_vec
 
 /**
  *  Associate a native rewards_destination identity with a crowdloan contribution.
  * 
- *  The caller needs to provide the unassociated relay account and a proof to succeed
- *  with the association
- *  The proof is nothing but a signature over the reward_address using the relay keys
+ *  This is an unsigned call because the caller may not have any funds to pay fees with.
+ *  This is inspired by Polkadot's claims pallet:
+ *  https://github.com/paritytech/polkadot/blob/master/runtime/common/src/claims.rs
+ * 
+ *  The contributor needs to issue an additional addmemo transaction if it wants to receive
+ *  the reward in a parachain native account. For the moment I will leave this function here
+ *  just in case the contributor forgot to add such a memo field. Whenever we can read the
+ *  state of the relay chain, we should first check whether that memo field exists in the
+ *  contribution
  */
 export interface CrowdloanRewardsCall_associate_native_identity {
     __kind: 'associate_native_identity'
@@ -2408,27 +2057,15 @@ export interface CrowdloanRewardsCall_associate_native_identity {
 }
 
 /**
- *  Change reward account by submitting proofs from relay accounts
- * 
- *  The number of valid proofs needs to be bigger than 'RewardAddressRelayVoteThreshold'
- *  The account to be changed needs to be submitted as 'previous_account'
- */
-export interface CrowdloanRewardsCall_change_association_with_relay_keys {
-    __kind: 'change_association_with_relay_keys'
-    rewardAccount: Uint8Array
-    previousAccount: Uint8Array
-    proofs: [Uint8Array, MultiSignature][]
-}
-
-/**
- *  Collect whatever portion of your reward are currently vested.
+ *  Collect whatever portion of your reward are currently vested. The first time each
+ *  contributor calls this function pays no fees
  */
 export interface CrowdloanRewardsCall_claim {
     __kind: 'claim'
 }
 
 /**
- *  Update reward address, proving that the caller owns the current native key
+ *  Update reward address. To determine whether its something we want to keep
  */
 export interface CrowdloanRewardsCall_update_reward_address {
     __kind: 'update_reward_address'
@@ -2436,77 +2073,17 @@ export interface CrowdloanRewardsCall_update_reward_address {
 }
 
 /**
- *  This extrinsic completes the initialization if some checks are fullfiled. These checks are:
- *   -The reward contribution money matches the crowdloan pot
- *   -The end vesting block is higher than the init vesting block
- *   -The initialization has not complete yet
- */
-export interface CrowdloanRewardsCall_complete_initialization {
-    __kind: 'complete_initialization'
-    leaseEndingBlock: number
-}
-
-/**
  *  Initialize the reward distribution storage. It shortcuts whenever an error is found
- *  This does not enforce any checks other than making sure we dont go over funds
- *  complete_initialization should perform any additional
+ *  We can change this behavior to check this beforehand if we prefer
+ *  We only set this to "initialized" once we receive index==limit
+ *  This is expected to be executed with batch_all, that atomically initializes contributions
+ *  TODO Should we perform sanity checks here? (i.e., min contribution)
  */
 export interface CrowdloanRewardsCall_initialize_reward_vec {
     __kind: 'initialize_reward_vec'
     rewards: [Uint8Array, (Uint8Array | undefined), bigint][]
-}
-
-export interface DispatchErrorModule {
     index: number
-    error: number
-}
-
-export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Underflow | TokenError_Overflow
-
-export interface TokenError_NoFunds {
-    __kind: 'NoFunds'
-}
-
-export interface TokenError_WouldDie {
-    __kind: 'WouldDie'
-}
-
-export interface TokenError_BelowMinimum {
-    __kind: 'BelowMinimum'
-}
-
-export interface TokenError_CannotCreate {
-    __kind: 'CannotCreate'
-}
-
-export interface TokenError_UnknownAsset {
-    __kind: 'UnknownAsset'
-}
-
-export interface TokenError_Frozen {
-    __kind: 'Frozen'
-}
-
-export interface TokenError_Underflow {
-    __kind: 'Underflow'
-}
-
-export interface TokenError_Overflow {
-    __kind: 'Overflow'
-}
-
-export type ArithmeticError = ArithmeticError_Underflow | ArithmeticError_Overflow | ArithmeticError_DivisionByZero
-
-export interface ArithmeticError_Underflow {
-    __kind: 'Underflow'
-}
-
-export interface ArithmeticError_Overflow {
-    __kind: 'Overflow'
-}
-
-export interface ArithmeticError_DivisionByZero {
-    __kind: 'DivisionByZero'
+    limit: number
 }
 
 export interface ChangesTrieConfiguration {
@@ -2527,104 +2104,104 @@ export interface Range {
     max: bigint
 }
 
-export type Type_71 = Type_71_System | Type_71_ParachainSystem | Type_71_Timestamp | Type_71_Balances | Type_71_ParachainStaking | Type_71_AuthorInherent | Type_71_AuthorFilter | Type_71_AuthorMapping | Type_71_Utility | Type_71_Proxy | Type_71_MaintenanceMode | Type_71_Identity | Type_71_EVM | Type_71_Ethereum | Type_71_Scheduler | Type_71_Democracy | Type_71_CouncilCollective | Type_71_TechComitteeCollective | Type_71_Treasury | Type_71_CrowdloanRewards
+export type Type_72 = Type_72_System | Type_72_ParachainSystem | Type_72_RandomnessCollectiveFlip | Type_72_Timestamp | Type_72_Balances | Type_72_ParachainStaking | Type_72_AuthorInherent | Type_72_AuthorFilter | Type_72_AuthorMapping | Type_72_Utility | Type_72_Proxy | Type_72_Sudo | Type_72_EVM | Type_72_Ethereum | Type_72_Scheduler | Type_72_Democracy | Type_72_CouncilCollective | Type_72_TechComitteeCollective | Type_72_Treasury | Type_72_CrowdloanRewards
 
-export interface Type_71_System {
+export interface Type_72_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_71_ParachainSystem {
+export interface Type_72_ParachainSystem {
     __kind: 'ParachainSystem'
     value: ParachainSystemCall
 }
 
-export interface Type_71_Timestamp {
+export interface Type_72_RandomnessCollectiveFlip {
+    __kind: 'RandomnessCollectiveFlip'
+    value: RandomnessCollectiveFlipCall
+}
+
+export interface Type_72_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_71_Balances {
+export interface Type_72_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_71_ParachainStaking {
+export interface Type_72_ParachainStaking {
     __kind: 'ParachainStaking'
     value: ParachainStakingCall
 }
 
-export interface Type_71_AuthorInherent {
+export interface Type_72_AuthorInherent {
     __kind: 'AuthorInherent'
     value: AuthorInherentCall
 }
 
-export interface Type_71_AuthorFilter {
+export interface Type_72_AuthorFilter {
     __kind: 'AuthorFilter'
     value: AuthorFilterCall
 }
 
-export interface Type_71_AuthorMapping {
+export interface Type_72_AuthorMapping {
     __kind: 'AuthorMapping'
     value: AuthorMappingCall
 }
 
-export interface Type_71_Utility {
+export interface Type_72_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_71_Proxy {
+export interface Type_72_Proxy {
     __kind: 'Proxy'
     value: ProxyCall
 }
 
-export interface Type_71_MaintenanceMode {
-    __kind: 'MaintenanceMode'
-    value: MaintenanceModeCall
+export interface Type_72_Sudo {
+    __kind: 'Sudo'
+    value: SudoCall
 }
 
-export interface Type_71_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
-}
-
-export interface Type_71_EVM {
+export interface Type_72_EVM {
     __kind: 'EVM'
     value: EVMCall
 }
 
-export interface Type_71_Ethereum {
+export interface Type_72_Ethereum {
     __kind: 'Ethereum'
     value: EthereumCall
 }
 
-export interface Type_71_Scheduler {
+export interface Type_72_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
 }
 
-export interface Type_71_Democracy {
+export interface Type_72_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
 }
 
-export interface Type_71_CouncilCollective {
+export interface Type_72_CouncilCollective {
     __kind: 'CouncilCollective'
     value: CouncilCollectiveCall
 }
 
-export interface Type_71_TechComitteeCollective {
+export interface Type_72_TechComitteeCollective {
     __kind: 'TechComitteeCollective'
     value: TechComitteeCollectiveCall
 }
 
-export interface Type_71_Treasury {
+export interface Type_72_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_71_CrowdloanRewards {
+export interface Type_72_CrowdloanRewards {
     __kind: 'CrowdloanRewards'
     value: CrowdloanRewardsCall
 }
@@ -2657,240 +2234,6 @@ export interface ProxyType_Balances {
 
 export interface ProxyType_AuthorMapping {
     __kind: 'AuthorMapping'
-}
-
-export interface IdentityInfo {
-    additional: [Data, Data][]
-    display: Data
-    legal: Data
-    web: Data
-    riot: Data
-    email: Data
-    pgpFingerprint: (Uint8Array | undefined)
-    image: Data
-    twitter: Data
-}
-
-export type Data = Data_None | Data_Raw0 | Data_Raw1 | Data_Raw2 | Data_Raw3 | Data_Raw4 | Data_Raw5 | Data_Raw6 | Data_Raw7 | Data_Raw8 | Data_Raw9 | Data_Raw10 | Data_Raw11 | Data_Raw12 | Data_Raw13 | Data_Raw14 | Data_Raw15 | Data_Raw16 | Data_Raw17 | Data_Raw18 | Data_Raw19 | Data_Raw20 | Data_Raw21 | Data_Raw22 | Data_Raw23 | Data_Raw24 | Data_Raw25 | Data_Raw26 | Data_Raw27 | Data_Raw28 | Data_Raw29 | Data_Raw30 | Data_Raw31 | Data_Raw32 | Data_BlakeTwo256 | Data_Sha256 | Data_Keccak256 | Data_ShaThree256
-
-export interface Data_None {
-    __kind: 'None'
-}
-
-export interface Data_Raw0 {
-    __kind: 'Raw0'
-    value: Uint8Array
-}
-
-export interface Data_Raw1 {
-    __kind: 'Raw1'
-    value: Uint8Array
-}
-
-export interface Data_Raw2 {
-    __kind: 'Raw2'
-    value: Uint8Array
-}
-
-export interface Data_Raw3 {
-    __kind: 'Raw3'
-    value: Uint8Array
-}
-
-export interface Data_Raw4 {
-    __kind: 'Raw4'
-    value: Uint8Array
-}
-
-export interface Data_Raw5 {
-    __kind: 'Raw5'
-    value: Uint8Array
-}
-
-export interface Data_Raw6 {
-    __kind: 'Raw6'
-    value: Uint8Array
-}
-
-export interface Data_Raw7 {
-    __kind: 'Raw7'
-    value: Uint8Array
-}
-
-export interface Data_Raw8 {
-    __kind: 'Raw8'
-    value: Uint8Array
-}
-
-export interface Data_Raw9 {
-    __kind: 'Raw9'
-    value: Uint8Array
-}
-
-export interface Data_Raw10 {
-    __kind: 'Raw10'
-    value: Uint8Array
-}
-
-export interface Data_Raw11 {
-    __kind: 'Raw11'
-    value: Uint8Array
-}
-
-export interface Data_Raw12 {
-    __kind: 'Raw12'
-    value: Uint8Array
-}
-
-export interface Data_Raw13 {
-    __kind: 'Raw13'
-    value: Uint8Array
-}
-
-export interface Data_Raw14 {
-    __kind: 'Raw14'
-    value: Uint8Array
-}
-
-export interface Data_Raw15 {
-    __kind: 'Raw15'
-    value: Uint8Array
-}
-
-export interface Data_Raw16 {
-    __kind: 'Raw16'
-    value: Uint8Array
-}
-
-export interface Data_Raw17 {
-    __kind: 'Raw17'
-    value: Uint8Array
-}
-
-export interface Data_Raw18 {
-    __kind: 'Raw18'
-    value: Uint8Array
-}
-
-export interface Data_Raw19 {
-    __kind: 'Raw19'
-    value: Uint8Array
-}
-
-export interface Data_Raw20 {
-    __kind: 'Raw20'
-    value: Uint8Array
-}
-
-export interface Data_Raw21 {
-    __kind: 'Raw21'
-    value: Uint8Array
-}
-
-export interface Data_Raw22 {
-    __kind: 'Raw22'
-    value: Uint8Array
-}
-
-export interface Data_Raw23 {
-    __kind: 'Raw23'
-    value: Uint8Array
-}
-
-export interface Data_Raw24 {
-    __kind: 'Raw24'
-    value: Uint8Array
-}
-
-export interface Data_Raw25 {
-    __kind: 'Raw25'
-    value: Uint8Array
-}
-
-export interface Data_Raw26 {
-    __kind: 'Raw26'
-    value: Uint8Array
-}
-
-export interface Data_Raw27 {
-    __kind: 'Raw27'
-    value: Uint8Array
-}
-
-export interface Data_Raw28 {
-    __kind: 'Raw28'
-    value: Uint8Array
-}
-
-export interface Data_Raw29 {
-    __kind: 'Raw29'
-    value: Uint8Array
-}
-
-export interface Data_Raw30 {
-    __kind: 'Raw30'
-    value: Uint8Array
-}
-
-export interface Data_Raw31 {
-    __kind: 'Raw31'
-    value: Uint8Array
-}
-
-export interface Data_Raw32 {
-    __kind: 'Raw32'
-    value: Uint8Array
-}
-
-export interface Data_BlakeTwo256 {
-    __kind: 'BlakeTwo256'
-    value: Uint8Array
-}
-
-export interface Data_Sha256 {
-    __kind: 'Sha256'
-    value: Uint8Array
-}
-
-export interface Data_Keccak256 {
-    __kind: 'Keccak256'
-    value: Uint8Array
-}
-
-export interface Data_ShaThree256 {
-    __kind: 'ShaThree256'
-    value: Uint8Array
-}
-
-export type IdentityJudgement = IdentityJudgement_Unknown | IdentityJudgement_FeePaid | IdentityJudgement_Reasonable | IdentityJudgement_KnownGood | IdentityJudgement_OutOfDate | IdentityJudgement_LowQuality | IdentityJudgement_Erroneous
-
-export interface IdentityJudgement_Unknown {
-    __kind: 'Unknown'
-}
-
-export interface IdentityJudgement_FeePaid {
-    __kind: 'FeePaid'
-    value: bigint
-}
-
-export interface IdentityJudgement_Reasonable {
-    __kind: 'Reasonable'
-}
-
-export interface IdentityJudgement_KnownGood {
-    __kind: 'KnownGood'
-}
-
-export interface IdentityJudgement_OutOfDate {
-    __kind: 'OutOfDate'
-}
-
-export interface IdentityJudgement_LowQuality {
-    __kind: 'LowQuality'
-}
-
-export interface IdentityJudgement_Erroneous {
-    __kind: 'Erroneous'
 }
 
 export interface EthTransaction {

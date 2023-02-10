@@ -10,8 +10,8 @@ interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new TreasuryProposedEvent(ctx, itemEvent)
-    if (event.isV47) {
-        const index = event.asV47
+    if (event.isV49) {
+        const index = event.asV49
         return {
             index,
         }
@@ -31,8 +31,8 @@ interface RejectedData {
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RejectedData {
     const event = new TreasuryRejectedEvent(ctx, itemEvent)
-    if (event.isV47) {
-        const [index] = event.asV47
+    if (event.isV49) {
+        const [index] = event.asV49
         return {
             index,
         }
@@ -52,8 +52,8 @@ interface AwarderData {
 
 export function getAwarderData(ctx: BatchContext<Store, unknown>, itemEvent: Event): AwarderData {
     const event = new TreasuryAwardedEvent(ctx, itemEvent)
-    if (event.isV47) {
-        const [index] = event.asV47
+    if (event.isV49) {
+        const [index] = event.asV49
         return {
             index,
         }
@@ -76,8 +76,8 @@ interface SpendApprovedData {
 
 export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
     const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
-    if (event.isV1800) {
-        const { proposalIndex, amount, beneficiary}= event.asV1800
+    if (event.isV1801) {
+        const { proposalIndex, amount, beneficiary}= event.asV1801
         return {
             proposalIndex,
             amount,

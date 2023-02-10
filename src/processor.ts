@@ -8,8 +8,8 @@ import { getTransaction } from '@subsquid/frontier'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://wss.api.moonbase.moonbeam.network',
-        archive: lookupArchive('moonbase', { release: 'FireSquid' }),
+        chain: 'wss://wss.moonriver.moonbeam.network',
+        archive: lookupArchive('moonriver', { release: 'FireSquid' }),
     })
     .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

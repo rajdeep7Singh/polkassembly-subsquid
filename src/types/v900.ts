@@ -1,12 +1,12 @@
 import type {Result, Option} from './support'
 
-export type Type_33 = Type_33_Ok | Type_33_Err
+export type Type_43 = Type_43_Ok | Type_43_Err
 
-export interface Type_33_Ok {
+export interface Type_43_Ok {
     __kind: 'Ok'
 }
 
-export interface Type_33_Err {
+export interface Type_43_Err {
     __kind: 'Err'
     value: DispatchError
 }

@@ -1,9 +1,9 @@
 import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
-import * as v40 from './v40'
+import * as v49 from './v49'
 import * as v900 from './v900'
-import * as v1200 from './v1200'
-import * as v1900 from './v1900'
+import * as v1201 from './v1201'
+import * as v2100 from './v2100'
 
 export class ConvictionVotingDelegateCall {
     private readonly _chain: Chain
@@ -43,7 +43,7 @@ export class ConvictionVotingDelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get isV1900(): boolean {
+    get isV2100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.delegate') === '0047ced5ecf678f44965588bb856e701eebb4511cf82448739f03ecaeb15c145'
     }
 
@@ -72,8 +72,8 @@ export class ConvictionVotingDelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get asV1900(): {class: number, to: Uint8Array, conviction: v1900.Conviction, balance: bigint} {
-        assert(this.isV1900)
+    get asV2100(): {class: number, to: Uint8Array, conviction: v2100.Conviction, balance: bigint} {
+        assert(this.isV2100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -109,7 +109,7 @@ export class ConvictionVotingRemoveOtherVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get isV1900(): boolean {
+    get isV2100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.remove_other_vote') === 'c547dd3078ad7242b020eb9970d13cda8f45abe0c6950209c239ca95a62b6ee7'
     }
 
@@ -131,8 +131,8 @@ export class ConvictionVotingRemoveOtherVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get asV1900(): {target: Uint8Array, class: number, index: number} {
-        assert(this.isV1900)
+    get asV2100(): {target: Uint8Array, class: number, index: number} {
+        assert(this.isV2100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -181,7 +181,7 @@ export class ConvictionVotingRemoveVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get isV1900(): boolean {
+    get isV2100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.remove_vote') === 'be8a5ba82f77b6bda5e0784b678fdfe0fe9d28837d87406cb5d907269bb45b25'
     }
 
@@ -216,8 +216,8 @@ export class ConvictionVotingRemoveVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get asV1900(): {class: (number | undefined), index: number} {
-        assert(this.isV1900)
+    get asV2100(): {class: (number | undefined), index: number} {
+        assert(this.isV2100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -251,7 +251,7 @@ export class ConvictionVotingUndelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get isV1900(): boolean {
+    get isV2100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.undelegate') === '55363f75c61dc45265060eec3a1e578e86c93c9059f3f1b3d63fc1f2da6e7ea5'
     }
 
@@ -271,8 +271,8 @@ export class ConvictionVotingUndelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get asV1900(): {class: number} {
-        assert(this.isV1900)
+    get asV2100(): {class: number} {
+        assert(this.isV2100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -301,7 +301,7 @@ export class ConvictionVotingVoteCall {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    get isV1900(): boolean {
+    get isV2100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.vote') === 'd10ef1b298a681ecd2445c4d8c083dbabfcf6f60a2f8103238e6ab7895b95b86'
     }
 
@@ -316,8 +316,8 @@ export class ConvictionVotingVoteCall {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    get asV1900(): {pollIndex: number, vote: v1900.AccountVote} {
-        assert(this.isV1900)
+    get asV2100(): {pollIndex: number, vote: v2100.AccountVote} {
+        assert(this.isV2100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -357,7 +357,7 @@ export class DemocracyDelegateCall {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Democracy.delegate') === 'ea6d9056c97bede42218d3ea9d4c8633f234aca966d9502b1e8fcd6de60ba33e'
     }
 
@@ -383,8 +383,8 @@ export class DemocracyDelegateCall {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    get asV40(): {to: Uint8Array, conviction: v40.Conviction, balance: bigint} {
-        assert(this.isV40)
+    get asV49(): {to: Uint8Array, conviction: v49.Conviction, balance: bigint} {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -419,7 +419,7 @@ export class DemocracyRemoveOtherVoteCall {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Democracy.remove_other_vote') === '99f879d671c8ba0ed32f19cf13acb14ab923d50415a4267048e1e58754bc46c9'
     }
 
@@ -440,8 +440,8 @@ export class DemocracyRemoveOtherVoteCall {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    get asV40(): {target: Uint8Array, index: number} {
-        assert(this.isV40)
+    get asV49(): {target: Uint8Array, index: number} {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -488,7 +488,7 @@ export class DemocracyRemoveVoteCall {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Democracy.remove_vote') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
     }
 
@@ -521,8 +521,8 @@ export class DemocracyRemoveVoteCall {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    get asV40(): {index: number} {
-        assert(this.isV40)
+    get asV49(): {index: number} {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -554,7 +554,7 @@ export class DemocracyUndelegateCall {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Democracy.undelegate') === '01f2f9c28aa1d4d36a81ff042620b6677d25bf07c2bf4acc37b58658778a4fca'
     }
 
@@ -572,8 +572,8 @@ export class DemocracyUndelegateCall {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    get asV40(): null {
-        assert(this.isV40)
+    get asV49(): null {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -602,7 +602,7 @@ export class DemocracyVoteCall {
      * 
      *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Democracy.vote') === '6cdb35b5ffcb74405cdf222b0cc0bf7ad7025d59f676bea6712d77bcc9aff1db'
     }
 
@@ -617,8 +617,8 @@ export class DemocracyVoteCall {
      * 
      *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    get asV40(): {refIndex: number, vote: v40.AccountVote} {
-        assert(this.isV40)
+    get asV49(): {refIndex: number, vote: v49.AccountVote} {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 
@@ -670,30 +670,30 @@ export class EthereumTransactCall {
     /**
      *  Transact an Ethereum transaction.
      */
-    get isV40(): boolean {
+    get isV49(): boolean {
         return this._chain.getCallHash('Ethereum.transact') === '5428ddd9e500c37fab03733ba478898e4067902f2f5f71871a41c7242422fe10'
     }
 
     /**
      *  Transact an Ethereum transaction.
      */
-    get asV40(): {transaction: v40.EthTransaction} {
-        assert(this.isV40)
+    get asV49(): {transaction: v49.EthTransaction} {
+        assert(this.isV49)
         return this._chain.decodeCall(this.call)
     }
 
     /**
      * Transact an Ethereum transaction.
      */
-    get isV1200(): boolean {
+    get isV1201(): boolean {
         return this._chain.getCallHash('Ethereum.transact') === '1415fd2e9fbe639b903297515a3d773224e43cd3e03aa9e6c3f0ae82fe4e93f4'
     }
 
     /**
      * Transact an Ethereum transaction.
      */
-    get asV1200(): {transaction: v1200.TransactionV2} {
-        assert(this.isV1200)
+    get asV1201(): {transaction: v1201.TransactionV2} {
+        assert(this.isV1201)
         return this._chain.decodeCall(this.call)
     }
 }

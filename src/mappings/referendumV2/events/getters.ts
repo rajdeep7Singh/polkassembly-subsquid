@@ -24,15 +24,8 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new ReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const {index, track, proposalHash } = event.asV1900
-        return {
-            index,
-            track,
-            hash: proposalHash
-        }
-    } else if (event.isV2000) {
-        const {index, track, proposal } = event.asV2000
+    if (event.isV2100) {
+        const {index, track, proposal } = event.asV2100
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -57,8 +50,8 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+    if (event.isV2100) {
+        const { index, tally } = event.asV2100
         return {
             index,
             tally
@@ -74,8 +67,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+    if (event.isV2100) {
+        const { index } = event.asV2100
         return {
             index
         }
@@ -86,8 +79,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+    if (event.isV2100) {
+        const { index, tally } = event.asV2100
         return {
             index,
             tally
@@ -99,8 +92,8 @@ export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+    if (event.isV2100) {
+        const { index, tally } = event.asV2100
         return {
             index,
             tally
@@ -112,8 +105,8 @@ export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+    if (event.isV2100) {
+        const { index, tally } = event.asV2100
         return {
             index,
             tally
@@ -125,8 +118,8 @@ export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+    if (event.isV2100) {
+        const { index } = event.asV2100
         return {
             index
         }
@@ -137,8 +130,8 @@ export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+    if (event.isV2100) {
+        const { index, tally } = event.asV2100
         return {
             index,
             tally
@@ -150,8 +143,8 @@ export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+    if (event.isV2100) {
+        const { index } = event.asV2100
         return {
             index,
         }
@@ -168,8 +161,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
     const event = new ReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, who, amount } = event.asV1900
+    if (event.isV2100) {
+        const { index, who, amount } = event.asV2100
         return {
             index,
             who,
@@ -189,16 +182,8 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
     const event = new ReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, track, proposalHash, tally} = event.asV1900
-        return {
-            index,
-            track,
-            tally,
-            hash: proposalHash
-        }
-    } else if (event.isV2000) {
-        const { index, track, proposal, tally} = event.asV2000
+    if (event.isV2100) {
+        const { index, track, proposal, tally} = event.asV2100
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
