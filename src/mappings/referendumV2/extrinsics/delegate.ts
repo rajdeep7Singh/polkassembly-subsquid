@@ -94,7 +94,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     await addOngoingReferendaDelegatedVotes(ctx, from, header, track)
 }
 
-export async function handlePrecompileDelegate(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any): Promise<void> {
+export async function handlePrecompileDelegate(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any, txnHash: string): Promise<void> {
     
     const [track, toWallet, lockPeriod, balance] = data
 
@@ -170,9 +170,10 @@ export async function handlePrecompileDelegate(ctx: BatchContext<Store, unknown>
                 createdAt: new Date(header.timestamp),
                 delegatedTo: toWallet,
                 isDelegated: true,
+                txnHash,
                 type: VoteType.ReferendumV2,
             })
         )
     }
-    await addOngoingReferendaDelegatedVotes(ctx, from, header, track)
+    await addOngoingReferendaDelegatedVotes(ctx, from, header, track, txnHash)
 }

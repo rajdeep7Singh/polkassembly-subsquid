@@ -1,5 +1,4 @@
 import { getOriginAccountId } from '../../../common/tools'
-import { CallHandlerContext } from '../../types/contexts' 
 import { NoDelegationFound, TooManyOpenDelegations } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
@@ -44,7 +43,7 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
     await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 }
 
-export async function handlePrecompileUndelegate(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any): Promise<void> {
+export async function handlePrecompileUndelegate(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any, txnHash?: string): Promise<void> {
     const [track] = data
     const from = originAccountId
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
@@ -68,7 +67,7 @@ export async function handlePrecompileUndelegate(ctx: BatchContext<Store, unknow
         if(!referendum || referendum.index == undefined || referendum.index == null){
             continue
         }
-        await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
+        await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to, txnHash)
     }
-    await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
+    await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track, txnHash)
 }

@@ -115,7 +115,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
 
 }
 
-export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, aye: boolean = true, originAccountId: string) {
+export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, aye: boolean = true, originAccountId: string, txnHash: string) {
     const [ index, amount, conviction ] = data
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
@@ -156,10 +156,11 @@ export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Stor
                 value: amount
             }),
             isDelegated: false,
+            txnHash,
             createdAt: new Date(header.timestamp),
             type: VoteType.ReferendumV2,
         })
     )
-    await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
+    await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber, txnHash)
 
 }

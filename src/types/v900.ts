@@ -54,6 +54,16 @@ export interface ReferendumInfo_Finished {
     end: number
 }
 
+export interface TransactionStatus {
+    transactionHash: Uint8Array
+    transactionIndex: number
+    from: Uint8Array
+    to: (Uint8Array | undefined)
+    contractAddress: (Uint8Array | undefined)
+    logs: Log[]
+    logsBloom: Uint8Array
+}
+
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
 
 export interface DispatchError_Other {
@@ -98,6 +108,12 @@ export interface ReferendumStatus {
     threshold: VoteThreshold
     delay: number
     tally: Tally
+}
+
+export interface Log {
+    address: Uint8Array
+    topics: Uint8Array[]
+    data: Uint8Array
 }
 
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported

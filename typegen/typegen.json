@@ -17,7 +17,8 @@
     "Referenda.ReferendumInfoFor",
     "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
-    "Preimage.PreimageFor"
+    "Preimage.PreimageFor",
+    "Ethereum.CurrentTransactionStatuses"
   ],
   "events": [
     "Democracy.Proposed",

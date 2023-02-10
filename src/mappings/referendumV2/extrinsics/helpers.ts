@@ -13,7 +13,7 @@ export function convictionToLockPeriod(convictionKind: string): number {
     return convictionKind === 'None' ? 0 : Number(convictionKind[convictionKind.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number): Promise<void> {
+export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
     //get top toWallet vote
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
     if (votes.length > 1) {
@@ -47,6 +47,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
                 delegatedTo: delegation.to,
                 type: VoteType.ReferendumV2,
                 isDelegated: true,
+                txnHash
             })
         )
     }
@@ -68,7 +69,7 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
     }
 }
 
-export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Store, unknown>, wallet: string | undefined, block: number, blockTime: number, track: number): Promise<void> {
+export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Store, unknown>, wallet: string | undefined, block: number, blockTime: number, track: number, txnHash?: string): Promise<void> {
     //get any ongoing referenda in this track
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, track)
@@ -77,11 +78,11 @@ export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Sto
         if(ongoingReferendum.index === undefined || ongoingReferendum.index === null) {
             continue
         }
-        await removeDelegatedVotesReferendum(ctx, block, blockTime, ongoingReferendum.index, nestedDelegations)
+        await removeDelegatedVotesReferendum(ctx, block, blockTime, ongoingReferendum.index, nestedDelegations, txnHash)
     }
 }
 
-export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, index: number, nestedDelegations: VotingDelegation[]): Promise<void> {
+export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, index: number, nestedDelegations: VotingDelegation[], txnHash?: string): Promise<void> {
     for (let i = 0; i < nestedDelegations.length; i++) {
         const delegation = nestedDelegations[i]
         const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.from, delegatedTo: delegation.to, proposalIndex: index, removedAtBlock: IsNull(), isDelegated: true } })
@@ -95,11 +96,12 @@ export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, un
         const vote = votes[0]
         vote.removedAtBlock = block
         vote.removedAt = new Date(blockTime)
+        vote.txnHash = txnHash
         await ctx.store.save(vote)
     }
 }
 
-export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, isDelegated: boolean = false, delegatedTo?: string): Promise<void> {
+export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, isDelegated: boolean = false, delegatedTo?: string, txnHash?: string): Promise<void> {
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), isDelegated, delegatedTo, type: VoteType.ReferendumV2 } })
     if (votes.length > 1) {
         ctx.log.warn(TooManyOpenVotes(block, proposalIndex, wallet))
@@ -115,19 +117,20 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
     const vote = votes[0]
     vote.removedAtBlock = block
     vote.removedAt = new Date(blockTime)
+    vote.txnHash = txnHash
     await ctx.store.save(vote)
 }
 
-export async function addOngoingReferendaDelegatedVotes(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, header: SubstrateBlock, track: number): Promise<void> {
+export async function addOngoingReferendaDelegatedVotes(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, header: SubstrateBlock, track: number, txnHash?: string): Promise<void> {
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     const nestedDelegations = await getAllNestedDelegations(ctx, toWallet, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const ongoingReferendum = ongoingReferenda[i]
-        await addDelegatedVotesReferendum(ctx, toWallet, header.height, header.timestamp, ongoingReferendum, nestedDelegations, track)
+        await addDelegatedVotesReferendum(ctx, toWallet, header.height, header.timestamp, ongoingReferendum, nestedDelegations, track, txnHash)
     }
 }
 
-export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number): Promise<void> {
+export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
     //get top toWallet vote
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull() } })
     if (votes.length > 1) {
@@ -161,6 +164,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
                 delegatedTo: delegation.to,
                 type: VoteType.ReferendumV2,
                 isDelegated: true,
+                txnHash
             })
         )
     }

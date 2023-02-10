@@ -130,6 +130,16 @@ export interface ReferendumInfo_Finished {
     value: ReferendumInfoFinished
 }
 
+export interface EthTransactionStatus {
+    transactionHash: Uint8Array
+    transactionIndex: number
+    from: Uint8Array
+    to: (Uint8Array | undefined)
+    contractAddress: (Uint8Array | undefined)
+    logs: EthLog[]
+    logsBloom: Uint8Array
+}
+
 export interface AccountInfo {
     nonce: number
     consumers: number
@@ -320,6 +330,19 @@ export interface ReferendumStatus {
 export interface ReferendumInfoFinished {
     approved: boolean
     end: number
+}
+
+export interface EthLog {
+    address: Uint8Array
+    topics: Uint8Array[]
+    data: Uint8Array
+    blockHash: (Uint8Array | undefined)
+    blockNumber: (bigint | undefined)
+    transactionHash: (Uint8Array | undefined)
+    transactionIndex: (bigint | undefined)
+    logIndex: (bigint | undefined)
+    transactionLogIndex: (bigint | undefined)
+    removed: boolean
 }
 
 export interface DispatchErrorModule {

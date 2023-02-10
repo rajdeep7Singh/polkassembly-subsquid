@@ -243,6 +243,7 @@ type ConvictionVote @entity {
   delegatedTo: String 
   isDelegated: Boolean
   type: VoteType!
+  txnHash: String
 }
 
 type VotingDelegation @entity {

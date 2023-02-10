@@ -44,11 +44,11 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }
 
-export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any): Promise<void> {
+export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any, txnHash?: string): Promise<void> {
     const [ wallet, track, index ] = data
 
     const referendum = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2} })
-    if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {
+    if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {   
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
         return
     }
@@ -70,7 +70,8 @@ export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, u
     const vote = votes[0]
     vote.removedAtBlock = header.height
     vote.removedAt = new Date(header.timestamp)
+    vote.txnHash = txnHash
     await ctx.store.save(vote)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
-    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
+    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations, txnHash)
 }

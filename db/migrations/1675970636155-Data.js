@@ -1,5 +1,5 @@
-module.exports = class Data1675878313752 {
-    name = 'Data1675878313752'
+module.exports = class Data1675970636155 {
+    name = 'Data1675970636155'
 
     async up(db) {
         await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "proposed_call" jsonb, "length" integer, "deposit" numeric, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
@@ -10,7 +10,7 @@ module.exports = class Data1675878313752 {
         await db.query(`CREATE INDEX "IDX_db85a3f8526cbaa2865faf8637" ON "vote" ("proposal_id") `)
         await db.query(`CREATE INDEX "IDX_6d54f04fc9dd3a4c15cb607c9e" ON "vote" ("block_number") `)
         await db.query(`CREATE INDEX "IDX_8d701dbd422ac5e3e1d7a9a0d1" ON "vote" ("timestamp") `)
-        await db.query(`CREATE TABLE "conviction_vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "proposal_index" integer NOT NULL, "created_at_block" integer NOT NULL, "removed_at_block" integer, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "removed_at" TIMESTAMP WITH TIME ZONE, "decision" character varying(12) NOT NULL, "balance" jsonb NOT NULL, "lock_period" integer, "delegated_to" text, "is_delegated" boolean, "type" character varying(17) NOT NULL, CONSTRAINT "PK_ff0112254d31eff17e0ab8f8245" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "conviction_vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "proposal_index" integer NOT NULL, "created_at_block" integer NOT NULL, "removed_at_block" integer, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "removed_at" TIMESTAMP WITH TIME ZONE, "decision" character varying(12) NOT NULL, "balance" jsonb NOT NULL, "lock_period" integer, "delegated_to" text, "is_delegated" boolean, "type" character varying(17) NOT NULL, "txn_hash" text, CONSTRAINT "PK_ff0112254d31eff17e0ab8f8245" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_80392f89297f706d3ab7d6b386" ON "conviction_vote" ("proposal_index") `)
         await db.query(`CREATE INDEX "IDX_410db8207bfa4aec346ca941e4" ON "conviction_vote" ("proposal_id") `)
         await db.query(`CREATE INDEX "IDX_3425f9b0a53b41017fbec10955" ON "conviction_vote" ("created_at_block") `)

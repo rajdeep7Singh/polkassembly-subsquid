@@ -25,7 +25,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Democracy.PreimageInvalid', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageMissing', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageReaped', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Ethereum.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Ethereum.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addEvent('Treasury.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -84,10 +84,7 @@ const processor = new SubstrateBatchProcessor()
                         await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
                     }
                     if(item.name == 'Ethereum.transact'){
-                        const tx = getTransaction(ctx, item.call)
-                        const hash = tx.hash
-                        recievedTxns[hash] = [item, block.header]
-                        // await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, item, block.header)
+                        await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, item, block.header)
                     }
                 }
                 if (item.kind === 'event'){
@@ -187,19 +184,19 @@ const processor = new SubstrateBatchProcessor()
                     if(item.name == 'Scheduler.Dispatched'){
                         await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
                     }
-                    if (item.name === "Ethereum.Executed") {
-                        const txHash = item?.event?.args?.transactionHash;
-                        executedTxns[txHash] = true;
-                        // await modules.ethereum.events.handleExecuted(ctx, item, block.header)
-                    }
+                    // if (item.name === "Ethereum.Executed") {
+                    //     const txHash = item?.event?.args?.transactionHash;
+                    //     executedTxns[txHash] = true;
+                    //     await modules.ethereum.events.handleExecuted(ctx, item, block.header)
+                    // }
                 }
             }
-            for (let hash in recievedTxns){
-                if(executedTxns[hash]){
-                    if(recievedTxns[hash] && recievedTxns[hash][0] && recievedTxns[hash][1]){
-                        await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, recievedTxns[hash][0], recievedTxns[hash][1])
-                    }
-                }
-            }
+            // for (let hash in recievedTxns){
+            //     if(executedTxns[hash]){
+            //         if(recievedTxns[hash] && recievedTxns[hash][0] && recievedTxns[hash][1]){
+            //             await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, recievedTxns[hash][0], recievedTxns[hash][1])
+            //         }
+            //     }
+            // }
         }  
     });

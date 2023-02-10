@@ -436,6 +436,60 @@ export interface DemocracyReferendumInfoOfStorageV2000 {
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2000.ReferendumInfo][]>
 }
 
+export class EthereumCurrentTransactionStatusesStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Ethereum'
+    }
+
+    protected getName() {
+        return 'CurrentTransactionStatuses'
+    }
+
+    /**
+     *  The current transaction statuses.
+     */
+    get isV40(): boolean {
+        return this.getTypeHash() === '258bd41865de2f8cfa5372dc3a38af8b5110322e5098a04f50c36a5195a4c893'
+    }
+
+    /**
+     *  The current transaction statuses.
+     */
+    get asV40(): EthereumCurrentTransactionStatusesStorageV40 {
+        assert(this.isV40)
+        return this as any
+    }
+
+    /**
+     *  The current transaction statuses.
+     */
+    get isV900(): boolean {
+        return this.getTypeHash() === 'e42d9c1a7dbca2e4e0301367b0c021b885fe9bf9ce8eadadb8b48112a96cf49e'
+    }
+
+    /**
+     *  The current transaction statuses.
+     */
+    get asV900(): EthereumCurrentTransactionStatusesStorageV900 {
+        assert(this.isV900)
+        return this as any
+    }
+}
+
+/**
+ *  The current transaction statuses.
+ */
+export interface EthereumCurrentTransactionStatusesStorageV40 {
+    get(): Promise<(v40.EthTransactionStatus[] | undefined)>
+}
+
+/**
+ *  The current transaction statuses.
+ */
+export interface EthereumCurrentTransactionStatusesStorageV900 {
+    get(): Promise<(v900.TransactionStatus[] | undefined)>
+}
+
 export class Instance1CollectiveMembersStorage extends StorageBase {
     protected getPrefix() {
         return 'Instance1Collective'
