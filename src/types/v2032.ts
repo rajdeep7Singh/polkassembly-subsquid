@@ -25,18 +25,6 @@ export interface AccountVote_Split {
     nay: bigint
 }
 
-export type RequestStatus = RequestStatus_Unrequested | RequestStatus_Requested
-
-export interface RequestStatus_Unrequested {
-    __kind: 'Unrequested'
-    value: ([Uint8Array, bigint] | undefined)
-}
-
-export interface RequestStatus_Requested {
-    __kind: 'Requested'
-    value: number
-}
-
 export type Call = Call_System | Call_Timestamp | Call_Scheduler | Call_Utility | Call_Multisig | Call_Proxy | Call_TransactionPause | Call_IdleScheduler | Call_Preimage | Call_Balances | Call_Currencies | Call_Vesting | Call_TransactionPayment | Call_Treasury | Call_Bounties | Call_Tips | Call_CollatorSelection | Call_Session | Call_SessionManager | Call_PolkadotXcm | Call_DmpQueue | Call_XTokens | Call_OrmlXcm | Call_Authority | Call_GeneralCouncil | Call_GeneralCouncilMembership | Call_FinancialCouncil | Call_FinancialCouncilMembership | Call_HomaCouncil | Call_HomaCouncilMembership | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Democracy | Call_AcalaOracle | Call_OperatorMembershipAcala | Call_Auction | Call_Rewards | Call_Prices | Call_Dex | Call_DexOracle | Call_AuctionManager | Call_Loans | Call_Honzon | Call_CdpTreasury | Call_CdpEngine | Call_EmergencyShutdown | Call_Homa | Call_HomaXcm | Call_Incentives | Call_NFT | Call_AssetRegistry | Call_EVM | Call_EvmAccounts | Call_ParachainSystem | Call_Sudo
 
 export interface Call_System {
@@ -312,6 +300,18 @@ export interface Call_ParachainSystem {
 export interface Call_Sudo {
     __kind: 'Sudo'
     value: SudoCall
+}
+
+export type RequestStatus = RequestStatus_Unrequested | RequestStatus_Requested
+
+export interface RequestStatus_Unrequested {
+    __kind: 'Unrequested'
+    value: ([Uint8Array, bigint] | undefined)
+}
+
+export interface RequestStatus_Requested {
+    __kind: 'Requested'
+    value: number
 }
 
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_TooManyConsumers | DispatchError_Token | DispatchError_Arithmetic

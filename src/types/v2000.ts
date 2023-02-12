@@ -114,14 +114,6 @@ export interface ReferendumInfo_Finished {
     end: number
 }
 
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
-}
-
 export type Call = Call_System | Call_Timestamp | Call_Scheduler | Call_Utility | Call_Multisig | Call_Proxy | Call_TransactionPause | Call_IdleScheduler | Call_Balances | Call_Currencies | Call_Vesting | Call_TransactionPayment | Call_Treasury | Call_Bounties | Call_Tips | Call_ParachainSystem | Call_CollatorSelection | Call_Session | Call_SessionManager | Call_PolkadotXcm | Call_DmpQueue | Call_XTokens | Call_OrmlXcm | Call_Authority | Call_GeneralCouncil | Call_GeneralCouncilMembership | Call_FinancialCouncil | Call_FinancialCouncilMembership | Call_HomaCouncil | Call_HomaCouncilMembership | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Democracy | Call_AcalaOracle | Call_OperatorMembershipAcala | Call_Auction | Call_Rewards | Call_Prices | Call_Dex | Call_AuctionManager | Call_Loans | Call_Honzon | Call_CdpTreasury | Call_CdpEngine | Call_EmergencyShutdown | Call_HomaLite | Call_Incentives | Call_NFT | Call_EVM | Call_EvmAccounts | Call_Sudo
 
 export interface Call_System {
@@ -377,6 +369,14 @@ export interface Call_EvmAccounts {
 export interface Call_Sudo {
     __kind: 'Sudo'
     value: SudoCall
+}
+
+export interface AccountInfo {
+    nonce: number
+    consumers: number
+    providers: number
+    sufficients: number
+    data: AccountData
 }
 
 export interface OpenTip {

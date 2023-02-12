@@ -965,6 +965,344 @@ export class DemocracyVotedEvent {
     }
 }
 
+export class GeneralCouncilApprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Approved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     * \[proposal_hash\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Approved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     * \[proposal_hash\]
+     */
+    get asV2000(): Uint8Array {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Approved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get asV2011(): {proposalHash: Uint8Array} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class GeneralCouncilClosedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Closed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     * \[proposal_hash, yes, no\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Closed') === '7d509ca6ee36d401f2d5410aa32038550c256cc3ce4b34cdfe1f8adea0e1679c'
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     * \[proposal_hash, yes, no\]
+     */
+    get asV2000(): [Uint8Array, number, number] {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Closed') === '084e73926c22836c888c17e49053d3b72e2feaa904b8f0175d21fb5b800542f9'
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get asV2011(): {proposalHash: Uint8Array, yes: number, no: number} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class GeneralCouncilDisapprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Disapproved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     * \[proposal_hash\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Disapproved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     * \[proposal_hash\]
+     */
+    get asV2000(): Uint8Array {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Disapproved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get asV2011(): {proposalHash: Uint8Array} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class GeneralCouncilExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Executed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     * \[proposal_hash, result\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === '4c0b4a162aadee51101107186bcd8702d456d82a3b858208b7ecbf7f53187fbb'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     * \[proposal_hash, result\]
+     */
+    get asV2000(): [Uint8Array, v2000.Type_31] {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === '985881284cd2d985dd366d839f2f998c085d1947cd3d3888f28b2b95e28572f1'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV2011(): {proposalHash: Uint8Array, result: v2011.Type_28} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV2032(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === '66d95d205ed46ac5925431190b235d9609aa48d16739fe72413be37096aa7cd0'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV2032(): {proposalHash: Uint8Array, result: v2032.Type_28} {
+        assert(this.isV2032)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV2040(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === '277b4c0e428c2d4a9558753a98f57fb1fce7e27c7e6311138f5416b2baf86e33'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV2040(): {proposalHash: Uint8Array, result: v2040.Type_29} {
+        assert(this.isV2040)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV2060(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === 'e3462770cd5fd27e557ee1e7e9aa904092ca387f3eec55182b953d310847e044'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV2060(): {proposalHash: Uint8Array, result: v2060.Type_30} {
+        assert(this.isV2060)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    get isV2110(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    get asV2110(): {proposalHash: Uint8Array, result: v2110.Type_32} {
+        assert(this.isV2110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class GeneralCouncilProposedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Proposed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     * \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Proposed') === '8d3dc2ef388c0264b2a1bd5e18788f415f4c08186c50dbbee2c60e61d81cb025'
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     * \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get asV2000(): [Uint8Array, number, Uint8Array, number] {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Proposed') === '63978c884e95719fd416c8a38a2ec2ec5a691a58a28349d62b0173643f0d8262'
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get asV2011(): {account: Uint8Array, proposalIndex: number, proposalHash: Uint8Array, threshold: number} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class GeneralCouncilVotedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'GeneralCouncil.Voted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     * \[account, proposal_hash, voted, yes, no\]
+     */
+    get isV2000(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Voted') === '5693223b18444daea47c5d959a8026ce5084d3e9c76fe5a2be5ef93f3526e0ac'
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     * \[account, proposal_hash, voted, yes, no\]
+     */
+    get asV2000(): [Uint8Array, Uint8Array, boolean, number, number] {
+        assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get isV2011(): boolean {
+        return this._chain.getEventHash('GeneralCouncil.Voted') === 'b69e97272b7c060192bbc1a5e91692b0a8b905727af6d9eb5627b7857ede0846'
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get asV2011(): {account: Uint8Array, proposalHash: Uint8Array, voted: boolean, yes: number, no: number} {
+        assert(this.isV2011)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class PreimageClearedEvent {
     private readonly _chain: Chain
     private readonly event: Event

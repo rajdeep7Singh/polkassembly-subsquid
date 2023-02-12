@@ -1,5 +1,5 @@
 import democracy from './democracy'
-// import council from './council'
+import council from './council'
 import treasury from './treasury'
 import tips from './tips'
 import bounties from './bounties'
@@ -9,4 +9,4 @@ import preimageV2 from './preimageV2'
 // import referendumV2 from './referendumV2'
 // import fellowshipReferendum from './fellowshipReferendum'
 
-export { democracy, treasury, tips, bounties, techComittee, preimageV2 }
+export { democracy, treasury, tips, bounties, techComittee, preimageV2, council }

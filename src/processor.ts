@@ -6,7 +6,7 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://acala-polkadot.api.onfinality.io/public-ws',
+        chain: 'wss://acala-rpc-3.aca-api.network/ws',
         archive: lookupArchive('acala', { release: 'FireSquid' }),
     })
     .setBlockRange({from: 0})
@@ -24,12 +24,12 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Democracy.PreimageMissing', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageReaped', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
-    // .addEvent('Council.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Council.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Council.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Council.Closed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Council.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Council.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Closed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('GeneralCouncil.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addEvent('TechnicalCommittee.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('TechnicalCommittee.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -205,24 +205,24 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Democracy.PreimageReaped'){
                     await modules.democracy.events.handlePreimageReaped(ctx, item, block.header)
                 }
-                // if (item.name == 'Council.Proposed'){
-                //     await modules.council.events.handleProposed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Council.Voted'){
-                //     await modules.council.events.handleVoted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Council.Closed'){
-                //     await modules.council.events.handleClosed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Council.Disapproved'){
-                //     await modules.council.events.handleDisapproved(ctx, item, block.header)
-                // }
-                // if (item.name == 'Council.Executed'){
-                //     await modules.council.events.handleExecuted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Council.Approved'){
-                //     await modules.council.events.handleApproved(ctx, item, block.header)
-                // }
+                if (item.name == 'GeneralCouncil.Proposed'){
+                    await modules.council.events.handleProposed(ctx, item, block.header)
+                }
+                if (item.name == 'GeneralCouncil.Voted'){
+                    await modules.council.events.handleVoted(ctx, item, block.header)
+                }
+                if (item.name == 'GeneralCouncil.Closed'){
+                    await modules.council.events.handleClosed(ctx, item, block.header)
+                }
+                if (item.name == 'GeneralCouncil.Disapproved'){
+                    await modules.council.events.handleDisapproved(ctx, item, block.header)
+                }
+                if (item.name == 'GeneralCouncil.Executed'){
+                    await modules.council.events.handleExecuted(ctx, item, block.header)
+                }
+                if (item.name == 'GeneralCouncil.Approved'){
+                    await modules.council.events.handleApproved(ctx, item, block.header)
+                }
                 if (item.name == 'TechnicalCommittee.Proposed'){
                     await modules.techComittee.events.handleProposed(ctx, item, block.header)
                 }
