@@ -33,14 +33,14 @@ interface BountyAwardedData {
 
 export function getBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
     const event = new BountiesBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [index, beneficiary] = event.asV2000
+    if (event.isV1000) {
+        const [index, beneficiary] = event.asV1000
         return {
             index,
             beneficiary,
         }
-    } else if (event.isV2011) {
-        const { index, beneficiary } = event.asV2011
+    } else if (event.isV2010) {
+        const { index, beneficiary } = event.asV2010
         return {
             index,
             beneficiary,
@@ -68,13 +68,13 @@ interface BountyBacameActiveData {
 
 export function getBountyBacameActiveData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
     const event = new BountiesBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const index = event.asV2000
+    if (event.isV1000) {
+        const index = event.asV1000
         return {
             index,
         }
-    } else if (event.isV2011) {
-        const { index } = event.asV2011
+    } else if (event.isV2010) {
+        const { index } = event.asV2010
         return {
             index,
         }
@@ -101,13 +101,13 @@ interface BountyCanceledData {
 
 export function getBountyCanceledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
     const event = new BountiesBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const index = event.asV2000
+    if (event.isV1000) {
+        const index = event.asV1000
         return {
             index,
         }
-    } else if (event.isV2011) {
-        const { index } = event.asV2011
+    } else if (event.isV2010) {
+        const { index } = event.asV2010
         return {
             index,
         }
@@ -138,15 +138,15 @@ interface BountyClaimedData {
 
 export function getBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
     const event = new BountiesBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [index, payout, beneficiary] = event.asV2000
+    if (event.isV1000) {
+        const [index, payout, beneficiary] = event.asV1000
         return {
             index,
             payout,
             beneficiary,
         }
-    } else if (event.isV2011) {
-        const { index, payout, beneficiary } = event.asV2011
+    } else if (event.isV2010) {
+        const { index, payout, beneficiary } = event.asV2010
         return {
             index,
             payout,
@@ -175,13 +175,13 @@ interface BountyExtendedData {
 
 export function getBountyExtendedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
     const event = new BountiesBountyExtendedEvent(ctx,  itemEvent)
-    if (event.isV2000) {
-        const index = event.asV2000
+    if (event.isV1000) {
+        const index = event.asV1000
         return {
             index,
         }
-    } else if (event.isV2011) {
-        const { index } = event.asV2011
+    } else if (event.isV2010) {
+        const { index } = event.asV2010
         return {
             index,
         }
@@ -208,13 +208,13 @@ interface BountyProposedData {
 
 export function getBountyProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
     const event = new BountiesBountyProposedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const index = event.asV2000
+    if (event.isV1000) {
+        const index = event.asV1000
         return {
             index,
         }
-    } else if (event.isV2011) {
-        const { index } = event.asV2011
+    } else if (event.isV2010) {
+        const { index } = event.asV2010
         return {
             index,
         }
@@ -241,13 +241,13 @@ interface BountyRejectedData {
 
 export function getBountyRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
     const event = new BountiesBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [index] = event.asV2000
+    if (event.isV1000) {
+        const [index] = event.asV1000
         return {
             index,
         }
-    } else if (event.isV2011) {
-        const { index } = event.asV2011
+    } else if (event.isV2010) {
+        const { index } = event.asV2010
         return {
             index,
         }

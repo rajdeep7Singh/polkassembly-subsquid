@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { UnknownVersionError } from '../../common/errors'
-import { BountiesBountiesStorage, BountiesBountyDescriptionsStorage,  } from '../../types/storage'
+import { BountiesBountiesStorage, BountiesBountyDescriptionsStorage, TreasuryBountiesStorage, TreasuryBountyDescriptionsStorage,  } from '../../types/storage'
 import { BlockContext } from '../../types/support'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
@@ -18,26 +18,26 @@ async function getBountyStorageData(ctx: BatchContext<Store, unknown>, index: nu
     const storage = new BountiesBountiesStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV2000) {
-        return await storage.asV2000.get(index)
+    if (storage.isV1019) {
+        return await storage.asV1019.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
 
-// async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<BountyStorageData | undefined> {
-//     const storage = new TreasuryBountiesStorage(ctx, block)
-//     if (!storage.isExists) return undefined
+async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<BountyStorageData | undefined> {
+    const storage = new TreasuryBountiesStorage(ctx, block)
+    if (!storage.isExists) return undefined
 
-//     if (storage.isV2025) {
-//         return await storage.asV2025.get(index)
-//     } else {
-//         throw new UnknownVersionError(storage.constructor.name)
-//     }
-// }
+    if (storage.isV1000) {
+        return await storage.asV1000.get(index)
+    } else {
+        throw new UnknownVersionError(storage.constructor.name)
+    }
+}
 
 export async function getBounties(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
-    let bountyInfo =  (await getBountyStorageData(ctx, index, block))
+    let bountyInfo =  (await getBountyStorageData(ctx, index, block)) || (await getTreasuryStorageData(ctx, index, block));
     if(!bountyInfo) return undefined;
     let description = await getDescription(ctx, index, block).then((r) => r || '');
     return {
@@ -51,24 +51,24 @@ async function getBountyDescriptionStorageData(ctx: BatchContext<Store, unknown>
     const storage = new BountiesBountyDescriptionsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV2000) {
-        return await storage.asV2000.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV1019) {
+        return await storage.asV1019.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
 }
 
-// async function getTreasuryDescriptionStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<string | undefined> {
-//     const storage = new TreasuryBountyDescriptionsStorage(ctx, block)
-//     if (!storage.isExists) return undefined
+async function getTreasuryDescriptionStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<string | undefined> {
+    const storage = new TreasuryBountyDescriptionsStorage(ctx, block)
+    if (!storage.isExists) return undefined
 
-//     if (storage.isV2025) {
-//         return await storage.asV2025.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
-//     } else {
-//         throw new UnknownVersionError(storage.constructor.name)
-//     }
-// }
+    if (storage.isV1000) {
+        return await storage.asV1000.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    } else {
+        throw new UnknownVersionError(storage.constructor.name)
+    }
+}
 
 async function getDescription(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
-    return (await getBountyDescriptionStorageData(ctx, index, block))
+    return (await getBountyDescriptionStorageData(ctx, index, block)) || (await getTreasuryDescriptionStorageData(ctx, index, block))
 }

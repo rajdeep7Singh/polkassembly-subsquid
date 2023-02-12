@@ -30,14 +30,14 @@ interface ClosedData {
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
     const event = new TipsTipClosedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [hash, , reward] = event.asV2000
+    if (event.isV1000) {
+        const [hash, , reward] = event.asV1000
         return {
             hash,
             reward,
         }
-    } else if (event.isV2011) {
-        const { tipHash: hash, payout: reward } = event.asV2011
+    } else if (event.isV2010) {
+        const { tipHash: hash, payout: reward } = event.asV2010
         return {
             hash,
             reward,
@@ -54,13 +54,13 @@ interface NewTipData {
 
 export function getNewTipData(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
     const event = new TipsNewTipEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const hash = event.asV2000
+    if (event.isV1000) {
+        const hash = event.asV1000
         return {
             hash,
         }
-    } else if (event.isV2011) {
-        const { tipHash: hash } = event.asV2011
+    } else if (event.isV2010) {
+        const { tipHash: hash } = event.asV2010
         return {
             hash,
         }
@@ -87,13 +87,13 @@ interface RectractedData {
 
 export function getRectractedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
     const event = new TipsTipRetractedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const hash = event.asV2000
+    if (event.isV1000) {
+        const hash = event.asV1000
         return {
             hash,
         }
-    } else if (event.isV2011) {
-        const { tipHash: hash } = event.asV2011
+    } else if (event.isV2010) {
+        const { tipHash: hash } = event.asV2010
         return {
             hash,
         }
@@ -108,13 +108,13 @@ interface SlashedData {
 
 export function getSlashedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SlashedData {
     const event = new TipsTipSlashedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [hash] = event.asV2000
+    if (event.isV1000) {
+        const [hash] = event.asV1000
         return {
             hash,
         }
-    } else if (event.isV2011) {
-        const { tipHash: hash } = event.asV2011
+    } else if (event.isV2010) {
+        const { tipHash: hash } = event.asV2010
         return {
             hash,
         }

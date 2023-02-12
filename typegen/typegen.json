@@ -1,8 +1,9 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://acala.archive.subsquid.io/graphql",
-  "typesBundle": "acala",
+  "specVersions": "https://karura.archive.subsquid.io/graphql",
+  "typesBundle": "karura",
   "storage": [
+
     "Democracy.PublicPropCount",
     "Balances.TotalIssuance",
     "Democracy.Preimages",
@@ -14,6 +15,12 @@
     "Bounties.Bounties",
     "Bounties.BountyDescriptions",
     "TechnicalCommittee.ProposalOf",
+    "Instance2Collective.ProposalOf",
+    "Treasury.Tips",
+    "Tips.Reasons",
+    "Treasury.Reasons",
+    "Treasury.Bounties",
+    "Treasury.BountyDescriptions",
     "System.Account",
     "Balances.Account",
     "Preimage.StatusFor",

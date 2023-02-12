@@ -6,10 +6,10 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://acala-polkadot.api.onfinality.io/public-ws',
-        archive: lookupArchive('acala', { release: 'FireSquid' }),
+        chain: 'wss://karura-rpc-3.aca-api.network/ws',
+        archive: lookupArchive('karura', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 0})
+    .setBlockRange({from: 50556, to: 50556})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

@@ -15,10 +15,10 @@ import { Store } from '@subsquid/typeorm-store'
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeApprovedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        return event.asV2000
-    } else if (event.isV2011) {
-        return event.asV2011.proposalHash
+    if (event.isV1000) {
+        return event.asV1000
+    } else if (event.isV2010) {
+        return event.asV2010.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -26,10 +26,10 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeClosedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        return event.asV2000[0]
-    } else if (event.isV2011) {
-        return event.asV2011.proposalHash
+    if (event.isV1000) {
+        return event.asV1000[0]
+    } else if (event.isV2010) {
+        return event.asV2010.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -37,10 +37,10 @@ export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeDisapprovedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        return event.asV2000
-    } else if (event.isV2011) {
-        return event.asV2011.proposalHash
+    if (event.isV1000) {
+        return event.asV1000
+    } else if (event.isV2010) {
+        return event.asV2010.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -48,10 +48,12 @@ export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent:
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeExecutedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        return event.asV2000[0]
-    } else if (event.isV2011) {
-        return event.asV2011.proposalHash
+    if (event.isV1000) {
+        return event.asV1000[0]
+    } else if (event.isV1019) {
+        return event.asV1019[0]
+    }else if (event.isV2010) {
+        return event.asV2010.proposalHash
     } else if (event.isV2032) {
         return event.asV2032.proposalHash
     }else if (event.isV2040) {
@@ -76,16 +78,16 @@ export interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new TechnicalCommitteeProposedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [proposer, index, hash, threshold] = event.asV2000
+    if (event.isV1000) {
+        const [proposer, index, hash, threshold] = event.asV1000
         return {
             proposer,
             index,
             hash,
             threshold,
         }
-    } else if (event.isV2011) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV2011
+    } else if (event.isV2010) {
+        const { account, proposalIndex, proposalHash, threshold } = event.asV2010
         return {
             proposer: account,
             index: proposalIndex,
@@ -105,15 +107,15 @@ export interface VotedData {
 
 export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
     const event = new TechnicalCommitteeVotedEvent(ctx, itemEvent)
-    if (event.isV2000) {
-        const [voter, hash, decision] = event.asV2000
+    if (event.isV1000) {
+        const [voter, hash, decision] = event.asV1000
         return {
             voter,
             hash,
             decision,
         }
-    } else if (event.isV2011) {
-        const { account, proposalHash, voted } = event.asV2011
+    } else if (event.isV2010) {
+        const { account, proposalHash, voted } = event.asV2010
         return {
             voter: account,
             hash: proposalHash,

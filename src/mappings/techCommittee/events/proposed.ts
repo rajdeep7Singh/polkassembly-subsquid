@@ -15,6 +15,7 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
     item: EventItem<'TechnicalCommittee.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
     const { index, proposer, hash, threshold } = getProposedData(ctx, item.event)
+    console.log('index', index, proposer, hash, threshold)
 
     const storageData = await storage.techCommittee.getProposalOf(ctx, hash, header)
     if (!storageData) {

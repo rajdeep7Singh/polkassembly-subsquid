@@ -1,6 +1,6 @@
 import type {Result, Option} from './support'
 
-export type Call = Call_System | Call_Timestamp | Call_Scheduler | Call_Utility | Call_Multisig | Call_Proxy | Call_TransactionPause | Call_IdleScheduler | Call_Balances | Call_Currencies | Call_Vesting | Call_TransactionPayment | Call_Treasury | Call_Bounties | Call_Tips | Call_ParachainSystem | Call_CollatorSelection | Call_Session | Call_SessionManager | Call_PolkadotXcm | Call_DmpQueue | Call_XTokens | Call_OrmlXcm | Call_Authority | Call_GeneralCouncil | Call_GeneralCouncilMembership | Call_FinancialCouncil | Call_FinancialCouncilMembership | Call_HomaCouncil | Call_HomaCouncilMembership | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Democracy | Call_AcalaOracle | Call_OperatorMembershipAcala | Call_Auction | Call_Rewards | Call_Prices | Call_Dex | Call_AuctionManager | Call_Loans | Call_Honzon | Call_CdpTreasury | Call_CdpEngine | Call_EmergencyShutdown | Call_HomaLite | Call_Incentives | Call_NFT | Call_AssetRegistry | Call_EVM | Call_EvmAccounts | Call_Sudo
+export type Call = Call_System | Call_Timestamp | Call_Scheduler | Call_Utility | Call_Multisig | Call_Proxy | Call_TransactionPause | Call_IdleScheduler | Call_Balances | Call_Currencies | Call_Vesting | Call_TransactionPayment | Call_Treasury | Call_Bounties | Call_Tips | Call_CollatorSelection | Call_Session | Call_SessionManager | Call_PolkadotXcm | Call_DmpQueue | Call_XTokens | Call_OrmlXcm | Call_Authority | Call_GeneralCouncil | Call_GeneralCouncilMembership | Call_FinancialCouncil | Call_FinancialCouncilMembership | Call_HomaCouncil | Call_HomaCouncilMembership | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Democracy | Call_AcalaOracle | Call_OperatorMembershipAcala | Call_Auction | Call_Rewards | Call_Prices | Call_Dex | Call_DexOracle | Call_AuctionManager | Call_Loans | Call_Honzon | Call_CdpTreasury | Call_CdpEngine | Call_EmergencyShutdown | Call_Homa | Call_HomaXcm | Call_Incentives | Call_NFT | Call_AssetRegistry | Call_EVM | Call_EvmAccounts | Call_ParachainSystem | Call_Sudo
 
 export interface Call_System {
     __kind: 'System'
@@ -75,11 +75,6 @@ export interface Call_Bounties {
 export interface Call_Tips {
     __kind: 'Tips'
     value: TipsCall
-}
-
-export interface Call_ParachainSystem {
-    __kind: 'ParachainSystem'
-    value: ParachainSystemCall
 }
 
 export interface Call_CollatorSelection {
@@ -197,6 +192,11 @@ export interface Call_Dex {
     value: DexCall
 }
 
+export interface Call_DexOracle {
+    __kind: 'DexOracle'
+    value: DexOracleCall
+}
+
 export interface Call_AuctionManager {
     __kind: 'AuctionManager'
     value: AuctionManagerCall
@@ -227,9 +227,14 @@ export interface Call_EmergencyShutdown {
     value: EmergencyShutdownCall
 }
 
-export interface Call_HomaLite {
-    __kind: 'HomaLite'
-    value: HomaLiteCall
+export interface Call_Homa {
+    __kind: 'Homa'
+    value: HomaCall
+}
+
+export interface Call_HomaXcm {
+    __kind: 'HomaXcm'
+    value: HomaXcmCall
 }
 
 export interface Call_Incentives {
@@ -255,6 +260,11 @@ export interface Call_EVM {
 export interface Call_EvmAccounts {
     __kind: 'EvmAccounts'
     value: EvmAccountsCall
+}
+
+export interface Call_ParachainSystem {
+    __kind: 'ParachainSystem'
+    value: ParachainSystemCall
 }
 
 export interface Call_Sudo {
@@ -1629,42 +1639,6 @@ export interface TipsCall_slash_tip {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ParachainSystemCall = ParachainSystemCall_set_validation_data | ParachainSystemCall_sudo_send_upward_message | ParachainSystemCall_authorize_upgrade | ParachainSystemCall_enact_authorized_upgrade
-
-/**
- * Set the current validation data.
- * 
- * This should be invoked exactly once per block. It will panic at the finalization
- * phase if the call was not invoked.
- * 
- * The dispatch origin for this call must be `Inherent`
- * 
- * As a side effect, this function upgrades the current validation function
- * if the appropriate time has come.
- */
-export interface ParachainSystemCall_set_validation_data {
-    __kind: 'set_validation_data'
-    data: ParachainInherentData
-}
-
-export interface ParachainSystemCall_sudo_send_upward_message {
-    __kind: 'sudo_send_upward_message'
-    message: Uint8Array
-}
-
-export interface ParachainSystemCall_authorize_upgrade {
-    __kind: 'authorize_upgrade'
-    codeHash: Uint8Array
-}
-
-export interface ParachainSystemCall_enact_authorized_upgrade {
-    __kind: 'enact_authorized_upgrade'
-    code: Uint8Array
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export type CollatorSelectionCall = CollatorSelectionCall_set_invulnerables | CollatorSelectionCall_set_desired_candidates | CollatorSelectionCall_set_candidacy_bond | CollatorSelectionCall_register_as_candidate | CollatorSelectionCall_register_candidate | CollatorSelectionCall_leave_intent | CollatorSelectionCall_withdraw_bond
 
 export interface CollatorSelectionCall_set_invulnerables {
@@ -1842,7 +1816,7 @@ export interface PolkadotXcmCall_reserve_transfer_assets {
  */
 export interface PolkadotXcmCall_execute {
     __kind: 'execute'
-    message: Type_250
+    message: Type_241
     maxWeight: bigint
 }
 
@@ -4004,6 +3978,57 @@ export interface DexCall_disable_trading_pair {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
+export type DexOracleCall = DexOracleCall_enable_average_price | DexOracleCall_disable_average_price | DexOracleCall_update_average_price_interval
+
+/**
+ * Enabled average price for trading pair.
+ * 
+ * Requires `UpdateOrigin`
+ * 
+ * - `currency_id_a`: one currency_id that forms a trading pair
+ * - `currency_id_b`: another currency_id that forms a trading pair
+ * - `interval`: the timestamp interval to update average price.
+ */
+export interface DexOracleCall_enable_average_price {
+    __kind: 'enable_average_price'
+    currencyIdA: CurrencyId
+    currencyIdB: CurrencyId
+    interval: bigint
+}
+
+/**
+ * Disable average price for trading pair.
+ * 
+ * Requires `UpdateOrigin`
+ * 
+ * - `currency_id_a`: one currency_id that forms a trading pair
+ * - `currency_id_b`: another currency_id that forms a trading pair
+ */
+export interface DexOracleCall_disable_average_price {
+    __kind: 'disable_average_price'
+    currencyIdA: CurrencyId
+    currencyIdB: CurrencyId
+}
+
+/**
+ * Update the interval of the trading pair that enabled average price.
+ * 
+ * Requires `UpdateOrigin`
+ * 
+ * - `currency_id_a`: one currency_id that forms a trading pair
+ * - `currency_id_b`: another currency_id that forms a trading pair
+ * - `new_interval`: the new interval.
+ */
+export interface DexOracleCall_update_average_price_interval {
+    __kind: 'update_average_price_interval'
+    currencyIdA: CurrencyId
+    currencyIdB: CurrencyId
+    newInterval: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
 export type AuctionManagerCall = AuctionManagerCall_cancel
 
 /**
@@ -4205,7 +4230,7 @@ export interface CdpEngineCall_set_collateral_params {
     liquidationRatio: Change
     liquidationPenalty: Change
     requiredCollateralRatio: Change
-    maximumTotalDebitValue: Type_295
+    maximumTotalDebitValue: Type_287
 }
 
 /**
@@ -4244,165 +4269,144 @@ export interface EmergencyShutdownCall_refund_collaterals {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type HomaLiteCall = HomaLiteCall_mint | HomaLiteCall_set_total_staking_currency | HomaLiteCall_adjust_total_staking_currency | HomaLiteCall_set_minting_cap | HomaLiteCall_set_xcm_dest_weight | HomaLiteCall_mint_for_requests | HomaLiteCall_request_redeem | HomaLiteCall_schedule_unbond | HomaLiteCall_replace_schedule_unbond | HomaLiteCall_adjust_available_staking_balance | HomaLiteCall_set_staking_interest_rate_per_update
+export type HomaCall = HomaCall_mint | HomaCall_request_redeem | HomaCall_fast_match_redeems | HomaCall_claim_redemption | HomaCall_update_homa_params | HomaCall_update_bump_era_params | HomaCall_reset_ledgers | HomaCall_reset_current_era | HomaCall_force_bump_current_era
 
 /**
- * Mint some Liquid currency, by locking up the given amount of Staking currency.
- * Will try to match Redeem Requests if available. Remaining amount is minted via XCM.
- * 
- * The exchange rate is calculated using the ratio of the total amount of the staking and
- * liquid currency.
- * 
- * If any amount is minted through XCM, a portion of that amount (T::MintFee and
- * T::MaxRewardPerEra) is deducted as fee.
+ * Mint liquid currency by put locking up amount of staking currency.
  * 
  * Parameters:
- * - `amount`: The amount of Staking currency to be exchanged.
+ * - `amount`: The amount of staking currency used to mint liquid currency.
  */
-export interface HomaLiteCall_mint {
+export interface HomaCall_mint {
     __kind: 'mint'
     amount: bigint
 }
 
 /**
- * Sets the total amount of the Staking currency that are currently on the relaychain.
- * Requires `T::GovernanceOrigin`
+ * Build/Cancel/Overwrite a redeem request, use liquid currency to redeem staking currency.
+ * The redeem request will be executed in two ways:
+ * 1. Redeem by fast match: Homa use staking currency in ToBondPool to match redeem request
+ * in the current era, setting a higher fee_rate can increase the possibility of being fast
+ * matched. 2. Redeem by unbond on relaychain: if redeem request has not been fast matched
+ * in current era, Homa will unbond staking currency on relaychain when the next era
+ * bumped. So redeemer at least wait for the unbonding period + extra 1 era to get the
+ * redemption.
  * 
  * Parameters:
- * - `staking_total`: The current amount of the Staking currency. Used to calculate
- *   conversion rate.
+ * - `amount`: The amount of liquid currency to be requested  redeemed into Staking
+ *   currency.
+ * - `allow_fast_match`: allow the request to be fast matched, fast match will take a fixed
+ *   rate as fee.
  */
-export interface HomaLiteCall_set_total_staking_currency {
-    __kind: 'set_total_staking_currency'
-    stakingTotal: bigint
-}
-
-/**
- * Adjusts the total_staking_currency by the given difference.
- * Requires `T::GovernanceOrigin`
- * 
- * Parameters:
- * - `adjustment`: The difference in amount the total_staking_currency should be adjusted
- *   by.
- */
-export interface HomaLiteCall_adjust_total_staking_currency {
-    __kind: 'adjust_total_staking_currency'
-    byAmount: bigint
-}
-
-/**
- * Updates the cap for how much Staking currency can be used to Mint liquid currency.
- * Requires `T::GovernanceOrigin`
- * 
- * Parameters:
- * - `new_cap`: The new cap for staking currency.
- */
-export interface HomaLiteCall_set_minting_cap {
-    __kind: 'set_minting_cap'
-    newCap: bigint
-}
-
-/**
- * Sets the xcm_dest_weight for XCM transfers.
- * Requires `T::GovernanceOrigin`
- * 
- * Parameters:
- * - `xcm_dest_weight`: The new weight for XCM transfers.
- */
-export interface HomaLiteCall_set_xcm_dest_weight {
-    __kind: 'set_xcm_dest_weight'
-    xcmDestWeight: bigint
-}
-
-/**
- * Mint some Liquid currency, by locking up the given amount of Staking currency.
- * This is similar with the mint() extrinsic, except that the given Redeem Requests are
- * matched with priority.
- * 
- * Parameters:
- * - `amount`: The amount of Staking currency to be exchanged.
- * - `requests`: The redeem requests that are prioritized to match.
- */
-export interface HomaLiteCall_mint_for_requests {
-    __kind: 'mint_for_requests'
-    amount: bigint
-    requests: Uint8Array[]
-}
-
-/**
- * Put in an request to redeem Staking currencies used to mint Liquid currency.
- * The redemption will happen after the currencies are unbonded on the relaychain.
- * 
- * Parameters:
- * - `liquid_amount`: The amount of liquid currency to be redeemed into Staking currency.
- * - `additional_fee`: Percentage of the fee to be awarded to the minter.
- */
-export interface HomaLiteCall_request_redeem {
+export interface HomaCall_request_redeem {
     __kind: 'request_redeem'
-    liquidAmount: bigint
-    additionalFee: number
+    amount: bigint
+    allowFastMatch: boolean
 }
 
 /**
- * Request staking currencies to be unbonded from the RelayChain.
- * 
- * Requires `T::GovernanceOrigin`
+ * Execute fast match for specific redeem requests.
  * 
  * Parameters:
- * - `staking_amount`: The amount of staking currency to be unbonded.
- * - `unbond_block`: The relaychain block number to unbond.
+ * - `redeemer_list`: The list of redeem requests to execute fast redeem.
  */
-export interface HomaLiteCall_schedule_unbond {
-    __kind: 'schedule_unbond'
-    stakingAmount: bigint
-    unbondBlock: number
+export interface HomaCall_fast_match_redeems {
+    __kind: 'fast_match_redeems'
+    redeemerList: Uint8Array[]
 }
 
 /**
- * Replace the current storage for `ScheduledUnbond`.
- * This should only be used to correct mistaken call of schedule_unbond or if something
- * unexpected happened on relaychain.
- * 
- * Requires `T::GovernanceOrigin`
+ * Withdraw the expired redemption of specific redeemer by unbond.
  * 
  * Parameters:
- * - `new_unbonds`: The new ScheduledUnbond storage to replace the current storage.
+ * - `redeemer`: redeemer.
  */
-export interface HomaLiteCall_replace_schedule_unbond {
-    __kind: 'replace_schedule_unbond'
-    newUnbonds: [bigint, number][]
+export interface HomaCall_claim_redemption {
+    __kind: 'claim_redemption'
+    redeemer: Uint8Array
 }
 
 /**
- * Adjusts the AvailableStakingBalance by the given difference.
- * Also attempt to process queued redeem request with the new Staking Balance.
- * Requires `T::GovernanceOrigin`
+ * Sets the params of Homa.
+ * Requires `GovernanceOrigin`
  * 
  * Parameters:
- * - `adjustment`: The difference in amount the AvailableStakingBalance should be adjusted
- *   by.
- * 
- * Weight: Weight(xcm unbond) + n * Weight(match redeem requests), where n is number of
- * redeem requests matched.
+ * - `soft_bonded_cap_per_sub_account`:  soft cap of staking amount for a single nominator
+ *   on relaychain to obtain the best staking rewards.
+ * - `estimated_reward_rate_per_era`: the estimated staking yield of each era on the
+ *   current relay chain.
+ * - `commission_rate`: the rate to draw from estimated staking rewards as commission to
+ *   HomaTreasury
+ * - `fast_match_fee_rate`: the fixed fee rate when redeem request is been fast matched.
  */
-export interface HomaLiteCall_adjust_available_staking_balance {
-    __kind: 'adjust_available_staking_balance'
-    byAmount: bigint
-    maxNumMatches: number
+export interface HomaCall_update_homa_params {
+    __kind: 'update_homa_params'
+    softBondedCapPerSubAccount: (bigint | undefined)
+    estimatedRewardRatePerEra: (bigint | undefined)
+    commissionRate: (bigint | undefined)
+    fastMatchFeeRate: (bigint | undefined)
 }
 
 /**
- * Set the interest rate for TotalStakingCurrency.
- * TotalStakingCurrency is incremented every `T::StakingUpdateFrequency` blocks
- * 
- * Requires `T::GovernanceOrigin`
+ * Sets the params that control when to bump local current era.
+ * Requires `GovernanceOrigin`
  * 
  * Parameters:
- * - `interest_rate`: the new interest rate for TotalStakingCurrency.
+ * - `fix_last_era_bumped_block`: fix the relaychain block number of last era bumped.
+ * - `frequency`: the frequency of block number on parachain.
  */
-export interface HomaLiteCall_set_staking_interest_rate_per_update {
-    __kind: 'set_staking_interest_rate_per_update'
-    interestRate: number
+export interface HomaCall_update_bump_era_params {
+    __kind: 'update_bump_era_params'
+    lastEraBumpedBlock: (number | undefined)
+    frequency: (number | undefined)
+}
+
+/**
+ * Reset the bonded and unbonding to local subaccounts ledger according to the ledger on
+ * relaychain. Requires `GovernanceOrigin`
+ * 
+ * Parameters:
+ * - `updates`: update list of subaccount.
+ */
+export interface HomaCall_reset_ledgers {
+    __kind: 'reset_ledgers'
+    updates: [number, (bigint | undefined), (UnlockChunk[] | undefined)][]
+}
+
+/**
+ * Reset the RelayChainCurrentEra.
+ * If there is a deviation of more than 1 EraIndex between current era of relaychain and
+ * current era on local, should reset era to current era of relaychain as soon as possible.
+ * At the same time, check whether the unlocking of ledgers should be updated.
+ * Requires `GovernanceOrigin`
+ * 
+ * Parameters:
+ * - `era_index`: the latest era index of relaychain.
+ */
+export interface HomaCall_reset_current_era {
+    __kind: 'reset_current_era'
+    eraIndex: number
+}
+
+export interface HomaCall_force_bump_current_era {
+    __kind: 'force_bump_current_era'
+    bumpAmount: number
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type HomaXcmCall = HomaXcmCall_update_xcm_dest_weight_and_fee
+
+/**
+ * Sets the xcm_dest_weight and fee for XCM operation of HomaXcm.
+ * 
+ * Parameters:
+ * - `updates`: tumple of (HomaXcmOperation, WeightChange, FeeChange).
+ */
+export interface HomaXcmCall_update_xcm_dest_weight_and_fee {
+    __kind: 'update_xcm_dest_weight_and_fee'
+    updates: [HomaXcmOperation, (bigint | undefined), (bigint | undefined)][]
 }
 
 /**
@@ -4625,7 +4629,7 @@ export interface AssetRegistryCall_update_erc20_asset {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type EVMCall = EVMCall_eth_call | EVMCall_call | EVMCall_scheduled_call | EVMCall_create | EVMCall_create2 | EVMCall_create_nft_contract | EVMCall_create_predeploy_contract | EVMCall_transfer_maintainer | EVMCall_deploy | EVMCall_deploy_free | EVMCall_enable_contract_development | EVMCall_disable_contract_development | EVMCall_set_code | EVMCall_selfdestruct
+export type EVMCall = EVMCall_eth_call | EVMCall_call | EVMCall_scheduled_call | EVMCall_create | EVMCall_create2 | EVMCall_create_nft_contract | EVMCall_create_predeploy_contract | EVMCall_transfer_maintainer | EVMCall_publish_contract | EVMCall_publish_free | EVMCall_enable_contract_development | EVMCall_disable_contract_development | EVMCall_set_code | EVMCall_selfdestruct
 
 export interface EVMCall_eth_call {
     __kind: 'eth_call'
@@ -4763,30 +4767,30 @@ export interface EVMCall_transfer_maintainer {
 }
 
 /**
- * Mark a given contract as deployed.
+ * Mark a given contract as published.
  * 
- * - `contract`: The contract to mark as deployed, the caller must the contract's
+ * - `contract`: The contract to mark as published, the caller must the contract's
  *   maintainer
  */
-export interface EVMCall_deploy {
-    __kind: 'deploy'
+export interface EVMCall_publish_contract {
+    __kind: 'publish_contract'
     contract: Uint8Array
 }
 
 /**
- * Mark a given contract as deployed without paying the deployment fee
+ * Mark a given contract as published without paying the publication fee
  * 
- * - `contract`: The contract to mark as deployed, the caller must be the contract's
+ * - `contract`: The contract to mark as published, the caller must be the contract's
  *   maintainer.
  */
-export interface EVMCall_deploy_free {
-    __kind: 'deploy_free'
+export interface EVMCall_publish_free {
+    __kind: 'publish_free'
     contract: Uint8Array
 }
 
 /**
  * Mark the caller's address to allow contract development.
- * This allows the address to interact with non-deployed contracts.
+ * This allows the address to interact with non-published contracts.
  */
 export interface EVMCall_enable_contract_development {
     __kind: 'enable_contract_development'
@@ -4794,7 +4798,7 @@ export interface EVMCall_enable_contract_development {
 
 /**
  * Mark the caller's address to disable contract development.
- * This disallows the address to interact with non-deployed contracts.
+ * This disallows the address to interact with non-published contracts.
  */
 export interface EVMCall_disable_contract_development {
     __kind: 'disable_contract_development'
@@ -4803,7 +4807,7 @@ export interface EVMCall_disable_contract_development {
 /**
  * Set the code of a contract at a given address.
  * 
- * - `contract`: The contract whose code is being set, must not be marked as deployed
+ * - `contract`: The contract whose code is being set, must not be marked as published
  * - `code`: The new ABI bundle for the contract
  */
 export interface EVMCall_set_code {
@@ -4815,7 +4819,7 @@ export interface EVMCall_set_code {
 /**
  * Remove a contract at a given address.
  * 
- * - `contract`: The contract to remove, must not be marked as deployed
+ * - `contract`: The contract to remove, must not be marked as published
  */
 export interface EVMCall_selfdestruct {
     __kind: 'selfdestruct'
@@ -4847,6 +4851,42 @@ export interface EvmAccountsCall_claim_account {
  */
 export interface EvmAccountsCall_claim_default_account {
     __kind: 'claim_default_account'
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type ParachainSystemCall = ParachainSystemCall_set_validation_data | ParachainSystemCall_sudo_send_upward_message | ParachainSystemCall_authorize_upgrade | ParachainSystemCall_enact_authorized_upgrade
+
+/**
+ * Set the current validation data.
+ * 
+ * This should be invoked exactly once per block. It will panic at the finalization
+ * phase if the call was not invoked.
+ * 
+ * The dispatch origin for this call must be `Inherent`
+ * 
+ * As a side effect, this function upgrades the current validation function
+ * if the appropriate time has come.
+ */
+export interface ParachainSystemCall_set_validation_data {
+    __kind: 'set_validation_data'
+    data: ParachainInherentData
+}
+
+export interface ParachainSystemCall_sudo_send_upward_message {
+    __kind: 'sudo_send_upward_message'
+    message: Uint8Array
+}
+
+export interface ParachainSystemCall_authorize_upgrade {
+    __kind: 'authorize_upgrade'
+    codeHash: Uint8Array
+}
+
+export interface ParachainSystemCall_enact_authorized_upgrade {
+    __kind: 'enact_authorized_upgrade'
+    code: Uint8Array
 }
 
 /**
@@ -4939,7 +4979,7 @@ export interface OriginCaller_PolkadotXcm {
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Type_110
+    value: Type_109
 }
 
 export interface OriginCaller_Authority {
@@ -4949,22 +4989,22 @@ export interface OriginCaller_Authority {
 
 export interface OriginCaller_GeneralCouncil {
     __kind: 'GeneralCouncil'
-    value: Type_113
+    value: Type_112
 }
 
 export interface OriginCaller_FinancialCouncil {
     __kind: 'FinancialCouncil'
-    value: Type_114
+    value: Type_113
 }
 
 export interface OriginCaller_HomaCouncil {
     __kind: 'HomaCouncil'
-    value: Type_115
+    value: Type_114
 }
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_116
+    value: Type_115
 }
 
 export interface OriginCaller_Void {
@@ -5037,7 +5077,7 @@ export interface MultiAddress_Address20 {
     value: Uint8Array
 }
 
-export type CurrencyId = CurrencyId_Token | CurrencyId_DexShare | CurrencyId_Erc20 | CurrencyId_StableAssetPoolToken | CurrencyId_LiquidCroadloan | CurrencyId_ForeignAsset
+export type CurrencyId = CurrencyId_Token | CurrencyId_DexShare | CurrencyId_Erc20 | CurrencyId_StableAssetPoolToken | CurrencyId_LiquidCrowdloan | CurrencyId_ForeignAsset
 
 export interface CurrencyId_Token {
     __kind: 'Token'
@@ -5059,8 +5099,8 @@ export interface CurrencyId_StableAssetPoolToken {
     value: number
 }
 
-export interface CurrencyId_LiquidCroadloan {
-    __kind: 'LiquidCroadloan'
+export interface CurrencyId_LiquidCrowdloan {
+    __kind: 'LiquidCrowdloan'
     value: number
 }
 
@@ -5074,13 +5114,6 @@ export interface VestingSchedule {
     period: number
     periodCount: number
     perPeriod: bigint
-}
-
-export interface ParachainInherentData {
-    validationData: V1PersistedValidationData
-    relayChainState: StorageProof
-    downwardMessages: InboundDownwardMessage[]
-    horizontalMessages: [number, InboundHrmpMessage[]][]
 }
 
 export interface SessionKeys {
@@ -5128,21 +5161,21 @@ export interface VersionedMultiAssets_V1 {
     value: V1MultiAsset[]
 }
 
-export type Type_250 = Type_250_V0 | Type_250_V1 | Type_250_V2
+export type Type_241 = Type_241_V0 | Type_241_V1 | Type_241_V2
 
-export interface Type_250_V0 {
+export interface Type_241_V0 {
     __kind: 'V0'
-    value: Type_251
+    value: Type_242
 }
 
-export interface Type_250_V1 {
+export interface Type_241_V1 {
     __kind: 'V1'
-    value: Type_256
+    value: Type_247
 }
 
-export interface Type_250_V2 {
+export interface Type_241_V2 {
     __kind: 'V2'
-    value: Type_262[]
+    value: Type_253[]
 }
 
 export interface V1MultiLocation {
@@ -5262,15 +5295,38 @@ export interface Change_NewValue {
     value: (bigint | undefined)
 }
 
-export type Type_295 = Type_295_NoChange | Type_295_NewValue
+export type Type_287 = Type_287_NoChange | Type_287_NewValue
 
-export interface Type_295_NoChange {
+export interface Type_287_NoChange {
     __kind: 'NoChange'
 }
 
-export interface Type_295_NewValue {
+export interface Type_287_NewValue {
     __kind: 'NewValue'
     value: bigint
+}
+
+export interface UnlockChunk {
+    value: bigint
+    era: number
+}
+
+export type HomaXcmOperation = HomaXcmOperation_XtokensTransfer | HomaXcmOperation_XcmWithdrawUnbonded | HomaXcmOperation_XcmBondExtra | HomaXcmOperation_XcmUnbond
+
+export interface HomaXcmOperation_XtokensTransfer {
+    __kind: 'XtokensTransfer'
+}
+
+export interface HomaXcmOperation_XcmWithdrawUnbonded {
+    __kind: 'XcmWithdrawUnbonded'
+}
+
+export interface HomaXcmOperation_XcmBondExtra {
+    __kind: 'XcmBondExtra'
+}
+
+export interface HomaXcmOperation_XcmUnbond {
+    __kind: 'XcmUnbond'
 }
 
 export type PoolId = PoolId_Loans | PoolId_Dex
@@ -5303,6 +5359,13 @@ export interface TransactionAction_Create {
     __kind: 'Create'
 }
 
+export interface ParachainInherentData {
+    validationData: V1PersistedValidationData
+    relayChainState: StorageProof
+    downwardMessages: InboundDownwardMessage[]
+    horizontalMessages: [number, InboundHrmpMessage[]][]
+}
+
 export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
 
 export interface RawOrigin_Root {
@@ -5330,13 +5393,13 @@ export interface Origin_Response {
     value: V1MultiLocation
 }
 
-export type Type_110 = Type_110_Relay | Type_110_SiblingParachain
+export type Type_109 = Type_109_Relay | Type_109_SiblingParachain
 
-export interface Type_110_Relay {
+export interface Type_109_Relay {
     __kind: 'Relay'
 }
 
-export interface Type_110_SiblingParachain {
+export interface Type_109_SiblingParachain {
     __kind: 'SiblingParachain'
     value: number
 }
@@ -5344,6 +5407,22 @@ export interface Type_110_SiblingParachain {
 export interface DelayedOrigin {
     delay: number
     origin: OriginCaller
+}
+
+export type Type_112 = Type_112_Members | Type_112_Member | Type_112__Phantom
+
+export interface Type_112_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_112_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_112__Phantom {
+    __kind: '_Phantom'
 }
 
 export type Type_113 = Type_113_Members | Type_113_Member | Type_113__Phantom
@@ -5391,22 +5470,6 @@ export interface Type_115_Member {
 }
 
 export interface Type_115__Phantom {
-    __kind: '_Phantom'
-}
-
-export type Type_116 = Type_116_Members | Type_116_Member | Type_116__Phantom
-
-export interface Type_116_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface Type_116_Member {
-    __kind: 'Member'
-    value: Uint8Array
-}
-
-export interface Type_116__Phantom {
     __kind: '_Phantom'
 }
 
@@ -5497,7 +5560,7 @@ export interface TokenSymbol_KBTC {
     __kind: 'KBTC'
 }
 
-export type DexShare = DexShare_Token | DexShare_Erc20 | DexShare_LiquidCroadloan | DexShare_ForeignAsset
+export type DexShare = DexShare_Token | DexShare_Erc20 | DexShare_LiquidCrowdloan | DexShare_ForeignAsset
 
 export interface DexShare_Token {
     __kind: 'Token'
@@ -5509,35 +5572,14 @@ export interface DexShare_Erc20 {
     value: Uint8Array
 }
 
-export interface DexShare_LiquidCroadloan {
-    __kind: 'LiquidCroadloan'
+export interface DexShare_LiquidCrowdloan {
+    __kind: 'LiquidCrowdloan'
     value: number
 }
 
 export interface DexShare_ForeignAsset {
     __kind: 'ForeignAsset'
     value: number
-}
-
-export interface V1PersistedValidationData {
-    parentHead: Uint8Array
-    relayParentNumber: number
-    relayParentStorageRoot: Uint8Array
-    maxPovSize: number
-}
-
-export interface StorageProof {
-    trieNodes: Uint8Array[]
-}
-
-export interface InboundDownwardMessage {
-    sentAt: number
-    msg: Uint8Array
-}
-
-export interface InboundHrmpMessage {
-    sentAt: number
-    data: Uint8Array
 }
 
 export type V0MultiLocation = V0MultiLocation_Null | V0MultiLocation_X1 | V0MultiLocation_X2 | V0MultiLocation_X3 | V0MultiLocation_X4 | V0MultiLocation_X5 | V0MultiLocation_X6 | V0MultiLocation_X7 | V0MultiLocation_X8
@@ -5972,245 +6014,245 @@ export interface V1MultiAsset {
     fun: V1Fungibility
 }
 
-export type Type_251 = Type_251_WithdrawAsset | Type_251_ReserveAssetDeposit | Type_251_TeleportAsset | Type_251_QueryResponse | Type_251_TransferAsset | Type_251_TransferReserveAsset | Type_251_Transact | Type_251_HrmpNewChannelOpenRequest | Type_251_HrmpChannelAccepted | Type_251_HrmpChannelClosing | Type_251_RelayedFrom
+export type Type_242 = Type_242_WithdrawAsset | Type_242_ReserveAssetDeposit | Type_242_TeleportAsset | Type_242_QueryResponse | Type_242_TransferAsset | Type_242_TransferReserveAsset | Type_242_Transact | Type_242_HrmpNewChannelOpenRequest | Type_242_HrmpChannelAccepted | Type_242_HrmpChannelClosing | Type_242_RelayedFrom
 
-export interface Type_251_WithdrawAsset {
+export interface Type_242_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V0MultiAsset[]
-    effects: Type_253[]
+    effects: Type_244[]
 }
 
-export interface Type_251_ReserveAssetDeposit {
+export interface Type_242_ReserveAssetDeposit {
     __kind: 'ReserveAssetDeposit'
     assets: V0MultiAsset[]
-    effects: Type_253[]
+    effects: Type_244[]
 }
 
-export interface Type_251_TeleportAsset {
+export interface Type_242_TeleportAsset {
     __kind: 'TeleportAsset'
     assets: V0MultiAsset[]
-    effects: Type_253[]
+    effects: Type_244[]
 }
 
-export interface Type_251_QueryResponse {
+export interface Type_242_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V0Response
 }
 
-export interface Type_251_TransferAsset {
+export interface Type_242_TransferAsset {
     __kind: 'TransferAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_251_TransferReserveAsset {
+export interface Type_242_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_251_Transact {
+export interface Type_242_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_251_HrmpNewChannelOpenRequest {
+export interface Type_242_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_251_HrmpChannelAccepted {
+export interface Type_242_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_251_HrmpChannelClosing {
+export interface Type_242_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_251_RelayedFrom {
+export interface Type_242_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V0MultiLocation
-    message: Type_251
+    message: Type_242
 }
 
-export type Type_256 = Type_256_WithdrawAsset | Type_256_ReserveAssetDeposited | Type_256_ReceiveTeleportedAsset | Type_256_QueryResponse | Type_256_TransferAsset | Type_256_TransferReserveAsset | Type_256_Transact | Type_256_HrmpNewChannelOpenRequest | Type_256_HrmpChannelAccepted | Type_256_HrmpChannelClosing | Type_256_RelayedFrom | Type_256_SubscribeVersion | Type_256_UnsubscribeVersion
+export type Type_247 = Type_247_WithdrawAsset | Type_247_ReserveAssetDeposited | Type_247_ReceiveTeleportedAsset | Type_247_QueryResponse | Type_247_TransferAsset | Type_247_TransferReserveAsset | Type_247_Transact | Type_247_HrmpNewChannelOpenRequest | Type_247_HrmpChannelAccepted | Type_247_HrmpChannelClosing | Type_247_RelayedFrom | Type_247_SubscribeVersion | Type_247_UnsubscribeVersion
 
-export interface Type_256_WithdrawAsset {
+export interface Type_247_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V1MultiAsset[]
-    effects: Type_258[]
+    effects: Type_249[]
 }
 
-export interface Type_256_ReserveAssetDeposited {
+export interface Type_247_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     assets: V1MultiAsset[]
-    effects: Type_258[]
+    effects: Type_249[]
 }
 
-export interface Type_256_ReceiveTeleportedAsset {
+export interface Type_247_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     assets: V1MultiAsset[]
-    effects: Type_258[]
+    effects: Type_249[]
 }
 
-export interface Type_256_QueryResponse {
+export interface Type_247_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V1Response
 }
 
-export interface Type_256_TransferAsset {
+export interface Type_247_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_256_TransferReserveAsset {
+export interface Type_247_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_256_Transact {
+export interface Type_247_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_256_HrmpNewChannelOpenRequest {
+export interface Type_247_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_256_HrmpChannelAccepted {
+export interface Type_247_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_256_HrmpChannelClosing {
+export interface Type_247_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_256_RelayedFrom {
+export interface Type_247_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V1Junctions
-    message: Type_256
+    message: Type_247
 }
 
-export interface Type_256_SubscribeVersion {
+export interface Type_247_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_256_UnsubscribeVersion {
+export interface Type_247_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export type Type_262 = Type_262_WithdrawAsset | Type_262_ReserveAssetDeposited | Type_262_ReceiveTeleportedAsset | Type_262_QueryResponse | Type_262_TransferAsset | Type_262_TransferReserveAsset | Type_262_Transact | Type_262_HrmpNewChannelOpenRequest | Type_262_HrmpChannelAccepted | Type_262_HrmpChannelClosing | Type_262_ClearOrigin | Type_262_DescendOrigin | Type_262_ReportError | Type_262_DepositAsset | Type_262_DepositReserveAsset | Type_262_ExchangeAsset | Type_262_InitiateReserveWithdraw | Type_262_InitiateTeleport | Type_262_QueryHolding | Type_262_BuyExecution | Type_262_RefundSurplus | Type_262_SetErrorHandler | Type_262_SetAppendix | Type_262_ClearError | Type_262_ClaimAsset | Type_262_Trap | Type_262_SubscribeVersion | Type_262_UnsubscribeVersion
+export type Type_253 = Type_253_WithdrawAsset | Type_253_ReserveAssetDeposited | Type_253_ReceiveTeleportedAsset | Type_253_QueryResponse | Type_253_TransferAsset | Type_253_TransferReserveAsset | Type_253_Transact | Type_253_HrmpNewChannelOpenRequest | Type_253_HrmpChannelAccepted | Type_253_HrmpChannelClosing | Type_253_ClearOrigin | Type_253_DescendOrigin | Type_253_ReportError | Type_253_DepositAsset | Type_253_DepositReserveAsset | Type_253_ExchangeAsset | Type_253_InitiateReserveWithdraw | Type_253_InitiateTeleport | Type_253_QueryHolding | Type_253_BuyExecution | Type_253_RefundSurplus | Type_253_SetErrorHandler | Type_253_SetAppendix | Type_253_ClearError | Type_253_ClaimAsset | Type_253_Trap | Type_253_SubscribeVersion | Type_253_UnsubscribeVersion
 
-export interface Type_262_WithdrawAsset {
+export interface Type_253_WithdrawAsset {
     __kind: 'WithdrawAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_262_ReserveAssetDeposited {
+export interface Type_253_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     value: V1MultiAsset[]
 }
 
-export interface Type_262_ReceiveTeleportedAsset {
+export interface Type_253_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_262_QueryResponse {
+export interface Type_253_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V2Response
     maxWeight: bigint
 }
 
-export interface Type_262_TransferAsset {
+export interface Type_253_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_262_TransferReserveAsset {
+export interface Type_253_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_262_Transact {
+export interface Type_253_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
     call: DoubleEncoded
 }
 
-export interface Type_262_HrmpNewChannelOpenRequest {
+export interface Type_253_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_262_HrmpChannelAccepted {
+export interface Type_253_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_262_HrmpChannelClosing {
+export interface Type_253_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_262_ClearOrigin {
+export interface Type_253_ClearOrigin {
     __kind: 'ClearOrigin'
 }
 
-export interface Type_262_DescendOrigin {
+export interface Type_253_DescendOrigin {
     __kind: 'DescendOrigin'
     value: V1Junctions
 }
 
-export interface Type_262_ReportError {
+export interface Type_253_ReportError {
     __kind: 'ReportError'
     queryId: bigint
     dest: V1MultiLocation
     maxResponseWeight: bigint
 }
 
-export interface Type_262_DepositAsset {
+export interface Type_253_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_262_DepositReserveAsset {
+export interface Type_253_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -6218,27 +6260,27 @@ export interface Type_262_DepositReserveAsset {
     xcm: V2Instruction[]
 }
 
-export interface Type_262_ExchangeAsset {
+export interface Type_253_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_262_InitiateReserveWithdraw {
+export interface Type_253_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_262_InitiateTeleport {
+export interface Type_253_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_262_QueryHolding {
+export interface Type_253_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
@@ -6246,48 +6288,48 @@ export interface Type_262_QueryHolding {
     maxResponseWeight: bigint
 }
 
-export interface Type_262_BuyExecution {
+export interface Type_253_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weightLimit: V2WeightLimit
 }
 
-export interface Type_262_RefundSurplus {
+export interface Type_253_RefundSurplus {
     __kind: 'RefundSurplus'
 }
 
-export interface Type_262_SetErrorHandler {
+export interface Type_253_SetErrorHandler {
     __kind: 'SetErrorHandler'
-    value: Type_262[]
+    value: Type_253[]
 }
 
-export interface Type_262_SetAppendix {
+export interface Type_253_SetAppendix {
     __kind: 'SetAppendix'
-    value: Type_262[]
+    value: Type_253[]
 }
 
-export interface Type_262_ClearError {
+export interface Type_253_ClearError {
     __kind: 'ClearError'
 }
 
-export interface Type_262_ClaimAsset {
+export interface Type_253_ClaimAsset {
     __kind: 'ClaimAsset'
     assets: V1MultiAsset[]
     ticket: V1MultiLocation
 }
 
-export interface Type_262_Trap {
+export interface Type_253_Trap {
     __kind: 'Trap'
     value: bigint
 }
 
-export interface Type_262_SubscribeVersion {
+export interface Type_253_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_262_UnsubscribeVersion {
+export interface Type_253_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
@@ -6335,6 +6377,27 @@ export interface V1Junctions_X7 {
 export interface V1Junctions_X8 {
     __kind: 'X8'
     value: [V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction, V1Junction]
+}
+
+export interface V1PersistedValidationData {
+    parentHead: Uint8Array
+    relayParentNumber: number
+    relayParentStorageRoot: Uint8Array
+    maxPovSize: number
+}
+
+export interface StorageProof {
+    trieNodes: Uint8Array[]
+}
+
+export interface InboundDownwardMessage {
+    sentAt: number
+    msg: Uint8Array
+}
+
+export interface InboundHrmpMessage {
+    sentAt: number
+    data: Uint8Array
 }
 
 export type V0Junction = V0Junction_Parent | V0Junction_Parachain | V0Junction_AccountId32 | V0Junction_AccountIndex64 | V0Junction_AccountKey20 | V0Junction_PalletInstance | V0Junction_GeneralIndex | V0Junction_GeneralKey | V0Junction_OnlyChild | V0Junction_Plurality
@@ -6637,75 +6700,75 @@ export interface V1Fungibility_NonFungible {
     value: V1AssetInstance
 }
 
-export type Type_253 = Type_253_Null | Type_253_DepositAsset | Type_253_DepositReserveAsset | Type_253_ExchangeAsset | Type_253_InitiateReserveWithdraw | Type_253_InitiateTeleport | Type_253_QueryHolding | Type_253_BuyExecution
+export type Type_244 = Type_244_Null | Type_244_DepositAsset | Type_244_DepositReserveAsset | Type_244_ExchangeAsset | Type_244_InitiateReserveWithdraw | Type_244_InitiateTeleport | Type_244_QueryHolding | Type_244_BuyExecution
 
-export interface Type_253_Null {
+export interface Type_244_Null {
     __kind: 'Null'
 }
 
-export interface Type_253_DepositAsset {
+export interface Type_244_DepositAsset {
     __kind: 'DepositAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_253_DepositReserveAsset {
+export interface Type_244_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_253_ExchangeAsset {
+export interface Type_244_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V0MultiAsset[]
     receive: V0MultiAsset[]
 }
 
-export interface Type_253_InitiateReserveWithdraw {
+export interface Type_244_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V0MultiAsset[]
     reserve: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_253_InitiateTeleport {
+export interface Type_244_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_253_QueryHolding {
+export interface Type_244_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V0MultiLocation
     assets: V0MultiAsset[]
 }
 
-export interface Type_253_BuyExecution {
+export interface Type_244_BuyExecution {
     __kind: 'BuyExecution'
     fees: V0MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    xcm: Type_251[]
+    xcm: Type_242[]
 }
 
-export type Type_258 = Type_258_Noop | Type_258_DepositAsset | Type_258_DepositReserveAsset | Type_258_ExchangeAsset | Type_258_InitiateReserveWithdraw | Type_258_InitiateTeleport | Type_258_QueryHolding | Type_258_BuyExecution
+export type Type_249 = Type_249_Noop | Type_249_DepositAsset | Type_249_DepositReserveAsset | Type_249_ExchangeAsset | Type_249_InitiateReserveWithdraw | Type_249_InitiateTeleport | Type_249_QueryHolding | Type_249_BuyExecution
 
-export interface Type_258_Noop {
+export interface Type_249_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_258_DepositAsset {
+export interface Type_249_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_258_DepositReserveAsset {
+export interface Type_249_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -6713,40 +6776,40 @@ export interface Type_258_DepositReserveAsset {
     effects: V1Order[]
 }
 
-export interface Type_258_ExchangeAsset {
+export interface Type_249_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_258_InitiateReserveWithdraw {
+export interface Type_249_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_258_InitiateTeleport {
+export interface Type_249_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_258_QueryHolding {
+export interface Type_249_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
     assets: V1MultiAssetFilter
 }
 
-export interface Type_258_BuyExecution {
+export interface Type_249_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    instructions: Type_256[]
+    instructions: Type_247[]
 }
 
 export type V1Junction = V1Junction_Parachain | V1Junction_AccountId32 | V1Junction_AccountIndex64 | V1Junction_AccountKey20 | V1Junction_PalletInstance | V1Junction_GeneralIndex | V1Junction_GeneralKey | V1Junction_OnlyChild | V1Junction_Plurality

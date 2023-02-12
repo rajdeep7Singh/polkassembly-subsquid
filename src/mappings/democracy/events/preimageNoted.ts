@@ -30,8 +30,20 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 
 async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
     const storage = new DemocracyPreimagesStorage(ctx, block)
-    if (storage.isV2000) {
-        const storageData = await storage.asV2000.get(hash)
+    if (storage.isV1001) {
+        const storageData = await storage.asV1001.get(hash)
+        if (!storageData || storageData.__kind === 'Missing') return undefined
+
+        const { provider, deposit, since, data } = storageData.value
+
+        return {
+            data,
+            provider,
+            deposit,
+            block: since,
+        }
+    }else if (storage.isV1019) {
+        const storageData = await storage.asV1019.get(hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData

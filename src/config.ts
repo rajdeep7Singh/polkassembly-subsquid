@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'acala',
-        prefix: 'acala',
+        name: 'karura',
+        prefix: 'karura',
     },
     dataSource: {
-        archive: lookupArchive("acala", {release: "FireSquid"}),
-        chain: 'wss://acala-polkadot.api.onfinality.io/public-ws',
+        archive: lookupArchive("karura", {release: "FireSquid"}),
+        chain: 'wss://karura.api.onfinality.io/public-ws',
     },
-    typesBundle: 'acala',
+    typesBundle: 'karura',
     batchSize: 500,
     blockRange: {
         from: 0,

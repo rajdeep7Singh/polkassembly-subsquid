@@ -12,8 +12,8 @@ interface DemocracyProposalStorageData {
 
 async function getStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<DemocracyProposalStorageData[] | undefined> {
     const storage = new DemocracyPublicPropsStorage(ctx, block)
-    if (storage.isV2000) {
-        const storageData = await storage.asV2000.get()
+    if (storage.isV1001) {
+        const storageData = await storage.asV1001.get()
         if (!storageData) return undefined
 
         return storageData.map((proposal: any): DemocracyProposalStorageData => {
