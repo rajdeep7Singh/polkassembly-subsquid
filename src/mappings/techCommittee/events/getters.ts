@@ -15,21 +15,17 @@ import { Store } from '@subsquid/typeorm-store'
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeApprovedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
-    } else {
+    if (event.isV200) {
+        return event.asV200
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeClosedEvent(ctx, itemEvent)
-    if (event.isV1050) {
-        return event.asV1050[0]
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    if (event.isV200) {
+        return event.asV200[0]
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -37,23 +33,17 @@ export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeDisapprovedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
-    } else {
+    if (event.isV200) {
+        return event.asV200
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new TechnicalCommitteeExecutedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020[0]
-    } else if (event.isV2005) {
-        return event.asV2005[0]
-    } else if (event.isV9111) {
-        return event.asV9111[0]
+    if (event.isV200) {
+        return event.asV200[0]
     } else {
         const data = ctx._chain.decodeEvent(itemEvent)
         assert(Buffer.isBuffer(data.proposalHash))
@@ -70,20 +60,12 @@ export interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new TechnicalCommitteeProposedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [proposer, index, hash, threshold] = event.asV1020
+    if (event.isV200) {
+        const [proposer, index, hash, threshold] = event.asV200
         return {
             proposer,
             index,
             hash,
-            threshold,
-        }
-    } else if (event.isV9130) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV9130
-        return {
-            proposer: account,
-            index: proposalIndex,
-            hash: proposalHash,
             threshold,
         }
     } else {
@@ -99,19 +81,12 @@ export interface VotedData {
 
 export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
     const event = new TechnicalCommitteeVotedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [voter, hash, decision] = event.asV1020
+    if (event.isV200) {
+        const [voter, hash, decision] = event.asV200
         return {
             voter,
             hash,
             decision,
-        }
-    } else if (event.isV9130) {
-        const { account, proposalHash, voted } = event.asV9130
-        return {
-            voter: account,
-            hash: proposalHash,
-            decision: voted,
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)
