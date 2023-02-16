@@ -56,6 +56,7 @@ const processor = new SubstrateBatchProcessor()
     .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Ethereum.transact', { data: { call: { origin: true, args: true, }, } } as const)
 
     .addEthereumTransaction('0x0000000000000000000000000000000000000812')
 

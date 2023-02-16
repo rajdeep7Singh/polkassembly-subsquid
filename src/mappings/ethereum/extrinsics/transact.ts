@@ -3,7 +3,10 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getTransaction } from '@subsquid/frontier'
 import { EthereumCurrentTransactionStatusesStorage } from '../../../types/storage'
-import { functions } from '../../../abi/convictionVoteAbi'
+import { functions as oldFunctions } from '../../../gov1AbiOld/moonbeamAbi'
+import { functions as newFunctions } from '../../../gov1AbiNew/moonbeamAbi'
+import { handlePrecompileVote } from '../../democracy/extrinsics/vote'
+import { functions } from '../../../convictionVotingAbi/convictionVoteAbi'
 import { handleConvictionVotesFromPrecompile } from '../../referendumV2/extrinsics/convictionVoting'
 import { handlePrecompileDelegate } from '../../referendumV2/extrinsics/delegate'
 import { handlePrecompileUndelegate } from '../../referendumV2/extrinsics/undelegate'
@@ -51,14 +54,36 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
     const txnHash = tx.hash
     let flag = false;
     try {
-        const decoded = functions.voteYes.decode(tx.input)
+        const decoded = newFunctions.standardVote.decode(tx.input)
         if(decoded){
-            await handleConvictionVotesFromPrecompile(ctx, item.call, header, decoded, true, originAccountId, txnHash)
+            await handlePrecompileVote(ctx, item.call, header, decoded, originAccountId, txnHash)
             flag = true
         }
     }
     catch (e){
-        ctx.log.info(`Ethereum transaction looking for suitable decoder`)
+    }
+    if (!flag){
+        try{
+            const decoded = oldFunctions.standard_vote.decode(tx.input)
+            if(decoded){
+                flag = true
+                await handlePrecompileVote(ctx, item.call, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if (!flag){
+        try {
+            const decoded = functions.voteYes.decode(tx.input)
+            if(decoded){
+                await handleConvictionVotesFromPrecompile(ctx, item.call, header, decoded, true, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
     }
     if (!flag){
         try{
@@ -70,7 +95,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
     if (!flag){
@@ -83,7 +107,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
     if (!flag){
@@ -95,7 +118,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
     if (!flag){
@@ -107,7 +129,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
     if (!flag){
@@ -119,7 +140,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
 }
