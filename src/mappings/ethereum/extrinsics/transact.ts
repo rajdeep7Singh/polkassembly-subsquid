@@ -26,7 +26,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
         }
     }
     catch (e){
-        ctx.log.info(`Ethereum transaction looking for suitable decoder ${e}`)
     }
     if (!flag){
         try{
@@ -37,7 +36,6 @@ export async function handlePrecompileTransaction(ctx: BatchContext<Store, unkno
             }
         }
         catch (e){
-            ctx.log.info(`Ethereum transaction looking for suitable decoder`)
         }
     }
     // if (!flag){
