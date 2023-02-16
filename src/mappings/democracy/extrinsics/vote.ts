@@ -70,3 +70,44 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         })
     )
 }
+
+export async function handlePrecompileVote(ctx: BatchContext<Store, unknown>, item: any, header: SubstrateBlock, data:any, originAccountId: string, txnHash: string) {
+    if (!item.success) return
+
+    const [ index, aye, amount, conviction ] = data
+
+    const refIndex = index.toNumber()
+
+    const proposal = await ctx.store.get(Proposal, { where: { index: refIndex , type: ProposalType.Referendum } })
+    if (!proposal) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
+        return
+    }
+
+    const decision: VoteDecision = aye ? VoteDecision.yes : VoteDecision.no
+
+    let lockPeriod: number | undefined
+    let balance: VoteBalance | undefined
+    balance = new StandardVoteBalance({
+        value: amount.toBigInt(),
+    })
+
+    lockPeriod = conviction.toNumber()
+
+    // const count = await getVotesCount(ctx, proposal.id)
+
+    await ctx.store.insert(
+        new Vote({
+            id: randomUUID(),
+            voter: originAccountId,
+            blockNumber: header.height,
+            decision,
+            lockPeriod,
+            proposal,
+            balance,
+            timestamp: new Date(header.timestamp),
+            type: VoteType.Referendum,
+            txnHash: txnHash
+        })
+    )
+}

@@ -43,4 +43,7 @@ export class Vote {
 
     @Column_("varchar", {length: 17, nullable: true})
     type!: VoteType | undefined | null
+
+    @Column_("text", {nullable: true})
+    txnHash!: string | undefined | null
 }

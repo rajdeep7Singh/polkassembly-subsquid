@@ -1,6 +1,7 @@
 import assert from 'assert'
 import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
 import * as v900 from './v900'
+import * as v1001 from './v1001'
 import * as v1201 from './v1201'
 import * as v1300 from './v1300'
 import * as v1401 from './v1401'
@@ -659,6 +660,65 @@ export class DemocracyTabledEvent {
      */
     get asV2000(): {proposalIndex: number, deposit: bigint} {
         assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class DemocracyVotedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Democracy.Voted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get isV1001(): boolean {
+        return this._chain.getEventHash('Democracy.Voted') === '604da654023263e7aea05372e1eb33e38c4a6f4e84e160804c7879f6e1564022'
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get asV1001(): [Uint8Array, number, v1001.AccountVote] {
+        assert(this.isV1001)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get isV1201(): boolean {
+        return this._chain.getEventHash('Democracy.Voted') === 'f368480dd5ebfa5a0e2f0613bc234e6c02a38fc86dfc2ece938dee4f5a0483d1'
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get asV1201(): {who: Uint8Array, refIndex: number, vote: v1201.AccountVote} {
+        assert(this.isV1201)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get isV1300(): boolean {
+        return this._chain.getEventHash('Democracy.Voted') === '0eaf760dcfa41dbcca324addedbf718eb01fd2ef951a16ed7fe4bb420e2ebf8a'
+    }
+
+    /**
+     * An account has voted in a referendum
+     */
+    get asV1300(): {voter: Uint8Array, refIndex: number, vote: v1300.AccountVote} {
+        assert(this.isV1300)
         return this._chain.decodeEvent(this.event)
     }
 }

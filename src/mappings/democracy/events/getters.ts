@@ -10,8 +10,10 @@ import {
     DemocracyPreimageReapedEvent,
     DemocracyPreimageUsedEvent,
     DemocracySecondedEvent,
+    DemocracyVotedEvent,
 } from '../../../types/events'
 import { Event } from '../../../types/support'
+import { AccountVote } from '../../../types/v1001'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -222,6 +224,40 @@ export function getDemocracySecondedData(ctx: BatchContext<Store, unknown>, item
         }
     }
     else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+interface DemocracyVotedData {
+    accountId: Uint8Array
+    refIndex: number
+    vote: AccountVote
+}
+
+export function getDemocracyVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracyVotedData {
+    const event = new DemocracyVotedEvent(ctx, itemEvent)
+    if (event.isV1001) {
+        const [accountId, refIndex, vote] = event.asV1001
+        return {
+            accountId,
+            refIndex,
+            vote,
+        }
+    } else if (event.isV1201) {
+        const { who: accountId, refIndex, vote } = event.asV1201
+        return {
+            accountId,
+            refIndex,
+            vote,
+        }
+    } else if (event.isV1300) {
+        const { voter: accountId, refIndex, vote } = event.asV1300
+        return {
+            accountId,
+            refIndex,
+            vote,
+        }
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

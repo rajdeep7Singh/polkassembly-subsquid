@@ -23,6 +23,7 @@
     "Democracy.Cancelled",
     "Democracy.Executed",
     "Democracy.Seconded",
+    "Democracy.Voted",
     "Democracy.PreimageNoted",
     "Democracy.PreimageUsed",
     "Democracy.PreimageInvalid",

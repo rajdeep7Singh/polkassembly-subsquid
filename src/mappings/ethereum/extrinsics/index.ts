@@ -1,1 +1,1 @@
-// export { handlePrecompileTransaction } from './transact' 
+export { handlePrecompileTransaction } from './transact' 
