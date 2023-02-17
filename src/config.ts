@@ -4,12 +4,12 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'pendulum',
+        prefix: 58,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: 'https://app.subsquid.io/archives/pendulum/subsquid',
+        chain: 'wss://rpc-pendulum.prd.pendulumchain.tech:443',
     },
     typesBundle: 'kusama',
     batchSize: 500,
