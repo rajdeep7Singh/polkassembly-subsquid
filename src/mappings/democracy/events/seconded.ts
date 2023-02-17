@@ -17,7 +17,7 @@ export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
 
     const proposal = await ctx.store.get(Proposal, { where: { index: refIndex, type: ProposalType.DemocracyProposal } })
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.FellowshipReferendum, refIndex))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.DemocracyProposal, refIndex))
         return
     }
 

@@ -81,12 +81,12 @@ const processor = new SubstrateBatchProcessor()
                     // if (item.name == 'ConvictionVoting.remove_other_vote'){
                     //     await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
                     // }
-                    if (item.name == 'Democracy.vote'){
-                        await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
-                    }
-                    if(item.name == 'Ethereum.transact'){
-                        await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, item, block.header)
-                    }
+                    // if (item.name == 'Democracy.vote'){
+                    //     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                    // }
+                    // if(item.name == 'Ethereum.transact'){
+                    //     await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, item, block.header)
+                    // }
                 }
                 if (item.kind === 'event'){
                     if (item.name == 'Democracy.Proposed'){
@@ -112,6 +112,9 @@ const processor = new SubstrateBatchProcessor()
                     }
                     if (item.name == 'Democracy.Seconded'){
                         await modules.democracy.events.handleDemocracySeconds(ctx, item, block.header)
+                    }
+                    if (item.name == 'Democracy.Voted'){
+                        await modules.democracy.events.handleDemocracyVotes(ctx, item, block.header)
                     }
                     if (item.name == 'Democracy.PreimageNoted'){
                         await modules.democracy.events.handlePreimageNoted(ctx, item, block.header)
