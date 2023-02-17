@@ -4,12 +4,12 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'robonomics',
+        prefix: 32,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: 'https://robonomics.archive.subsquid.io/graphql',
+        chain: 'wss://robonomics.api.onfinality.io/public-ws',
     },
     typesBundle: 'kusama',
     batchSize: 500,
