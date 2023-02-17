@@ -117,6 +117,7 @@ const processor = new SubstrateBatchProcessor()
     .addCall('Tips.tip', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Treasury.tip', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.second', { data: { call: { origin: true, args: true, }, } } as const)
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
@@ -163,6 +164,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 // }
                 if (item.name == 'Democracy.vote'){
                     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.second'){
+                    await modules.democracy.extrinsics.handleDemocracySeconds(ctx, item, block.header)
                 }
             }
             if (item.kind === 'event'){

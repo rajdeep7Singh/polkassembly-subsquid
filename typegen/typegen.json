@@ -65,6 +65,7 @@
     "Democracy.remove_other_vote",
     "Democracy.delegate",
     "Democracy.undelegate",
+    "Democracy.second",
     "Tips.tip",
     "Bounties.accept_curator",
     "Bounties.unassign_curator"

@@ -313,6 +313,53 @@ export class DemocracyRemoveVoteCall {
     }
 }
 
+export class DemocracySecondCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'Democracy.second')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     * Signals agreement with a particular proposal.
+     * 
+     * The dispatch origin of this call must be _Signed_ and the sender
+     * must have funds to cover the deposit, equal to the original deposit.
+     * 
+     * - `proposal`: The index of the proposal to second.
+     * - `seconds_upper_bound`: an upper bound on the current number of seconds on this
+     *   proposal. Extrinsic is weighted according to this value with no refund.
+     * 
+     * Weight: `O(S)` where S is the number of seconds a proposal already has.
+     */
+    get isV200(): boolean {
+        return this._chain.getCallHash('Democracy.second') === 'abe1357aae784eefd21f6999076deb6cfbc92fcb9e80c21e93a944ceb739423c'
+    }
+
+    /**
+     * Signals agreement with a particular proposal.
+     * 
+     * The dispatch origin of this call must be _Signed_ and the sender
+     * must have funds to cover the deposit, equal to the original deposit.
+     * 
+     * - `proposal`: The index of the proposal to second.
+     * - `seconds_upper_bound`: an upper bound on the current number of seconds on this
+     *   proposal. Extrinsic is weighted according to this value with no refund.
+     * 
+     * Weight: `O(S)` where S is the number of seconds a proposal already has.
+     */
+    get asV200(): {proposal: number, secondsUpperBound: number} {
+        assert(this.isV200)
+        return this._chain.decodeCall(this.call)
+    }
+}
+
 export class DemocracyUndelegateCall {
     private readonly _chain: Chain
     private readonly call: Call

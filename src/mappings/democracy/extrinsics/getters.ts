@@ -1,5 +1,5 @@
 import { UnknownVersionError } from '../../../common/errors'
-import { DemocracyVoteCall } from '../../../types/calls'
+import { DemocracyVoteCall, DemocracySecondCall } from '../../../types/calls'
 import { CallContext } from '../../types/contexts'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
@@ -43,6 +43,24 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                     nay: vote.nay,
                 },
             }
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+interface DemocracySecondCallData {
+    index: number
+    seconds: number
+}
+
+export function getSecondedData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracySecondCallData {
+    const event = new DemocracySecondCall(ctx, itemCall)
+    if (event.isV200) {
+        const {proposal, secondsUpperBound} = event.asV200
+        return {
+            index: proposal,
+            seconds: secondsUpperBound
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)

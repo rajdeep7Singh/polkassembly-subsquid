@@ -11,7 +11,7 @@ import {
     VoteType,
 } from '../../../model'
 import { getOriginAccountId } from '../../../common/tools'
-import { getVoteData } from './getters'
+import { getVoteData, getSecondedData } from './getters'
 import { randomUUID } from 'crypto'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
@@ -67,6 +67,35 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
             balance,
             timestamp: new Date(header.timestamp),
             type: VoteType.Referendum,
+        })
+    )
+}
+
+export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
+    item: CallItem<'Democracy.second', { call: { args: true; origin: true } }>,
+    header: SubstrateBlock) {
+    const { index, seconds } = getSecondedData(ctx, item.call)
+
+    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.DemocracyProposal } })
+    if (!proposal) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.DemocracyProposal, index))
+        return
+    }
+
+    //const count = await getVotesCount(ctx, proposal.id)
+
+    await ctx.store.insert(
+        new Vote({
+            id: randomUUID(),
+            voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+            blockNumber: header.height,
+            decision: VoteDecision.yes,
+            proposal,
+            balance: new StandardVoteBalance({
+                value: BigInt(0),
+            }),
+            timestamp: new Date(header.timestamp),
+            type: VoteType.DemocracyProposal,
         })
     )
 }
