@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://squid-archive.vara-network.io/graphql",
+  "specVersions": "https://vara.archive.subsquid.io/graphql",
   "storage": [
     "Council.Members",
     "Council.ProposalCount",
