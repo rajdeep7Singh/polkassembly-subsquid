@@ -44,11 +44,11 @@ export class Proposal {
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : fromJsonThreshold(obj)}, nullable: true})
     threshold!: Threshold | undefined | null
 
-    @Column_("int4", {nullable: true})
-    end!: number | undefined | null
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    end!: bigint | undefined | null
 
-    @Column_("int4", {nullable: true})
-    delay!: number | undefined | null
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    delay!: bigint | undefined | null
 
     @Column_("text", {nullable: true})
     curator!: string | undefined | null

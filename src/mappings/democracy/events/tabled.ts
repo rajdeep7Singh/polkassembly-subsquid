@@ -16,28 +16,21 @@ interface TabledEventData {
 
 function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): TabledEventData {
     const event = new DemocracyTabledEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [index, deposit, depositors] = event.asV1020
+    if (event.isV25) {
+        const [index, deposit, depositors] = event.asV25
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (event.isV9130) {
-        const { proposalIndex: index, deposit, depositors } = event.asV9130
+    } else if (event.isV10400) {
+        const { proposalIndex: index, deposit, depositors } = event.asV10400
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (event.isV9320) {
-        const { proposalIndex: index, deposit } = event.asV9320
-        return {
-            index,
-            deposit,
-        }
-    }
-     else {
+    } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
