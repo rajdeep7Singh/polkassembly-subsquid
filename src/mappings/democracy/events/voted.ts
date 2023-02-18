@@ -54,7 +54,7 @@ export async function handleDemocracyVotes(ctx: BatchContext<Store, unknown>,
             proposal,
             balance: balance,
             timestamp: new Date(header.timestamp),
-            type: VoteType.DemocracyProposal,
+            type: VoteType.Referendum,
         })
     )
 }
