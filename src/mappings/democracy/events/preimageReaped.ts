@@ -16,6 +16,6 @@ export async function handlePreimageReaped(ctx: BatchContext<Store, unknown>,
     const hexHash = toHex(hash)
 
     await updatePreimageStatus(ctx, header, hexHash,{
-        status: ProposalStatus.Invalid,
+        status: ProposalStatus.Reaped,
     })
 }

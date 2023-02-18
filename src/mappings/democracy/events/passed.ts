@@ -14,6 +14,6 @@ export async function handlePassed(ctx: BatchContext<Store, unknown>,
 
     await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
         isEnded: true,
-        status: ProposalStatus.Executed,
+        status: ProposalStatus.Passed,
     })
 }
