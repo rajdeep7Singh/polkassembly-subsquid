@@ -18,14 +18,8 @@ interface DemocracyProposalEventData {
 
 function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracyProposalEventData {
     const event = new DemocracyProposedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [index, deposit] = event.asV1020
-        return {
-            index,
-            deposit,
-        }
-    } else if (event.isV9130) {
-        const { proposalIndex: index, deposit } = event.asV9130
+    if (event.isV1400) {
+        const { proposalIndex: index, deposit } = event.asV1400
         return {
             index,
             deposit,

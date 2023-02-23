@@ -4,12 +4,12 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'picasso',
+        prefix: 49,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: 'https://subsquid-archive.composablenodes.tech/graphql',
+        chain: 'wss://picasso-rpc.composable.finance',
     },
     typesBundle: 'kusama',
     batchSize: 500,
