@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: kusama-polkassembly
-version: 1
+version: 3
 description: |-
   Kusama's governance proposals
 
@@ -15,9 +15,10 @@ deploy:
     cmd: [ "npx", "squid-graphql-server" ]
 
 scale:
+  dedicated: true
   addons:
      postgres:
-         storage: 50G
+         storage: 30Gi
          profile: medium
   processor:
      profile: medium

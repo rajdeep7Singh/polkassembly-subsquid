@@ -18,20 +18,23 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
     if (!(item.call as any).success) return
     const from = getOriginAccountId(item.call.origin)
     const { track } = getUndelegateData(ctx, item.call)
+    let delegation = null;
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
-    if (delegations.length > 1) {
-        //should never be the case
-        ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
+    if(delegations != undefined && delegations != null){
+        if (delegations.length > 1) {
+            //should never be the case
+            ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
+        }
+        else if (delegations.length === 0) {
+            //should never be the case
+            ctx.log.warn(NoDelegationFound(header.height, track, from))
+            return
+        }
+        delegation = delegations[0]
+        delegation.endedAtBlock = header.height
+        delegation.endedAt = new Date(header.timestamp)
+        await ctx.store.save(delegation)
     }
-    else if (delegations.length === 0) {
-        //should never be the case
-        ctx.log.warn(NoDelegationFound(header.height, track, from))
-        return
-    }
-    const delegation = delegations[0]
-    delegation.endedAtBlock = header.height
-    delegation.endedAt = new Date(header.timestamp)
-    await ctx.store.save(delegation)
     //remove currently delegated votes from ongoing referenda for this wallet
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     for (let i = 0; i < ongoingReferenda.length; i++) {
@@ -39,7 +42,9 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
         if(!referendum || referendum.index == undefined || referendum.index == null){
             continue
         }
-        await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
+        if(delegation){
+            await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
+        }
     }
     await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 }

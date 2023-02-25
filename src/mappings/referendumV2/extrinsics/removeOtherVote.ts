@@ -29,17 +29,19 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     } 
     const wallet = ss58codec.encode(target)
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
-    if (votes.length > 1) {
-        ctx.log.warn(TooManyOpenVotes(header.height, index, wallet))
+    if(votes){
+        if (votes.length > 1) {
+            ctx.log.warn(TooManyOpenVotes(header.height, index, wallet))
+        }
+        else if (votes.length === 0) {
+            ctx.log.warn(NoOpenVoteFound(header.height, index, wallet))
+            return
+        }
+        const vote = votes[0]
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
+        await ctx.store.save(vote)
     }
-    else if (votes.length === 0) {
-        ctx.log.warn(NoOpenVoteFound(header.height, index, wallet))
-        return
-    }
-    const vote = votes[0]
-    vote.removedAtBlock = header.height
-    vote.removedAt = new Date(header.timestamp)
-    await ctx.store.save(vote)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }

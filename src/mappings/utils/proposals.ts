@@ -424,7 +424,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
                 createdAtBlock: 'DESC'
             }
         })
-        if(associatedProposal && associatedProposal.index && associatedProposal.type){
+        if(associatedProposal && associatedProposal.index !=null && associatedProposal.index != undefined && associatedProposal.type){
             group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
             associatedProposal.group = group
             await ctx.store.save(associatedProposal)
@@ -576,7 +576,7 @@ export async function createCoucilMotion(
                     createdAtBlock: 'DESC'
                 }
             })
-            if (counciMotion && counciMotion.index) {
+            if (counciMotion && counciMotion.index != null && counciMotion.index != undefined) {
                 group = await getOrCreateProposalGroup(ctx, counciMotion.index, ProposalType.CouncilMotion, index, type)
                 counciMotion.group = group
                 await ctx.store.save(counciMotion)
@@ -766,7 +766,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
                 proposer: proposer,
             }
         })
-        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index) {
+        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index !== null && referendumV2.index !== undefined) {
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if(group) {
                 referendumV2.group = group
