@@ -11,11 +11,12 @@ import { Store } from '@subsquid/typeorm-store'
 export async function handleDisapproved(ctx: BatchContext<Store, unknown>,
     item: EventItem<'TechnicalCommittee.Disapproved', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
-    const hash = getDissaprovedData(ctx, item.event)
+    let hash = getDissaprovedData(ctx, item.event)
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.TechCommitteeProposal, {
+    if(hash instanceof Uint8Array) {
+        hash = toHex(hash)
+    }
+    await updateProposalStatus(ctx, header, hash, ProposalType.TechCommitteeProposal, {
         isEnded: true,
         status: ProposalStatus.Disapproved,
     })

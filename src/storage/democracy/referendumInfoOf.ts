@@ -3,6 +3,7 @@ import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
 import * as v25 from '../../types/v25'
 import * as v2800 from '../../types/v2800'
+import * as v10890 from '../../types/v10890'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -65,6 +66,35 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
             }
         } else {
             const { end, approved } = storageData as v2800.ReferendumInfo_Finished
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
+    } else if (storage.isV10890) {
+        const storageData = await storage.asV10890.get(index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            const { proposal, end, delay, threshold } = (storageData as v10890.ReferendumInfo_Ongoing).value
+            let hash;
+            if(proposal.__kind == 'Inline'){
+                hash = proposal.value
+            }
+            else {
+                hash = proposal.hash
+            }
+            return {
+                status,
+                hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = storageData as v10890.ReferendumInfo_Finished
             return {
                 status,
                 end,

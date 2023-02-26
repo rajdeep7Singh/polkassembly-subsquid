@@ -9,7 +9,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://spiritnet.kilt.io/',
         archive: 'https://kilt.archive.subsquid.io/graphql',
     })
-    .setBlockRange({from:2241765, to: 2241765})
+    .setBlockRange({from:0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

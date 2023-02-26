@@ -11,11 +11,13 @@ import { Store } from '@subsquid/typeorm-store'
 export async function handlePreimageReaped(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Democracy.PreimageReaped', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
-    const { hash } = getPreimageReapedData(ctx, item.event)
+    let { hash } = getPreimageReapedData(ctx, item.event)
 
-    const hexHash = toHex(hash)
+    if(hash instanceof Uint8Array) {
+        hash = toHex(hash)
+    }
 
-    await updatePreimageStatus(ctx, header, hexHash,{
+    await updatePreimageStatus(ctx, header, hash,{
         status: ProposalStatus.Invalid,
     })
 }

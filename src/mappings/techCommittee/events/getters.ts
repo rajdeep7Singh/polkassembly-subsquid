@@ -13,51 +13,74 @@ import { Event } from '../../../types/support'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array | string {
     const event = new TechnicalCommitteeApprovedEvent(ctx, itemEvent)
     if (event.isV25) {
         return event.asV25
     } else if (event.isV10400) {
-        return event.asV10400.proposalHash
+        try{
+            return event.asV10400.proposalHash
+        } catch (e) {
+            return itemEvent.args[0]
+        }
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
-export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array | string {
     const event = new TechnicalCommitteeClosedEvent(ctx, itemEvent)
     if (event.isV25) {
         return event.asV25[0]
     } else if (event.isV10400) {
-        return event.asV10400.proposalHash
+        try{
+            return event.asV10400.proposalHash
+        } catch (e) {
+            return itemEvent.args[0]
+        }
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
-export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array | string {
     const event = new TechnicalCommitteeDisapprovedEvent(ctx, itemEvent)
     if (event.isV25) {
         return event.asV25
     } else if (event.isV10400) {
-        return event.asV10400.proposalHash
+        try{
+            return event.asV10400.proposalHash
+        } catch (e) {
+            return itemEvent.args[0]
+        }
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
-export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
+export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array | string {
     const event = new TechnicalCommitteeExecutedEvent(ctx, itemEvent)
     if (event.isV25) {
         return event.asV25[0]
     } else if (event.isV2800) {
         return event.asV2800[0]
     } else if (event.isV10400) {
-        return event.asV10400.proposalHash
+        try{
+            return event.asV10400.proposalHash
+        } catch (e) {
+            return itemEvent.args[0]
+        }
     } else if (event.isV10500) {
         return event.asV10500.proposalHash
     } else if (event.isV10700) {
-        return event.asV10700.proposalHash
+        try{
+            return event.asV10700.proposalHash
+        }
+        catch (e) {
+            return itemEvent.args[0]
+        }
+    }  else if (event.isV10890) {
+        return event.asV10890.proposalHash
     } else {
         const data = ctx._chain.decodeEvent(itemEvent)
         assert(Buffer.isBuffer(data.proposalHash))

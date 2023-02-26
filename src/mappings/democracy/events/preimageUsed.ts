@@ -10,11 +10,13 @@ import { Store } from '@subsquid/typeorm-store'
 export async function handlePreimageUsed(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Democracy.PreimageUsed', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
-    const { hash } = getPreimageUsedData(ctx, item.event)
-
-    const hexHash = toHex(hash)
-
-    await updatePreimageStatus(ctx, header, hexHash,{
+    let { hash } = getPreimageUsedData(ctx, item.event)
+    
+    if(hash instanceof Uint8Array) {
+        hash = toHex(hash)
+    }
+    
+    await updatePreimageStatus(ctx, header, hash, {
         status: ProposalStatus.Invalid,
     })
 }

@@ -11,11 +11,13 @@ import { Store } from '@subsquid/typeorm-store'
 export async function handleClosed(ctx: BatchContext<Store, unknown>,
     item: EventItem<'TechnicalCommittee.Closed', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
-    const hash = getClosedData(ctx, item.event)
+    let hash = getClosedData(ctx, item.event)
+    
+    if(hash instanceof Uint8Array) {
+        hash = toHex(hash)
+    }
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.TechCommitteeProposal, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.TechCommitteeProposal, {
         isEnded: true,
         status: ProposalStatus.Closed,
     })

@@ -25,10 +25,19 @@ function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Refe
             threshold: threshold.__kind,
         }
     } else if (event.isV10400) {
-        const { refIndex: index, threshold } = event.asV10400
-        return {
-            index,
-            threshold: threshold.__kind,
+        try{
+            const { refIndex: index, threshold } = event.asV10400
+            return {
+                index,
+                threshold: threshold.__kind,
+            }
+        }
+        catch (e) {
+            const [index, threshold] = itemEvent.args
+            return {
+                index: index,
+                threshold: threshold.__kind,
+            }
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)
