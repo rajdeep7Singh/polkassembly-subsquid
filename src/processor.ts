@@ -3,7 +3,6 @@ import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
-import { getTransaction } from '@subsquid/frontier'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
