@@ -447,6 +447,10 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
         })
     }
 
+    if (!proposer && preimage && preimage.proposer) {
+        proposer = preimage.proposer
+    }
+
 
     const proposal = new Proposal({
         id,
