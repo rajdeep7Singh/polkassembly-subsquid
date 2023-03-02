@@ -55,6 +55,28 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
+    }else if (event.isV2201) {
+        const { pollIndex, vote } = event.asV2201
+        if(vote.__kind === 'Standard') {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'Standard',
+                    balance: vote.balance,
+                    value: vote.vote
+                },
+            }
+        }
+         else {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'Split',
+                    aye: vote.aye,
+                    nay: vote.nay,
+                },
+            }
+        }
     }
     else {
         throw new UnknownVersionError(event.constructor.name)

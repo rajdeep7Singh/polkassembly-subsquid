@@ -4,6 +4,7 @@ import * as v40 from './v40'
 import * as v900 from './v900'
 import * as v1200 from './v1200'
 import * as v1900 from './v1900'
+import * as v2201 from './v2201'
 
 export class ConvictionVotingDelegateCall {
     private readonly _chain: Chain
@@ -318,6 +319,37 @@ export class ConvictionVotingVoteCall {
      */
     get asV1900(): {pollIndex: number, vote: v1900.AccountVote} {
         assert(this.isV1900)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
+     * otherwise it is a vote to keep the status quo.
+     * 
+     * The dispatch origin of this call must be _Signed_.
+     * 
+     * - `poll_index`: The index of the poll to vote for.
+     * - `vote`: The vote configuration.
+     * 
+     * Weight: `O(R)` where R is the number of polls the voter has voted on.
+     */
+    get isV2201(): boolean {
+        return this._chain.getCallHash('ConvictionVoting.vote') === 'c659a6e0d84861cd97f11d84780117a5b61201e70e1e5533a740761dc9489558'
+    }
+
+    /**
+     * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
+     * otherwise it is a vote to keep the status quo.
+     * 
+     * The dispatch origin of this call must be _Signed_.
+     * 
+     * - `poll_index`: The index of the poll to vote for.
+     * - `vote`: The vote configuration.
+     * 
+     * Weight: `O(R)` where R is the number of polls the voter has voted on.
+     */
+    get asV2201(): {pollIndex: number, vote: v2201.Type_320} {
+        assert(this.isV2201)
         return this._chain.decodeCall(this.call)
     }
 }

@@ -105,6 +105,57 @@ export async function getStorageData(ctx: BatchContext<Store, unknown>, index: n
             }
         }
 
+    }else if(storage.isV2100){
+        const storageData = await storage.asV2100.get(index)
+        if (!storageData) return undefined
+        if(storageData.__kind === 'Ongoing') {
+            let enactmentAt = undefined
+            let enactmentAfter = undefined;
+            if(storageData.value.enactment.__kind === 'At') {
+                enactmentAt = storageData.value.enactment.value
+            }
+            else if(storageData.value.enactment.__kind === 'After') {
+                enactmentAfter = storageData.value.enactment.value
+            }
+            return {
+                index,
+                trackNumber: storageData.value.track,
+                origin: storageData.value.origin.value.__kind,
+                enactmentAt: enactmentAt,
+                enactmentAfter: enactmentAfter,
+                submittedAt: storageData.value.submitted,
+                submissionDeposit: storageData.value.submissionDeposit,
+                decisionDeposit: storageData.value.decisionDeposit,
+                deciding: storageData.value.deciding,
+                tally: storageData.value.tally
+            }
+        }
+    }
+    else if(storage.isV2201){
+        const storageData = await storage.asV2201.get(index)
+        if (!storageData) return undefined
+        if(storageData.__kind === 'Ongoing') {
+            let enactmentAt = undefined
+            let enactmentAfter = undefined;
+            if(storageData.value.enactment.__kind === 'At') {
+                enactmentAt = storageData.value.enactment.value
+            }
+            else if(storageData.value.enactment.__kind === 'After') {
+                enactmentAfter = storageData.value.enactment.value
+            }
+            return {
+                index,
+                trackNumber: storageData.value.track,
+                origin: storageData.value.origin.value.__kind,
+                enactmentAt: enactmentAt,
+                enactmentAfter: enactmentAfter,
+                submittedAt: storageData.value.submitted,
+                submissionDeposit: storageData.value.submissionDeposit,
+                decisionDeposit: storageData.value.decisionDeposit,
+                deciding: storageData.value.deciding,
+                tally: storageData.value.tally
+            }
+        }
     }
     else {
         throw new UnknownVersionError(storage.constructor.name)
