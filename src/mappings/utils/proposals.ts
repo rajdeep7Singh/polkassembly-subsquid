@@ -760,14 +760,12 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Confirmed,
-                proposer: proposer,
             }
         }) || await ctx.store.get(Proposal, {
             where: {
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Executed,
-                proposer: proposer,
             }
         })
         if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index !== null && referendumV2.index !== undefined) {
