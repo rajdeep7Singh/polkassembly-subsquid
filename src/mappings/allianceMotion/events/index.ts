@@ -1,0 +1,6 @@
+export {handleApproved} from './approved'
+export {handleExecuted} from './executed'
+export {handleDisApproved} from './disapproved'
+export {handleProposed} from './proposed'
+export {handleVoted} from './voted'
+export {handleClosed} from './closed'

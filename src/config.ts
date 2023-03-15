@@ -5,7 +5,7 @@ import { Store } from '@subsquid/typeorm-store'
 const config: ProcessorConfig<Store> = {
     chain: {
         name: 'collecitves',
-        prefix: 'collectives',
+        prefix: 0,
     },
     dataSource: {
         archive: lookupArchive("collectives", {release: "FireSquid"}),

@@ -1,20 +1,10 @@
 import { ProposalStatus, ProposalType, ReferendumThresholdType } from '../../model'
 
 export type IndexProposal =
-    | ProposalType.DemocracyProposal
-    | ProposalType.Referendum
-    | ProposalType.TreasuryProposal
-    | ProposalType.Bounty
-    | ProposalType.TechCommitteeProposal
-    | ProposalType.CouncilMotion
-    | ProposalType.ChildBounty
-    | ProposalType.ReferendumV2
-    | ProposalType.FellowshipReferendum
+    | ProposalType.AllianceMotion
 
 export type HashProposal =
-    | ProposalType.Tip
-    | ProposalType.CouncilMotion
-    | ProposalType.TechCommitteeProposal
+    | ProposalType.AllianceMotion
 
 export interface ProposedCallData {
     section: string
@@ -31,6 +21,21 @@ export interface DemocracyProposalData extends BaseProposalData {
     hash: string
     proposer: string
     deposit: bigint
+}
+
+export interface AllianceMotionData extends BaseProposalData {
+    index: number
+    hash: string
+    proposer: string
+    threshold: number
+}
+
+export interface AnnouncementsData {
+    hash: string
+    version?: string
+    code?: bigint
+    announcement?: any
+    codec?: bigint
 }
 
 export interface ReferendumData extends BaseProposalData {

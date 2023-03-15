@@ -10,3 +10,7 @@
 // import fellowshipReferendum from './fellowshipReferendum'
 
 // export { democracy, council, treasury, tips, bounties, techComittee, childBounties, preimageV2, referendumV2, fellowshipReferendum }
+import alliance from './alliance'
+import allianceMotion from './allianceMotion'
+
+export { alliance, allianceMotion }
