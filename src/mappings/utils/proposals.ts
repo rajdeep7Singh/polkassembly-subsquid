@@ -511,6 +511,21 @@ export async function createCoucilMotion(
                 }
             })
         }
+        if(call.args['proposal']){
+            const prop = call.args['proposal'] as any
+            if(prop.hash){
+                hexHash = prop.hash
+                preimage = await ctx.store.get(Preimage, {
+                    where: {
+                        hash: hexHash,
+                        status: ProposalStatus.Noted,
+                    },
+                    order: {
+                        createdAtBlock: 'DESC'
+                    }
+                })
+            }
+        }
     }
 
     const id = await getProposalId(ctx.store, type)
@@ -877,12 +892,33 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
+    const preimage: any = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
         },
         order: { createdAtBlock: 'DESC' },
     })
+
+    let group = null;
+
+    if(preimage && preimage.proposedCall) {
+        if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
+            const bounty = await ctx.store.get(Proposal, {
+                where: {
+                    index: preimage.proposedCall.args.bountyId,
+                    type: ProposalType.Bounty,
+                },
+                order: { createdAtBlock: 'DESC' },
+            })
+            if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
+                group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
+                if(group) {
+                    bounty.group = group
+                    await ctx.store.save(bounty)
+                }
+            }
+        }
+    }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
@@ -907,6 +943,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
         submittedAtBlock: submittedAt,
         enactmentAfterBlock: enactmentAfter,
         enactmentAtBlock: enactmentAt,
+        group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
         createdAtBlock: header.height,

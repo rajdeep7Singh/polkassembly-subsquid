@@ -10,10 +10,15 @@ import { Store } from '@subsquid/typeorm-store'
 export async function handleTimedOut(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Referenda.TimedOut', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
-    const { index } = getTimedOutData(ctx, item.event)
+    const { index, tally } = getTimedOutData(ctx, item.event)
+    
+    const tallyData = createTally(tally)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         isEnded: true,
         status: ProposalStatus.TimedOut,
+        data: {
+            tally: tallyData
+        }
     })
 }
