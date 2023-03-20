@@ -1,7 +1,7 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://kusama.archive.subsquid.io/graphql",
-  "typesBundle": "kusama",
+  "specVersions": "https://polkadot.archive.subsquid.io/graphql",
+  "typesBundle": "polkadot",
   "storage": [
     "Council.Members",
     "Council.ProposalCount",
@@ -28,11 +28,7 @@
     "TechnicalCommittee.ProposalOf",
     "Instance2Collective.ProposalOf",
     "System.Account",
-    "System.AccountNonce",
     "Balances.Account",
-    "Referenda.ReferendumInfoFor",
-    "FellowshipReferenda.ReferendumInfoFor",
-    "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
     "Preimage.PreimageFor"
   ],
@@ -91,35 +87,9 @@
     "TechnicalCommittee.Disapproved",
     "TechnicalCommittee.Executed",
     "TechnicalCommittee.Closed",
-    "Referenda.Submitted",
-    "Referenda.DecisionDepositPlaced",
-    "Referenda.DecisionStarted",
-    "Referenda.ConfirmStarted",
-    "Referenda.ConfirmAborted",
-    "Referenda.Confirmed",
-    "Referenda.Approved",
-    "Referenda.Rejected",
-    "Referenda.TimedOut",
-    "Referenda.Cancelled",
-    "Referenda.Killed",
-    "FellowshipReferenda.Submitted",
-    "FellowshipReferenda.DecisionDepositPlaced",
-    "FellowshipReferenda.DecisionStarted",
-    "FellowshipReferenda.ConfirmStarted",
-    "FellowshipReferenda.ConfirmAborted",
-    "FellowshipReferenda.Confirmed",
-    "FellowshipReferenda.Approved",
-    "FellowshipReferenda.Rejected",
-    "FellowshipReferenda.TimedOut",
-    "FellowshipReferenda.Cancelled",
-    "FellowshipReferenda.Killed",
-    "FellowshipCollective.Voted",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared",
-    "Scheduler.Scheduled",
-    "Scheduler.Dispatched",
-    "Treasury.SpendApproved"
+    "Preimage.Cleared"
   ],
   "calls": [
     "Democracy.vote",
@@ -134,12 +104,6 @@
     "ChildBounties.unassign_curator",
     "Treasury.accept_curator",
     "Bounties.unassign_curator",
-    "Treasury.unassign_curator",
-    "ConvictionVoting.vote",
-    "ConvictionVoting.delegate",
-    "ConvictionVoting.undelegate",
-    "ConvictionVoting.remove_vote",
-    "ConvictionVoting.remove_other_vote",
-    "FellowshipCollective.vote"
+    "Treasury.unassign_curator"
   ]
 }

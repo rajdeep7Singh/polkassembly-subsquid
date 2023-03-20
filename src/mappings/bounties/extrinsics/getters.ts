@@ -13,8 +13,8 @@ interface AccepterCuratorData {
 
 export function getAccepterCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
     const call = new TreasuryAcceptCuratorCall(ctx, itemCall)
-    if (call.isV2025) {
-        const { bountyId } = call.asV2025
+    if (call.isV25) {
+        const { bountyId } = call.asV25
         return {
             index: bountyId,
         }
@@ -25,8 +25,8 @@ export function getAccepterCuratorDataOld(ctx: BatchContext<Store, unknown>, ite
 
 export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
     const call = new BountiesAcceptCuratorCall(ctx, itemCall)
-    if (call.isV2028) {
-        const { bountyId } = call.asV2028
+    if (call.isV28) {
+        const { bountyId } = call.asV28
         return {
             index: bountyId,
         }
@@ -41,8 +41,8 @@ interface UnassingCuratorData {
 
 export function getUnassingCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
     const call = new TreasuryUnassignCuratorCall(ctx, itemCall)
-    if (call.isV2025) {
-        const { bountyId } = call.asV2025
+    if (call.isV25) {
+        const { bountyId } = call.asV25
         return {
             index: bountyId,
         }
@@ -53,8 +53,8 @@ export function getUnassingCuratorDataOld(ctx: BatchContext<Store, unknown>, ite
 
 export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
     const call = new BountiesUnassignCuratorCall(ctx, itemCall)
-    if (call.isV2028) {
-        const { bountyId } = call.asV2028
+    if (call.isV28) {
+        const { bountyId } = call.asV28
         return {
             index: bountyId,
         }

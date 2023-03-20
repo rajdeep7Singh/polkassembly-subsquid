@@ -27,8 +27,8 @@ interface BountyAwardedData {
 
 export function getBountyAwardedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
     const event = new TreasuryBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const [index, beneficiary] = event.asV2025
+    if (event.isV25) {
+        const [index, beneficiary] = event.asV25
         return {
             index,
             beneficiary,
@@ -40,14 +40,14 @@ export function getBountyAwardedDataOld(ctx: BatchContext<Store, unknown>, itemE
 
 export function getBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
     const event = new BountiesBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const [index, beneficiary] = event.asV2028
+    if (event.isV28) {
+        const [index, beneficiary] = event.asV28
         return {
             index,
             beneficiary,
         }
-    } else if (event.isV9130) {
-        const { index, beneficiary } = event.asV9130
+    } else if (event.isV9140) {
+        const { index, beneficiary } = event.asV9140
         return {
             index,
             beneficiary,
@@ -63,8 +63,8 @@ interface BountyBacameActiveData {
 
 export function getBountyBacameActiveDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
     const event = new TreasuryBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const index = event.asV2025
+    if (event.isV25) {
+        const index = event.asV25
         return {
             index,
         }
@@ -75,13 +75,13 @@ export function getBountyBacameActiveDataOld(ctx: BatchContext<Store, unknown>, 
 
 export function getBountyBacameActiveData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
     const event = new BountiesBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const index = event.asV2028
+    if (event.isV28) {
+        const index = event.asV28
         return {
             index,
         }
-    } else if (event.isV9130) {
-        const { index } = event.asV9130
+    } else if (event.isV9140) {
+        const { index } = event.asV9140
         return {
             index,
         }
@@ -96,8 +96,8 @@ interface BountyCanceledData {
 
 export function getBountyCanceledDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
     const event = new TreasuryBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const index = event.asV2025
+    if (event.isV25) {
+        const index = event.asV25
         return {
             index,
         }
@@ -108,13 +108,13 @@ export function getBountyCanceledDataOld(ctx: BatchContext<Store, unknown>, item
 
 export function getBountyCanceledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
     const event = new BountiesBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const index = event.asV2028
+    if (event.isV28) {
+        const index = event.asV28
         return {
             index,
         }
-    } else if (event.isV9130) {
-        const { index } = event.asV9130
+    } else if (event.isV9140) {
+        const { index } = event.asV9140
         return {
             index,
         }
@@ -131,8 +131,8 @@ interface BountyClaimedData {
 
 export function getBountyClaimedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
     const event = new TreasuryBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const [index, payout, beneficiary] = event.asV2025
+    if (event.isV25) {
+        const [index, payout, beneficiary] = event.asV25
         return {
             index,
             beneficiary,
@@ -145,15 +145,15 @@ export function getBountyClaimedDataOld(ctx: BatchContext<Store, unknown>, itemE
 
 export function getBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
     const event = new BountiesBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const [index, payout, beneficiary] = event.asV2028
+    if (event.isV28) {
+        const [index, payout, beneficiary] = event.asV28
         return {
             index,
             payout,
             beneficiary,
         }
-    } else if (event.isV9130) {
-        const { index, payout, beneficiary } = event.asV9130
+    } else if (event.isV9140) {
+        const { index, payout, beneficiary } = event.asV9140
         return {
             index,
             payout,
@@ -170,8 +170,8 @@ interface BountyExtendedData {
 
 export function getBountyExtendedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
     const event = new TreasuryBountyExtendedEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const index = event.asV2025
+    if (event.isV25) {
+        const index = event.asV25
         return {
             index,
         }
@@ -182,13 +182,13 @@ export function getBountyExtendedDataOld(ctx: BatchContext<Store, unknown>, item
 
 export function getBountyExtendedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
     const event = new BountiesBountyExtendedEvent(ctx,  itemEvent)
-    if (event.isV2028) {
-        const index = event.asV2028
+    if (event.isV28) {
+        const index = event.asV28
         return {
             index,
         }
-    } else if (event.isV9130) {
-        const { index } = event.asV9130
+    } else if (event.isV9140) {
+        const { index } = event.asV9140
         return {
             index,
         }
@@ -203,8 +203,8 @@ interface BountyProposedData {
 
 export function getBountyProposedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
     const event = new TreasuryBountyProposedEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const index = event.asV2025
+    if (event.isV25) {
+        const index = event.asV25
         return {
             index,
         }
@@ -215,13 +215,13 @@ export function getBountyProposedDataOld(ctx: BatchContext<Store, unknown>, item
 
 export function getBountyProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
     const event = new BountiesBountyProposedEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const index = event.asV2028
+    if (event.isV28) {
+        const index = event.asV28
         return {
             index,
         }
-    } else if (event.isV9130) {
-        const { index } = event.asV9130
+    } else if (event.isV9140) {
+        const { index } = event.asV9140
         return {
             index,
         }
@@ -236,8 +236,8 @@ interface BountyRejectedData {
 
 export function getBountyRejectedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
     const event = new TreasuryBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV2025) {
-        const [index] = event.asV2025
+    if (event.isV25) {
+        const [index] = event.asV25
         return {
             index,
         }
@@ -248,13 +248,13 @@ export function getBountyRejectedDataOld(ctx: BatchContext<Store, unknown>, item
 
 export function getBountyRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
     const event = new BountiesBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV2028) {
-        const [index] = event.asV2028
+    if (event.isV28) {
+        const [index] = event.asV28
         return {
             index,
         }
-    } else if (event.isV9130) {
-        const { index } = event.asV9130
+    } else if (event.isV9140) {
+        const { index } = event.asV9140
         return {
             index,
         }

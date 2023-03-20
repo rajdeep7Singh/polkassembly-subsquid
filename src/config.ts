@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'polkadot',
+        prefix: 'polkadot',
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: lookupArchive("polkadot", {release: "FireSquid"}),
+        chain: 'wss://polkadot.api.onfinality.io/public-ws',
     },
-    typesBundle: 'kusama',
+    typesBundle: 'polkadot',
     batchSize: 500,
     blockRange: {
         from: 0,

@@ -15,8 +15,8 @@ async function getTipsStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8
     const storage = new TipsTipsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.asV9111.get(hash)
+    if (storage.isV9110) {
+        return await storage.asV9110.get(hash)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -26,8 +26,8 @@ async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, hash: U
     const storage = new TreasuryTipsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV1038) {
-        const storageData = await storage.asV1038.get(hash)
+    if (storage.isV0) {
+        const storageData = await storage.asV0.get(hash)
         if (!storageData) return undefined
 
         const { who, finder, reason } = storageData
@@ -37,8 +37,8 @@ async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, hash: U
             deposit: finder?.[1],
             reason,
         }
-    } else if (storage.isV2013) {
-        return await storage.asV2013.get(hash)
+    } else if (storage.isV13) {
+        return await storage.asV13.get(hash)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -48,8 +48,8 @@ async function getTipsReasonsStorageData(ctx: BatchContext<Store, unknown>, hash
     const storage = new TipsReasonsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.asV9111.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV9110) {
+        return await storage.asV9110.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -59,8 +59,8 @@ async function getTreasuryReasonsStorageData(ctx: BatchContext<Store, unknown>, 
     const storage = new TreasuryReasonsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV1038) {
-        return await storage.asV1038.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV0) {
+        return await storage.asV0.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

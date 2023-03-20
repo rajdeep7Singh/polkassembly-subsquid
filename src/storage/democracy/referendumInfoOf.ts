@@ -1,9 +1,9 @@
 import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
-import * as v1055 from '../../types/v1055'
-import * as v9111 from '../../types/v9111'
-import * as v9320 from '../../types/v9320'
+import * as v0 from '../../types/v0'
+import * as v9110 from '../../types/v9110'
+import * as v9340 from '../../types/v9340'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -28,25 +28,13 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
     const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
-    if (storage.isV1020) {
-        const storageData = await storage.asV1020.get(index)
-        if (!storageData) return undefined
-
-        const { proposalHash: hash, end, delay, threshold } = storageData
-        return {
-            status: 'Ongoing',
-            hash,
-            end,
-            delay,
-            threshold: threshold.__kind,
-        }
-    } else if (storage.isV1055) {
-        const storageData = await storage.asV1055.get(index)
+    if (storage.isV0) {
+        const storageData = await storage.asV0.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v1055.ReferendumInfo_Ongoing).value
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v0.ReferendumInfo_Ongoing).value
             return {
                 status,
                 hash,
@@ -55,20 +43,20 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = (storageData as v1055.ReferendumInfo_Finished).value
+            const { end, approved } = (storageData as v0.ReferendumInfo_Finished).value
             return {
                 status,
                 end,
                 approved,
             }
         }
-    } else if (storage.isV9111) {
-        const storageData = await storage.asV9111.get(index)
+    } else if (storage.isV9110) {
+        const storageData = await storage.asV9110.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v9111.ReferendumInfo_Ongoing).value
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v9110.ReferendumInfo_Ongoing).value
             return {
                 status,
                 hash,
@@ -77,7 +65,7 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = storageData as v9111.ReferendumInfo_Finished
+            const { end, approved } = storageData as v9110.ReferendumInfo_Finished
             return {
                 status,
                 end,
@@ -85,14 +73,14 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
             }
         }
     }
-    else if(storage.isV9320){
-        const storageData = await storage.asV9320.get(index)
+    else if(storage.isV9340){
+        const storageData = await storage.asV9340.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
             let hash
-            const { proposal, end, delay, threshold } = (storageData as v9320.ReferendumInfo_Ongoing).value
+            const { proposal, end, delay, threshold } = (storageData as v9340.ReferendumInfo_Ongoing).value
             if(proposal.__kind == "Inline") {
                 hash = proposal.value
             }
@@ -107,7 +95,7 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = storageData as v9111.ReferendumInfo_Finished
+            const { end, approved } = storageData as v9340.ReferendumInfo_Finished
             return {
                 status,
                 end,
