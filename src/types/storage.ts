@@ -12,6 +12,7 @@ import * as v701 from './v701'
 import * as v900 from './v900'
 import * as v2000 from './v2000'
 import * as v2100 from './v2100'
+import * as v2201 from './v2201'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -118,6 +119,23 @@ export class ConvictionVotingVotingForStorage extends StorageBase {
         assert(this.isV2100)
         return this as any
     }
+
+    /**
+     *  All voting for a particular voter in a particular voting class. We store the balance for the
+     *  number of votes that we have recorded.
+     */
+    get isV2201(): boolean {
+        return this.getTypeHash() === '9723a5b8948dbd837b6b519d58e5bcf4305ffd6e57bcda3af8564bfa065eed44'
+    }
+
+    /**
+     *  All voting for a particular voter in a particular voting class. We store the balance for the
+     *  number of votes that we have recorded.
+     */
+    get asV2201(): ConvictionVotingVotingForStorageV2201 {
+        assert(this.isV2201)
+        return this as any
+    }
 }
 
 /**
@@ -140,6 +158,28 @@ export interface ConvictionVotingVotingForStorageV2100 {
     getPairsPaged(pageSize: number): AsyncIterable<[k: [Uint8Array, number], v: v2100.Type_468][]>
     getPairsPaged(pageSize: number, key1: Uint8Array): AsyncIterable<[k: [Uint8Array, number], v: v2100.Type_468][]>
     getPairsPaged(pageSize: number, key1: Uint8Array, key2: number): AsyncIterable<[k: [Uint8Array, number], v: v2100.Type_468][]>
+}
+
+/**
+ *  All voting for a particular voter in a particular voting class. We store the balance for the
+ *  number of votes that we have recorded.
+ */
+export interface ConvictionVotingVotingForStorageV2201 {
+    get(key1: Uint8Array, key2: number): Promise<v2201.Type_467>
+    getAll(): Promise<v2201.Type_467[]>
+    getMany(keys: [Uint8Array, number][]): Promise<v2201.Type_467[]>
+    getKeys(): Promise<[Uint8Array, number][]>
+    getKeys(key1: Uint8Array): Promise<[Uint8Array, number][]>
+    getKeys(key1: Uint8Array, key2: number): Promise<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number, key1: Uint8Array): AsyncIterable<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number, key1: Uint8Array, key2: number): AsyncIterable<[Uint8Array, number][]>
+    getPairs(): Promise<[k: [Uint8Array, number], v: v2201.Type_467][]>
+    getPairs(key1: Uint8Array): Promise<[k: [Uint8Array, number], v: v2201.Type_467][]>
+    getPairs(key1: Uint8Array, key2: number): Promise<[k: [Uint8Array, number], v: v2201.Type_467][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: [Uint8Array, number], v: v2201.Type_467][]>
+    getPairsPaged(pageSize: number, key1: Uint8Array): AsyncIterable<[k: [Uint8Array, number], v: v2201.Type_467][]>
+    getPairsPaged(pageSize: number, key1: Uint8Array, key2: number): AsyncIterable<[k: [Uint8Array, number], v: v2201.Type_467][]>
 }
 
 export class DemocracyPreimagesStorage extends StorageBase {
@@ -946,6 +986,21 @@ export class ReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV2100)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV2201(): boolean {
+        return this.getTypeHash() === '7e87345f58ecbf5f07fbc34d91c3c78a3738a2e854caff1bb792dd7c514d0bea'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV2201(): ReferendaReferendumInfoForStorageV2201 {
+        assert(this.isV2201)
+        return this as any
+    }
 }
 
 /**
@@ -963,6 +1018,23 @@ export interface ReferendaReferendumInfoForStorageV2100 {
     getPairs(key: number): Promise<[k: number, v: v2100.Type_480][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2100.Type_480][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2100.Type_480][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV2201 {
+    get(key: number): Promise<(v2201.Type_479 | undefined)>
+    getAll(): Promise<v2201.Type_479[]>
+    getMany(keys: number[]): Promise<(v2201.Type_479 | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v2201.Type_479][]>
+    getPairs(key: number): Promise<[k: number, v: v2201.Type_479][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2201.Type_479][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2201.Type_479][]>
 }
 
 export class SystemAccountStorage extends StorageBase {
