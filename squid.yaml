@@ -1,5 +1,5 @@
 manifestVersion: subsquid.io/v0.1
-name: polkadot-polkassembly-new
+name: polkadot-polkassembly
 version: 1
 description: |-
   Polkadot's governance proposals
