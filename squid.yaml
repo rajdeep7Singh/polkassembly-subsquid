@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name: kusama-polkassembly
-version: 2
+name: polkadex-polkassembly
+version: 1
 description: |-
-  Kusama's governance proposals
+  Polkadex's governance proposals
 
 build:
 
@@ -13,15 +13,3 @@ deploy:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server" ]
-
-scale:
-  dedicated: true
-  addons:
-     postgres:
-         storage: 30Gi
-         profile: medium
-  processor:
-     profile: medium
-  api:
-     profile: large
-     replicas: 3

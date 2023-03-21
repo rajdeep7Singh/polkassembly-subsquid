@@ -18,14 +18,14 @@ interface ReferendumEventData {
 
 function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new DemocracyStartedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [index, threshold] = event.asV1020
+    if (event.isV273) {
+        const [index, threshold] = event.asV273
         return {
             index,
             threshold: threshold.__kind,
         }
-    } else if (event.isV9130) {
-        const { refIndex: index, threshold } = event.asV9130
+    } else if (event.isV274) {
+        const { refIndex: index, threshold } = event.asV274
         return {
             index,
             threshold: threshold.__kind,
