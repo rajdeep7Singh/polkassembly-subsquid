@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'myriad',
+        prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: lookupArchive("myriad", {release: "FireSquid"}),
+        chain: 'myriad',
     },
-    typesBundle: 'kusama',
+    typesBundle: 'myriad',
     batchSize: 500,
     blockRange: {
         from: 0,

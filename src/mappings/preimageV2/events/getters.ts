@@ -16,8 +16,8 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
     const event = new PreimageNotedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const { hash } = event.asV9160
+    if (event.isV2035) {
+        const { hash } = event.asV2035
         return {
             hash
         }
@@ -32,8 +32,8 @@ export interface PreimageRequestedData {
 
 export function getPreimageRequestedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageRequestedData {
     const event = new PreimageRequestedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV2035) {
+        const {hash} = event.asV2035
         return {
             hash
         }
@@ -48,8 +48,8 @@ export interface PreimageClearedData {
 
 export function getPreimageClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageClearedData {
     const event = new PreimageClearedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV2035) {
+        const {hash} = event.asV2035
         return {
             hash
         }
