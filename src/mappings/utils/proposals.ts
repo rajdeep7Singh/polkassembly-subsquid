@@ -883,6 +883,13 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
 
     await ctx.store.insert(preimage)
 
+    const associatedProposal = await ctx.store.get(Proposal, { where: { hash, type: ProposalType.ReferendumV2 }, order: { createdAt: 'DESC' } })
+
+    if(associatedProposal && !associatedProposal.preimage) {
+        associatedProposal.preimage = preimage
+        await ctx.store.save(associatedProposal)
+    }
+
     return preimage
 }
 
