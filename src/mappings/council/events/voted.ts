@@ -19,6 +19,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
     const hexHash = toHex(hash)
     const proposal = await ctx.store.get(Proposal, {
         where: { hash: hexHash, type: ProposalType.CouncilMotion },
+        order: { createdAtBlock: 'DESC' },
     })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.CouncilMotion, hexHash))
