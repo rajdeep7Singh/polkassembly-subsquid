@@ -8,11 +8,10 @@ import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../..
 import { IsNull } from 'typeorm'
 import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
-import { getConvictionVotesCount } from '../../utils/votes'
 import { randomUUID } from 'crypto'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true } }>,
+    item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
     header: SubstrateBlock): Promise<void> {
     if (!(item.call as any).success) return
     const { to, lockPeriod, balance, track } = getDelegateData(ctx, item.call)

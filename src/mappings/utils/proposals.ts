@@ -908,24 +908,24 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
 
     let group = null;
 
-    if(preimage && preimage.proposedCall) {
-        if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
-            const bounty = await ctx.store.get(Proposal, {
-                where: {
-                    index: preimage.proposedCall.args.bountyId,
-                    type: ProposalType.Bounty,
-                },
-                order: { createdAtBlock: 'DESC' },
-            })
-            if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
-                group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
-                if(group) {
-                    bounty.group = group
-                    await ctx.store.save(bounty)
-                }
-            }
-        }
-    }
+    // if(preimage && preimage.proposedCall) {
+    //     if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
+    //         const bounty = await ctx.store.get(Proposal, {
+    //             where: {
+    //                 index: preimage.proposedCall.args.bountyId,
+    //                 type: ProposalType.Bounty,
+    //             },
+    //             order: { createdAtBlock: 'DESC' },
+    //         })
+    //         if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
+    //             group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
+    //             if(group) {
+    //                 bounty.group = group
+    //                 await ctx.store.save(bounty)
+    //             }
+    //         }
+    //     }
+    // }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 

@@ -2,6 +2,7 @@ import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
+import assert from 'assert'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
@@ -9,7 +10,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://kusama.api.onfinality.io/public-ws',
         archive: lookupArchive('kusama', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 0})
+    .setBlockRange({from: 17339050})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -99,6 +100,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Multisig.MultisigExecuted', { data: {  event: { args: true, extrinsic: { hash: true, } }, } } as const)
+
 
     // .addEvent('Scheduler.Scheduled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -120,7 +123,9 @@ const processor = new SubstrateBatchProcessor()
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
+        let multisigOrigins = new Map<string, any>()
         for (let item of block.items) {
+            let multisigAddress: string
             if (item.kind === 'call') {
                 if (item.name == 'ConvictionVoting.vote'){
                     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
@@ -413,6 +418,33 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if(item.name == 'Scheduler.Dispatched'){
                     await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
+                }
+                if (item.name == 'Multisig.MultisigExecuted') {
+                    if (Array.isArray(item.event.args)) {
+                        assert(item.event.args.length >= 3)
+                        multisigAddress = item.event.args[2]
+                    } else if (typeof item.event.args === 'object') {
+                        assert('multisig' in item.event.args)
+                        multisigAddress = item.event.args.multisig
+                    } else {
+                        throw new Error('Unextpected case')
+                    }
+    
+                    let extrinsicHash = item.event.extrinsic!.hash
+                    multisigOrigins.set(extrinsicHash, {
+                        __kind: 'system',
+                        value: {
+                            __kind: 'Signed',
+                            value: multisigAddress,
+                        },
+                    })
+                }
+            }
+        }
+        if (multisigOrigins.size > 0) {
+            for (let item of block.items) {
+                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
+                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
                 }
             }
         }
