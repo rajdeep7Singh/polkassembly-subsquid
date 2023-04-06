@@ -1,15 +1,14 @@
-import {lookupArchive} from "@subsquid/archive-registry"
 import { ProcessorConfig } from './common/processorConfig'
 import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'frequency',
+        prefix: 90,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        chain: 'wss://0.rpc.frequency.xyz',
+        archive: 'https://frequency.archive.subsquid.io/graphql',
     },
     typesBundle: 'kusama',
     batchSize: 500,
