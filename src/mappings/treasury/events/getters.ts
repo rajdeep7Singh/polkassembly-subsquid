@@ -10,13 +10,8 @@ interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new TreasuryProposedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const index = event.asV1020
-        return {
-            index,
-        }
-    } else if (event.isV9160) {
-        const { proposalIndex: index } = event.asV9160
+    if (event.isV3) {
+        const { proposalIndex: index } = event.asV3
         return {
             index,
         }
@@ -31,13 +26,8 @@ interface RejectedData {
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RejectedData {
     const event = new TreasuryRejectedEvent(ctx, itemEvent)
-    if (event.isV1032) {
-        const [index] = event.asV1032
-        return {
-            index,
-        }
-    } else if (event.isV9160) {
-        const { proposalIndex: index } = event.asV9160
+    if (event.isV3) {
+        const { proposalIndex: index } = event.asV3
         return {
             index,
         }
@@ -52,13 +42,8 @@ interface AwarderData {
 
 export function getAwarderData(ctx: BatchContext<Store, unknown>, itemEvent: Event): AwarderData {
     const event = new TreasuryAwardedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [index] = event.asV1020
-        return {
-            index,
-        }
-    } else if (event.isV9160) {
-        const { proposalIndex: index } = event.asV9160
+    if (event.isV3) {
+        const { proposalIndex: index } = event.asV3
         return {
             index,
         }
@@ -76,8 +61,8 @@ interface SpendApprovedData {
 
 export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
     const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
-    if (event.isV9250) {
-        const { proposalIndex, amount, beneficiary}= event.asV9250
+    if (event.isV6) {
+        const { proposalIndex, amount, beneficiary}= event.asV6
         return {
             proposalIndex,
             amount,

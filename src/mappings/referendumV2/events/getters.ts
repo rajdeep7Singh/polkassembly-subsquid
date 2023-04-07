@@ -24,21 +24,15 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new ReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const {index, track, proposal } = event.asV9320
+    if (event.isV3) {
+        const {index, track, proposalHash } = event.asV3
         let hash = null;
-        if(proposal.__kind == "Inline") {
-            hash = proposal.value
-        }
-        else{
-            hash = proposal.hash
-        }
         return {
             index,
             track,
-            hash
+            hash: proposalHash
         }
-    } else {
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
@@ -50,8 +44,14 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV3) {
+        const { index, tally } = event.asV3
+        return {
+            index,
+            tally
+        }
+    } else if (event.isV6) {
+        const { index, tally } = event.asV6
         return {
             index,
             tally
@@ -67,8 +67,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV3) {
+        const { index } = event.asV3
         return {
             index
         }
@@ -79,8 +79,14 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV3) {
+        const { index, tally } = event.asV3
+        return {
+            index,
+            tally
+        }
+    }else if (event.isV6) {
+        const { index, tally } = event.asV6
         return {
             index,
             tally
@@ -92,8 +98,14 @@ export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV3) {
+        const { index, tally } = event.asV3
+        return {
+            index,
+            tally
+        }
+    }else if (event.isV6) {
+        const { index, tally } = event.asV6
         return {
             index,
             tally
@@ -105,8 +117,8 @@ export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV6) {
+        const { index, tally } = event.asV6
         return {
             index,
             tally
@@ -118,8 +130,8 @@ export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV3) {
+        const { index } = event.asV3
         return {
             index
         }
@@ -130,21 +142,27 @@ export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV3) {
+        const { index, tally } = event.asV3
         return {
             index,
             tally
         }
-    } else {
+    }else if (event.isV6) {
+        const { index, tally } = event.asV6
+        return {
+            index,
+            tally
+        }
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV3) {
+        const { index } = event.asV3
         return {
             index,
         }
@@ -161,8 +179,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
     const event = new ReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, who, amount } = event.asV9320
+    if (event.isV3) {
+        const { index, who, amount } = event.asV3
         return {
             index,
             who,
@@ -182,20 +200,23 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
     const event = new ReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
+    if (event.isV3) {
         let hash = undefined;
-        const { index, track, proposal, tally} = event.asV9320
-        if(proposal.__kind == "Inline") {
-            hash = proposal.value
-        }
-        else{
-            hash = proposal.hash
-        }
+        const { index, track, proposalHash, tally} = event.asV3
         return {
             index,
             track,
             tally,
-            hash
+            hash: proposalHash
+        }
+    }else if (event.isV6) {
+        let hash = undefined;
+        const { index, track, proposalHash, tally} = event.asV6
+        return {
+            index,
+            track,
+            tally,
+            hash: proposalHash
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)

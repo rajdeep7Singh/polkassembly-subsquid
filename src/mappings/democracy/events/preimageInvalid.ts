@@ -14,7 +14,7 @@ export async function handlePreimageInvalid(ctx: BatchContext<Store, unknown>,
 
     const hexHash = toHex(hash)
 
-    await updatePreimageStatus(ctx, header, hexHash,{
+    await updatePreimageStatus(ctx, header, hexHash, {
         status: ProposalStatus.Invalid,
     })
 }

@@ -2,15 +2,14 @@ import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
-import assert from 'assert'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
-        archive: lookupArchive('kusama', { release: 'FireSquid' }),
+        chain: 'wss://tanganika-archive.datahighway.com',
+        archive: 'https://tanganika.archive.subsquid.io/graphql',
     })
-    .setBlockRange({from: 17339050})
+    .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -42,16 +41,16 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Treasury.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Awarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.NewTip', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.TipClosed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.TipRetracted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const) 
-    .addEvent('Treasury.BountyRejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyBecameActive', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyAwarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyClaimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Treasury.BountyExtended', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.NewTip', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.TipClosed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.TipRetracted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyProposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const) 
+    // .addEvent('Treasury.BountyRejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyBecameActive', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyAwarded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyClaimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Treasury.BountyExtended', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Treasury.SpendApproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
 
@@ -88,19 +87,19 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
-    .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Multisig.MultisigExecuted', { data: {  event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    // .addEvent('Multisig.MultisigExecuted', { data: {  event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
 
     // .addEvent('Scheduler.Scheduled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -148,12 +147,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Bounties.unassign_curator'){
                     await modules.bounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.accept_curator'){
-                    await modules.bounties.extrinsic.handleAcceptCuratorOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.unassign_curator'){
-                    await modules.bounties.extrinsic.handleUnassignCuratorOld(ctx, item, block.header)
-                }
                 if (item.name == 'ChildBounties.accept_curator'){
                     await modules.childBounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
                 }
@@ -162,9 +155,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Tips.tip'){
                     await modules.tips.extrinsics.handleNewTipValue(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.tip'){
-                    await modules.tips.extrinsics.handleNewTipValueOld(ctx, item, block.header)
                 }
                 if (item.name == 'Democracy.vote'){
                     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
@@ -258,36 +248,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Treasury.SpendApproved'){
                     await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
                 }
-                if (item.name == 'Treasury.BountyProposed'){
-                    await modules.bounties.events.handleProposedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyRejected'){
-                    await modules.bounties.events.handleRejectedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyBecameActive'){
-                    await modules.bounties.events.handleBecameActiveOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyAwarded'){
-                    await modules.bounties.events.handleAwardedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyClaimed'){
-                    await modules.bounties.events.handleClaimedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyCanceled'){
-                    await modules.bounties.events.handleCanceledOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.BountyExtended'){
-                    await modules.bounties.events.handleExtendedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.NewTip'){
-                    await modules.tips.events.handleNewTipOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.TipRetracted'){
-                    await modules.tips.events.handleRetractedOld(ctx, item, block.header)
-                }
-                if (item.name == 'Treasury.TipClosed'){
-                    await modules.tips.events.handleClosedOld(ctx, item, block.header)
-                }
                 if (item.name == 'Tips.TipClosed'){
                     await modules.tips.events.handleClosed(ctx, item, block.header)
                 }
@@ -374,77 +334,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Referenda.TimedOut'){
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Submitted'){
-                    await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Approved'){
-                    await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Cancelled'){
-                    await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.ConfirmAborted'){
-                    await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Confirmed'){
-                    await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.ConfirmStarted'){
-                    await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
-                    await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.DecisionStarted'){
-                    await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Killed'){
-                    await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.Rejected'){
-                    await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipReferenda.TimedOut'){
-                    await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
-                }
-                if (item.name == 'FellowshipCollective.Voted'){
-                    await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
-                }
-                // if(item.name == 'Scheduler.Scheduled'){
-                //     await modules.fellowshipReferendum.events.   (ctx, item, block.header)
-                //     await modules.referendumV2.events.handleReferendumV2ExecutionSchedule(ctx, item, block.header)
-                // }
-                if(item.name == 'Scheduler.Dispatched'){
-                    await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
-                    await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
-                }
-                if (item.name == 'Multisig.MultisigExecuted') {
-                    if (Array.isArray(item.event.args)) {
-                        assert(item.event.args.length >= 3)
-                        multisigAddress = item.event.args[2]
-                    } else if (typeof item.event.args === 'object') {
-                        assert('multisig' in item.event.args)
-                        multisigAddress = item.event.args.multisig
-                    } else {
-                        throw new Error('Unextpected case')
-                    }
-    
-                    let extrinsicHash = item.event.extrinsic!.hash
-                    multisigOrigins.set(extrinsicHash, {
-                        __kind: 'system',
-                        value: {
-                            __kind: 'Signed',
-                            value: multisigAddress,
-                        },
-                    })
-                }
-            }
-        }
-        if (multisigOrigins.size > 0) {
-            for (let item of block.items) {
-                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
-                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
                 }
             }
         }

@@ -14,8 +14,8 @@ interface AccepterCuratorData {
 
 export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
     const call = new ChildBountiesAcceptCuratorCall(ctx, itemCall)
-    if (call.isV9190) {
-        const { parentBountyId, childBountyId } = call.asV9190
+    if (call.isV3) {
+        const { parentBountyId, childBountyId } = call.asV3
         return {
             childBountyId,
             parentBountyId,
@@ -32,8 +32,8 @@ interface UnassingCuratorData {
 
 export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
     const call = new ChildBountiesUnassignCuratorCall(ctx, itemCall)
-    if (call.isV9190) {
-        const {parentBountyId, childBountyId} = call.asV9190
+    if (call.isV3) {
+        const {parentBountyId, childBountyId} = call.asV3
         return {
             parentBountyId,
             childBountyId,

@@ -33,8 +33,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
     const event = new ConvictionVotingVoteCall(ctx, itemCall)
-    if (event.isV9320) {
-        const { pollIndex, vote } = event.asV9320
+    if (event.isV3) {
+        const { pollIndex, vote } = event.asV3
         if(vote.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -55,40 +55,6 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-    }
-    else if(event.isV9340){
-        const { pollIndex, vote } = event.asV9340
-        if (vote.__kind === 'Standard') {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Standard',
-                    balance: vote.balance,
-                    value: vote.vote
-                },
-            }
-        }
-        else if (vote.__kind === 'Split') {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Split',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                },
-            }
-        }
-        else{
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'SplitAbstain',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                    abstain: vote.abstain,
-                },
-            }
-        }
     }  
     else {
         throw new UnknownVersionError(event.constructor.name)
@@ -105,12 +71,12 @@ export interface ConvictionVoteDelegateCallData {
 export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
     const event = new ConvictionVotingDelegateCall(ctx, itemCall)
    
-    if (event.isV9320) {
+    if (event.isV3) {
         //{ class, to, conviction, balance}
-        const eventData = event.asV9320
+        const eventData = event.asV3
         return {
             track: eventData.class,
-            to: eventData.to.value,
+            to: eventData.to,
             lockPeriod:convictionToLockPeriod(eventData.conviction.__kind),
             balance: eventData.balance
         }
@@ -125,8 +91,8 @@ export interface ConvictionVoteUndelegateCallData {
 export function getUndelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteUndelegateCallData {
     const event = new ConvictionVotingUndelegateCall(ctx, itemCall)
    
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV3) {
+        const eventData = event.asV3
         return {
             track: eventData.class
         }
@@ -142,8 +108,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
     const event = new ConvictionVotingRemoveVoteCall(ctx, itemCall)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV3) {
+        const eventData = event.asV3
         return {
             index: eventData.index,
             track: eventData.class
@@ -156,13 +122,20 @@ export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: a
 export interface ConvictionVotingRemoveOtherVoteCallData {
     index: number
     track: number | undefined
-    target: Uint8Array | null
+    target: Uint8Array | number
 }
 
 export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
     const event = new ConvictionVotingRemoveOtherVoteCall(ctx, itemCall)
-    if (event.isV9320) {
-        const eventData = event.asV9320
+    if (event.isV3) {
+        const eventData = event.asV3
+        return {
+            index: eventData.index,
+            track: eventData.class,
+            target: eventData.target
+        }
+    } else if (event.isV6) {
+        const eventData = event.asV6
         return {
             index: eventData.index,
             track: eventData.class,
