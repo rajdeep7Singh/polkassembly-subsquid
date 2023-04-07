@@ -1,6 +1,6 @@
-import { Instance2CollectiveProposalOfStorage, TechnicalCommitteeProposalOfStorage } from '../../types/storage'
+import { TechnicalCommitteeProposalOfStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
-import { Call } from '../../types/v9170'
+import { Call } from '../../types/v29'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
@@ -8,13 +8,13 @@ import { UnknownVersionError } from '../../common/errors'
 type TechnicalCommitteeProposalStorageData = Call
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function getInstanceStorageData(
-    ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
-): Promise<TechnicalCommitteeProposalStorageData | undefined> {
-    const storage = new Instance2CollectiveProposalOfStorage(ctx, block)
-    if (!storage.isExists) return undefined
+// async function getInstanceStorageData(
+//     ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
+// ): Promise<TechnicalCommitteeProposalStorageData | undefined> {
+//     const storage = new Instance2CollectiveProposalOfStorage(ctx, block)
+//     if (!storage.isExists) return undefined
 
-    return ctx._chain.getStorage(block.hash, 'Instance2Collective', 'ProposalOf', hash)
+//     return ctx._chain.getStorage(block.hash, 'Instance2Collective', 'ProposalOf', hash)
 
     // if (storage.isV1020) {
     //     return (await storage.getAsV1020(hash)) as Call
@@ -93,7 +93,7 @@ async function getInstanceStorageData(
     // } else {
     //     throw new UnknownVersionError(storage.constructor.name)
     // }
-}
+// }
 
 async function getCoucilStorageData(
     ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
@@ -125,5 +125,5 @@ async function getCoucilStorageData(
 export async function getProposalOf(
     ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
 ): Promise<TechnicalCommitteeProposalStorageData | undefined> {
-    return (await getCoucilStorageData(ctx, hash, block)) || (await getInstanceStorageData(ctx, hash, block))
+    return (await getCoucilStorageData(ctx, hash, block))
 }
