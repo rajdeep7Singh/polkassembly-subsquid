@@ -30,6 +30,7 @@
     "System.Account",
     "System.AccountNonce",
     "Balances.Account",
+    "Balances.InactiveIssuance",
     "Referenda.ReferendumInfoFor",
     "FellowshipReferenda.ReferendumInfoFor",
     "ConvictionVoting.VotingFor",

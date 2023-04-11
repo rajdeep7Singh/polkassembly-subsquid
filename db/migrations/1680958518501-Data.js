@@ -1,5 +1,5 @@
-module.exports = class Data1675415460222 {
-    name = 'Data1675415460222'
+module.exports = class Data1680958518501 {
+    name = 'Data1680958518501'
 
     async up(db) {
         await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "deposit" numeric, "length" integer, "proposed_call" jsonb, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
@@ -47,12 +47,20 @@ module.exports = class Data1675415460222 {
         await db.query(`CREATE INDEX "IDX_28ce581f13ce6368b87d0da18e" ON "voting_delegation" ("from") `)
         await db.query(`CREATE INDEX "IDX_2362eae049e9b15d72d4462a84" ON "voting_delegation" ("to") `)
         await db.query(`CREATE INDEX "IDX_5a1b74d2f522f505bd242f18bd" ON "voting_delegation" ("created_at_block") `)
+        await db.query(`CREATE TABLE "curve_data" ("id" character varying NOT NULL, "block" integer NOT NULL, "index" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "approval_percent" numeric, "support_percent" numeric, "proposal_id" character varying, CONSTRAINT "PK_17d7d90e8ada81aaf7105db7c51" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_8b4bf9828c9d297d5ee1a5d381" ON "curve_data" ("block") `)
+        await db.query(`CREATE INDEX "IDX_032c5c4648dfa5c9501832c470" ON "curve_data" ("proposal_id") `)
+        await db.query(`CREATE INDEX "IDX_42920410f3a7b9c4a71c87e6e5" ON "curve_data" ("index") `)
+        await db.query(`CREATE INDEX "IDX_168fd5ebfb618ddccf5b041d3a" ON "curve_data" ("timestamp") `)
+        await db.query(`CREATE INDEX "IDX_b27bc138ecb80f9b58c8f95fc5" ON "curve_data" ("approval_percent") `)
+        await db.query(`CREATE INDEX "IDX_398f712103757d7d18171cb267" ON "curve_data" ("support_percent") `)
         await db.query(`ALTER TABLE "vote" ADD CONSTRAINT "FK_db85a3f8526cbaa2865faf8637f" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "conviction_vote" ADD CONSTRAINT "FK_410db8207bfa4aec346ca941e47" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "status_history" ADD CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_73ae2cd51401d164204182bd690" FOREIGN KEY ("preimage_id") REFERENCES "preimage"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438" FOREIGN KEY ("group_id") REFERENCES "proposal_group"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "tippers" ADD CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "curve_data" ADD CONSTRAINT "FK_032c5c4648dfa5c9501832c470b" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     }
 
     async down(db) {
@@ -101,11 +109,19 @@ module.exports = class Data1675415460222 {
         await db.query(`DROP INDEX "public"."IDX_28ce581f13ce6368b87d0da18e"`)
         await db.query(`DROP INDEX "public"."IDX_2362eae049e9b15d72d4462a84"`)
         await db.query(`DROP INDEX "public"."IDX_5a1b74d2f522f505bd242f18bd"`)
+        await db.query(`DROP TABLE "curve_data"`)
+        await db.query(`DROP INDEX "public"."IDX_8b4bf9828c9d297d5ee1a5d381"`)
+        await db.query(`DROP INDEX "public"."IDX_032c5c4648dfa5c9501832c470"`)
+        await db.query(`DROP INDEX "public"."IDX_42920410f3a7b9c4a71c87e6e5"`)
+        await db.query(`DROP INDEX "public"."IDX_168fd5ebfb618ddccf5b041d3a"`)
+        await db.query(`DROP INDEX "public"."IDX_b27bc138ecb80f9b58c8f95fc5"`)
+        await db.query(`DROP INDEX "public"."IDX_398f712103757d7d18171cb267"`)
         await db.query(`ALTER TABLE "vote" DROP CONSTRAINT "FK_db85a3f8526cbaa2865faf8637f"`)
         await db.query(`ALTER TABLE "conviction_vote" DROP CONSTRAINT "FK_410db8207bfa4aec346ca941e47"`)
         await db.query(`ALTER TABLE "status_history" DROP CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4"`)
         await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_73ae2cd51401d164204182bd690"`)
         await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438"`)
         await db.query(`ALTER TABLE "tippers" DROP CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b"`)
+        await db.query(`ALTER TABLE "curve_data" DROP CONSTRAINT "FK_032c5c4648dfa5c9501832c470b"`)
     }
 }
