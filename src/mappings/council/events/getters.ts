@@ -17,6 +17,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
     const event = new CouncilApprovedEvent(ctx, itemEvent)
     if (event.isV16) {
         return event.asV16
+    }else if (event.isV38) {
+        return event.asV38.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
