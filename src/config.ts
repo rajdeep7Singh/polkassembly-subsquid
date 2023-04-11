@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'hydradx',
+        prefix: 63,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: lookupArchive("hydradx", {release: "FireSquid"}),
+        chain: 'wss://rpc.hydradx.cloud',
     },
-    typesBundle: 'kusama',
+    typesBundle: 'hydradx',
     batchSize: 500,
     blockRange: {
         from: 0,
