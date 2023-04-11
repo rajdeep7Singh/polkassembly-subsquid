@@ -7,8 +7,8 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://rpc.hydradx.cloud',
-        archive: lookupArchive('hydradx', { release: 'FireSquid' }),
+        chain: 'wss://rpc.basilisk.cloud',
+        archive: 'https://basilisk.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

@@ -7,7 +7,7 @@ import { DemocracyPreimagesStorage } from '../../../types/storage'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec, parseProposalCall } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v138'
+import { Call } from '../../../types/v92'
 import { createPreimage } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -31,8 +31,20 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 
 async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
     const storage = new DemocracyPreimagesStorage(ctx, block)
-    if (storage.isV108) {
-        const storageData = await storage.asV108.get(hash)
+    if (storage.isV16) {
+        const storageData = await storage.asV16.get(hash)
+        if (!storageData || storageData.__kind === 'Missing') return undefined
+
+        const { provider, deposit, since, data } = storageData.value
+
+        return {
+            data,
+            provider,
+            deposit,
+            block: since,
+        }
+    } else if (storage.isV25) {
+        const storageData = await storage.asV25.get(hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData

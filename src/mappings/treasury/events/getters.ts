@@ -10,13 +10,13 @@ interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new TreasuryProposedEvent(ctx, itemEvent)
-    if (event.isV100) {
-        const index = event.asV100
+    if (event.isV16) {
+        const index = event.asV16
         return {
             index,
         }
-    } else if (event.isV104) {
-        const { proposalIndex: index } = event.asV104
+    } else if (event.isV38) {
+        const { proposalIndex: index } = event.asV38
         return {
             index,
         }
@@ -31,13 +31,13 @@ interface RejectedData {
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RejectedData {
     const event = new TreasuryRejectedEvent(ctx, itemEvent)
-    if (event.isV100) {
-        const [index] = event.asV100
+    if (event.isV16) {
+        const [index] = event.asV16
         return {
             index,
         }
-    } else if (event.isV104) {
-        const { proposalIndex: index } = event.asV104
+    } else if (event.isV38) {
+        const { proposalIndex: index } = event.asV38
         return {
             index,
         }
@@ -52,13 +52,13 @@ interface AwarderData {
 
 export function getAwarderData(ctx: BatchContext<Store, unknown>, itemEvent: Event): AwarderData {
     const event = new TreasuryAwardedEvent(ctx, itemEvent)
-    if (event.isV100) {
-        const [index] = event.asV100
+    if (event.isV16) {
+        const [index] = event.asV16
         return {
             index,
         }
-    } else if (event.isV104) {
-        const { proposalIndex: index } = event.asV104
+    } else if (event.isV38) {
+        const { proposalIndex: index } = event.asV38
         return {
             index,
         }
@@ -76,8 +76,8 @@ interface SpendApprovedData {
 
 export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
     const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
-    if (event.isV115) {
-        const { proposalIndex, amount, beneficiary}= event.asV115
+    if (event.isV81) {
+        const { proposalIndex, amount, beneficiary}= event.asV81
         return {
             proposalIndex,
             amount,

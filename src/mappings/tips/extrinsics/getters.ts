@@ -13,8 +13,8 @@ interface AccepterCuratorData {
 
 export function getTipsTipData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
     const call = new TipsTipCall(ctx, itemCall)
-    if (call.isV108) {
-        const { hash, tipValue } = call.asV108
+    if (call.isV16) {
+        const { hash, tipValue } = call.asV16
         return {
             hash,
             tipValue,

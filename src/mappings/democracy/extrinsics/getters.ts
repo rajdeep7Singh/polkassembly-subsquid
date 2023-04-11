@@ -23,8 +23,29 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
     const event = new DemocracyVoteCall(ctx, itemCall)
-    if (event.isV108) {
-        const { refIndex, vote } = event.asV108
+    if (event.isV16) {
+        const { refIndex, vote } = event.asV16
+        if (vote.__kind === 'Standard') {
+            return {
+                index: refIndex,
+                vote: {
+                    type: 'Standard',
+                    value: vote.value.vote,
+                    balance: vote.value.balance,
+                },
+            }
+        } else {
+            return {
+                index: refIndex,
+                vote: {
+                    type: 'Split',
+                    aye: vote.value.aye,
+                    nay: vote.value.nay,
+                },
+            }
+        }
+    }else if (event.isV25) {
+        const { refIndex, vote } = event.asV25
         if (vote.__kind === 'Standard') {
             return {
                 index: refIndex,
@@ -44,7 +65,7 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-    } else {
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

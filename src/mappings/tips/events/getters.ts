@@ -17,8 +17,14 @@ interface ClosedData {
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
     const event = new TipsTipClosedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { tipHash: hash, payout: reward } = event.asV108
+    if (event.isV16) {
+        const [ hash, who, reward ] = event.asV16
+        return {
+            hash,
+            reward,
+        }
+    } else if (event.isV38) {
+        const { tipHash: hash, payout: reward } = event.asV38
         return {
             hash,
             reward,
@@ -34,8 +40,13 @@ interface NewTipData {
 
 export function getNewTipData(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
     const event = new TipsNewTipEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { tipHash: hash } = event.asV108
+    if (event.isV16) {
+        const hash = event.asV16
+        return {
+            hash,
+        }
+    }else if (event.isV38) {
+        const { tipHash: hash } = event.asV38
         return {
             hash,
         }
@@ -50,8 +61,13 @@ interface RectractedData {
 
 export function getRectractedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
     const event = new TipsTipRetractedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { tipHash: hash } = event.asV108
+    if (event.isV16) {
+        const hash  = event.asV16
+        return {
+            hash,
+        }
+    } else if (event.isV38) {
+        const { tipHash: hash } = event.asV38
         return {
             hash,
         }
@@ -66,8 +82,13 @@ interface SlashedData {
 
 export function getSlashedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SlashedData {
     const event = new TipsTipSlashedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { tipHash: hash } = event.asV108
+    if (event.isV16) {
+        const [hash ] = event.asV16
+        return {
+            hash,
+        }
+    } else if (event.isV38) {
+        const { tipHash: hash } = event.asV38
         return {
             hash,
         }

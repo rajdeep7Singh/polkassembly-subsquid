@@ -1,6 +1,6 @@
 import { TechnicalCommitteeProposalOfStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
-import { Call } from '../../types/v138'
+import { Call } from '../../types/v92'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'

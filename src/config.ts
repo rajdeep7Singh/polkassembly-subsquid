@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'hydradx',
-        prefix: 63,
+        name: 'basilisk',
+        prefix: 10041,
     },
     dataSource: {
-        archive: lookupArchive("hydradx", {release: "FireSquid"}),
-        chain: 'wss://rpc.hydradx.cloud',
+        archive: "https://basilisk.archive.subsquid.io/graphql",
+        chain: 'wss://rpc.basilisk.cloud',
     },
-    typesBundle: 'hydradx',
+    typesBundle: 'basilisk',
     batchSize: 500,
     blockRange: {
         from: 0,

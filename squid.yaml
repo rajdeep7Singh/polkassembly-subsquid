@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name: hydradx-polkassembly
+name: basilisk-polkassembly
 version: 1
 description: |-
-  Hydradx's governance proposals
+  Basilisk's governance proposals
 
 build:
 

@@ -1,7 +1,8 @@
 import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
-import * as v108 from '../../types/v108'
+import * as v25 from '../../types/v25'
+import * as v16 from '../../types/v16'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -26,13 +27,13 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
     const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
-    if (storage.isV108) {
-        const storageData = await storage.asV108.get(index)
+    if (storage.isV16) {
+        const storageData = await storage.asV16.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v108.ReferendumInfo_Ongoing).value
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v16.ReferendumInfo_Ongoing).value
             return {
                 status,
                 hash,
@@ -41,7 +42,29 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = storageData as v108.ReferendumInfo_Finished
+            const { end, approved } = (storageData as v16.ReferendumInfo_Finished).value
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
+    }else if (storage.isV25) {
+        const storageData = await storage.asV25.get(index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v25.ReferendumInfo_Ongoing).value
+            return {
+                status,
+                hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = storageData as v25.ReferendumInfo_Finished
             return {
                 status,
                 end,

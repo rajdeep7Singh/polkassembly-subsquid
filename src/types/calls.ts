@@ -1,6 +1,7 @@
 import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
-import * as v108 from './v108'
+import * as v16 from './v16'
+import * as v25 from './v25'
 
 export class DemocracyDelegateCall {
     private readonly _chain: Chain
@@ -16,55 +17,55 @@ export class DemocracyDelegateCall {
     }
 
     /**
-     * Delegate the voting power (with some given conviction) of the sending account.
+     *  Delegate the voting power (with some given conviction) of the sending account.
      * 
-     * The balance delegated is locked for as long as it's delegated, and thereafter for the
-     * time appropriate for the conviction's lock period.
+     *  The balance delegated is locked for as long as it's delegated, and thereafter for the
+     *  time appropriate for the conviction's lock period.
      * 
-     * The dispatch origin of this call must be _Signed_, and the signing account must either:
-     *   - be delegating already; or
-     *   - have no voting activity (if there is, then it will need to be removed/consolidated
-     *     through `reap_vote` or `unvote`).
+     *  The dispatch origin of this call must be _Signed_, and the signing account must either:
+     *    - be delegating already; or
+     *    - have no voting activity (if there is, then it will need to be removed/consolidated
+     *      through `reap_vote` or `unvote`).
      * 
-     * - `to`: The account whose voting the `target` account's voting power will follow.
-     * - `conviction`: The conviction that will be attached to the delegated votes. When the
-     *   account is undelegated, the funds will be locked for the corresponding period.
-     * - `balance`: The amount of the account's balance to be used in delegating. This must not
-     *   be more than the account's current balance.
+     *  - `to`: The account whose voting the `target` account's voting power will follow.
+     *  - `conviction`: The conviction that will be attached to the delegated votes. When the
+     *    account is undelegated, the funds will be locked for the corresponding period.
+     *  - `balance`: The amount of the account's balance to be used in delegating. This must
+     *    not be more than the account's current balance.
      * 
-     * Emits `Delegated`.
+     *  Emits `Delegated`.
      * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *    voted on. Weight is charged as if maximum votes.
      */
-    get isV108(): boolean {
+    get isV16(): boolean {
         return this._chain.getCallHash('Democracy.delegate') === '719d303e364256b757876a8d1b18c8d62a96223d68ffc6f6c1bf18240e8d9793'
     }
 
     /**
-     * Delegate the voting power (with some given conviction) of the sending account.
+     *  Delegate the voting power (with some given conviction) of the sending account.
      * 
-     * The balance delegated is locked for as long as it's delegated, and thereafter for the
-     * time appropriate for the conviction's lock period.
+     *  The balance delegated is locked for as long as it's delegated, and thereafter for the
+     *  time appropriate for the conviction's lock period.
      * 
-     * The dispatch origin of this call must be _Signed_, and the signing account must either:
-     *   - be delegating already; or
-     *   - have no voting activity (if there is, then it will need to be removed/consolidated
-     *     through `reap_vote` or `unvote`).
+     *  The dispatch origin of this call must be _Signed_, and the signing account must either:
+     *    - be delegating already; or
+     *    - have no voting activity (if there is, then it will need to be removed/consolidated
+     *      through `reap_vote` or `unvote`).
      * 
-     * - `to`: The account whose voting the `target` account's voting power will follow.
-     * - `conviction`: The conviction that will be attached to the delegated votes. When the
-     *   account is undelegated, the funds will be locked for the corresponding period.
-     * - `balance`: The amount of the account's balance to be used in delegating. This must not
-     *   be more than the account's current balance.
+     *  - `to`: The account whose voting the `target` account's voting power will follow.
+     *  - `conviction`: The conviction that will be attached to the delegated votes. When the
+     *    account is undelegated, the funds will be locked for the corresponding period.
+     *  - `balance`: The amount of the account's balance to be used in delegating. This must
+     *    not be more than the account's current balance.
      * 
-     * Emits `Delegated`.
+     *  Emits `Delegated`.
      * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *    voted on. Weight is charged as if maximum votes.
      */
-    get asV108(): {to: Uint8Array, conviction: v108.Conviction, balance: bigint} {
-        assert(this.isV108)
+    get asV16(): {to: Uint8Array, conviction: v16.Conviction, balance: bigint} {
+        assert(this.isV16)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -83,45 +84,45 @@ export class DemocracyRemoveOtherVoteCall {
     }
 
     /**
-     * Remove a vote for a referendum.
+     *  Remove a vote for a referendum.
      * 
-     * If the `target` is equal to the signer, then this function is exactly equivalent to
-     * `remove_vote`. If not equal to the signer, then the vote must have expired,
-     * either because the referendum was cancelled, because the voter lost the referendum or
-     * because the conviction period is over.
+     *  If the `target` is equal to the signer, then this function is exactly equivalent to
+     *  `remove_vote`. If not equal to the signer, then the vote must have expired,
+     *  either because the referendum was cancelled, because the voter lost the referendum or
+     *  because the conviction period is over.
      * 
-     * The dispatch origin of this call must be _Signed_.
+     *  The dispatch origin of this call must be _Signed_.
      * 
-     * - `target`: The account of the vote to be removed; this account must have voted for
-     *   referendum `index`.
-     * - `index`: The index of referendum of the vote to be removed.
+     *  - `target`: The account of the vote to be removed; this account must have voted for
+     *    referendum `index`.
+     *  - `index`: The index of referendum of the vote to be removed.
      * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *    Weight is calculated for the maximum number of vote.
      */
-    get isV108(): boolean {
+    get isV16(): boolean {
         return this._chain.getCallHash('Democracy.remove_other_vote') === '57db819150acc73e380a9908a05d4f777cd3af825527d7ad88560426e1d0f652'
     }
 
     /**
-     * Remove a vote for a referendum.
+     *  Remove a vote for a referendum.
      * 
-     * If the `target` is equal to the signer, then this function is exactly equivalent to
-     * `remove_vote`. If not equal to the signer, then the vote must have expired,
-     * either because the referendum was cancelled, because the voter lost the referendum or
-     * because the conviction period is over.
+     *  If the `target` is equal to the signer, then this function is exactly equivalent to
+     *  `remove_vote`. If not equal to the signer, then the vote must have expired,
+     *  either because the referendum was cancelled, because the voter lost the referendum or
+     *  because the conviction period is over.
      * 
-     * The dispatch origin of this call must be _Signed_.
+     *  The dispatch origin of this call must be _Signed_.
      * 
-     * - `target`: The account of the vote to be removed; this account must have voted for
-     *   referendum `index`.
-     * - `index`: The index of referendum of the vote to be removed.
+     *  - `target`: The account of the vote to be removed; this account must have voted for
+     *    referendum `index`.
+     *  - `index`: The index of referendum of the vote to be removed.
      * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *    Weight is calculated for the maximum number of vote.
      */
-    get asV108(): {target: Uint8Array, index: number} {
-        assert(this.isV108)
+    get asV16(): {target: Uint8Array, index: number} {
+        assert(this.isV16)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -140,69 +141,69 @@ export class DemocracyRemoveVoteCall {
     }
 
     /**
-     * Remove a vote for a referendum.
+     *  Remove a vote for a referendum.
      * 
-     * If:
-     * - the referendum was cancelled, or
-     * - the referendum is ongoing, or
-     * - the referendum has ended such that
-     *   - the vote of the account was in opposition to the result; or
-     *   - there was no conviction to the account's vote; or
-     *   - the account made a split vote
-     * ...then the vote is removed cleanly and a following call to `unlock` may result in more
-     * funds being available.
+     *  If:
+     *  - the referendum was cancelled, or
+     *  - the referendum is ongoing, or
+     *  - the referendum has ended such that
+     *    - the vote of the account was in opposition to the result; or
+     *    - there was no conviction to the account's vote; or
+     *    - the account made a split vote
+     *  ...then the vote is removed cleanly and a following call to `unlock` may result in more
+     *  funds being available.
      * 
-     * If, however, the referendum has ended and:
-     * - it finished corresponding to the vote of the account, and
-     * - the account made a standard vote with conviction, and
-     * - the lock period of the conviction is not over
-     * ...then the lock will be aggregated into the overall account's lock, which may involve
-     * *overlocking* (where the two locks are combined into a single lock that is the maximum
-     * of both the amount locked and the time is it locked for).
+     *  If, however, the referendum has ended and:
+     *  - it finished corresponding to the vote of the account, and
+     *  - the account made a standard vote with conviction, and
+     *  - the lock period of the conviction is not over
+     *  ...then the lock will be aggregated into the overall account's lock, which may involve
+     *  *overlocking* (where the two locks are combined into a single lock that is the maximum
+     *  of both the amount locked and the time is it locked for).
      * 
-     * The dispatch origin of this call must be _Signed_, and the signer must have a vote
-     * registered for referendum `index`.
+     *  The dispatch origin of this call must be _Signed_, and the signer must have a vote
+     *  registered for referendum `index`.
      * 
-     * - `index`: The index of referendum of the vote to be removed.
+     *  - `index`: The index of referendum of the vote to be removed.
      * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *    Weight is calculated for the maximum number of vote.
      */
-    get isV108(): boolean {
+    get isV16(): boolean {
         return this._chain.getCallHash('Democracy.remove_vote') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
     }
 
     /**
-     * Remove a vote for a referendum.
+     *  Remove a vote for a referendum.
      * 
-     * If:
-     * - the referendum was cancelled, or
-     * - the referendum is ongoing, or
-     * - the referendum has ended such that
-     *   - the vote of the account was in opposition to the result; or
-     *   - there was no conviction to the account's vote; or
-     *   - the account made a split vote
-     * ...then the vote is removed cleanly and a following call to `unlock` may result in more
-     * funds being available.
+     *  If:
+     *  - the referendum was cancelled, or
+     *  - the referendum is ongoing, or
+     *  - the referendum has ended such that
+     *    - the vote of the account was in opposition to the result; or
+     *    - there was no conviction to the account's vote; or
+     *    - the account made a split vote
+     *  ...then the vote is removed cleanly and a following call to `unlock` may result in more
+     *  funds being available.
      * 
-     * If, however, the referendum has ended and:
-     * - it finished corresponding to the vote of the account, and
-     * - the account made a standard vote with conviction, and
-     * - the lock period of the conviction is not over
-     * ...then the lock will be aggregated into the overall account's lock, which may involve
-     * *overlocking* (where the two locks are combined into a single lock that is the maximum
-     * of both the amount locked and the time is it locked for).
+     *  If, however, the referendum has ended and:
+     *  - it finished corresponding to the vote of the account, and
+     *  - the account made a standard vote with conviction, and
+     *  - the lock period of the conviction is not over
+     *  ...then the lock will be aggregated into the overall account's lock, which may involve
+     *  *overlocking* (where the two locks are combined into a single lock that is the maximum
+     *  of both the amount locked and the time is it locked for).
      * 
-     * The dispatch origin of this call must be _Signed_, and the signer must have a vote
-     * registered for referendum `index`.
+     *  The dispatch origin of this call must be _Signed_, and the signer must have a vote
+     *  registered for referendum `index`.
      * 
-     * - `index`: The index of referendum of the vote to be removed.
+     *  - `index`: The index of referendum of the vote to be removed.
      * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *    Weight is calculated for the maximum number of vote.
      */
-    get asV108(): {index: number} {
-        assert(this.isV108)
+    get asV16(): {index: number} {
+        assert(this.isV16)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -221,39 +222,39 @@ export class DemocracyUndelegateCall {
     }
 
     /**
-     * Undelegate the voting power of the sending account.
+     *  Undelegate the voting power of the sending account.
      * 
-     * Tokens may be unlocked following once an amount of time consistent with the lock period
-     * of the conviction with which the delegation was issued.
+     *  Tokens may be unlocked following once an amount of time consistent with the lock period
+     *  of the conviction with which the delegation was issued.
      * 
-     * The dispatch origin of this call must be _Signed_ and the signing account must be
-     * currently delegating.
+     *  The dispatch origin of this call must be _Signed_ and the signing account must be
+     *  currently delegating.
      * 
-     * Emits `Undelegated`.
+     *  Emits `Undelegated`.
      * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *    voted on. Weight is charged as if maximum votes.
      */
-    get isV108(): boolean {
+    get isV16(): boolean {
         return this._chain.getCallHash('Democracy.undelegate') === '01f2f9c28aa1d4d36a81ff042620b6677d25bf07c2bf4acc37b58658778a4fca'
     }
 
     /**
-     * Undelegate the voting power of the sending account.
+     *  Undelegate the voting power of the sending account.
      * 
-     * Tokens may be unlocked following once an amount of time consistent with the lock period
-     * of the conviction with which the delegation was issued.
+     *  Tokens may be unlocked following once an amount of time consistent with the lock period
+     *  of the conviction with which the delegation was issued.
      * 
-     * The dispatch origin of this call must be _Signed_ and the signing account must be
-     * currently delegating.
+     *  The dispatch origin of this call must be _Signed_ and the signing account must be
+     *  currently delegating.
      * 
-     * Emits `Undelegated`.
+     *  Emits `Undelegated`.
      * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *    voted on. Weight is charged as if maximum votes.
      */
-    get asV108(): null {
-        assert(this.isV108)
+    get asV16(): null {
+        assert(this.isV16)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -272,6 +273,37 @@ export class DemocracyVoteCall {
     }
 
     /**
+     *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
+     *  otherwise it is a vote to keep the status quo.
+     * 
+     *  The dispatch origin of this call must be _Signed_.
+     * 
+     *  - `ref_index`: The index of the referendum to vote for.
+     *  - `vote`: The vote configuration.
+     * 
+     *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
+     */
+    get isV16(): boolean {
+        return this._chain.getCallHash('Democracy.vote') === '6cdb35b5ffcb74405cdf222b0cc0bf7ad7025d59f676bea6712d77bcc9aff1db'
+    }
+
+    /**
+     *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
+     *  otherwise it is a vote to keep the status quo.
+     * 
+     *  The dispatch origin of this call must be _Signed_.
+     * 
+     *  - `ref_index`: The index of the referendum to vote for.
+     *  - `vote`: The vote configuration.
+     * 
+     *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
+     */
+    get asV16(): {refIndex: number, vote: v16.AccountVote} {
+        assert(this.isV16)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
      * Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
      * otherwise it is a vote to keep the status quo.
      * 
@@ -282,7 +314,7 @@ export class DemocracyVoteCall {
      * 
      * Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    get isV108(): boolean {
+    get isV25(): boolean {
         return this._chain.getCallHash('Democracy.vote') === '3936a4cb49f77280bd94142d4ec458afcf5cb8a5e5b0d602b1b1530928021e28'
     }
 
@@ -297,8 +329,8 @@ export class DemocracyVoteCall {
      * 
      * Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    get asV108(): {refIndex: number, vote: v108.AccountVote} {
-        assert(this.isV108)
+    get asV25(): {refIndex: number, vote: v25.AccountVote} {
+        assert(this.isV25)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -317,63 +349,65 @@ export class TipsTipCall {
     }
 
     /**
-     * Declare a tip value for an already-open tip.
+     *  Declare a tip value for an already-open tip.
      * 
-     * The dispatch origin for this call must be _Signed_ and the signing account must be a
-     * member of the `Tippers` set.
+     *  The dispatch origin for this call must be _Signed_ and the signing account must be a
+     *  member of the `Tippers` set.
      * 
-     * - `hash`: The identity of the open tip for which a tip value is declared. This is formed
-     *   as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
-     *   account ID.
-     * - `tip_value`: The amount of tip that the sender would like to give. The median tip
-     *   value of active tippers will be given to the `who`.
+     *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
+     *    as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
+     *    account ID.
+     *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
+     *    value of active tippers will be given to the `who`.
      * 
-     * Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
-     * has started.
+     *  Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
+     *  has started.
      * 
-     * # <weight>
-     * - Complexity: `O(T)` where `T` is the number of tippers. decoding `Tipper` vec of length
-     *   `T`, insert tip and check closing, `T` is charged as upper bound given by
-     *   `ContainsLengthBound`. The actual cost depends on the implementation of `T::Tippers`.
+     *  # <weight>
+     *  - Complexity: `O(T)` where `T` is the number of tippers.
+     *    decoding `Tipper` vec of length `T`, insert tip and check closing,
+     *    `T` is charged as upper bound given by `ContainsLengthBound`.
+     *    The actual cost depends on the implementation of `T::Tippers`.
      * 
-     *   Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
-     *   is weighted as if almost full i.e of length `T-1`.
-     * - DbReads: `Tippers`, `Tips`
-     * - DbWrites: `Tips`
-     * # </weight>
+     *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
+     *    is weighted as if almost full i.e of length `T-1`.
+     *  - DbReads: `Tippers`, `Tips`
+     *  - DbWrites: `Tips`
+     *  # </weight>
      */
-    get isV108(): boolean {
+    get isV16(): boolean {
         return this._chain.getCallHash('Tips.tip') === 'f3795cdab18c292963e0e30ece37a15a2900030efc315a8e3f28ba886b2b9f58'
     }
 
     /**
-     * Declare a tip value for an already-open tip.
+     *  Declare a tip value for an already-open tip.
      * 
-     * The dispatch origin for this call must be _Signed_ and the signing account must be a
-     * member of the `Tippers` set.
+     *  The dispatch origin for this call must be _Signed_ and the signing account must be a
+     *  member of the `Tippers` set.
      * 
-     * - `hash`: The identity of the open tip for which a tip value is declared. This is formed
-     *   as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
-     *   account ID.
-     * - `tip_value`: The amount of tip that the sender would like to give. The median tip
-     *   value of active tippers will be given to the `who`.
+     *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
+     *    as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
+     *    account ID.
+     *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
+     *    value of active tippers will be given to the `who`.
      * 
-     * Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
-     * has started.
+     *  Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
+     *  has started.
      * 
-     * # <weight>
-     * - Complexity: `O(T)` where `T` is the number of tippers. decoding `Tipper` vec of length
-     *   `T`, insert tip and check closing, `T` is charged as upper bound given by
-     *   `ContainsLengthBound`. The actual cost depends on the implementation of `T::Tippers`.
+     *  # <weight>
+     *  - Complexity: `O(T)` where `T` is the number of tippers.
+     *    decoding `Tipper` vec of length `T`, insert tip and check closing,
+     *    `T` is charged as upper bound given by `ContainsLengthBound`.
+     *    The actual cost depends on the implementation of `T::Tippers`.
      * 
-     *   Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
-     *   is weighted as if almost full i.e of length `T-1`.
-     * - DbReads: `Tippers`, `Tips`
-     * - DbWrites: `Tips`
-     * # </weight>
+     *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
+     *    is weighted as if almost full i.e of length `T-1`.
+     *  - DbReads: `Tippers`, `Tips`
+     *  - DbWrites: `Tips`
+     *  # </weight>
      */
-    get asV108(): {hash: Uint8Array, tipValue: bigint} {
-        assert(this.isV108)
+    get asV16(): {hash: Uint8Array, tipValue: bigint} {
+        assert(this.isV16)
         return this._chain.decodeCall(this.call)
     }
 }

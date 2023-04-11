@@ -15,8 +15,8 @@ async function getTipsStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8
     const storage = new TipsTipsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV108) {
-        return await storage.asV108.get(hash)
+    if (storage.isV25) {
+        return await storage.asV25.get(hash)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -26,8 +26,8 @@ async function getTipsReasonsStorageData(ctx: BatchContext<Store, unknown>, hash
     const storage = new TipsReasonsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV108) {
-        return await storage.asV108.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV25) {
+        return await storage.asV25.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

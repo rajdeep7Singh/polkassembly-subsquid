@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://hydradx.archive.subsquid.io/graphql",
+  "specVersions": "https://basilisk.archive.subsquid.io/graphql",
   "storage": [
     "Council.Members",
     "Council.ProposalCount",

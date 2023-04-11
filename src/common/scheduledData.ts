@@ -13,8 +13,13 @@ interface ScheduledData {
 
 export function getScheduledEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData {
     const event = new SchedulerScheduledEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { when, index} = event.asV108
+    if (event.isV16) {
+        const [ when, index ] = event.asV16
+        return {
+            blockNumber: index
+        }
+    } else if (event.isV38) {
+        const { when, index} = event.asV38
         return {
             blockNumber: index
         }
@@ -25,16 +30,40 @@ export function getScheduledEventData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData | undefined {
     const event = new SchedulerDispatchedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { task, id, result } = event.asV108
+    if (event.isV16) {
+        const [ task, id, result ] = event.asV16
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[0]
             }
         }
         return undefined
-    } else if (event.isV115) {
-        const { task, id, result } = event.asV115
+    } else if (event.isV25) {
+        const [ task, id, result ] = event.asV25
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: task[0]
+            }
+        }
+        return undefined
+    } else if (event.isV38) {
+        const { task, id, result } = event.asV38
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: task[0]
+            }
+        }
+        return undefined
+    } else if (event.isV43) {
+        const { task, id, result } = event.asV43
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: task[0]
+            }
+        }
+        return undefined
+    } else if (event.isV81) {
+        const { task, id, result } = event.asV81
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[0]

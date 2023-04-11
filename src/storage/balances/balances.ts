@@ -9,8 +9,8 @@ export async function getTotalIssuanceStorageData(ctx: BatchContext<Store, unkno
     const storage = new BalancesTotalIssuanceStorage(ctx, block)
     if (!storage.isExists) return BigInt(0)
 
-    if (storage.isV100) {
-        return await storage.asV100.get()
+    if (storage.isV16) {
+        return await storage.asV16.get()
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

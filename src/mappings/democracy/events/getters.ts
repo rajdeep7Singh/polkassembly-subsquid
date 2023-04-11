@@ -17,8 +17,8 @@ import { Store } from '@subsquid/typeorm-store'
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyCancelledEvent(ctx, itemEvent)
-    if (event.isV108) {
-        return event.asV108.refIndex
+    if (event.isV16) {
+        return event.asV38.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -26,10 +26,16 @@ export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyExecutedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        return event.asV108.refIndex
-    } else if (event.isV115) {
-        return event.asV115.refIndex
+    if (event.isV16) {
+        return event.asV16[0]
+    } else if (event.isV25) {
+        return event.asV25[0]
+    }  else if (event.isV38) {
+        return event.asV38.refIndex
+    }  else if (event.isV43) {
+        return event.asV43.refIndex
+    }  else if (event.isV81) {
+        return event.asV81.refIndex
     } else {
         const data = ctx._chain.decodeEvent(itemEvent)
         return data.refIndex
@@ -38,8 +44,10 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getNotPassedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyNotPassedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        return event.asV108.refIndex
+    if (event.isV16) {
+        return event.asV16
+    }else if (event.isV38) {
+        return event.asV38.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -47,8 +55,10 @@ export function getNotPassedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getPassedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyPassedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        return event.asV108.refIndex
+    if (event.isV16) {
+        return event.asV16
+    }else if (event.isV38) {
+        return event.asV38.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -61,13 +71,19 @@ export interface PreimageInvalidData {
 
 export function getPreimageInvalidData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageInvalidData {
     const event = new DemocracyPreimageInvalidEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { proposalHash: hash, refIndex: index } = event.asV108
+    if (event.isV16) {
+        const [ hash, index ] = event.asV16
         return {
             hash,
             index,
         }
-    } else {
+    } else if (event.isV38) {
+        const { proposalHash: hash, refIndex: index } = event.asV38
+        return {
+            hash,
+            index,
+        }
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
@@ -79,8 +95,14 @@ export interface PreimageMissingData {
 
 export function getPreimageMissingData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageMissingData {
     const event = new DemocracyPreimageMissingEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { proposalHash: hash, refIndex: index } = event.asV108
+    if (event.isV16) {
+        const [ hash,index ] = event.asV16
+        return {
+            hash,
+            index,
+        }
+    }else if (event.isV38) {
+        const { proposalHash: hash, refIndex: index } = event.asV38
         return {
             hash,
             index,
@@ -98,8 +120,15 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
     const event = new DemocracyPreimageNotedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { proposalHash: hash, who: provider, deposit } = event.asV108
+    if (event.isV16) {
+        const [ hash, provider, deposit ] = event.asV16
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (event.isV38) {
+        const { proposalHash: hash, who: provider, deposit } = event.asV38
         return {
             hash,
             provider,
@@ -118,8 +147,15 @@ export interface PreimageReapedData {
 
 export function getPreimageReapedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageReapedData {
     const event = new DemocracyPreimageReapedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { proposalHash: hash, provider, deposit } = event.asV108
+    if (event.isV16) {
+        const [ hash, provider, deposit ] = event.asV16
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (event.isV38) {
+        const { proposalHash: hash, provider, deposit } = event.asV38
         return {
             hash,
             provider,
@@ -138,8 +174,15 @@ export interface PreimageUsedData {
 
 export function getPreimageUsedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageUsedData {
     const event = new DemocracyPreimageUsedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const { proposalHash: hash, provider, deposit } = event.asV108
+    if (event.isV16) {
+        const [ hash, provider, deposit ] = event.asV16
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (event.isV38) {
+        const { proposalHash: hash, provider, deposit } = event.asV38
         return {
             hash,
             provider,
@@ -157,8 +200,8 @@ interface DemocracySecondedData {
 
 export function getDemocracySecondedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracySecondedData {
     const event = new DemocracySecondedEvent(ctx, itemEvent)
-    if (event.isV108) {
-        const {seconder, propIndex} = event.asV108
+    if (event.isV38) {
+        const {seconder, propIndex} = event.asV38
         return {
             accountId: seconder,
             refIndex: propIndex
