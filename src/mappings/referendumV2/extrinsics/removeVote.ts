@@ -7,6 +7,7 @@ import { getRemoveVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum, removeVote } from './helpers'
 import { CallHandlerContext } from '../../types/contexts'
+import { updateCurveData } from '../../../common/curveData'
 
 export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.remove_vote', { call: { args: true; origin: true } }>,
@@ -42,5 +43,6 @@ export async function handlePrecompiledRemoveVote(ctx: BatchContext<Store, unkno
     const wallet = originAccountId
     await removeVote(ctx, wallet, index, header.height, header.timestamp, true, false, undefined, txnHash)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
+    await updateCurveData(ctx, header, referendum)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations, txnHash)
 }

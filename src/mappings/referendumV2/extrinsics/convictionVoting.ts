@@ -21,6 +21,7 @@ import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpe
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
 import { randomUUID } from 'crypto'
+import { updateCurveData } from '../../../common/curveData'
 
 export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.vote', { call: { args: true; origin: true } }>,
@@ -161,6 +162,7 @@ export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Stor
             type: VoteType.ReferendumV2,
         })
     )
+    await updateCurveData(ctx, header, proposal)
     await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber, txnHash)
 
 }
