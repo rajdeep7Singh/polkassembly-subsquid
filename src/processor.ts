@@ -58,7 +58,7 @@ const processor = new SubstrateBatchProcessor()
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('Ethereum.transact', { data: { call: { origin: true, args: true, }, } } as const)
 
-    .addEthereumTransaction('0x0000000000000000000000000000000000000812')
+    // .addEthereumTransaction('0x0000000000000000000000000000000000000812')
 
     processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let block of ctx.blocks) {

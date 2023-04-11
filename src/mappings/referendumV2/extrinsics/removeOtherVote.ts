@@ -9,6 +9,7 @@ import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { CallHandlerContext } from '../../types/contexts'
+import { updateCurveData } from '../../../common/curveData'
 
 export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.remove_other_vote', { call: { args: true; origin: true } }>,
@@ -72,6 +73,7 @@ export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, u
     vote.removedAt = new Date(header.timestamp)
     vote.txnHash = txnHash
     await ctx.store.save(vote)
+    await updateCurveData(ctx, header, referendum)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations, txnHash)
 }

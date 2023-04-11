@@ -62,6 +62,38 @@ export interface BalancesAccountStorageV49 {
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v49.AccountData][]>
 }
 
+export class BalancesInactiveIssuanceStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Balances'
+    }
+
+    protected getName() {
+        return 'InactiveIssuance'
+    }
+
+    /**
+     *  The total units of outstanding deactivated balance in the system.
+     */
+    get isV2201(): boolean {
+        return this.getTypeHash() === 'f8ebe28eb30158172c0ccf672f7747c46a244f892d08ef2ebcbaadde34a26bc0'
+    }
+
+    /**
+     *  The total units of outstanding deactivated balance in the system.
+     */
+    get asV2201(): BalancesInactiveIssuanceStorageV2201 {
+        assert(this.isV2201)
+        return this as any
+    }
+}
+
+/**
+ *  The total units of outstanding deactivated balance in the system.
+ */
+export interface BalancesInactiveIssuanceStorageV2201 {
+    get(): Promise<bigint>
+}
+
 export class BalancesTotalIssuanceStorage extends StorageBase {
     protected getPrefix() {
         return 'Balances'
