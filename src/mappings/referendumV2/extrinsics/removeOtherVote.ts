@@ -42,6 +42,7 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     vote.removedAt = new Date(header.timestamp)
     await ctx.store.save(vote)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
+    await updateCurveData(ctx, header, referendum)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }
 
