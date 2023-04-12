@@ -41,6 +41,7 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
     vote.removedAtBlock = header.height
     vote.removedAt = new Date(header.timestamp)
     await ctx.store.save(vote)
+    await updateCurveData(ctx, header, referendum)
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }
@@ -73,7 +74,7 @@ export async function handlePrecompileRemoveOtherVote(ctx: BatchContext<Store, u
     vote.removedAt = new Date(header.timestamp)
     vote.txnHash = txnHash
     await ctx.store.save(vote)
-    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await updateCurveData(ctx, header, referendum)
+    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
     await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations, txnHash)
 }

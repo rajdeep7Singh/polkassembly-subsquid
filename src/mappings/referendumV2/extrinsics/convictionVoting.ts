@@ -112,6 +112,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             type: VoteType.ReferendumV2,
         })
     )
+    await updateCurveData(ctx, header, proposal)
     await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
 
 }
