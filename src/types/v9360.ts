@@ -11,6 +11,11 @@ export interface Type_82_Err {
     value: DispatchError
 }
 
+export interface Weight {
+    refTime: bigint
+    proofSize: bigint
+}
+
 export type Call = Call_System | Call_ParachainSystem | Call_Timestamp | Call_Balances | Call_Authorship | Call_CollatorSelection | Call_Session | Call_XcmpQueue | Call_PolkadotXcm | Call_DmpQueue | Call_Utility | Call_Multisig | Call_Proxy | Call_Alliance | Call_AllianceMotion
 
 export interface Call_System {
@@ -1980,11 +1985,6 @@ export interface OriginCaller_AllianceMotion {
 export interface OriginCaller_Void {
     __kind: 'Void'
     value: Void
-}
-
-export interface Weight {
-    refTime: bigint
-    proofSize: bigint
 }
 
 export interface Timepoint {

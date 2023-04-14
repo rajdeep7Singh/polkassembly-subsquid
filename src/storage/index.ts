@@ -1,4 +1,4 @@
-// import * as council from './council'
+import * as allianceMotion from './allianceMotion'
 // import * as democracy from './democracy'
 // import * as techCommittee from './techCommittee'
 // import * as treasury from './treasury'
@@ -6,12 +6,12 @@
 // import * as bounties from './bounties'
 // import * as childBounties from './childBounties'
 
-// export const storage = {
-//     council,
+export const storage = {
+    allianceMotion
 //     techCommittee,
 //     democracy,
 //     treasury,
 //     bounties,
 //     tips,
 //     childBounties,
-// }
+}

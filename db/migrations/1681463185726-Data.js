@@ -1,5 +1,5 @@
-module.exports = class Data1678711257985 {
-    name = 'Data1678711257985'
+module.exports = class Data1681463185726 {
+    name = 'Data1681463185726'
 
     async up(db) {
         await db.query(`CREATE TABLE "vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "decision" character varying(12), "balance" jsonb, "lock_period" integer, "type" character varying(14), CONSTRAINT "PK_2d5932d46afe39c8176f9d4be72" PRIMARY KEY ("id"))`)
@@ -8,7 +8,7 @@ module.exports = class Data1678711257985 {
         await db.query(`CREATE INDEX "IDX_8d701dbd422ac5e3e1d7a9a0d1" ON "vote" ("timestamp") `)
         await db.query(`CREATE TABLE "status_history" ("id" character varying NOT NULL, "status" character varying(11) NOT NULL, "block" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "proposal_id" character varying, CONSTRAINT "PK_271a5228edb4eeb41bc01d58fac" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_6ecfec106cbaabdc5ac1bb4fbf" ON "status_history" ("proposal_id") `)
-        await db.query(`CREATE TABLE "proposal" ("id" character varying NOT NULL, "type" character varying(16) NOT NULL, "hash" text, "index" integer, "proposer" text, "deposit" numeric, "threshold" jsonb, "end" integer, "description" text, "proposal_argument_hash" text, "status" character varying(11) NOT NULL, "tally" jsonb, "execute_at_block_number" integer, "executed_at" TIMESTAMP WITH TIME ZONE, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "ended_at_block" integer, "ended_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_ca872ecfe4fef5720d2d39e4275" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "proposal" ("id" character varying NOT NULL, "type" character varying(16) NOT NULL, "hash" text, "index" integer, "proposer" text, "deposit" numeric, "threshold" jsonb, "end" integer, "description" text, "proposal_argument_hash" text, "call_data" jsonb, "status" character varying(11) NOT NULL, "tally" jsonb, "execute_at_block_number" integer, "executed_at" TIMESTAMP WITH TIME ZONE, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "ended_at_block" integer, "ended_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_ca872ecfe4fef5720d2d39e4275" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_788a2da76636d59b8803d21968" ON "proposal" ("type") `)
         await db.query(`CREATE INDEX "IDX_8a5d128863df341f83f7ae4974" ON "proposal" ("hash") `)
         await db.query(`CREATE INDEX "IDX_081891a0598db72dd59758cfae" ON "proposal" ("index") `)

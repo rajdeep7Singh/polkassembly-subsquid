@@ -8,7 +8,7 @@ const config: ProcessorConfig<Store> = {
         prefix: 0,
     },
     dataSource: {
-        archive: lookupArchive("collectives", {release: "FireSquid"}),
+        archive: 'https://collectives.archive.subsquid.io/graphql',
         chain: 'wss://polkadot-collectives-rpc.polkadot.io',
     },
     typesBundle: 'collectives',

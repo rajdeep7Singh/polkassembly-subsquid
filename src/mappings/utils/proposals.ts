@@ -13,6 +13,7 @@ import {
     StatusHistory,
     Announcements,
     AnnouncementType,
+    ProposedCall,
 } from '../../model'
 import {
     AnnouncementsData,
@@ -20,6 +21,7 @@ import {
     HashProposal,
     IndexProposal,
     TallyData,
+    ProposedCallData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
 
@@ -119,7 +121,7 @@ export async function createAllianceMotion(
     header: SubstrateBlock,
     data: AllianceMotionData
 ): Promise<Proposal> {
-    const { index, hash, proposer, threshold, status } = data
+    const { index, hash, proposer, threshold, status, callData } = data
 
     const type = ProposalType.AllianceMotion
 
@@ -136,6 +138,7 @@ export async function createAllianceMotion(
             value: threshold,
         }),
         status,
+        callData: callData ? createProposedCall(callData) : null,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
@@ -184,4 +187,8 @@ export async function createAnnouncements(
     await ctx.store.insert(announcementRow)
 
     return announcementRow
+}
+
+function createProposedCall(data: ProposedCallData): ProposedCall {
+    return new ProposedCall(toJSON(data))
 }

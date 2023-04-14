@@ -28,6 +28,7 @@ export interface AllianceMotionData extends BaseProposalData {
     hash: string
     proposer: string
     threshold: number
+    callData?: ProposedCallData
 }
 
 export interface AnnouncementsData {

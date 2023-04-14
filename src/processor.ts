@@ -7,7 +7,7 @@ import * as modules from './mappings'
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://polkadot-collectives-rpc.polkadot.io',
-        archive: lookupArchive('collectives', { release: 'FireSquid' }),
+        archive: 'https://collectives.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
     .addEvent('AllianceMotion.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

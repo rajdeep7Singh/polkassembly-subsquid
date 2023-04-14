@@ -19,5 +19,13 @@
     "Alliance.AnnouncementRemoved",
     "Alliance.UnscrupulousItemAdded",
     "Alliance.UnscrupulousItemRemoved"
+  ],
+  "calls": [
+    "AllianceMotion.propose",
+    "AllianceMotion.execute",
+    "AllianceMotion.close",
+    "AllianceMotion.vote",
+    "Alliance.announce",
+    "Alliance.vote"
   ]
 }

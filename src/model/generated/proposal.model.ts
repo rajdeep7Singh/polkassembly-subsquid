@@ -2,6 +2,7 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 import {ProposalType} from "./_proposalType"
 import {Threshold, fromJsonThreshold} from "./_threshold"
+import {ProposedCall} from "./_proposedCall"
 import {Vote} from "./vote.model"
 import {ProposalStatus} from "./_proposalStatus"
 import {StatusHistory} from "./statusHistory.model"
@@ -45,6 +46,9 @@ export class Proposal {
 
     @Column_("text", {nullable: true})
     proposalArgumentHash!: string | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
+    callData!: ProposedCall | undefined | null
 
     @OneToMany_(() => Vote, e => e.proposal)
     voting!: Vote[]
