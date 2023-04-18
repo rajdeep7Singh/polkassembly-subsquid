@@ -6,7 +6,7 @@ import {
     AllianceUnscrupulousItemAddedEvent, 
     AllianceUnscrupulousItemRemovedEvent,
 } from '../../../types/events'
-import * as v9290 from '../../../types/v9290'
+import * as v9290 from '../../../types/v9370'
 import { Event } from '../../../types/support'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
