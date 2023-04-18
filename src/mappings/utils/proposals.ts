@@ -2,7 +2,6 @@ import { Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
-import { ss58codec } from '../../common/tools'
 
 import {
     MotionThreshold,
@@ -176,7 +175,7 @@ export async function createAnnouncements(
     data: AnnouncementsData,
     type?: AnnouncementType | null
 ): Promise<Announcements> {
-    const { hash, code, codec, version, announcement } = data
+    const { hash, code, codec, version, announcement, cid } = data
 
     const associatedMotoion = await ctx.store.get(Proposal, {
         where: {
@@ -195,6 +194,8 @@ export async function createAnnouncements(
         proposer: associatedMotoion ? associatedMotoion.proposer : null,
         announcement: toJSON(announcement),
         type,
+        cid,
+        proposal: associatedMotoion ? associatedMotoion : null,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
@@ -204,6 +205,7 @@ export async function createAnnouncements(
     if(associatedMotoion){
         associatedMotoion.announcement = announcementRow
         await ctx.store.save(associatedMotoion)
+
     }
     return announcementRow
 }

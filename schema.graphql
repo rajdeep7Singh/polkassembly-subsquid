@@ -80,6 +80,8 @@ type Announcements @entity {
   codec: BigInt
   announcement: JSON
   digest: String
+  cid: String
+  proposal: Proposal
   code: BigInt
   isRemoved: Boolean
   createdAt: DateTime! @index

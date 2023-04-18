@@ -1,12 +1,13 @@
-module.exports = class Data1681811274867 {
-    name = 'Data1681811274867'
+module.exports = class Data1681823017734 {
+    name = 'Data1681823017734'
 
     async up(db) {
-        await db.query(`CREATE TABLE "announcements" ("id" character varying NOT NULL, "hash" text NOT NULL, "index" integer, "proposer" text, "type" character varying(12), "version" text, "codec" numeric, "announcement" jsonb, "digest" text, "code" numeric, "is_removed" boolean, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, CONSTRAINT "PK_b3ad760876ff2e19d58e05dc8b0" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "announcements" ("id" character varying NOT NULL, "hash" text NOT NULL, "index" integer, "proposer" text, "type" character varying(12), "version" text, "codec" numeric, "announcement" jsonb, "digest" text, "cid" text, "code" numeric, "is_removed" boolean, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, "proposal_id" character varying, CONSTRAINT "PK_b3ad760876ff2e19d58e05dc8b0" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_34a7f0557b4fe321a981b5e18e" ON "announcements" ("hash") `)
         await db.query(`CREATE INDEX "IDX_c8a3808a44e84d9a803f848c45" ON "announcements" ("index") `)
         await db.query(`CREATE INDEX "IDX_141503d3c369fa78900f08d343" ON "announcements" ("proposer") `)
         await db.query(`CREATE INDEX "IDX_472dcde086b0881656f29b94af" ON "announcements" ("type") `)
+        await db.query(`CREATE INDEX "IDX_42a3d77e080f7b2830ca953dee" ON "announcements" ("proposal_id") `)
         await db.query(`CREATE INDEX "IDX_541ba8781433f9ab045cc4330c" ON "announcements" ("created_at") `)
         await db.query(`CREATE INDEX "IDX_a96b21e3831ec6466c788275fa" ON "announcements" ("created_at_block") `)
         await db.query(`CREATE INDEX "IDX_07819130a716918c413e7b040f" ON "announcements" ("updated_at") `)
@@ -26,6 +27,7 @@ module.exports = class Data1681811274867 {
         await db.query(`CREATE INDEX "IDX_92d4592195fbffd27d2079c0d5" ON "proposal" ("created_at") `)
         await db.query(`CREATE INDEX "IDX_b972906d35a68e6b2f4605b775" ON "proposal" ("updated_at_block") `)
         await db.query(`CREATE INDEX "IDX_a66502647e53bd5c8986c769ef" ON "proposal" ("updated_at") `)
+        await db.query(`ALTER TABLE "announcements" ADD CONSTRAINT "FK_42a3d77e080f7b2830ca953dee1" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "vote" ADD CONSTRAINT "FK_db85a3f8526cbaa2865faf8637f" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "status_history" ADD CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_5669cd7280f4005df74d5cb4025" FOREIGN KEY ("announcement_id") REFERENCES "announcements"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
@@ -37,6 +39,7 @@ module.exports = class Data1681811274867 {
         await db.query(`DROP INDEX "public"."IDX_c8a3808a44e84d9a803f848c45"`)
         await db.query(`DROP INDEX "public"."IDX_141503d3c369fa78900f08d343"`)
         await db.query(`DROP INDEX "public"."IDX_472dcde086b0881656f29b94af"`)
+        await db.query(`DROP INDEX "public"."IDX_42a3d77e080f7b2830ca953dee"`)
         await db.query(`DROP INDEX "public"."IDX_541ba8781433f9ab045cc4330c"`)
         await db.query(`DROP INDEX "public"."IDX_a96b21e3831ec6466c788275fa"`)
         await db.query(`DROP INDEX "public"."IDX_07819130a716918c413e7b040f"`)
@@ -56,6 +59,7 @@ module.exports = class Data1681811274867 {
         await db.query(`DROP INDEX "public"."IDX_92d4592195fbffd27d2079c0d5"`)
         await db.query(`DROP INDEX "public"."IDX_b972906d35a68e6b2f4605b775"`)
         await db.query(`DROP INDEX "public"."IDX_a66502647e53bd5c8986c769ef"`)
+        await db.query(`ALTER TABLE "announcements" DROP CONSTRAINT "FK_42a3d77e080f7b2830ca953dee1"`)
         await db.query(`ALTER TABLE "vote" DROP CONSTRAINT "FK_db85a3f8526cbaa2865faf8637f"`)
         await db.query(`ALTER TABLE "status_history" DROP CONSTRAINT "FK_6ecfec106cbaabdc5ac1bb4fbf4"`)
         await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_5669cd7280f4005df74d5cb4025"`)

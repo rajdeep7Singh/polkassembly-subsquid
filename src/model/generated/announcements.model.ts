@@ -1,6 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
 import * as marshal from "./marshal"
 import {AnnouncementType} from "./_announcementType"
+import {Proposal} from "./proposal.model"
 
 @Entity_()
 export class Announcements {
@@ -38,6 +39,13 @@ export class Announcements {
 
     @Column_("text", {nullable: true})
     digest!: string | undefined | null
+
+    @Column_("text", {nullable: true})
+    cid!: string | undefined | null
+
+    @Index_()
+    @ManyToOne_(() => Proposal, {nullable: true})
+    proposal!: Proposal | undefined | null
 
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     code!: bigint | undefined | null
