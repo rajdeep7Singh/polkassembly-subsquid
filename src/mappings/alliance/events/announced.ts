@@ -13,7 +13,6 @@ export async function handleAnnounced(ctx: BatchContext<Store, unknown>,
     const { announcementHash, codec, version} = getAnnouncedData(ctx, item.event)
     const hexHash = toHex(announcementHash.digest)
     let cid = null
-    console.log(version, codec, announcementHash)
     if(version && codec && announcementHash.digest){
         const bytes = announcementHash.digest;
         const codeLen = varint.encodingLength(Number(announcementHash.code));
