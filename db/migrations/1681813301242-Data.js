@@ -1,8 +1,8 @@
-module.exports = class Data1681811274867 {
-    name = 'Data1681811274867'
+module.exports = class Data1681813301242 {
+    name = 'Data1681813301242'
 
     async up(db) {
-        await db.query(`CREATE TABLE "announcements" ("id" character varying NOT NULL, "hash" text NOT NULL, "index" integer, "proposer" text, "type" character varying(12), "version" text, "codec" numeric, "announcement" jsonb, "digest" text, "code" numeric, "is_removed" boolean, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, CONSTRAINT "PK_b3ad760876ff2e19d58e05dc8b0" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "announcements" ("id" character varying NOT NULL, "hash" text NOT NULL, "index" integer, "proposer" text, "type" character varying(12), "version" text, "codec" numeric, "cid" text, "announcement" jsonb, "digest" text, "code" numeric, "is_removed" boolean, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "updated_at" TIMESTAMP WITH TIME ZONE, "updated_at_block" integer, CONSTRAINT "PK_b3ad760876ff2e19d58e05dc8b0" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_34a7f0557b4fe321a981b5e18e" ON "announcements" ("hash") `)
         await db.query(`CREATE INDEX "IDX_c8a3808a44e84d9a803f848c45" ON "announcements" ("index") `)
         await db.query(`CREATE INDEX "IDX_141503d3c369fa78900f08d343" ON "announcements" ("proposer") `)

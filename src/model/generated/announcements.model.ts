@@ -33,6 +33,9 @@ export class Announcements {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     codec!: bigint | undefined | null
 
+    @Column_("text", {nullable: true})
+    cid!: string | undefined | null
+
     @Column_("jsonb", {nullable: true})
     announcement!: unknown | undefined | null
 

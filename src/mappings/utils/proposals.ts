@@ -176,7 +176,7 @@ export async function createAnnouncements(
     data: AnnouncementsData,
     type?: AnnouncementType | null
 ): Promise<Announcements> {
-    const { hash, code, codec, version, announcement } = data
+    const { hash, code, codec, version, announcement, cid } = data
 
     const associatedMotoion = await ctx.store.get(Proposal, {
         where: {
@@ -195,6 +195,7 @@ export async function createAnnouncements(
         proposer: associatedMotoion ? associatedMotoion.proposer : null,
         announcement: toJSON(announcement),
         type,
+        cid,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),

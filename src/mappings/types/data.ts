@@ -38,6 +38,7 @@ export interface AnnouncementsData {
     code?: bigint
     announcement?: Multihash
     codec?: bigint
+    cid?: string
 }
 
 export interface ReferendumData extends BaseProposalData {

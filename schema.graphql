@@ -78,6 +78,7 @@ type Announcements @entity {
   type: AnnouncementType @index
   version: String
   codec: BigInt
+  cid: String
   announcement: JSON
   digest: String
   code: BigInt
