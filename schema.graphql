@@ -79,6 +79,7 @@ type Announcements @entity {
   version: String
   codec: BigInt
   cid: String
+  proposal: Proposal
   announcement: JSON
   digest: String
   code: BigInt

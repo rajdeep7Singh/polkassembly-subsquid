@@ -196,6 +196,7 @@ export async function createAnnouncements(
         announcement: toJSON(announcement),
         type,
         cid,
+        proposal: associatedMotoion ? associatedMotoion : null,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
