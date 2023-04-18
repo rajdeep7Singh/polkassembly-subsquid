@@ -70,8 +70,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 err: false
             }
         }
-    }else if (event.isV9360) {
-        const {proposalHash, result} = event.asV9360
+    }else if (event.isV9320) {
+        const {proposalHash, result} = event.asV9320
         if (result.__kind == 'Err') {
             return {
                 proposalHash,

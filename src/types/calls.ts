@@ -1,8 +1,11 @@
 import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
 import * as v9290 from './v9290'
+import * as v9320 from './v9320'
 import * as v9360 from './v9360'
 import * as v9370 from './v9370'
+import * as v9380 from './v9380'
+import * as v9400 from './v9400'
 
 export class AllianceAnnounceCall {
     private readonly _chain: Chain
@@ -190,7 +193,7 @@ export class AllianceMotionCloseCall {
      * - up to 3 events
      * # </weight>
      */
-    get isV9360(): boolean {
+    get isV9320(): boolean {
         return this._chain.getCallHash('AllianceMotion.close') === 'a88911953f51bddf0f0aeafa7caa7ca904d30cdb24f940ff177d2acf7088d3bd'
     }
 
@@ -228,8 +231,8 @@ export class AllianceMotionCloseCall {
      * - up to 3 events
      * # </weight>
      */
-    get asV9360(): {proposalHash: Uint8Array, index: number, proposalWeightBound: v9360.Weight, lengthBound: number} {
-        assert(this.isV9360)
+    get asV9320(): {proposalHash: Uint8Array, index: number, proposalWeightBound: v9320.Weight, lengthBound: number} {
+        assert(this.isV9320)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -279,6 +282,41 @@ export class AllianceMotionExecuteCall {
      */
     get asV9290(): {proposal: v9290.Call, lengthBound: number} {
         assert(this.isV9290)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
+     *   `proposal`
+     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
+     * - 1 event
+     * # </weight>
+     */
+    get isV9320(): boolean {
+        return this._chain.getCallHash('AllianceMotion.execute') === '75838bc587d0b897fc172e09ab8db85d2fbe4d9628184a3c5c6dbae5b8c98b31'
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
+     *   `proposal`
+     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
+     * - 1 event
+     * # </weight>
+     */
+    get asV9320(): {proposal: v9320.Call, lengthBound: number} {
+        assert(this.isV9320)
         return this._chain.decodeCall(this.call)
     }
 
@@ -349,6 +387,72 @@ export class AllianceMotionExecuteCall {
      */
     get asV9370(): {proposal: v9370.Call, lengthBound: number} {
         assert(this.isV9370)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
+     *   `proposal`
+     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
+     * - 1 event
+     * # </weight>
+     */
+    get isV9380(): boolean {
+        return this._chain.getCallHash('AllianceMotion.execute') === '0f87ec1a8dd5c91239bd09d5342e4e1171d6f29a9a7b642aa5850ad98293ecab'
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
+     *   `proposal`
+     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
+     * - 1 event
+     * # </weight>
+     */
+    get asV9380(): {proposal: v9380.Call, lengthBound: number} {
+        assert(this.isV9380)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * ## Complexity:
+     * - `O(B + M + P)` where:
+     * - `B` is `proposal` size in bytes (length-fee-bounded)
+     * - `M` members-count (code-bounded)
+     * - `P` complexity of dispatching `proposal`
+     */
+    get isV9400(): boolean {
+        return this._chain.getCallHash('AllianceMotion.execute') === 'dd18d7fba44e1d51407700dc2446f5973c7e0cb97fc47acc88cb683223d5fee6'
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * ## Complexity:
+     * - `O(B + M + P)` where:
+     * - `B` is `proposal` size in bytes (length-fee-bounded)
+     * - `M` members-count (code-bounded)
+     * - `P` complexity of dispatching `proposal`
+     */
+    get asV9400(): {proposal: v9400.Call, lengthBound: number} {
+        assert(this.isV9400)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -430,6 +534,73 @@ export class AllianceMotionProposeCall {
      */
     get asV9290(): {threshold: number, proposal: v9290.Call, lengthBound: number} {
         assert(this.isV9290)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     * - DB:
+     *   - 1 storage read `is_member` (codec `O(M)`)
+     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
+     *   - DB accesses influenced by `threshold`:
+     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
+     *     - OR proposal insertion (`threshold <= 2`)
+     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
+     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
+     *       - 1 storage write `ProposalOf` (codec `O(B)`)
+     *       - 1 storage write `Voting` (codec `O(M)`)
+     *   - 1 event
+     * # </weight>
+     */
+    get isV9320(): boolean {
+        return this._chain.getCallHash('AllianceMotion.propose') === '41f74228bb7af6889c1b9e32a01c942347ee58d8eae154867aed2f2ee2cbb8e4'
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     * - DB:
+     *   - 1 storage read `is_member` (codec `O(M)`)
+     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
+     *   - DB accesses influenced by `threshold`:
+     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
+     *     - OR proposal insertion (`threshold <= 2`)
+     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
+     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
+     *       - 1 storage write `ProposalOf` (codec `O(B)`)
+     *       - 1 storage write `Voting` (codec `O(M)`)
+     *   - 1 event
+     * # </weight>
+     */
+    get asV9320(): {threshold: number, proposal: v9320.Call, lengthBound: number} {
+        assert(this.isV9320)
         return this._chain.decodeCall(this.call)
     }
 
@@ -564,6 +735,114 @@ export class AllianceMotionProposeCall {
      */
     get asV9370(): {threshold: number, proposal: v9370.Call, lengthBound: number} {
         assert(this.isV9370)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     * - DB:
+     *   - 1 storage read `is_member` (codec `O(M)`)
+     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
+     *   - DB accesses influenced by `threshold`:
+     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
+     *     - OR proposal insertion (`threshold <= 2`)
+     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
+     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
+     *       - 1 storage write `ProposalOf` (codec `O(B)`)
+     *       - 1 storage write `Voting` (codec `O(M)`)
+     *   - 1 event
+     * # </weight>
+     */
+    get isV9380(): boolean {
+        return this._chain.getCallHash('AllianceMotion.propose') === '3a7ae87515f100b1988845480b69fbb773107718bcddde35949df052fe826b2f'
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * # <weight>
+     * ## Weight
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     * - DB:
+     *   - 1 storage read `is_member` (codec `O(M)`)
+     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
+     *   - DB accesses influenced by `threshold`:
+     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
+     *     - OR proposal insertion (`threshold <= 2`)
+     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
+     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
+     *       - 1 storage write `ProposalOf` (codec `O(B)`)
+     *       - 1 storage write `Voting` (codec `O(M)`)
+     *   - 1 event
+     * # </weight>
+     */
+    get asV9380(): {threshold: number, proposal: v9380.Call, lengthBound: number} {
+        assert(this.isV9380)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * ## Complexity
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     */
+    get isV9400(): boolean {
+        return this._chain.getCallHash('AllianceMotion.propose') === '9fceb3b4825287739c8c169b2327b7c93fe339bd9a4dfe253cc1b75227b017d7'
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * ## Complexity
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     */
+    get asV9400(): {threshold: number, proposal: v9400.Call, lengthBound: number} {
+        assert(this.isV9400)
         return this._chain.decodeCall(this.call)
     }
 }

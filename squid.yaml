@@ -1,8 +1,8 @@
 manifestVersion: subsquid.io/v0.1
-name: collectives-polkassembly
+name: westend-collectives
 version: 1
 description: |-
-  Polkadot-Collective's governance proposals
+  Westend-Collective's governance proposals
 
 build:
 

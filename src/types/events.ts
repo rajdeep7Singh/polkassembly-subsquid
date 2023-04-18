@@ -1,7 +1,7 @@
 import assert from 'assert'
 import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
 import * as v9290 from './v9290'
-import * as v9360 from './v9360'
+import * as v9320 from './v9320'
 
 export class AllianceAnnouncedEvent {
     private readonly _chain: Chain
@@ -237,15 +237,15 @@ export class AllianceMotionExecutedEvent {
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    get isV9360(): boolean {
+    get isV9320(): boolean {
         return this._chain.getEventHash('AllianceMotion.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
     }
 
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    get asV9360(): {proposalHash: Uint8Array, result: v9360.Type_82} {
-        assert(this.isV9360)
+    get asV9320(): {proposalHash: Uint8Array, result: v9320.Type_82} {
+        assert(this.isV9320)
         return this._chain.decodeEvent(this.event)
     }
 }

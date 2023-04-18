@@ -4,12 +4,12 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'collecitves',
+        name: 'westend-collecitves',
         prefix: 0,
     },
     dataSource: {
-        archive: 'https://collectives.archive.subsquid.io/graphql',
-        chain: 'wss://polkadot-collectives-rpc.polkadot.io',
+        archive: 'https://westend-collectives.archive.subsquid.io/graphql',
+        chain: 'wss://westend-collectives-rpc.polkadot.io',
     },
     typesBundle: 'collectives',
     batchSize: 500,

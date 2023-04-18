@@ -124,15 +124,22 @@ export async function createAllianceMotion(
     const { index, hash, proposer, threshold, status, callData } = data
 
     const type = ProposalType.AllianceMotion
-
+    let digest = null
     const id = await getProposalId(ctx.store, type)
 
+    if(callData){
+        if(callData.args && callData.args.announcement){
+            const announcement: any = callData.args.announcement
+            digest = announcement.hash?.digest
+        }
+    }
 
     const proposal = new Proposal({
         id,
         index,
         type,
         hash,
+        digest,
         proposer,
         threshold: new MotionThreshold({
             value: threshold,
@@ -171,21 +178,33 @@ export async function createAnnouncements(
 ): Promise<Announcements> {
     const { hash, code, codec, version, announcement } = data
 
+    const associatedMotoion = await ctx.store.get(Proposal, {
+        where: {
+            type: ProposalType.AllianceMotion,
+            digest: hash,
+        }
+    })
+
     const announcementRow = new Announcements({
+        id: randomUUID(),
         hash,
         code,
         codec,
         version,
-        announcement,
+        digest: hash,
+        proposer: associatedMotoion ? associatedMotoion.proposer : null,
+        announcement: toJSON(announcement),
         type,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
         updatedAtBlock: header.height,
     })
-
     await ctx.store.insert(announcementRow)
-
+    if(associatedMotoion){
+        associatedMotoion.announcement = announcementRow
+        await ctx.store.save(associatedMotoion)
+    }
     return announcementRow
 }
 

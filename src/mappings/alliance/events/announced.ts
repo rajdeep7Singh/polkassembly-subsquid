@@ -11,7 +11,6 @@ export async function handleAnnounced(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Alliance.Announced', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
     const { announcementHash, codec, version} = getAnnouncedData(ctx, item.event)
-
     const hexHash = toHex(announcementHash.digest)
  
     await createAnnouncements(ctx, header, {

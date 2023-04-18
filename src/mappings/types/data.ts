@@ -1,4 +1,5 @@
 import { ProposalStatus, ProposalType, ReferendumThresholdType } from '../../model'
+import { Multihash } from '../../types/v9400'
 
 export type IndexProposal =
     | ProposalType.AllianceMotion
@@ -35,7 +36,7 @@ export interface AnnouncementsData {
     hash: string
     version?: string
     code?: bigint
-    announcement?: any
+    announcement?: Multihash
     codec?: bigint
 }
 

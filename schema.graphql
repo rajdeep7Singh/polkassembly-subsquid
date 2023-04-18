@@ -48,6 +48,8 @@ type Proposal @entity {
   description: String
   proposalArgumentHash: String
   callData: ProposedCall
+  digest: String
+  announcement: Announcements
   voting: [Vote!] @derivedFrom(field: "proposal")
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")

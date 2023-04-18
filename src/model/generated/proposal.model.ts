@@ -1,8 +1,9 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {ProposalType} from "./_proposalType"
 import {Threshold, fromJsonThreshold} from "./_threshold"
 import {ProposedCall} from "./_proposedCall"
+import {Announcements} from "./announcements.model"
 import {Vote} from "./vote.model"
 import {ProposalStatus} from "./_proposalStatus"
 import {StatusHistory} from "./statusHistory.model"
@@ -49,6 +50,13 @@ export class Proposal {
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
     callData!: ProposedCall | undefined | null
+
+    @Column_("text", {nullable: true})
+    digest!: string | undefined | null
+
+    @Index_()
+    @ManyToOne_(() => Announcements, {nullable: true})
+    announcement!: Announcements | undefined | null
 
     @OneToMany_(() => Vote, e => e.proposal)
     voting!: Vote[]
