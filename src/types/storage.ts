@@ -17,6 +17,7 @@ import * as v1900 from './v1900'
 import * as v2000 from './v2000'
 import * as v2100 from './v2100'
 import * as v2201 from './v2201'
+import * as v2301 from './v2301'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -1195,6 +1196,21 @@ export class ReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV2201)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV2301(): boolean {
+        return this.getTypeHash() === '70abc042c12c426f6339dc39d29aa299be51323720151e94be67d887bb2a0157'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV2301(): ReferendaReferendumInfoForStorageV2301 {
+        assert(this.isV2301)
+        return this as any
+    }
 }
 
 /**
@@ -1263,6 +1279,23 @@ export interface ReferendaReferendumInfoForStorageV2201 {
     getPairs(key: number): Promise<[k: number, v: v2201.Type_556][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2201.Type_556][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2201.Type_556][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV2301 {
+    get(key: number): Promise<(v2301.Type_571 | undefined)>
+    getAll(): Promise<v2301.Type_571[]>
+    getMany(keys: number[]): Promise<(v2301.Type_571 | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v2301.Type_571][]>
+    getPairs(key: number): Promise<[k: number, v: v2301.Type_571][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2301.Type_571][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2301.Type_571][]>
 }
 
 export class SystemAccountStorage extends StorageBase {
