@@ -181,7 +181,10 @@ export async function createAnnouncements(
         where: {
             type: ProposalType.AllianceMotion,
             digest: hash,
-        }
+        },
+        order: {
+            createdAtBlock: 'DESC',
+        },
     })
 
     const announcementRow = new Announcements({
