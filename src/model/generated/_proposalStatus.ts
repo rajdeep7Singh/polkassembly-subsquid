@@ -7,6 +7,8 @@ export enum ProposalStatus {
     Approved = "Approved",
     Disapproved = "Disapproved",
     Closed = "Closed",
+    Announced = "Announced",
+    Removed = "Removed",
     Added = "Added",
     Rejected = "Rejected",
     Active = "Active",

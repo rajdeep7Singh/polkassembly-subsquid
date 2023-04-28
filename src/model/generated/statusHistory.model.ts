@@ -1,5 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {Proposal} from "./proposal.model"
+import {Announcements} from "./announcements.model"
 import {ProposalStatus} from "./_proposalStatus"
 
 @Entity_()
@@ -13,7 +14,11 @@ export class StatusHistory {
 
     @Index_()
     @ManyToOne_(() => Proposal, {nullable: true})
-    proposal!: Proposal
+    proposal!: Proposal | undefined | null
+
+    @Index_()
+    @ManyToOne_(() => Announcements, {nullable: true})
+    announcement!: Announcements | undefined | null
 
     @Column_("varchar", {length: 11, nullable: false})
     status!: ProposalStatus

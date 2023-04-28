@@ -1,7 +1,9 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {AnnouncementType} from "./_announcementType"
 import {Proposal} from "./proposal.model"
+import {ProposalStatus} from "./_proposalStatus"
+import {StatusHistory} from "./statusHistory.model"
 
 @Entity_()
 export class Announcements {
@@ -52,6 +54,12 @@ export class Announcements {
 
     @Column_("bool", {nullable: true})
     isRemoved!: boolean | undefined | null
+
+    @Column_("varchar", {length: 11, nullable: false})
+    status!: ProposalStatus
+
+    @OneToMany_(() => StatusHistory, e => e.announcement)
+    statusHistory!: StatusHistory[]
 
     @Index_()
     @Column_("timestamp with time zone", {nullable: false})
