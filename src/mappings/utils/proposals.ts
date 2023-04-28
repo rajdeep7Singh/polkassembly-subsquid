@@ -199,6 +199,7 @@ export async function createAnnouncements(
         announcement: toJSON(announcement),
         type,
         cid,
+        status: ProposalStatus.Announced,
         proposal: associatedMotoion ? associatedMotoion : null,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
@@ -206,6 +207,16 @@ export async function createAnnouncements(
         updatedAtBlock: header.height,
     })
     await ctx.store.insert(announcementRow)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: announcementRow.createdAtBlock,
+            timestamp: announcementRow.createdAt,
+            status: announcementRow.status,
+            announcement: announcementRow,
+        })
+    )
     if(associatedMotoion){
         associatedMotoion.announcement = announcementRow
         await ctx.store.save(associatedMotoion)

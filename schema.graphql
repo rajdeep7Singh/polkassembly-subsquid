@@ -13,6 +13,8 @@ enum ProposalStatus {
   Approved
   Disapproved
   Closed
+  Announced
+  Removed
   Added
   Rejected
   Active
@@ -84,6 +86,8 @@ type Announcements @entity {
   digest: String
   code: BigInt
   isRemoved: Boolean
+  status: ProposalStatus!
+  statusHistory: [StatusHistory!] @derivedFrom(field: "announcement")
   createdAt: DateTime! @index
   createdAtBlock: Int! @index
   updatedAt: DateTime @index
@@ -99,7 +103,8 @@ type Tally {
 
 type StatusHistory @entity {
   id: ID!
-  proposal: Proposal!
+  proposal: Proposal
+  announcement: Announcements
   status: ProposalStatus!
   block: Int!
   timestamp: DateTime!
