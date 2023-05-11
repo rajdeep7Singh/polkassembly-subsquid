@@ -9,7 +9,7 @@ const config: ProcessorConfig<Store> = {
     },
     dataSource: {
         chain: 'wss://integritee-kusama.api.onfinality.io/public-ws',
-        archive: lookupArchive('integritee-network', { release: 'FireSquid' }),
+        archive: 'https://integritee-network.archive.subsquid.io/graphql',
     },
     typesBundle: 'kusama',
     batchSize: 500,

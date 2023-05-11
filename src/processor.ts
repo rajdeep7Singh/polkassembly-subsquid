@@ -8,7 +8,7 @@ import assert from 'assert'
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://integritee-kusama.api.onfinality.io/public-ws',
-        archive: lookupArchive('integritee-network', { release: 'FireSquid' }),
+        archive: 'https://integritee-network.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
