@@ -1,6 +1,6 @@
 import { CouncilProposalOfStorage, Instance1CollectiveProposalOfStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
-import { Call } from '../../types/v9170'
+import { Call } from '../../types/v301'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'

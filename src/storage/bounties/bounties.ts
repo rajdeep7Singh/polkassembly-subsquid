@@ -18,8 +18,8 @@ async function getBountyStorageData(ctx: BatchContext<Store, unknown>, index: nu
     const storage = new BountiesBountiesStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.asV9111.get(index)
+    if (storage.isV295) {
+        return await storage.asV295.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -29,8 +29,8 @@ async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, index: 
     const storage = new TreasuryBountiesStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV2025) {
-        return await storage.asV2025.get(index)
+    if (storage.isV266) {
+        return await storage.asV266.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -51,8 +51,8 @@ async function getBountyDescriptionStorageData(ctx: BatchContext<Store, unknown>
     const storage = new BountiesBountyDescriptionsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV9111) {
-        return await storage.asV9111.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV295) {
+        return await storage.asV295.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -62,8 +62,8 @@ async function getTreasuryDescriptionStorageData(ctx: BatchContext<Store, unknow
     const storage = new TreasuryBountyDescriptionsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV2025) {
-        return await storage.asV2025.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV266) {
+        return await storage.asV266.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
