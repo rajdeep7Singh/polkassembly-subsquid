@@ -20,6 +20,9 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
         where: {
             type: ProposalType.AllianceMotion, 
             hash: hexHash
+        },
+        order: {
+            createdAtBlock: 'DESC'
         }
     })
 
