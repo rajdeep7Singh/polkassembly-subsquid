@@ -152,6 +152,14 @@ export interface Proposal_Scheduler {
     value: SchedulerCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_175
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_suicide
 
 /**
@@ -3703,135 +3711,6 @@ export interface VestingCall_vested_transfer {
 
 export type SchedulerCall = never
 
-export interface ChangesTrieConfiguration {
-    digestInterval: number
-    digestLevels: number
-}
-
-export interface Header {
-    parentHash: Uint8Array
-    number: number
-    stateRoot: Uint8Array
-    extrinsicsRoot: Uint8Array
-    digest: Digest
-}
-
-export type RewardDestination = RewardDestination_Staked | RewardDestination_Stash | RewardDestination_Controller | RewardDestination_Account | RewardDestination_None
-
-export interface RewardDestination_Staked {
-    __kind: 'Staked'
-}
-
-export interface RewardDestination_Stash {
-    __kind: 'Stash'
-}
-
-export interface RewardDestination_Controller {
-    __kind: 'Controller'
-}
-
-export interface RewardDestination_Account {
-    __kind: 'Account'
-    value: Uint8Array
-}
-
-export interface RewardDestination_None {
-    __kind: 'None'
-}
-
-export interface ValidatorPrefs {
-    commission: number
-}
-
-export interface CompactAssignments {
-    votes1: [number, [number, number][], number][]
-    votes2: [number, [number, number][], number][]
-    votes3: [number, [number, number][], number][]
-    votes4: [number, [number, number][], number][]
-    votes5: [number, [number, number][], number][]
-    votes6: [number, [number, number][], number][]
-    votes7: [number, [number, number][], number][]
-    votes8: [number, [number, number][], number][]
-    votes9: [number, [number, number][], number][]
-    votes10: [number, [number, number][], number][]
-    votes11: [number, [number, number][], number][]
-    votes12: [number, [number, number][], number][]
-    votes13: [number, [number, number][], number][]
-    votes14: [number, [number, number][], number][]
-    votes15: [number, [number, number][], number][]
-    votes16: [number, [number, number][], number][]
-}
-
-export interface Heartbeat {
-    blockNumber: number
-    networkState: OpaqueNetworkState
-    sessionIndex: number
-    authorityIndex: number
-    validatorsLen: number
-}
-
-export type AccountVote = AccountVote_Standard | AccountVote_Split
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    value: AccountVoteStandard
-}
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    value: AccountVoteSplit
-}
-
-export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
-
-export interface Conviction_None {
-    __kind: 'None'
-}
-
-export interface Conviction_Locked1x {
-    __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-    __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-    __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-    __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-    __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-    __kind: 'Locked6x'
-}
-
-export interface AttestedCandidate {
-    candidate: AbridgedCandidateReceipt
-    validityVotes: ValidityAttestation[]
-    validatorIndices: Uint8Array
-}
-
-export interface DoubleVoteReport {
-    identity: Uint8Array
-    first: [Statement, Uint8Array]
-    second: [Statement, Uint8Array]
-    proof: MembershipProof
-    signingContext: SigningContext
-}
-
-export interface ParaInfo {
-    manager: Uint8Array
-    deposit: bigint
-    locked: boolean
-}
-
 export type Type_175 = Type_175_System | Type_175_Babe | Type_175_Timestamp | Type_175_Indices | Type_175_Balances | Type_175_Authorship | Type_175_Staking | Type_175_Offences | Type_175_Session | Type_175_FinalityTracker | Type_175_Grandpa | Type_175_ImOnline | Type_175_AuthorityDiscovery | Type_175_Democracy | Type_175_Council | Type_175_TechnicalCommittee | Type_175_ElectionsPhragmen | Type_175_TechnicalMembership | Type_175_Treasury | Type_175_Claims | Type_175_Parachains | Type_175_Attestations | Type_175_Slots | Type_175_Registrar | Type_175_Utility | Type_175_Identity | Type_175_Society | Type_175_Recovery | Type_175_Vesting | Type_175_Scheduler
 
 export interface Type_175_System {
@@ -3982,6 +3861,152 @@ export interface Type_175_Vesting {
 export interface Type_175_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
+}
+
+export interface Header {
+    parentHash: Uint8Array
+    number: number
+    stateRoot: Uint8Array
+    extrinsicsRoot: Uint8Array
+    digest: Digest
+}
+
+export type RewardDestination = RewardDestination_Staked | RewardDestination_Stash | RewardDestination_Controller | RewardDestination_Account | RewardDestination_None
+
+export interface RewardDestination_Staked {
+    __kind: 'Staked'
+}
+
+export interface RewardDestination_Stash {
+    __kind: 'Stash'
+}
+
+export interface RewardDestination_Controller {
+    __kind: 'Controller'
+}
+
+export interface RewardDestination_Account {
+    __kind: 'Account'
+    value: Uint8Array
+}
+
+export interface RewardDestination_None {
+    __kind: 'None'
+}
+
+export interface ValidatorPrefs {
+    commission: number
+}
+
+export interface CompactAssignments {
+    votes1: [number, [number, number][], number][]
+    votes2: [number, [number, number][], number][]
+    votes3: [number, [number, number][], number][]
+    votes4: [number, [number, number][], number][]
+    votes5: [number, [number, number][], number][]
+    votes6: [number, [number, number][], number][]
+    votes7: [number, [number, number][], number][]
+    votes8: [number, [number, number][], number][]
+    votes9: [number, [number, number][], number][]
+    votes10: [number, [number, number][], number][]
+    votes11: [number, [number, number][], number][]
+    votes12: [number, [number, number][], number][]
+    votes13: [number, [number, number][], number][]
+    votes14: [number, [number, number][], number][]
+    votes15: [number, [number, number][], number][]
+    votes16: [number, [number, number][], number][]
+}
+
+export interface Heartbeat {
+    blockNumber: number
+    networkState: OpaqueNetworkState
+    sessionIndex: number
+    authorityIndex: number
+    validatorsLen: number
+}
+
+export type AccountVote = AccountVote_Standard | AccountVote_Split
+
+export interface AccountVote_Standard {
+    __kind: 'Standard'
+    value: AccountVoteStandard
+}
+
+export interface AccountVote_Split {
+    __kind: 'Split'
+    value: AccountVoteSplit
+}
+
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export interface AttestedCandidate {
+    candidate: AbridgedCandidateReceipt
+    validityVotes: ValidityAttestation[]
+    validatorIndices: Uint8Array
+}
+
+export interface DoubleVoteReport {
+    identity: Uint8Array
+    first: [Statement, Uint8Array]
+    second: [Statement, Uint8Array]
+    proof: MembershipProof
+    signingContext: SigningContext
+}
+
+export interface ParaInfo {
+    manager: Uint8Array
+    deposit: bigint
+    locked: boolean
 }
 
 export interface Timepoint {
@@ -4241,6 +4266,33 @@ export interface VestingInfo {
     locked: bigint
     perBlock: bigint
     startingBlock: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface Digest {

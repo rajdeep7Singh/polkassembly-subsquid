@@ -237,6 +237,14 @@ export interface Proposal_XcmPallet {
     value: XcmPalletCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_138
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
 
 /**
@@ -5376,178 +5384,6 @@ export interface XcmPalletCall_execute {
     maxWeight: bigint
 }
 
-export interface ChangesTrieConfiguration {
-    digestInterval: number
-    digestLevels: number
-}
-
-export interface BabeEquivocationProof {
-    offender: Uint8Array
-    slotNumber: bigint
-    firstHeader: Header
-    secondHeader: Header
-}
-
-export interface KeyOwnerProof {
-    session: number
-    trieNodes: Uint8Array[]
-    validatorCount: number
-}
-
-export type NextConfigDescriptor = NextConfigDescriptor_V0 | NextConfigDescriptor_V1
-
-export interface NextConfigDescriptor_V0 {
-    __kind: 'V0'
-}
-
-export interface NextConfigDescriptor_V1 {
-    __kind: 'V1'
-    value: NextConfigDescriptorV1
-}
-
-export type LookupSource = LookupSource_Id | LookupSource_Index | LookupSource_Raw | LookupSource_Address32 | LookupSource_Address20
-
-export interface LookupSource_Id {
-    __kind: 'Id'
-    value: Uint8Array
-}
-
-export interface LookupSource_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface LookupSource_Raw {
-    __kind: 'Raw'
-    value: Uint8Array
-}
-
-export interface LookupSource_Address32 {
-    __kind: 'Address32'
-    value: Uint8Array
-}
-
-export interface LookupSource_Address20 {
-    __kind: 'Address20'
-    value: Uint8Array
-}
-
-export interface Header {
-    parentHash: Uint8Array
-    number: number
-    stateRoot: Uint8Array
-    extrinsicsRoot: Uint8Array
-    digest: Digest
-}
-
-export type RewardDestination = RewardDestination_Staked | RewardDestination_Stash | RewardDestination_Controller | RewardDestination_Account | RewardDestination_None
-
-export interface RewardDestination_Staked {
-    __kind: 'Staked'
-}
-
-export interface RewardDestination_Stash {
-    __kind: 'Stash'
-}
-
-export interface RewardDestination_Controller {
-    __kind: 'Controller'
-}
-
-export interface RewardDestination_Account {
-    __kind: 'Account'
-    value: Uint8Array
-}
-
-export interface RewardDestination_None {
-    __kind: 'None'
-}
-
-export interface ValidatorPrefs {
-    commission: number
-    blocked: boolean
-}
-
-export interface GrandpaEquivocationProof {
-    setId: bigint
-    equivocation: GrandpaEquivocation
-}
-
-export interface Heartbeat {
-    blockNumber: number
-    networkState: OpaqueNetworkState
-    sessionIndex: number
-    authorityIndex: number
-    validatorsLen: number
-}
-
-export type AccountVote = AccountVote_Standard | AccountVote_Split
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    value: AccountVoteStandard
-}
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    value: AccountVoteSplit
-}
-
-export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
-
-export interface Conviction_None {
-    __kind: 'None'
-}
-
-export interface Conviction_Locked1x {
-    __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-    __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-    __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-    __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-    __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-    __kind: 'Locked6x'
-}
-
-export type Renouncing = Renouncing_Member | Renouncing_RunnerUp | Renouncing_Candidate
-
-export interface Renouncing_Member {
-    __kind: 'Member'
-}
-
-export interface Renouncing_RunnerUp {
-    __kind: 'RunnerUp'
-}
-
-export interface Renouncing_Candidate {
-    __kind: 'Candidate'
-    value: number
-}
-
-export type StatementKind = StatementKind_Regular | StatementKind_Saft
-
-export interface StatementKind_Regular {
-    __kind: 'Regular'
-}
-
-export interface StatementKind_Saft {
-    __kind: 'Saft'
-}
-
 export type Type_138 = Type_138_System | Type_138_Babe | Type_138_Timestamp | Type_138_Indices | Type_138_Balances | Type_138_Authorship | Type_138_Staking | Type_138_Offences | Type_138_Session | Type_138_Grandpa | Type_138_ImOnline | Type_138_AuthorityDiscovery | Type_138_Democracy | Type_138_Council | Type_138_TechnicalCommittee | Type_138_PhragmenElection | Type_138_TechnicalMembership | Type_138_Treasury | Type_138_Claims | Type_138_Utility | Type_138_Identity | Type_138_Society | Type_138_Recovery | Type_138_Vesting | Type_138_Scheduler | Type_138_Proxy | Type_138_Multisig | Type_138_Bounties | Type_138_Tips | Type_138_ElectionProviderMultiPhase | Type_138_Gilt | Type_138_ParachainsConfiguration | Type_138_ParasShared | Type_138_ParasInclusion | Type_138_ParasInherent | Type_138_ParasScheduler | Type_138_Paras | Type_138_ParasInitializer | Type_138_ParasDmp | Type_138_ParasUmp | Type_138_ParasHrmp | Type_138_ParasSessionInfo | Type_138_Registrar | Type_138_Slots | Type_138_Auctions | Type_138_Crowdloan | Type_138_XcmPallet
 
 export interface Type_138_System {
@@ -5783,6 +5619,200 @@ export interface Type_138_Crowdloan {
 export interface Type_138_XcmPallet {
     __kind: 'XcmPallet'
     value: XcmPalletCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee | PalletsOrigin_XcmPallet
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_XcmPallet {
+    __kind: 'XcmPallet'
+    value: XcmOrigin
+}
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
+}
+
+export interface BabeEquivocationProof {
+    offender: Uint8Array
+    slotNumber: bigint
+    firstHeader: Header
+    secondHeader: Header
+}
+
+export interface KeyOwnerProof {
+    session: number
+    trieNodes: Uint8Array[]
+    validatorCount: number
+}
+
+export type NextConfigDescriptor = NextConfigDescriptor_V0 | NextConfigDescriptor_V1
+
+export interface NextConfigDescriptor_V0 {
+    __kind: 'V0'
+}
+
+export interface NextConfigDescriptor_V1 {
+    __kind: 'V1'
+    value: NextConfigDescriptorV1
+}
+
+export type LookupSource = LookupSource_Id | LookupSource_Index | LookupSource_Raw | LookupSource_Address32 | LookupSource_Address20
+
+export interface LookupSource_Id {
+    __kind: 'Id'
+    value: Uint8Array
+}
+
+export interface LookupSource_Index {
+    __kind: 'Index'
+    value: number
+}
+
+export interface LookupSource_Raw {
+    __kind: 'Raw'
+    value: Uint8Array
+}
+
+export interface LookupSource_Address32 {
+    __kind: 'Address32'
+    value: Uint8Array
+}
+
+export interface LookupSource_Address20 {
+    __kind: 'Address20'
+    value: Uint8Array
+}
+
+export interface Header {
+    parentHash: Uint8Array
+    number: number
+    stateRoot: Uint8Array
+    extrinsicsRoot: Uint8Array
+    digest: Digest
+}
+
+export type RewardDestination = RewardDestination_Staked | RewardDestination_Stash | RewardDestination_Controller | RewardDestination_Account | RewardDestination_None
+
+export interface RewardDestination_Staked {
+    __kind: 'Staked'
+}
+
+export interface RewardDestination_Stash {
+    __kind: 'Stash'
+}
+
+export interface RewardDestination_Controller {
+    __kind: 'Controller'
+}
+
+export interface RewardDestination_Account {
+    __kind: 'Account'
+    value: Uint8Array
+}
+
+export interface RewardDestination_None {
+    __kind: 'None'
+}
+
+export interface ValidatorPrefs {
+    commission: number
+    blocked: boolean
+}
+
+export interface GrandpaEquivocationProof {
+    setId: bigint
+    equivocation: GrandpaEquivocation
+}
+
+export interface Heartbeat {
+    blockNumber: number
+    networkState: OpaqueNetworkState
+    sessionIndex: number
+    authorityIndex: number
+    validatorsLen: number
+}
+
+export type AccountVote = AccountVote_Standard | AccountVote_Split
+
+export interface AccountVote_Standard {
+    __kind: 'Standard'
+    value: AccountVoteStandard
+}
+
+export interface AccountVote_Split {
+    __kind: 'Split'
+    value: AccountVoteSplit
+}
+
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export type Renouncing = Renouncing_Member | Renouncing_RunnerUp | Renouncing_Candidate
+
+export interface Renouncing_Member {
+    __kind: 'Member'
+}
+
+export interface Renouncing_RunnerUp {
+    __kind: 'RunnerUp'
+}
+
+export interface Renouncing_Candidate {
+    __kind: 'Candidate'
+    value: number
+}
+
+export type StatementKind = StatementKind_Regular | StatementKind_Saft
+
+export interface StatementKind_Regular {
+    __kind: 'Regular'
+}
+
+export interface StatementKind_Saft {
+    __kind: 'Saft'
 }
 
 export interface IdentityInfo {
@@ -6308,6 +6338,40 @@ export interface MultiAsset_ConcreteNonFungible {
     __kind: 'ConcreteNonFungible'
     class: MultiLocationV0
     instance: AssetInstanceV0
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export type XcmOrigin = XcmOrigin_Xcm
+
+export interface XcmOrigin_Xcm {
+    __kind: 'Xcm'
+    value: MultiLocation
 }
 
 export interface NextConfigDescriptorV1 {

@@ -252,6 +252,14 @@ export interface Call_XcmPallet {
     value: XcmPalletCall
 }
 
+export interface ScheduledV2 {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Call
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
 
 export interface DispatchError_Other {
@@ -5812,6 +5820,38 @@ export interface XcmPalletCall_limited_teleport_assets {
     weightLimit: V2WeightLimit
 }
 
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_319
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_320
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_XcmPallet {
+    __kind: 'XcmPallet'
+    value: Type_322
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
 
 export interface TokenError_NoFunds {
@@ -6029,38 +6069,6 @@ export interface StatementKind_Regular {
 
 export interface StatementKind_Saft {
     __kind: 'Saft'
-}
-
-export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
-
-export interface OriginCaller_Council {
-    __kind: 'Council'
-    value: Type_319
-}
-
-export interface OriginCaller_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: Type_320
-}
-
-export interface OriginCaller_ParachainsOrigin {
-    __kind: 'ParachainsOrigin'
-    value: Origin
-}
-
-export interface OriginCaller_XcmPallet {
-    __kind: 'XcmPallet'
-    value: Type_322
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
 }
 
 export interface IdentityInfo {
@@ -6488,41 +6496,6 @@ export interface V2WeightLimit_Limited {
     value: bigint
 }
 
-export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
-
-export interface AllowedSlots_PrimarySlots {
-    __kind: 'PrimarySlots'
-}
-
-export interface AllowedSlots_PrimaryAndSecondaryPlainSlots {
-    __kind: 'PrimaryAndSecondaryPlainSlots'
-}
-
-export interface AllowedSlots_PrimaryAndSecondaryVRFSlots {
-    __kind: 'PrimaryAndSecondaryVRFSlots'
-}
-
-export interface Digest {
-    logs: DigestItem[]
-}
-
-export type Equivocation = Equivocation_Prevote | Equivocation_Precommit
-
-export interface Equivocation_Prevote {
-    __kind: 'Prevote'
-    value: Type_256
-}
-
-export interface Equivocation_Precommit {
-    __kind: 'Precommit'
-    value: Type_261
-}
-
-export interface OpaqueNetworkState {
-    peerId: Uint8Array
-    externalAddresses: Uint8Array[]
-}
-
 export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
 
 export interface RawOrigin_Root {
@@ -6590,6 +6563,41 @@ export interface Type_322_Response {
 }
 
 export type Void = never
+
+export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
+
+export interface AllowedSlots_PrimarySlots {
+    __kind: 'PrimarySlots'
+}
+
+export interface AllowedSlots_PrimaryAndSecondaryPlainSlots {
+    __kind: 'PrimaryAndSecondaryPlainSlots'
+}
+
+export interface AllowedSlots_PrimaryAndSecondaryVRFSlots {
+    __kind: 'PrimaryAndSecondaryVRFSlots'
+}
+
+export interface Digest {
+    logs: DigestItem[]
+}
+
+export type Equivocation = Equivocation_Prevote | Equivocation_Precommit
+
+export interface Equivocation_Prevote {
+    __kind: 'Prevote'
+    value: Type_256
+}
+
+export interface Equivocation_Precommit {
+    __kind: 'Precommit'
+    value: Type_261
+}
+
+export interface OpaqueNetworkState {
+    peerId: Uint8Array
+    externalAddresses: Uint8Array[]
+}
 
 export interface NposCompactSolution24 {
     votes1: [number, number][]

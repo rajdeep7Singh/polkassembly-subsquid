@@ -285,6 +285,14 @@ export interface ReferendumInfo_Finished {
     end: number
 }
 
+export interface ScheduledV2 {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Call
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
 export interface OpenTip {
     reason: Uint8Array
     who: Uint8Array
@@ -5898,6 +5906,38 @@ export interface ReferendumStatus {
     tally: Tally
 }
 
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_575
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_576
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_XcmPallet {
+    __kind: 'XcmPallet'
+    value: Type_578
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
 
 export interface TokenError_NoFunds {
@@ -6541,6 +6581,74 @@ export interface Tally {
     nays: bigint
     turnout: bigint
 }
+
+export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
+
+export interface RawOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface RawOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface RawOrigin_None {
+    __kind: 'None'
+}
+
+export type Type_575 = Type_575_Members | Type_575_Member | Type_575__Phantom
+
+export interface Type_575_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_575_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_575__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Type_576 = Type_576_Members | Type_576_Member | Type_576__Phantom
+
+export interface Type_576_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_576_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_576__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Origin = Origin_Parachain
+
+export interface Origin_Parachain {
+    __kind: 'Parachain'
+    value: number
+}
+
+export type Type_578 = Type_578_Xcm | Type_578_Response
+
+export interface Type_578_Xcm {
+    __kind: 'Xcm'
+    value: V1MultiLocation
+}
+
+export interface Type_578_Response {
+    __kind: 'Response'
+    value: V1MultiLocation
+}
+
+export type Void = never
 
 export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
 

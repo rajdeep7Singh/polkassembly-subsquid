@@ -8,7 +8,8 @@ import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 interface ScheduledData {
-    blockNumber: number
+    blockNumber: number,
+    result?: string
 }
 
 export function getScheduledEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData {
@@ -37,53 +38,40 @@ export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEv
     const event = new SchedulerDispatchedEvent(ctx, itemEvent)
     if (event.isV1058) {
         const [[block, number], hash, result] = event.asV1058
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: block
-            }
+        return {
+            blockNumber: block,
+            result: result.__kind
         }
-        return undefined
-
     } else if (event.isV9111) {
         const [[block, number], hash, result] = event.asV9111
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: block
-            }
+        return {
+            blockNumber: block,
+            result: result.__kind
         }
-        return undefined
     } else if (event.isV9160) {
         const { task, id, result } = event.asV9160
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: task[1]
-            }
+        return {
+            blockNumber: task[0],
+            result: result.__kind
         }
-        return undefined
     } else if (event.isV9170) {
         const { task, id, result } = event.asV9170
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: task[0]
-            }
+        return {
+            blockNumber: task[0],
+            result: result.__kind
         }
-        return undefined
     } else if (event.isV9190) {
         const { task, id, result } = event.asV9190
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: task[0]
-            }
+        return {
+            blockNumber: task[0],
+            result: result.__kind
         }
-        return undefined
     } else if (event.isV9320) {
         const { task, id, result } = event.asV9320
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: task[0]
-            }
+        return {
+            blockNumber: task[0],
+            result: result.__kind
         }
-        return undefined
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }

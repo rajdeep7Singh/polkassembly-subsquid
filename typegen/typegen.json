@@ -35,7 +35,8 @@
     "FellowshipReferenda.ReferendumInfoFor",
     "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
-    "Preimage.PreimageFor"
+    "Preimage.PreimageFor",
+    "Scheduler.Agenda"
   ],
   "events": [
     "Democracy.Proposed",

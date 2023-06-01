@@ -299,6 +299,14 @@ export interface Call_XcmPallet {
     value: XcmPalletCall
 }
 
+export interface ScheduledV3 {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: MaybeHashed
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -6435,6 +6443,50 @@ export interface XcmPalletCall_limited_teleport_assets {
     weightLimit: V2WeightLimit
 }
 
+export type MaybeHashed = MaybeHashed_Value | MaybeHashed_Hash
+
+export interface MaybeHashed_Value {
+    __kind: 'Value'
+    value: Call
+}
+
+export interface MaybeHashed_Hash {
+    __kind: 'Hash'
+    value: Uint8Array
+}
+
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_340
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_341
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_XcmPallet {
+    __kind: 'XcmPallet'
+    value: Type_343
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export interface EquivocationProof {
     offender: Uint8Array
     slot: bigint
@@ -6611,38 +6663,6 @@ export interface StatementKind_Regular {
 
 export interface StatementKind_Saft {
     __kind: 'Saft'
-}
-
-export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
-
-export interface OriginCaller_Council {
-    __kind: 'Council'
-    value: Type_340
-}
-
-export interface OriginCaller_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: Type_341
-}
-
-export interface OriginCaller_ParachainsOrigin {
-    __kind: 'ParachainsOrigin'
-    value: Origin
-}
-
-export interface OriginCaller_XcmPallet {
-    __kind: 'XcmPallet'
-    value: Type_343
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
 }
 
 export interface IdentityInfo {
@@ -6899,18 +6919,6 @@ export interface VestingInfo {
     startingBlock: number
 }
 
-export type MaybeHashed = MaybeHashed_Value | MaybeHashed_Hash
-
-export interface MaybeHashed_Value {
-    __kind: 'Value'
-    value: Call
-}
-
-export interface MaybeHashed_Hash {
-    __kind: 'Hash'
-    value: Uint8Array
-}
-
 export type ProxyType = ProxyType_Any | ProxyType_NonTransfer | ProxyType_Governance | ProxyType_Staking | ProxyType_IdentityJudgement | ProxyType_CancelProxy | ProxyType_Auction | ProxyType_Society
 
 export interface ProxyType_Any {
@@ -7158,41 +7166,6 @@ export interface V2WeightLimit_Limited {
     value: bigint
 }
 
-export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
-
-export interface AllowedSlots_PrimarySlots {
-    __kind: 'PrimarySlots'
-}
-
-export interface AllowedSlots_PrimaryAndSecondaryPlainSlots {
-    __kind: 'PrimaryAndSecondaryPlainSlots'
-}
-
-export interface AllowedSlots_PrimaryAndSecondaryVRFSlots {
-    __kind: 'PrimaryAndSecondaryVRFSlots'
-}
-
-export interface Digest {
-    logs: DigestItem[]
-}
-
-export type Equivocation = Equivocation_Prevote | Equivocation_Precommit
-
-export interface Equivocation_Prevote {
-    __kind: 'Prevote'
-    value: Type_278
-}
-
-export interface Equivocation_Precommit {
-    __kind: 'Precommit'
-    value: Type_283
-}
-
-export interface OpaqueNetworkState {
-    peerId: Uint8Array
-    externalAddresses: Uint8Array[]
-}
-
 export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
 
 export interface RawOrigin_Root {
@@ -7260,6 +7233,41 @@ export interface Type_343_Response {
 }
 
 export type Void = never
+
+export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
+
+export interface AllowedSlots_PrimarySlots {
+    __kind: 'PrimarySlots'
+}
+
+export interface AllowedSlots_PrimaryAndSecondaryPlainSlots {
+    __kind: 'PrimaryAndSecondaryPlainSlots'
+}
+
+export interface AllowedSlots_PrimaryAndSecondaryVRFSlots {
+    __kind: 'PrimaryAndSecondaryVRFSlots'
+}
+
+export interface Digest {
+    logs: DigestItem[]
+}
+
+export type Equivocation = Equivocation_Prevote | Equivocation_Precommit
+
+export interface Equivocation_Prevote {
+    __kind: 'Prevote'
+    value: Type_278
+}
+
+export interface Equivocation_Precommit {
+    __kind: 'Precommit'
+    value: Type_283
+}
+
+export interface OpaqueNetworkState {
+    peerId: Uint8Array
+    externalAddresses: Uint8Array[]
+}
 
 export interface NposCompactSolution24 {
     votes1: [number, number][]

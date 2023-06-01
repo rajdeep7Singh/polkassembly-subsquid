@@ -142,6 +142,14 @@ export interface Proposal_Multisig {
     value: MultisigCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_195
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export interface AccountInfo {
     nonce: number
     refcount: number
@@ -4475,6 +4483,165 @@ export interface MultisigCall_cancel_as_multi {
     callHash: Uint8Array
 }
 
+export type Type_195 = Type_195_System | Type_195_Babe | Type_195_Timestamp | Type_195_Indices | Type_195_Balances | Type_195_Authorship | Type_195_Staking | Type_195_Offences | Type_195_Session | Type_195_FinalityTracker | Type_195_Grandpa | Type_195_ImOnline | Type_195_AuthorityDiscovery | Type_195_Democracy | Type_195_Council | Type_195_TechnicalCommittee | Type_195_ElectionsPhragmen | Type_195_TechnicalMembership | Type_195_Treasury | Type_195_Claims | Type_195_Utility | Type_195_Identity | Type_195_Society | Type_195_Recovery | Type_195_Vesting | Type_195_Scheduler | Type_195_Proxy | Type_195_Multisig
+
+export interface Type_195_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Type_195_Babe {
+    __kind: 'Babe'
+    value: BabeCall
+}
+
+export interface Type_195_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Type_195_Indices {
+    __kind: 'Indices'
+    value: IndicesCall
+}
+
+export interface Type_195_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Type_195_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
+}
+
+export interface Type_195_Staking {
+    __kind: 'Staking'
+    value: StakingCall
+}
+
+export interface Type_195_Offences {
+    __kind: 'Offences'
+    value: OffencesCall
+}
+
+export interface Type_195_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Type_195_FinalityTracker {
+    __kind: 'FinalityTracker'
+    value: FinalityTrackerCall
+}
+
+export interface Type_195_Grandpa {
+    __kind: 'Grandpa'
+    value: GrandpaCall
+}
+
+export interface Type_195_ImOnline {
+    __kind: 'ImOnline'
+    value: ImOnlineCall
+}
+
+export interface Type_195_AuthorityDiscovery {
+    __kind: 'AuthorityDiscovery'
+    value: AuthorityDiscoveryCall
+}
+
+export interface Type_195_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Type_195_Council {
+    __kind: 'Council'
+    value: CouncilCall
+}
+
+export interface Type_195_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: TechnicalCommitteeCall
+}
+
+export interface Type_195_ElectionsPhragmen {
+    __kind: 'ElectionsPhragmen'
+    value: ElectionsPhragmenCall
+}
+
+export interface Type_195_TechnicalMembership {
+    __kind: 'TechnicalMembership'
+    value: TechnicalMembershipCall
+}
+
+export interface Type_195_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Type_195_Claims {
+    __kind: 'Claims'
+    value: ClaimsCall
+}
+
+export interface Type_195_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Type_195_Identity {
+    __kind: 'Identity'
+    value: IdentityCall
+}
+
+export interface Type_195_Society {
+    __kind: 'Society'
+    value: SocietyCall
+}
+
+export interface Type_195_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
+}
+
+export interface Type_195_Vesting {
+    __kind: 'Vesting'
+    value: VestingCall
+}
+
+export interface Type_195_Scheduler {
+    __kind: 'Scheduler'
+    value: SchedulerCall
+}
+
+export interface Type_195_Proxy {
+    __kind: 'Proxy'
+    value: ProxyCall
+}
+
+export interface Type_195_Multisig {
+    __kind: 'Multisig'
+    value: MultisigCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
 export interface AccountData {
     free: bigint
     reserved: bigint
@@ -4672,148 +4839,6 @@ export interface StatementKind_Regular {
 
 export interface StatementKind_Saft {
     __kind: 'Saft'
-}
-
-export type Type_195 = Type_195_System | Type_195_Babe | Type_195_Timestamp | Type_195_Indices | Type_195_Balances | Type_195_Authorship | Type_195_Staking | Type_195_Offences | Type_195_Session | Type_195_FinalityTracker | Type_195_Grandpa | Type_195_ImOnline | Type_195_AuthorityDiscovery | Type_195_Democracy | Type_195_Council | Type_195_TechnicalCommittee | Type_195_ElectionsPhragmen | Type_195_TechnicalMembership | Type_195_Treasury | Type_195_Claims | Type_195_Utility | Type_195_Identity | Type_195_Society | Type_195_Recovery | Type_195_Vesting | Type_195_Scheduler | Type_195_Proxy | Type_195_Multisig
-
-export interface Type_195_System {
-    __kind: 'System'
-    value: SystemCall
-}
-
-export interface Type_195_Babe {
-    __kind: 'Babe'
-    value: BabeCall
-}
-
-export interface Type_195_Timestamp {
-    __kind: 'Timestamp'
-    value: TimestampCall
-}
-
-export interface Type_195_Indices {
-    __kind: 'Indices'
-    value: IndicesCall
-}
-
-export interface Type_195_Balances {
-    __kind: 'Balances'
-    value: BalancesCall
-}
-
-export interface Type_195_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
-}
-
-export interface Type_195_Staking {
-    __kind: 'Staking'
-    value: StakingCall
-}
-
-export interface Type_195_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
-}
-
-export interface Type_195_Session {
-    __kind: 'Session'
-    value: SessionCall
-}
-
-export interface Type_195_FinalityTracker {
-    __kind: 'FinalityTracker'
-    value: FinalityTrackerCall
-}
-
-export interface Type_195_Grandpa {
-    __kind: 'Grandpa'
-    value: GrandpaCall
-}
-
-export interface Type_195_ImOnline {
-    __kind: 'ImOnline'
-    value: ImOnlineCall
-}
-
-export interface Type_195_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
-
-export interface Type_195_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
-}
-
-export interface Type_195_Council {
-    __kind: 'Council'
-    value: CouncilCall
-}
-
-export interface Type_195_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: TechnicalCommitteeCall
-}
-
-export interface Type_195_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
-}
-
-export interface Type_195_TechnicalMembership {
-    __kind: 'TechnicalMembership'
-    value: TechnicalMembershipCall
-}
-
-export interface Type_195_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryCall
-}
-
-export interface Type_195_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
-}
-
-export interface Type_195_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
-}
-
-export interface Type_195_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
-}
-
-export interface Type_195_Society {
-    __kind: 'Society'
-    value: SocietyCall
-}
-
-export interface Type_195_Recovery {
-    __kind: 'Recovery'
-    value: RecoveryCall
-}
-
-export interface Type_195_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export interface Type_195_Scheduler {
-    __kind: 'Scheduler'
-    value: SchedulerCall
-}
-
-export interface Type_195_Proxy {
-    __kind: 'Proxy'
-    value: ProxyCall
-}
-
-export interface Type_195_Multisig {
-    __kind: 'Multisig'
-    value: MultisigCall
 }
 
 export interface IdentityInfo {
@@ -5103,6 +5128,33 @@ export interface ProxyType_Auction {
 export interface Timepoint {
     height: number
     index: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface BountyStatusCuratorProposed {

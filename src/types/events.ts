@@ -10,6 +10,7 @@ import * as v9160 from './v9160'
 import * as v9170 from './v9170'
 import * as v9190 from './v9190'
 import * as v9320 from './v9320'
+import * as v9420 from './v9420'
 
 export class BountiesBountyAwardedEvent {
     private readonly _chain: Chain
@@ -2259,6 +2260,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV9320(): {task: [number, number], id: (Uint8Array | undefined), result: v9320.Type_60} {
         assert(this.isV9320)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV9420(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '154dd24b4e6cd6cd4e2529e62ebb06fadb719be62866fec5887d179577869c45'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV9420(): {task: [number, number], id: (Uint8Array | undefined), result: v9420.Type_460} {
+        assert(this.isV9420)
         return this._chain.decodeEvent(this.event)
     }
 }

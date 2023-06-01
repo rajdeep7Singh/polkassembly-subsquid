@@ -55,6 +55,7 @@ import * as v9340 from './v9340'
 import * as v9350 from './v9350'
 import * as v9370 from './v9370'
 import * as v9381 from './v9381'
+import * as v9420 from './v9420'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -89,6 +90,67 @@ export class BalancesAccountStorage extends StorageBase {
         assert(this.isV1050)
         return this as any
     }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === '12d9e780c790f66e9c340b94cabd98da447e1087819d4acb4b1fe22bbb2783fb'
+    }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get asV9420(): BalancesAccountStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
 }
 
 /**
@@ -103,6 +165,46 @@ export interface BalancesAccountStorageV1050 {
     get(key: Uint8Array): Promise<v1050.AccountData>
     getAll(): Promise<v1050.AccountData[]>
     getMany(keys: Uint8Array[]): Promise<v1050.AccountData[]>
+}
+
+/**
+ *  The Balances pallet example of storing the balance of an account.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+ *   }
+ *  ```
+ * 
+ *  You can also store the balance of an account in the `System` pallet.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *    type AccountStore = System
+ *   }
+ *  ```
+ * 
+ *  But this comes with tradeoffs, storing account balances in the system pallet stores
+ *  `frame_system` data alongside the account data contrary to storing account balances in the
+ *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+ *  NOTE: This is only used in the case that this pallet is used to store balances.
+ */
+export interface BalancesAccountStorageV9420 {
+    get(key: Uint8Array): Promise<v9420.AccountData>
+    getAll(): Promise<v9420.AccountData[]>
+    getMany(keys: Uint8Array[]): Promise<v9420.AccountData[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v9420.AccountData][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v9420.AccountData][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v9420.AccountData][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v9420.AccountData][]>
 }
 
 export class BalancesInactiveIssuanceStorage extends StorageBase {
@@ -1504,6 +1606,21 @@ export class FellowshipReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV9381)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === 'b07ce7a9e25b52e042041a9d4b4fdbc37cae4e71a1484beaa001e17a9b8857e4'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV9420(): FellowshipReferendaReferendumInfoForStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
 }
 
 /**
@@ -1572,6 +1689,23 @@ export interface FellowshipReferendaReferendumInfoForStorageV9381 {
     getPairs(key: number): Promise<[k: number, v: v9381.Type_649][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v9381.Type_649][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9381.Type_649][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface FellowshipReferendaReferendumInfoForStorageV9420 {
+    get(key: number): Promise<(v9420.Type_632 | undefined)>
+    getAll(): Promise<v9420.Type_632[]>
+    getMany(keys: number[]): Promise<(v9420.Type_632 | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v9420.Type_632][]>
+    getPairs(key: number): Promise<[k: number, v: v9420.Type_632][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v9420.Type_632][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9420.Type_632][]>
 }
 
 export class Instance1CollectiveMembersStorage extends StorageBase {
@@ -4025,6 +4159,21 @@ export class ReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV9381)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === 'db57abeb0a45cf88aa6c6be9867481c5b3f1bf5ae1df62f2e92a729accf21c98'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV9420(): ReferendaReferendumInfoForStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
 }
 
 /**
@@ -4095,6 +4244,1281 @@ export interface ReferendaReferendumInfoForStorageV9381 {
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9381.Type_626][]>
 }
 
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV9420 {
+    get(key: number): Promise<(v9420.ReferendumInfo | undefined)>
+    getAll(): Promise<v9420.ReferendumInfo[]>
+    getMany(keys: number[]): Promise<(v9420.ReferendumInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v9420.ReferendumInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v9420.ReferendumInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v9420.ReferendumInfo][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9420.ReferendumInfo][]>
+}
+
+export class SchedulerAgendaStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Scheduler'
+    }
+
+    protected getName() {
+        return 'Agenda'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV1058(): boolean {
+        return this.getTypeHash() === '7a1495e5fac21e7b1eb19ef9378f1fa7d631d88052e309456e963bda895c6e30'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV1058(): SchedulerAgendaStorageV1058 {
+        assert(this.isV1058)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV1062(): boolean {
+        return this.getTypeHash() === 'eacf3b30fa493b22312a4312eadde9a83d90528bd43a5f1e6abc82ff76e8588d'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV1062(): SchedulerAgendaStorageV1062 {
+        assert(this.isV1062)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2005(): boolean {
+        return this.getTypeHash() === '26f72d605f5743cf8daf006eb76816e51bff3108c5e154f77644c6971f79f5c2'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2005(): SchedulerAgendaStorageV2005 {
+        assert(this.isV2005)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2007(): boolean {
+        return this.getTypeHash() === '896ca31d79f490c66848186c21637847fc0e5de4f6da7216ccd84093341113f7'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2007(): SchedulerAgendaStorageV2007 {
+        assert(this.isV2007)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2011(): boolean {
+        return this.getTypeHash() === 'f70c2f0486bfabed6284d237eba5160ddc2d5f569fbe78b260802acd34036ea0'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2011(): SchedulerAgendaStorageV2011 {
+        assert(this.isV2011)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2013(): boolean {
+        return this.getTypeHash() === '190888f54ccc61d785ffaa28c234fd95b941296c7e90852ee82143f6c7e0fe54'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2013(): SchedulerAgendaStorageV2013 {
+        assert(this.isV2013)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2015(): boolean {
+        return this.getTypeHash() === 'e9b47a7798116791b71ab1f0ad35f94ce932e648d72301dc26c7939fe4584f61'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2015(): SchedulerAgendaStorageV2015 {
+        assert(this.isV2015)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2022(): boolean {
+        return this.getTypeHash() === 'c64ae7e9f704ee466a875a958efe9699b89246b1c69a215f23881de6ad18e648'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2022(): SchedulerAgendaStorageV2022 {
+        assert(this.isV2022)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2023(): boolean {
+        return this.getTypeHash() === 'f05ab83ea3631057ebe10b71f18e5a211424c6de178d11913582d51d6b82d986'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2023(): SchedulerAgendaStorageV2023 {
+        assert(this.isV2023)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2024(): boolean {
+        return this.getTypeHash() === 'a8ba083030e42ac1d0aa82d4cdaa70f463dbe72f5ac0cd3c0404176927107a7b'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2024(): SchedulerAgendaStorageV2024 {
+        assert(this.isV2024)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2025(): boolean {
+        return this.getTypeHash() === '690f80a20d6304db81f6edc86fb5b4aa2cc06ee98fa4e676c9e09ffa60dc7537'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2025(): SchedulerAgendaStorageV2025 {
+        assert(this.isV2025)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2026(): boolean {
+        return this.getTypeHash() === 'f9d7f17aaa955368456accca3813336c3f0b5f4d7ad4c4081e8e769a6f3e1e4e'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2026(): SchedulerAgendaStorageV2026 {
+        assert(this.isV2026)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2028(): boolean {
+        return this.getTypeHash() === 'c33dc5d845c433b8f321e4919359e2bbc4c32dc86d27ae90d7405ff250cb5790'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2028(): SchedulerAgendaStorageV2028 {
+        assert(this.isV2028)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2029(): boolean {
+        return this.getTypeHash() === '2263c6fd375169f0272aeffa1ded548f6467de9cb1d93d8e17025cfa32962997'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2029(): SchedulerAgendaStorageV2029 {
+        assert(this.isV2029)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV2030(): boolean {
+        return this.getTypeHash() === '355d0546bdfb981306ab6d3731ca0e09ff1cb8675ff69593d0420ed6f9911242'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV2030(): SchedulerAgendaStorageV2030 {
+        assert(this.isV2030)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9010(): boolean {
+        return this.getTypeHash() === 'ff16c34460ef0425c5f09e7c478af16b4624e8fa3208d0040c6f9d900f491fe3'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9010(): SchedulerAgendaStorageV9010 {
+        assert(this.isV9010)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9030(): boolean {
+        return this.getTypeHash() === 'dc1418cf07cd9d82f13f557bac39881a79c6ab498a35e8513d013523f6a75d97'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9030(): SchedulerAgendaStorageV9030 {
+        assert(this.isV9030)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9040(): boolean {
+        return this.getTypeHash() === 'e4de374320c23030d692bd68429c27007f026dd7102fcf09d4f318558a4c7ea0'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9040(): SchedulerAgendaStorageV9040 {
+        assert(this.isV9040)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9050(): boolean {
+        return this.getTypeHash() === '6f0a778ffb782aa1aac88002610b4a8587f66fcc096c435ec3ab88f66d56c61f'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9050(): SchedulerAgendaStorageV9050 {
+        assert(this.isV9050)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9080(): boolean {
+        return this.getTypeHash() === 'f9dc5d982b0715090fad66e58049d2129691b19743950271e137c60fa5eab7fa'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9080(): SchedulerAgendaStorageV9080 {
+        assert(this.isV9080)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9090(): boolean {
+        return this.getTypeHash() === 'c767cc61d145c4f5cf13812715ac405d2ddaba943a46fb139f1bb53ffa32ac64'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9090(): SchedulerAgendaStorageV9090 {
+        assert(this.isV9090)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9100(): boolean {
+        return this.getTypeHash() === '77ec09e3eb473ebef4a49c49baf35c6295cc238889343f2c4229d3fd992fb766'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9100(): SchedulerAgendaStorageV9100 {
+        assert(this.isV9100)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9111(): boolean {
+        return this.getTypeHash() === '855fd592dc08504b9f77ab44721fb5530a96ec7e39ae454c50853bfccf22f78d'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9111(): SchedulerAgendaStorageV9111 {
+        assert(this.isV9111)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9122(): boolean {
+        return this.getTypeHash() === '992154c282b8081c78969e259f1a5ccc7218af7ce571ada232b51000c6f5debe'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9122(): SchedulerAgendaStorageV9122 {
+        assert(this.isV9122)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9130(): boolean {
+        return this.getTypeHash() === '30d53378261a79f00a9ab72dd9d5c24a814885e9a00961d6842c5f2cb23718e2'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9130(): SchedulerAgendaStorageV9130 {
+        assert(this.isV9130)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9160(): boolean {
+        return this.getTypeHash() === '93a83d3e9e9713272cf5eba2ebe46a2e8210173b9208d8e039eb7be9abf8c6a1'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9160(): SchedulerAgendaStorageV9160 {
+        assert(this.isV9160)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9170(): boolean {
+        return this.getTypeHash() === 'e4a7319ab6ce8260d93b4ea04802e913400e5ef90837b5656dbc16bdfe6b618e'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9170(): SchedulerAgendaStorageV9170 {
+        assert(this.isV9170)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9180(): boolean {
+        return this.getTypeHash() === '18dd9bed1eddc89263af6e84b44142680d4997a91849f1f1616c728298b7e1b6'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9180(): SchedulerAgendaStorageV9180 {
+        assert(this.isV9180)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9190(): boolean {
+        return this.getTypeHash() === '38c51890e381af33bc0191759181b8fe95286950f49b691ac6df64e4cd28b5d7'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9190(): SchedulerAgendaStorageV9190 {
+        assert(this.isV9190)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9220(): boolean {
+        return this.getTypeHash() === 'f25747d736742c964b8c1ab67804da392e2fb11200d0b7665aeb63a2a2b53236'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9220(): SchedulerAgendaStorageV9220 {
+        assert(this.isV9220)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9230(): boolean {
+        return this.getTypeHash() === '2e52a770fdbc44a1c735b5f17910b8ca3807dc08d834f56efd9e492d2beaee77'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9230(): SchedulerAgendaStorageV9230 {
+        assert(this.isV9230)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9250(): boolean {
+        return this.getTypeHash() === '763b74570e5d2dc645f17eb9c9a35f6ec8ef9863cac033f45ddcf807653fb3f8'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9250(): SchedulerAgendaStorageV9250 {
+        assert(this.isV9250)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9271(): boolean {
+        return this.getTypeHash() === 'a120835d6fa6abebd066538315e5944fdd3e04d6f3561558def30d4f11d4c05d'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9271(): SchedulerAgendaStorageV9271 {
+        assert(this.isV9271)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9291(): boolean {
+        return this.getTypeHash() === '808705ea298473713ebf6d39078298bcb67c781da92e01623d6d9711c03c49db'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9291(): SchedulerAgendaStorageV9291 {
+        assert(this.isV9291)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9300(): boolean {
+        return this.getTypeHash() === 'a9432053e5bdf0321dfad50276e601ccd5a7a584930bea46e185a387a90f9d35'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9300(): SchedulerAgendaStorageV9300 {
+        assert(this.isV9300)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9320(): boolean {
+        return this.getTypeHash() === 'e414bd1d8730f0592bdb1de94e4c0dca0dd5ce2e70476822250367f72e83111e'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9320(): SchedulerAgendaStorageV9320 {
+        assert(this.isV9320)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9370(): boolean {
+        return this.getTypeHash() === '98f7d3f98d82a159726271a03ba48aa720675b7b8bb59f3ca416e2f61c975d2c'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9370(): SchedulerAgendaStorageV9370 {
+        assert(this.isV9370)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9381(): boolean {
+        return this.getTypeHash() === '9951402003264d1de62aa87a03bdb69d749f4c6bc2b111b143272d2bd84dff9d'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9381(): SchedulerAgendaStorageV9381 {
+        assert(this.isV9381)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === '62b36ab8424d18fddc4d5b88113baf0a185fe3a6b392e841ea1a4a005a25ceb8'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9420(): SchedulerAgendaStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV1058 {
+    get(key: number): Promise<(v1058.Scheduled | undefined)[]>
+    getAll(): Promise<(v1058.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v1058.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v1058.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v1058.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v1058.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v1058.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV1062 {
+    get(key: number): Promise<(v1062.Scheduled | undefined)[]>
+    getAll(): Promise<(v1062.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v1062.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v1062.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v1062.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v1062.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v1062.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2005 {
+    get(key: number): Promise<(v2005.Scheduled | undefined)[]>
+    getAll(): Promise<(v2005.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2005.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2005.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2005.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2005.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2005.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2007 {
+    get(key: number): Promise<(v2007.Scheduled | undefined)[]>
+    getAll(): Promise<(v2007.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2007.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2007.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2007.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2007.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2007.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2011 {
+    get(key: number): Promise<(v2011.Scheduled | undefined)[]>
+    getAll(): Promise<(v2011.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2011.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2011.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2011.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2011.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2011.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2013 {
+    get(key: number): Promise<(v2013.Scheduled | undefined)[]>
+    getAll(): Promise<(v2013.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2013.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2013.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2013.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2013.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2013.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2015 {
+    get(key: number): Promise<(v2015.Scheduled | undefined)[]>
+    getAll(): Promise<(v2015.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2015.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2015.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2015.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2015.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2015.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2022 {
+    get(key: number): Promise<(v2022.Scheduled | undefined)[]>
+    getAll(): Promise<(v2022.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2022.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2022.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2022.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2022.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2022.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2023 {
+    get(key: number): Promise<(v2023.Scheduled | undefined)[]>
+    getAll(): Promise<(v2023.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2023.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2023.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2023.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2023.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2023.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2024 {
+    get(key: number): Promise<(v2024.Scheduled | undefined)[]>
+    getAll(): Promise<(v2024.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2024.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2024.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2024.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2024.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2024.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2025 {
+    get(key: number): Promise<(v2025.Scheduled | undefined)[]>
+    getAll(): Promise<(v2025.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2025.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2025.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2025.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2025.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2025.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2026 {
+    get(key: number): Promise<(v2026.Scheduled | undefined)[]>
+    getAll(): Promise<(v2026.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2026.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2026.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2026.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2026.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2026.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2028 {
+    get(key: number): Promise<(v2028.Scheduled | undefined)[]>
+    getAll(): Promise<(v2028.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2028.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2028.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2028.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2028.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2028.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2029 {
+    get(key: number): Promise<(v2029.Scheduled | undefined)[]>
+    getAll(): Promise<(v2029.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2029.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2029.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2029.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2029.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2029.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV2030 {
+    get(key: number): Promise<(v2030.Scheduled | undefined)[]>
+    getAll(): Promise<(v2030.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v2030.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v2030.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v2030.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v2030.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v2030.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9010 {
+    get(key: number): Promise<(v9010.Scheduled | undefined)[]>
+    getAll(): Promise<(v9010.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9010.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9010.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9010.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9010.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9010.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9030 {
+    get(key: number): Promise<(v9030.Scheduled | undefined)[]>
+    getAll(): Promise<(v9030.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9030.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9030.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9030.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9030.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9030.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9040 {
+    get(key: number): Promise<(v9040.Scheduled | undefined)[]>
+    getAll(): Promise<(v9040.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9040.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9040.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9040.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9040.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9040.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9050 {
+    get(key: number): Promise<(v9050.Scheduled | undefined)[]>
+    getAll(): Promise<(v9050.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9050.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9050.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9050.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9050.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9050.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9080 {
+    get(key: number): Promise<(v9080.Scheduled | undefined)[]>
+    getAll(): Promise<(v9080.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9080.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9080.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9080.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9080.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9080.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9090 {
+    get(key: number): Promise<(v9090.Scheduled | undefined)[]>
+    getAll(): Promise<(v9090.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9090.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9090.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9090.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9090.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9090.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9100 {
+    get(key: number): Promise<(v9100.Scheduled | undefined)[]>
+    getAll(): Promise<(v9100.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9100.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9100.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9100.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9100.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9100.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9111 {
+    get(key: number): Promise<(v9111.ScheduledV2 | undefined)[]>
+    getAll(): Promise<(v9111.ScheduledV2 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9111.ScheduledV2 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9111.ScheduledV2 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9111.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9111.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9111.ScheduledV2 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9122 {
+    get(key: number): Promise<(v9122.ScheduledV2 | undefined)[]>
+    getAll(): Promise<(v9122.ScheduledV2 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9122.ScheduledV2 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9122.ScheduledV2 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9122.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9122.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9122.ScheduledV2 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9130 {
+    get(key: number): Promise<(v9130.ScheduledV2 | undefined)[]>
+    getAll(): Promise<(v9130.ScheduledV2 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9130.ScheduledV2 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9130.ScheduledV2 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9130.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9130.ScheduledV2 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9130.ScheduledV2 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9160 {
+    get(key: number): Promise<(v9160.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9160.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9160.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9160.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9160.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9160.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9160.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9170 {
+    get(key: number): Promise<(v9170.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9170.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9170.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9170.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9170.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9170.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9170.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9180 {
+    get(key: number): Promise<(v9180.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9180.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9180.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9180.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9180.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9180.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9180.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9190 {
+    get(key: number): Promise<(v9190.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9190.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9190.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9190.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9190.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9190.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9190.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9220 {
+    get(key: number): Promise<(v9220.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9220.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9220.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9220.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9220.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9220.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9220.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9230 {
+    get(key: number): Promise<(v9230.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9230.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9230.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9230.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9230.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9230.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9230.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9250 {
+    get(key: number): Promise<(v9250.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9250.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9250.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9250.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9250.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9250.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9250.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9271 {
+    get(key: number): Promise<(v9271.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9271.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9271.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9271.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9271.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9271.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9271.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9291 {
+    get(key: number): Promise<(v9291.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9291.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9291.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9291.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9291.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9291.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9291.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9300 {
+    get(key: number): Promise<(v9300.ScheduledV3 | undefined)[]>
+    getAll(): Promise<(v9300.ScheduledV3 | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9300.ScheduledV3 | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9300.ScheduledV3 | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9300.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9300.ScheduledV3 | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9300.ScheduledV3 | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9320 {
+    get(key: number): Promise<(v9320.Scheduled | undefined)[]>
+    getAll(): Promise<(v9320.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9320.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9320.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9320.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9320.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9320.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9370 {
+    get(key: number): Promise<(v9370.Scheduled | undefined)[]>
+    getAll(): Promise<(v9370.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9370.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9370.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9370.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9370.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9370.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9381 {
+    get(key: number): Promise<(v9381.Scheduled | undefined)[]>
+    getAll(): Promise<(v9381.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9381.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9381.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9381.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9381.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9381.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9420 {
+    get(key: number): Promise<(v9420.Scheduled | undefined)[]>
+    getAll(): Promise<(v9420.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9420.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+}
+
 export class SystemAccountStorage extends StorageBase {
     protected getPrefix() {
         return 'System'
@@ -4163,6 +5587,21 @@ export class SystemAccountStorage extends StorageBase {
         assert(this.isV2030)
         return this as any
     }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === 'd6b7a816e0cf6dc8f60cb2bd55c5c5ae7ad928521a6e98aafbe6e954f5c54878'
+    }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get asV9420(): SystemAccountStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
 }
 
 /**
@@ -4223,6 +5662,23 @@ export interface SystemAccountStorageV2030 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v2030.AccountInfo][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v2030.AccountInfo][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v2030.AccountInfo][]>
+}
+
+/**
+ *  The full account information for a particular account ID.
+ */
+export interface SystemAccountStorageV9420 {
+    get(key: Uint8Array): Promise<v9420.AccountInfo>
+    getAll(): Promise<v9420.AccountInfo[]>
+    getMany(keys: Uint8Array[]): Promise<v9420.AccountInfo[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v9420.AccountInfo][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v9420.AccountInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v9420.AccountInfo][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v9420.AccountInfo][]>
 }
 
 export class SystemAccountNonceStorage extends StorageBase {

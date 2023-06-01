@@ -173,6 +173,14 @@ export interface Proposal_Multisig {
     value: MultisigCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_188
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
 
 export interface DispatchError_Other {
@@ -4369,6 +4377,185 @@ export interface MultisigCall_cancel_as_multi {
     callHash: Uint8Array
 }
 
+export type Type_188 = Type_188_System | Type_188_Babe | Type_188_Timestamp | Type_188_Indices | Type_188_Balances | Type_188_Authorship | Type_188_Staking | Type_188_Offences | Type_188_Session | Type_188_FinalityTracker | Type_188_Grandpa | Type_188_ImOnline | Type_188_AuthorityDiscovery | Type_188_Democracy | Type_188_Council | Type_188_TechnicalCommittee | Type_188_ElectionsPhragmen | Type_188_TechnicalMembership | Type_188_Treasury | Type_188_Claims | Type_188_Parachains | Type_188_Attestations | Type_188_Slots | Type_188_Registrar | Type_188_Utility | Type_188_Identity | Type_188_Society | Type_188_Recovery | Type_188_Vesting | Type_188_Scheduler | Type_188_Proxy | Type_188_Multisig
+
+export interface Type_188_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Type_188_Babe {
+    __kind: 'Babe'
+    value: BabeCall
+}
+
+export interface Type_188_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Type_188_Indices {
+    __kind: 'Indices'
+    value: IndicesCall
+}
+
+export interface Type_188_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Type_188_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
+}
+
+export interface Type_188_Staking {
+    __kind: 'Staking'
+    value: StakingCall
+}
+
+export interface Type_188_Offences {
+    __kind: 'Offences'
+    value: OffencesCall
+}
+
+export interface Type_188_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Type_188_FinalityTracker {
+    __kind: 'FinalityTracker'
+    value: FinalityTrackerCall
+}
+
+export interface Type_188_Grandpa {
+    __kind: 'Grandpa'
+    value: GrandpaCall
+}
+
+export interface Type_188_ImOnline {
+    __kind: 'ImOnline'
+    value: ImOnlineCall
+}
+
+export interface Type_188_AuthorityDiscovery {
+    __kind: 'AuthorityDiscovery'
+    value: AuthorityDiscoveryCall
+}
+
+export interface Type_188_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Type_188_Council {
+    __kind: 'Council'
+    value: CouncilCall
+}
+
+export interface Type_188_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: TechnicalCommitteeCall
+}
+
+export interface Type_188_ElectionsPhragmen {
+    __kind: 'ElectionsPhragmen'
+    value: ElectionsPhragmenCall
+}
+
+export interface Type_188_TechnicalMembership {
+    __kind: 'TechnicalMembership'
+    value: TechnicalMembershipCall
+}
+
+export interface Type_188_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Type_188_Claims {
+    __kind: 'Claims'
+    value: ClaimsCall
+}
+
+export interface Type_188_Parachains {
+    __kind: 'Parachains'
+    value: ParachainsCall
+}
+
+export interface Type_188_Attestations {
+    __kind: 'Attestations'
+    value: AttestationsCall
+}
+
+export interface Type_188_Slots {
+    __kind: 'Slots'
+    value: SlotsCall
+}
+
+export interface Type_188_Registrar {
+    __kind: 'Registrar'
+    value: RegistrarCall
+}
+
+export interface Type_188_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Type_188_Identity {
+    __kind: 'Identity'
+    value: IdentityCall
+}
+
+export interface Type_188_Society {
+    __kind: 'Society'
+    value: SocietyCall
+}
+
+export interface Type_188_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
+}
+
+export interface Type_188_Vesting {
+    __kind: 'Vesting'
+    value: VestingCall
+}
+
+export interface Type_188_Scheduler {
+    __kind: 'Scheduler'
+    value: SchedulerCall
+}
+
+export interface Type_188_Proxy {
+    __kind: 'Proxy'
+    value: ProxyCall
+}
+
+export interface Type_188_Multisig {
+    __kind: 'Multisig'
+    value: MultisigCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
 export interface DispatchErrorModule {
     index: number
     error: number
@@ -4596,168 +4783,6 @@ export interface ParaInfo {
     manager: Uint8Array
     deposit: bigint
     locked: boolean
-}
-
-export type Type_188 = Type_188_System | Type_188_Babe | Type_188_Timestamp | Type_188_Indices | Type_188_Balances | Type_188_Authorship | Type_188_Staking | Type_188_Offences | Type_188_Session | Type_188_FinalityTracker | Type_188_Grandpa | Type_188_ImOnline | Type_188_AuthorityDiscovery | Type_188_Democracy | Type_188_Council | Type_188_TechnicalCommittee | Type_188_ElectionsPhragmen | Type_188_TechnicalMembership | Type_188_Treasury | Type_188_Claims | Type_188_Parachains | Type_188_Attestations | Type_188_Slots | Type_188_Registrar | Type_188_Utility | Type_188_Identity | Type_188_Society | Type_188_Recovery | Type_188_Vesting | Type_188_Scheduler | Type_188_Proxy | Type_188_Multisig
-
-export interface Type_188_System {
-    __kind: 'System'
-    value: SystemCall
-}
-
-export interface Type_188_Babe {
-    __kind: 'Babe'
-    value: BabeCall
-}
-
-export interface Type_188_Timestamp {
-    __kind: 'Timestamp'
-    value: TimestampCall
-}
-
-export interface Type_188_Indices {
-    __kind: 'Indices'
-    value: IndicesCall
-}
-
-export interface Type_188_Balances {
-    __kind: 'Balances'
-    value: BalancesCall
-}
-
-export interface Type_188_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
-}
-
-export interface Type_188_Staking {
-    __kind: 'Staking'
-    value: StakingCall
-}
-
-export interface Type_188_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
-}
-
-export interface Type_188_Session {
-    __kind: 'Session'
-    value: SessionCall
-}
-
-export interface Type_188_FinalityTracker {
-    __kind: 'FinalityTracker'
-    value: FinalityTrackerCall
-}
-
-export interface Type_188_Grandpa {
-    __kind: 'Grandpa'
-    value: GrandpaCall
-}
-
-export interface Type_188_ImOnline {
-    __kind: 'ImOnline'
-    value: ImOnlineCall
-}
-
-export interface Type_188_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
-
-export interface Type_188_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
-}
-
-export interface Type_188_Council {
-    __kind: 'Council'
-    value: CouncilCall
-}
-
-export interface Type_188_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: TechnicalCommitteeCall
-}
-
-export interface Type_188_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
-}
-
-export interface Type_188_TechnicalMembership {
-    __kind: 'TechnicalMembership'
-    value: TechnicalMembershipCall
-}
-
-export interface Type_188_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryCall
-}
-
-export interface Type_188_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
-}
-
-export interface Type_188_Parachains {
-    __kind: 'Parachains'
-    value: ParachainsCall
-}
-
-export interface Type_188_Attestations {
-    __kind: 'Attestations'
-    value: AttestationsCall
-}
-
-export interface Type_188_Slots {
-    __kind: 'Slots'
-    value: SlotsCall
-}
-
-export interface Type_188_Registrar {
-    __kind: 'Registrar'
-    value: RegistrarCall
-}
-
-export interface Type_188_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
-}
-
-export interface Type_188_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
-}
-
-export interface Type_188_Society {
-    __kind: 'Society'
-    value: SocietyCall
-}
-
-export interface Type_188_Recovery {
-    __kind: 'Recovery'
-    value: RecoveryCall
-}
-
-export interface Type_188_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export interface Type_188_Scheduler {
-    __kind: 'Scheduler'
-    value: SchedulerCall
-}
-
-export interface Type_188_Proxy {
-    __kind: 'Proxy'
-    value: ProxyCall
-}
-
-export interface Type_188_Multisig {
-    __kind: 'Multisig'
-    value: MultisigCall
 }
 
 export interface IdentityInfo {
@@ -5047,6 +5072,33 @@ export interface ProxyType_Auction {
 export interface Timepoint {
     height: number
     index: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface Digest {

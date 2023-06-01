@@ -222,6 +222,14 @@ export interface Call_XcmPallet {
     value: XcmPalletCall
 }
 
+export interface ScheduledV2 {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Call
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -5806,6 +5814,38 @@ export interface XcmPalletCall_limited_teleport_assets {
     weightLimit: V2WeightLimit
 }
 
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_XcmPallet | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_577
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_578
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_XcmPallet {
+    __kind: 'XcmPallet'
+    value: Type_580
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export interface ChangesTrieConfiguration {
     digestInterval: number
     digestLevels: number
@@ -6410,6 +6450,74 @@ export interface V2WeightLimit_Limited {
     __kind: 'Limited'
     value: bigint
 }
+
+export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
+
+export interface RawOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface RawOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface RawOrigin_None {
+    __kind: 'None'
+}
+
+export type Type_577 = Type_577_Members | Type_577_Member | Type_577__Phantom
+
+export interface Type_577_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_577_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_577__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Type_578 = Type_578_Members | Type_578_Member | Type_578__Phantom
+
+export interface Type_578_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_578_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_578__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Origin = Origin_Parachain
+
+export interface Origin_Parachain {
+    __kind: 'Parachain'
+    value: number
+}
+
+export type Type_580 = Type_580_Xcm | Type_580_Response
+
+export interface Type_580_Xcm {
+    __kind: 'Xcm'
+    value: V1MultiLocation
+}
+
+export interface Type_580_Response {
+    __kind: 'Response'
+    value: V1MultiLocation
+}
+
+export type Void = never
 
 export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
 

@@ -175,6 +175,14 @@ export interface Proposal_Scheduler {
     value: SchedulerCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_176
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
 
 export interface DispatchError_Other {
@@ -3607,6 +3615,175 @@ export interface VestingCall_vested_transfer {
 
 export type SchedulerCall = never
 
+export type Type_176 = Type_176_System | Type_176_Babe | Type_176_Timestamp | Type_176_Indices | Type_176_Balances | Type_176_Authorship | Type_176_Staking | Type_176_Offences | Type_176_Session | Type_176_FinalityTracker | Type_176_Grandpa | Type_176_ImOnline | Type_176_AuthorityDiscovery | Type_176_Democracy | Type_176_Council | Type_176_TechnicalCommittee | Type_176_ElectionsPhragmen | Type_176_TechnicalMembership | Type_176_Treasury | Type_176_Claims | Type_176_Parachains | Type_176_Attestations | Type_176_Slots | Type_176_Registrar | Type_176_Utility | Type_176_Identity | Type_176_Society | Type_176_Recovery | Type_176_Vesting | Type_176_Scheduler
+
+export interface Type_176_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Type_176_Babe {
+    __kind: 'Babe'
+    value: BabeCall
+}
+
+export interface Type_176_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Type_176_Indices {
+    __kind: 'Indices'
+    value: IndicesCall
+}
+
+export interface Type_176_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Type_176_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
+}
+
+export interface Type_176_Staking {
+    __kind: 'Staking'
+    value: StakingCall
+}
+
+export interface Type_176_Offences {
+    __kind: 'Offences'
+    value: OffencesCall
+}
+
+export interface Type_176_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Type_176_FinalityTracker {
+    __kind: 'FinalityTracker'
+    value: FinalityTrackerCall
+}
+
+export interface Type_176_Grandpa {
+    __kind: 'Grandpa'
+    value: GrandpaCall
+}
+
+export interface Type_176_ImOnline {
+    __kind: 'ImOnline'
+    value: ImOnlineCall
+}
+
+export interface Type_176_AuthorityDiscovery {
+    __kind: 'AuthorityDiscovery'
+    value: AuthorityDiscoveryCall
+}
+
+export interface Type_176_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Type_176_Council {
+    __kind: 'Council'
+    value: CouncilCall
+}
+
+export interface Type_176_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: TechnicalCommitteeCall
+}
+
+export interface Type_176_ElectionsPhragmen {
+    __kind: 'ElectionsPhragmen'
+    value: ElectionsPhragmenCall
+}
+
+export interface Type_176_TechnicalMembership {
+    __kind: 'TechnicalMembership'
+    value: TechnicalMembershipCall
+}
+
+export interface Type_176_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Type_176_Claims {
+    __kind: 'Claims'
+    value: ClaimsCall
+}
+
+export interface Type_176_Parachains {
+    __kind: 'Parachains'
+    value: ParachainsCall
+}
+
+export interface Type_176_Attestations {
+    __kind: 'Attestations'
+    value: AttestationsCall
+}
+
+export interface Type_176_Slots {
+    __kind: 'Slots'
+    value: SlotsCall
+}
+
+export interface Type_176_Registrar {
+    __kind: 'Registrar'
+    value: RegistrarCall
+}
+
+export interface Type_176_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Type_176_Identity {
+    __kind: 'Identity'
+    value: IdentityCall
+}
+
+export interface Type_176_Society {
+    __kind: 'Society'
+    value: SocietyCall
+}
+
+export interface Type_176_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
+}
+
+export interface Type_176_Vesting {
+    __kind: 'Vesting'
+    value: VestingCall
+}
+
+export interface Type_176_Scheduler {
+    __kind: 'Scheduler'
+    value: SchedulerCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
 export interface DispatchErrorModule {
     index: number
     error: number
@@ -3786,158 +3963,6 @@ export interface ParaInfo {
     manager: Uint8Array
     deposit: bigint
     locked: boolean
-}
-
-export type Type_176 = Type_176_System | Type_176_Babe | Type_176_Timestamp | Type_176_Indices | Type_176_Balances | Type_176_Authorship | Type_176_Staking | Type_176_Offences | Type_176_Session | Type_176_FinalityTracker | Type_176_Grandpa | Type_176_ImOnline | Type_176_AuthorityDiscovery | Type_176_Democracy | Type_176_Council | Type_176_TechnicalCommittee | Type_176_ElectionsPhragmen | Type_176_TechnicalMembership | Type_176_Treasury | Type_176_Claims | Type_176_Parachains | Type_176_Attestations | Type_176_Slots | Type_176_Registrar | Type_176_Utility | Type_176_Identity | Type_176_Society | Type_176_Recovery | Type_176_Vesting | Type_176_Scheduler
-
-export interface Type_176_System {
-    __kind: 'System'
-    value: SystemCall
-}
-
-export interface Type_176_Babe {
-    __kind: 'Babe'
-    value: BabeCall
-}
-
-export interface Type_176_Timestamp {
-    __kind: 'Timestamp'
-    value: TimestampCall
-}
-
-export interface Type_176_Indices {
-    __kind: 'Indices'
-    value: IndicesCall
-}
-
-export interface Type_176_Balances {
-    __kind: 'Balances'
-    value: BalancesCall
-}
-
-export interface Type_176_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
-}
-
-export interface Type_176_Staking {
-    __kind: 'Staking'
-    value: StakingCall
-}
-
-export interface Type_176_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
-}
-
-export interface Type_176_Session {
-    __kind: 'Session'
-    value: SessionCall
-}
-
-export interface Type_176_FinalityTracker {
-    __kind: 'FinalityTracker'
-    value: FinalityTrackerCall
-}
-
-export interface Type_176_Grandpa {
-    __kind: 'Grandpa'
-    value: GrandpaCall
-}
-
-export interface Type_176_ImOnline {
-    __kind: 'ImOnline'
-    value: ImOnlineCall
-}
-
-export interface Type_176_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
-
-export interface Type_176_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
-}
-
-export interface Type_176_Council {
-    __kind: 'Council'
-    value: CouncilCall
-}
-
-export interface Type_176_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: TechnicalCommitteeCall
-}
-
-export interface Type_176_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
-}
-
-export interface Type_176_TechnicalMembership {
-    __kind: 'TechnicalMembership'
-    value: TechnicalMembershipCall
-}
-
-export interface Type_176_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryCall
-}
-
-export interface Type_176_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
-}
-
-export interface Type_176_Parachains {
-    __kind: 'Parachains'
-    value: ParachainsCall
-}
-
-export interface Type_176_Attestations {
-    __kind: 'Attestations'
-    value: AttestationsCall
-}
-
-export interface Type_176_Slots {
-    __kind: 'Slots'
-    value: SlotsCall
-}
-
-export interface Type_176_Registrar {
-    __kind: 'Registrar'
-    value: RegistrarCall
-}
-
-export interface Type_176_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
-}
-
-export interface Type_176_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
-}
-
-export interface Type_176_Society {
-    __kind: 'Society'
-    value: SocietyCall
-}
-
-export interface Type_176_Recovery {
-    __kind: 'Recovery'
-    value: RecoveryCall
-}
-
-export interface Type_176_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export interface Type_176_Scheduler {
-    __kind: 'Scheduler'
-    value: SchedulerCall
 }
 
 export interface Timepoint {
@@ -4197,6 +4222,33 @@ export interface VestingInfo {
     locked: bigint
     perBlock: bigint
     startingBlock: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface Digest {

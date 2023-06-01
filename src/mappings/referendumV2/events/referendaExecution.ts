@@ -1,11 +1,11 @@
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
-import { getScheduledEventData, getDispatchedEventData } from '../../../common/scheduledData'
-import { NoReferendaFoundForExecution } from '../../../common/errors'
+import { getDispatchedEventData } from '../../../common/scheduledData'
+import { SchedulerAgendaStorage } from "../../../types/storage";
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { toHex } from '@subsquid/substrate-processor'
 
 // export async function handleReferendumV2ExecutionSchedule(ctx: BatchContext<Store, unknown>,
 //     item: EventItem<'Scheduler.Scheduled', { event: { args: true; extrinsic: { hash: true } } }>,
@@ -46,26 +46,54 @@ export async function handleReferendumV2Execution(ctx: BatchContext<Store, unkno
         return null
     }
 
-    const proposal = await ctx.store.get(Proposal, {
-        where: {
-                    type: ProposalType.ReferendumV2,
-                    executeAtBlockNumber: eventData.blockNumber,
-                    status: ProposalStatus.Confirmed
-                },
-        order: {
-            id: 'DESC',
-        },
-    })
-
-    if(!proposal || !proposal.index){
-        return;
+    const storage = new SchedulerAgendaStorage(ctx, header)
+    if(!storage.isExists){
+        return null
     }
 
-    await updateProposalStatus(ctx, header, proposal.index, ProposalType.ReferendumV2, {
-        isEnded: true,
-        status: ProposalStatus.Executed,
-        data: {
-            executedAt: new Date(header.timestamp)
+    try{
+        const storageData = await ctx._chain.getStorage('0x1b268307bfec73be760aec6f017d7a7db704b6dbb2d135f635940df5b0f1961d', 'Scheduler', 'Agenda', 2075651)
+
+        if (!storageData || !storageData[0]) return null
+
+        const callData = storageData[0]?.call
+
+        let preimageHash = null
+
+        if(callData.__kind == 'Inline'){
+            preimageHash = callData.value
         }
-    })
+        else {
+            preimageHash = callData.hash
+        }
+
+        if(!preimageHash) return null
+
+        const proposal = await ctx.store.get(Proposal, {
+            where: {
+                        type: ProposalType.ReferendumV2,
+                        status: ProposalStatus.Confirmed,
+                        hash: toHex(preimageHash)
+                    },
+            order: {
+                id: 'DESC',
+            },
+        })
+
+        if(!proposal || !proposal.index){
+            return;
+        }
+
+        await updateProposalStatus(ctx, header, proposal.index, ProposalType.ReferendumV2, {
+            isEnded: true,
+            status: eventData.result == 'Ok' ? ProposalStatus.Executed : ProposalStatus.ExecutionFailed,
+            data: {
+                executedAt: new Date(header.timestamp),
+                executeAtBlockNumber: eventData.blockNumber
+            }
+        })
+    }catch(e){
+        console.log('error',e)
+    }
+
 }

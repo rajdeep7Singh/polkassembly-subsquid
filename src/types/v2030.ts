@@ -152,6 +152,14 @@ export interface Proposal_ElectionProviderMultiPhase {
     value: ElectionProviderMultiPhaseCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_138
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export interface AccountInfo {
     nonce: number
     consumers: number
@@ -4401,6 +4409,175 @@ export interface ElectionProviderMultiPhaseCall_submit_unsigned {
     witness: SolutionOrSnapshotSize
 }
 
+export type Type_138 = Type_138_System | Type_138_Babe | Type_138_Timestamp | Type_138_Indices | Type_138_Balances | Type_138_Authorship | Type_138_Staking | Type_138_Offences | Type_138_Session | Type_138_Grandpa | Type_138_ImOnline | Type_138_AuthorityDiscovery | Type_138_Democracy | Type_138_Council | Type_138_TechnicalCommittee | Type_138_ElectionsPhragmen | Type_138_TechnicalMembership | Type_138_Treasury | Type_138_Claims | Type_138_Utility | Type_138_Identity | Type_138_Society | Type_138_Recovery | Type_138_Vesting | Type_138_Scheduler | Type_138_Proxy | Type_138_Multisig | Type_138_Bounties | Type_138_Tips | Type_138_ElectionProviderMultiPhase
+
+export interface Type_138_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Type_138_Babe {
+    __kind: 'Babe'
+    value: BabeCall
+}
+
+export interface Type_138_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Type_138_Indices {
+    __kind: 'Indices'
+    value: IndicesCall
+}
+
+export interface Type_138_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Type_138_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
+}
+
+export interface Type_138_Staking {
+    __kind: 'Staking'
+    value: StakingCall
+}
+
+export interface Type_138_Offences {
+    __kind: 'Offences'
+    value: OffencesCall
+}
+
+export interface Type_138_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Type_138_Grandpa {
+    __kind: 'Grandpa'
+    value: GrandpaCall
+}
+
+export interface Type_138_ImOnline {
+    __kind: 'ImOnline'
+    value: ImOnlineCall
+}
+
+export interface Type_138_AuthorityDiscovery {
+    __kind: 'AuthorityDiscovery'
+    value: AuthorityDiscoveryCall
+}
+
+export interface Type_138_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Type_138_Council {
+    __kind: 'Council'
+    value: CouncilCall
+}
+
+export interface Type_138_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: TechnicalCommitteeCall
+}
+
+export interface Type_138_ElectionsPhragmen {
+    __kind: 'ElectionsPhragmen'
+    value: ElectionsPhragmenCall
+}
+
+export interface Type_138_TechnicalMembership {
+    __kind: 'TechnicalMembership'
+    value: TechnicalMembershipCall
+}
+
+export interface Type_138_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export interface Type_138_Claims {
+    __kind: 'Claims'
+    value: ClaimsCall
+}
+
+export interface Type_138_Utility {
+    __kind: 'Utility'
+    value: UtilityCall
+}
+
+export interface Type_138_Identity {
+    __kind: 'Identity'
+    value: IdentityCall
+}
+
+export interface Type_138_Society {
+    __kind: 'Society'
+    value: SocietyCall
+}
+
+export interface Type_138_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
+}
+
+export interface Type_138_Vesting {
+    __kind: 'Vesting'
+    value: VestingCall
+}
+
+export interface Type_138_Scheduler {
+    __kind: 'Scheduler'
+    value: SchedulerCall
+}
+
+export interface Type_138_Proxy {
+    __kind: 'Proxy'
+    value: ProxyCall
+}
+
+export interface Type_138_Multisig {
+    __kind: 'Multisig'
+    value: MultisigCall
+}
+
+export interface Type_138_Bounties {
+    __kind: 'Bounties'
+    value: BountiesCall
+}
+
+export interface Type_138_Tips {
+    __kind: 'Tips'
+    value: TipsCall
+}
+
+export interface Type_138_ElectionProviderMultiPhase {
+    __kind: 'ElectionProviderMultiPhase'
+    value: ElectionProviderMultiPhaseCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
 export interface AccountData {
     free: bigint
     reserved: bigint
@@ -4578,158 +4755,6 @@ export interface StatementKind_Regular {
 
 export interface StatementKind_Saft {
     __kind: 'Saft'
-}
-
-export type Type_138 = Type_138_System | Type_138_Babe | Type_138_Timestamp | Type_138_Indices | Type_138_Balances | Type_138_Authorship | Type_138_Staking | Type_138_Offences | Type_138_Session | Type_138_Grandpa | Type_138_ImOnline | Type_138_AuthorityDiscovery | Type_138_Democracy | Type_138_Council | Type_138_TechnicalCommittee | Type_138_ElectionsPhragmen | Type_138_TechnicalMembership | Type_138_Treasury | Type_138_Claims | Type_138_Utility | Type_138_Identity | Type_138_Society | Type_138_Recovery | Type_138_Vesting | Type_138_Scheduler | Type_138_Proxy | Type_138_Multisig | Type_138_Bounties | Type_138_Tips | Type_138_ElectionProviderMultiPhase
-
-export interface Type_138_System {
-    __kind: 'System'
-    value: SystemCall
-}
-
-export interface Type_138_Babe {
-    __kind: 'Babe'
-    value: BabeCall
-}
-
-export interface Type_138_Timestamp {
-    __kind: 'Timestamp'
-    value: TimestampCall
-}
-
-export interface Type_138_Indices {
-    __kind: 'Indices'
-    value: IndicesCall
-}
-
-export interface Type_138_Balances {
-    __kind: 'Balances'
-    value: BalancesCall
-}
-
-export interface Type_138_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
-}
-
-export interface Type_138_Staking {
-    __kind: 'Staking'
-    value: StakingCall
-}
-
-export interface Type_138_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
-}
-
-export interface Type_138_Session {
-    __kind: 'Session'
-    value: SessionCall
-}
-
-export interface Type_138_Grandpa {
-    __kind: 'Grandpa'
-    value: GrandpaCall
-}
-
-export interface Type_138_ImOnline {
-    __kind: 'ImOnline'
-    value: ImOnlineCall
-}
-
-export interface Type_138_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
-
-export interface Type_138_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
-}
-
-export interface Type_138_Council {
-    __kind: 'Council'
-    value: CouncilCall
-}
-
-export interface Type_138_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: TechnicalCommitteeCall
-}
-
-export interface Type_138_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
-}
-
-export interface Type_138_TechnicalMembership {
-    __kind: 'TechnicalMembership'
-    value: TechnicalMembershipCall
-}
-
-export interface Type_138_Treasury {
-    __kind: 'Treasury'
-    value: TreasuryCall
-}
-
-export interface Type_138_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
-}
-
-export interface Type_138_Utility {
-    __kind: 'Utility'
-    value: UtilityCall
-}
-
-export interface Type_138_Identity {
-    __kind: 'Identity'
-    value: IdentityCall
-}
-
-export interface Type_138_Society {
-    __kind: 'Society'
-    value: SocietyCall
-}
-
-export interface Type_138_Recovery {
-    __kind: 'Recovery'
-    value: RecoveryCall
-}
-
-export interface Type_138_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export interface Type_138_Scheduler {
-    __kind: 'Scheduler'
-    value: SchedulerCall
-}
-
-export interface Type_138_Proxy {
-    __kind: 'Proxy'
-    value: ProxyCall
-}
-
-export interface Type_138_Multisig {
-    __kind: 'Multisig'
-    value: MultisigCall
-}
-
-export interface Type_138_Bounties {
-    __kind: 'Bounties'
-    value: BountiesCall
-}
-
-export interface Type_138_Tips {
-    __kind: 'Tips'
-    value: TipsCall
-}
-
-export interface Type_138_ElectionProviderMultiPhase {
-    __kind: 'ElectionProviderMultiPhase'
-    value: ElectionProviderMultiPhaseCall
 }
 
 export interface IdentityInfo {
@@ -5030,6 +5055,33 @@ export interface RawSolution {
 export interface SolutionOrSnapshotSize {
     voters: number
     targets: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface NextConfigDescriptorV1 {
