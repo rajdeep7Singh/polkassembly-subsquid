@@ -16,18 +16,6 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, block: Substrat
         const storageData = await storage.asV266.get()
         if (!storageData) return undefined
 
-        return storageData.map((proposal: any): DemocracyProposalStorageData => {
-            const [index, , proposer] = proposal
-            return {
-                index,
-                hash: new Uint8Array(32).fill(0),
-                proposer,
-            }
-        })
-    } else if (storage.isV266) {
-        const storageData = await storage.asV266.get()
-        if (!storageData) return undefined
-
         return storageData.map((proposal): DemocracyProposalStorageData => {
             const [index, hash, proposer] = proposal
             return {

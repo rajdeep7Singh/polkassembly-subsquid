@@ -494,26 +494,26 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 //     await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                 //     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
                 // }
-                if (item.name == 'Multisig.MultisigExecuted') {
-                    if (Array.isArray(item.event.args)) {
-                        assert(item.event.args.length >= 3)
-                        multisigAddress = item.event.args[2]
-                    } else if (typeof item.event.args === 'object') {
-                        assert('multisig' in item.event.args)
-                        multisigAddress = item.event.args.multisig
-                    } else {
-                        throw new Error('Unextpected case')
-                    }
+                // if (item.name == 'Multisig.MultisigExecuted') {
+                //     if (Array.isArray(item.event.args)) {
+                //         assert(item.event.args.length >= 3)
+                //         multisigAddress = item.event.args[2]
+                //     } else if (typeof item.event.args === 'object') {
+                //         assert('multisig' in item.event.args)
+                //         multisigAddress = item.event.args.multisig
+                //     } else {
+                //         throw new Error('Unextpected case')
+                //     }
     
-                    let extrinsicHash = item.event.extrinsic!.hash
-                    multisigOrigins.set(extrinsicHash, {
-                        __kind: 'system',
-                        value: {
-                            __kind: 'Signed',
-                            value: multisigAddress,
-                        },
-                    })
-                }
+                //     let extrinsicHash = item.event.extrinsic!.hash
+                //     multisigOrigins.set(extrinsicHash, {
+                //         __kind: 'system',
+                //         value: {
+                //             __kind: 'Signed',
+                //             value: multisigAddress,
+                //         },
+                //     })
+                // }
             }
         }
         // if (multisigOrigins.size > 0) {
