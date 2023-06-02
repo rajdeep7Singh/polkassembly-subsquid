@@ -1,7 +1,6 @@
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDispatchedEventData } from '../../../common/scheduledData'
-import { SchedulerAgendaStorage } from "../../../types/storage";
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
@@ -46,14 +45,8 @@ export async function handleReferendumV2Execution(ctx: BatchContext<Store, unkno
         return null
     }
 
-    const storage = new SchedulerAgendaStorage(ctx, header)
-    if(!storage.isExists){
-        return null
-    }
-
     try{
-        const storageData = await ctx._chain.getStorage('0x1b268307bfec73be760aec6f017d7a7db704b6dbb2d135f635940df5b0f1961d', 'Scheduler', 'Agenda', 2075651)
-
+        const storageData = await ctx._chain.getStorage(header.parentHash, 'Scheduler', 'Agenda', eventData.blockNumber)
         if (!storageData || !storageData[0]) return null
 
         const callData = storageData[0]?.call
@@ -93,7 +86,7 @@ export async function handleReferendumV2Execution(ctx: BatchContext<Store, unkno
             }
         })
     }catch(e){
-        console.log('error',e)
+        console.error('error',e)
     }
 
 }

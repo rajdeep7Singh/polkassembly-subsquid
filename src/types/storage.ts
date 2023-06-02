@@ -4274,7 +4274,7 @@ export class SchedulerAgendaStorage extends StorageBase {
      *  Items to be executed, indexed by the block number that they should be executed on.
      */
     get isV1058(): boolean {
-        return this.getTypeHash() === '7a1495e5fac21e7b1eb19ef9378f1fa7d631d88052e309456e963bda895c6e30'
+        return this.getTypeHash() === 'c448e17ce7bf88fba590d693f24e06b0da135aa9deae98d1cc4063bd235eed69'
     }
 
     /**
@@ -4289,7 +4289,7 @@ export class SchedulerAgendaStorage extends StorageBase {
      *  Items to be executed, indexed by the block number that they should be executed on.
      */
     get isV1062(): boolean {
-        return this.getTypeHash() === 'eacf3b30fa493b22312a4312eadde9a83d90528bd43a5f1e6abc82ff76e8588d'
+        return this.getTypeHash() === '36b38bc8d4e942763821c3299a103de3cc18c0b13bffe80dcb74c830478d5602'
     }
 
     /**
@@ -4304,7 +4304,7 @@ export class SchedulerAgendaStorage extends StorageBase {
      *  Items to be executed, indexed by the block number that they should be executed on.
      */
     get isV2005(): boolean {
-        return this.getTypeHash() === '26f72d605f5743cf8daf006eb76816e51bff3108c5e154f77644c6971f79f5c2'
+        return this.getTypeHash() === 'a9500e48e9a35073881dca64414aeb6d89a104b61c3087791b1339dbb22f1722'
     }
 
     /**
@@ -4319,7 +4319,7 @@ export class SchedulerAgendaStorage extends StorageBase {
      *  Items to be executed, indexed by the block number that they should be executed on.
      */
     get isV2007(): boolean {
-        return this.getTypeHash() === '896ca31d79f490c66848186c21637847fc0e5de4f6da7216ccd84093341113f7'
+        return this.getTypeHash() === '5b035c08d9a6ec4c8841057c19036f8801cdc1ccb792e11636f13bde66680ef1'
     }
 
     /**
@@ -4334,7 +4334,7 @@ export class SchedulerAgendaStorage extends StorageBase {
      *  Items to be executed, indexed by the block number that they should be executed on.
      */
     get isV2011(): boolean {
-        return this.getTypeHash() === 'f70c2f0486bfabed6284d237eba5160ddc2d5f569fbe78b260802acd34036ea0'
+        return this.getTypeHash() === 'e061eb64501157e93c383ed1abda0f33ed222d23c3e69db76833960783cc9f6f'
     }
 
     /**

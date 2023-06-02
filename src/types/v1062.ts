@@ -157,7 +157,6 @@ export interface Scheduled {
     priority: number
     call: Type_175
     maybePeriodic: ([number, number] | undefined)
-    origin: PalletsOrigin
 }
 
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_suicide
@@ -3863,23 +3862,6 @@ export interface Type_175_Scheduler {
     value: SchedulerCall
 }
 
-export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
-
-export interface PalletsOrigin_System {
-    __kind: 'System'
-    value: SystemOrigin
-}
-
-export interface PalletsOrigin_Council {
-    __kind: 'Council'
-    value: CollectiveOrigin
-}
-
-export interface PalletsOrigin_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: CollectiveOrigin
-}
-
 export interface ChangesTrieConfiguration {
     digestInterval: number
     digestLevels: number
@@ -4266,33 +4248,6 @@ export interface VestingInfo {
     locked: bigint
     perBlock: bigint
     startingBlock: number
-}
-
-export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
-
-export interface SystemOrigin_Root {
-    __kind: 'Root'
-}
-
-export interface SystemOrigin_Signed {
-    __kind: 'Signed'
-    value: Uint8Array
-}
-
-export interface SystemOrigin_None {
-    __kind: 'None'
-}
-
-export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
-
-export interface CollectiveOrigin_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface CollectiveOrigin_Member {
-    __kind: 'Member'
-    value: Uint8Array
 }
 
 export interface Digest {

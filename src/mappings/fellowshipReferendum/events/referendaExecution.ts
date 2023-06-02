@@ -6,6 +6,7 @@ import { NoReferendaFoundForExecution } from '../../../common/errors'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { toHex } from '@subsquid/substrate-processor'
 
 // export async function handleFellowshipExecutionSchedule(ctx: BatchContext<Store, unknown>,
 //     item: EventItem<'Scheduler.Scheduled', { event: { args: true; extrinsic: { hash: true } } }>,
@@ -46,26 +47,48 @@ export async function handleFellowshipExecution(ctx: BatchContext<Store, unknown
         return null
     }
 
-    const proposal = await ctx.store.get(Proposal, {
-        where: {
-                    type: ProposalType.FellowshipReferendum,
-                    executeAtBlockNumber: eventData.blockNumber,
-                    status: ProposalStatus.Confirmed
-                },
-        order: {
-            id: 'DESC',
-        },
-    })
+    try{
+        const storageData = await ctx._chain.getStorage(header.parentHash, 'Scheduler', 'Agenda', eventData.blockNumber)
+        if (!storageData || !storageData[0]) return null
 
-    if(!proposal || !proposal.index){
-        return;
+        const callData = storageData[0]?.call
+
+        let preimageHash = null
+
+        if(callData.__kind == 'Inline'){
+            preimageHash = callData.value
+        }
+        else {
+            preimageHash = callData.hash
+        }
+
+        if(!preimageHash) return null
+
+        const proposal = await ctx.store.get(Proposal, {
+            where: {
+                        type: ProposalType.FellowshipReferendum,
+                        status: ProposalStatus.Confirmed,
+                        hash: toHex(preimageHash)
+                    },
+            order: {
+                id: 'DESC',
+            },
+        })
+
+        if(!proposal || !proposal.index){
+            return;
+        }
+
+        await updateProposalStatus(ctx, header, proposal.index, ProposalType.FellowshipReferendum, {
+            isEnded: true,
+            status: eventData.result == 'Ok' ? ProposalStatus.Executed : ProposalStatus.ExecutionFailed,
+            data: {
+                executedAt: new Date(header.timestamp),
+                executeAtBlockNumber: eventData.blockNumber
+            }
+        })
+    }catch(e){
+        console.error('error',e)
     }
 
-    await updateProposalStatus(ctx, header, proposal.index, ProposalType.FellowshipReferendum, {
-        isEnded: true,
-        status: ProposalStatus.Executed,
-        data: {
-            executedAt: new Date(header.timestamp)
-        }
-    })
 }

@@ -16,7 +16,10 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     if (!(item.call as any).success) return
     const { to, lockPeriod, balance, track } = getDelegateData(ctx, item.call)
     const toWallet = ss58codec.encode(to)
-    const from = getOriginAccountId(item.call.origin)
+    let from = getOriginAccountId(item.call.origin)
+    if(!from){
+        from = getOriginAccountId(item.extrinsic.call.origin)
+    }
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
 
     if (delegations != null && delegations != undefined && delegations.length > 1) {

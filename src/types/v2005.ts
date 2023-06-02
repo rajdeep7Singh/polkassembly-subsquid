@@ -178,7 +178,6 @@ export interface Scheduled {
     priority: number
     call: Type_188
     maybePeriodic: ([number, number] | undefined)
-    origin: PalletsOrigin
 }
 
 export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
@@ -4539,23 +4538,6 @@ export interface Type_188_Multisig {
     value: MultisigCall
 }
 
-export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
-
-export interface PalletsOrigin_System {
-    __kind: 'System'
-    value: SystemOrigin
-}
-
-export interface PalletsOrigin_Council {
-    __kind: 'Council'
-    value: CollectiveOrigin
-}
-
-export interface PalletsOrigin_TechnicalCommittee {
-    __kind: 'TechnicalCommittee'
-    value: CollectiveOrigin
-}
-
 export interface DispatchErrorModule {
     index: number
     error: number
@@ -5072,33 +5054,6 @@ export interface ProxyType_Auction {
 export interface Timepoint {
     height: number
     index: number
-}
-
-export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
-
-export interface SystemOrigin_Root {
-    __kind: 'Root'
-}
-
-export interface SystemOrigin_Signed {
-    __kind: 'Signed'
-    value: Uint8Array
-}
-
-export interface SystemOrigin_None {
-    __kind: 'None'
-}
-
-export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
-
-export interface CollectiveOrigin_Members {
-    __kind: 'Members'
-    value: [number, number]
-}
-
-export interface CollectiveOrigin_Member {
-    __kind: 'Member'
-    value: Uint8Array
 }
 
 export interface Digest {
