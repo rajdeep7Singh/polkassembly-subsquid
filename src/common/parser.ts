@@ -136,11 +136,17 @@ export class Parser {
 
     private parseBytesArray(def: CodecBytesArrayType, val: unknown): string {
         assert(val instanceof Uint8Array && val.length == def.len)
+        if(val.length > 2000){
+            return toHex(val.slice(0, 2000)) + '...'
+        }
         return toHex(val)
     }
 
     private parseBytes(val: unknown): string {
         assert(val instanceof Uint8Array)
+        if(val.length > 2000){
+            return toHex(val.slice(0, 2000)) + '...'
+        }
         return toHex(val)
     }
 
