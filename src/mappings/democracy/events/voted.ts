@@ -14,7 +14,7 @@ export async function handleDemocracyVotes(ctx: BatchContext<Store, unknown>,
     const { accountId, refIndex, vote } = getDemocracyVotedData(ctx, item.event)
 
     const proposal = await ctx.store.get(Proposal, { where: { index: refIndex, type: ProposalType.Referendum } })
-    if (!proposal) {
+    if (!proposal || !proposal.index) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, refIndex))
         return
     }
@@ -52,6 +52,7 @@ export async function handleDemocracyVotes(ctx: BatchContext<Store, unknown>,
             blockNumber: header.height,
             lockPeriod,
             decision: VoteDecision.yes,
+            proposalIndex: proposal.index,
             proposal,
             balance: balance,
             timestamp: new Date(header.timestamp),

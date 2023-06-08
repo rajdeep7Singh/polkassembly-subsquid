@@ -1,15 +1,18 @@
-module.exports = class Data1676569361197 {
-    name = 'Data1676569361197'
+module.exports = class Data1686223277902 {
+    name = 'Data1686223277902'
 
     async up(db) {
         await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "proposed_call" jsonb, "length" integer, "deposit" numeric, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_c6e9bc6f69c924e85a44174d35" ON "preimage" ("hash") `)
         await db.query(`CREATE INDEX "IDX_8961b767f111466724025930b0" ON "preimage" ("created_at_block") `)
         await db.query(`CREATE INDEX "IDX_146c48e4f4bf54acb708686897" ON "preimage" ("created_at") `)
-        await db.query(`CREATE TABLE "vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "decision" character varying(12), "balance" jsonb, "lock_period" integer, "type" character varying(17), "txn_hash" text, CONSTRAINT "PK_2d5932d46afe39c8176f9d4be72" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "proposal_index" integer NOT NULL, "block_number" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "decision" character varying(12), "balance" jsonb, "lock_period" integer, "type" character varying(17), "removed_at" TIMESTAMP WITH TIME ZONE, "removed_at_block" integer, "txn_hash" text, CONSTRAINT "PK_2d5932d46afe39c8176f9d4be72" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_db85a3f8526cbaa2865faf8637" ON "vote" ("proposal_id") `)
+        await db.query(`CREATE INDEX "IDX_97f6fbfcfca3eade2429f6ada9" ON "vote" ("proposal_index") `)
         await db.query(`CREATE INDEX "IDX_6d54f04fc9dd3a4c15cb607c9e" ON "vote" ("block_number") `)
         await db.query(`CREATE INDEX "IDX_8d701dbd422ac5e3e1d7a9a0d1" ON "vote" ("timestamp") `)
+        await db.query(`CREATE INDEX "IDX_ff43d27afdd555fd5266645042" ON "vote" ("removed_at") `)
+        await db.query(`CREATE INDEX "IDX_feeebb84bc65049ee964e71ec2" ON "vote" ("removed_at_block") `)
         await db.query(`CREATE TABLE "conviction_vote" ("id" character varying NOT NULL, "voter" text, "proposal_id" character varying NOT NULL, "proposal_index" integer NOT NULL, "created_at_block" integer NOT NULL, "removed_at_block" integer, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "removed_at" TIMESTAMP WITH TIME ZONE, "decision" character varying(12) NOT NULL, "balance" jsonb NOT NULL, "lock_period" integer, "delegated_to" text, "is_delegated" boolean, "type" character varying(17) NOT NULL, CONSTRAINT "PK_ff0112254d31eff17e0ab8f8245" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_80392f89297f706d3ab7d6b386" ON "conviction_vote" ("proposal_index") `)
         await db.query(`CREATE INDEX "IDX_410db8207bfa4aec346ca941e4" ON "conviction_vote" ("proposal_id") `)
@@ -64,8 +67,11 @@ module.exports = class Data1676569361197 {
         await db.query(`DROP INDEX "public"."IDX_146c48e4f4bf54acb708686897"`)
         await db.query(`DROP TABLE "vote"`)
         await db.query(`DROP INDEX "public"."IDX_db85a3f8526cbaa2865faf8637"`)
+        await db.query(`DROP INDEX "public"."IDX_97f6fbfcfca3eade2429f6ada9"`)
         await db.query(`DROP INDEX "public"."IDX_6d54f04fc9dd3a4c15cb607c9e"`)
         await db.query(`DROP INDEX "public"."IDX_8d701dbd422ac5e3e1d7a9a0d1"`)
+        await db.query(`DROP INDEX "public"."IDX_ff43d27afdd555fd5266645042"`)
+        await db.query(`DROP INDEX "public"."IDX_feeebb84bc65049ee964e71ec2"`)
         await db.query(`DROP TABLE "conviction_vote"`)
         await db.query(`DROP INDEX "public"."IDX_80392f89297f706d3ab7d6b386"`)
         await db.query(`DROP INDEX "public"."IDX_410db8207bfa4aec346ca941e4"`)

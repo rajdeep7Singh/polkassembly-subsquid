@@ -1,5 +1,5 @@
 import { CallHandlerContext } from '../../types/contexts'
-import { MissingProposalRecordWarn } from '../../../common/errors'
+import { MissingProposalRecordWarn, TooManyOpenVotes } from '../../../common/errors'
 import {
     Proposal,
     ProposalType,
@@ -16,6 +16,7 @@ import { randomUUID } from 'crypto'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { IsNull } from 'typeorm'
 
 export async function handleVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'Democracy.vote', { call: { args: true; origin: true } }>,
@@ -25,7 +26,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
     const { index, vote } = getVoteData(ctx, item.call)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Referendum } })
-    if (!proposal) {
+    if (!proposal || !proposal.index) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
         return
     }
@@ -38,6 +39,21 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         case 'Split':
             decision = VoteDecision.abstain
             break
+    }
+    const originAccountId = getOriginAccountId(item.call.origin)
+
+    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull() } })
+    
+    if (votes.length > 1) {
+        //should never be the case
+        ctx.log.warn(TooManyOpenVotes(header.height, index, originAccountId))
+    }
+
+    if (votes.length > 0) {
+        const vote = votes[0]
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
+        await ctx.store.save(vote)
     }
 
     let lockPeriod: number | undefined
@@ -61,6 +77,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
             id: randomUUID(),
             voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
             blockNumber: header.height,
+            proposalIndex: proposal.index,
             decision,
             lockPeriod,
             proposal,
@@ -79,9 +96,23 @@ export async function handlePrecompileVote(ctx: BatchContext<Store, unknown>, it
     const refIndex = index.toNumber()
 
     const proposal = await ctx.store.get(Proposal, { where: { index: refIndex , type: ProposalType.Referendum } })
-    if (!proposal) {
+    if (!proposal || !proposal.index) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
         return
+    }
+
+    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull() } })
+    
+    if (votes.length > 1) {
+        //should never be the case
+        ctx.log.warn(TooManyOpenVotes(header.height, index, originAccountId))
+    }
+
+    if (votes.length > 0) {
+        const vote = votes[0]
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
+        await ctx.store.save(vote)
     }
 
     const decision: VoteDecision = aye ? VoteDecision.yes : VoteDecision.no
@@ -101,6 +132,7 @@ export async function handlePrecompileVote(ctx: BatchContext<Store, unknown>, it
             id: randomUUID(),
             voter: originAccountId,
             blockNumber: header.height,
+            proposalIndex: proposal.index,
             decision,
             lockPeriod,
             proposal,

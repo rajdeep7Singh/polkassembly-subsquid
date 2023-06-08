@@ -196,12 +196,15 @@ type Vote @entity {
   voter: String
   proposalId: ID!
   proposal: Proposal!
+  proposalIndex: Int! @index
   blockNumber: Int! @index
   timestamp: DateTime! @index
   decision: VoteDecision
   balance: VoteBalance
   lockPeriod: Int
   type: VoteType
+  removedAt: DateTime @index
+  removedAtBlock: Int @index
   txnHash: String
 }
 

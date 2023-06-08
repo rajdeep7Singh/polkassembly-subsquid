@@ -26,6 +26,10 @@ export class Vote {
 
     @Index_()
     @Column_("int4", {nullable: false})
+    proposalIndex!: number
+
+    @Index_()
+    @Column_("int4", {nullable: false})
     blockNumber!: number
 
     @Index_()
@@ -43,6 +47,14 @@ export class Vote {
 
     @Column_("varchar", {length: 17, nullable: true})
     type!: VoteType | undefined | null
+
+    @Index_()
+    @Column_("timestamp with time zone", {nullable: true})
+    removedAt!: Date | undefined | null
+
+    @Index_()
+    @Column_("int4", {nullable: true})
+    removedAtBlock!: number | undefined | null
 
     @Column_("text", {nullable: true})
     txnHash!: string | undefined | null
