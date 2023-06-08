@@ -42,7 +42,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
     }
     const originAccountId = getOriginAccountId(item.call.origin)
 
-    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull() } })
+    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
     
     if (votes.length > 1) {
         //should never be the case
@@ -101,7 +101,7 @@ export async function handlePrecompileVote(ctx: BatchContext<Store, unknown>, it
         return
     }
 
-    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull() } })
+    const votes = await ctx.store.find(Vote, { where: { voter: originAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
     
     if (votes.length > 1) {
         //should never be the case

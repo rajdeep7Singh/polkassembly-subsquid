@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { MissingProposalRecordWarn } from '../../../common/errors'
+import { MissingProposalRecordWarn, TooManyOpenVotes } from '../../../common/errors'
 import { toHex } from '@subsquid/substrate-processor'
 import { Proposal, ProposalType, SplitVoteBalance, StandardVoteBalance, Vote, VoteBalance, VoteType } from '../../../model'
 import { getDemocracyVotedData } from './getters'
@@ -7,6 +7,7 @@ import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 import { VoteDecision } from '../../../model'
+import { IsNull } from 'typeorm'
 
 export async function handleDemocracyVotes(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Democracy.Voted', { event: { args: true; extrinsic: { hash: true } } }>,
@@ -17,6 +18,22 @@ export async function handleDemocracyVotes(ctx: BatchContext<Store, unknown>,
     if (!proposal || !proposal.index) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, refIndex))
         return
+    }
+
+    const hexAccountId = toHex(accountId)
+
+    const votes = await ctx.store.find(Vote, { where: { voter: hexAccountId, proposalIndex: proposal.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
+    
+    if (votes.length > 1) {
+        //should never be the case
+        ctx.log.warn(TooManyOpenVotes(header.height, refIndex, hexAccountId))
+    }
+
+    if (votes.length > 0) {
+        const vote = votes[0]
+        vote.removedAtBlock = header.height
+        vote.removedAt = new Date(header.timestamp)
+        await ctx.store.save(vote)
     }
 
     let decision: VoteDecision
