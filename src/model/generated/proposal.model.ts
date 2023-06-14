@@ -2,11 +2,15 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 import {ProposalType} from "./_proposalType"
 import {Threshold, fromJsonThreshold} from "./_threshold"
-import {ProposedCall} from "./_proposedCall"
 import {Announcements} from "./announcements.model"
+import {ProposedCall} from "./_proposedCall"
 import {Vote} from "./vote.model"
+import {Preimage} from "./preimage.model"
 import {ProposalStatus} from "./_proposalStatus"
 import {StatusHistory} from "./statusHistory.model"
+import {SubmissionDeposit} from "./_submissionDeposit"
+import {DecisionDeposit} from "./_decisionDeposit"
+import {Deciding} from "./_deciding"
 import {Tally} from "./_tally"
 
 @Entity_()
@@ -19,7 +23,7 @@ export class Proposal {
     id!: string
 
     @Index_()
-    @Column_("varchar", {length: 16, nullable: false})
+    @Column_("varchar", {length: 20, nullable: false})
     type!: ProposalType
 
     @Index_()
@@ -42,14 +46,23 @@ export class Proposal {
     @Column_("int4", {nullable: true})
     end!: number | undefined | null
 
-    @Column_("text", {nullable: true})
-    description!: string | undefined | null
+    @Column_("int4", {nullable: true})
+    delay!: number | undefined | null
 
     @Column_("text", {nullable: true})
-    proposalArgumentHash!: string | undefined | null
+    curator!: string | undefined | null
 
-    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
-    callData!: ProposedCall | undefined | null
+    @Column_("text", {nullable: true})
+    payee!: string | undefined | null
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    reward!: bigint | undefined | null
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    fee!: bigint | undefined | null
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    bond!: bigint | undefined | null
 
     @Column_("text", {nullable: true})
     digest!: string | undefined | null
@@ -58,14 +71,57 @@ export class Proposal {
     @ManyToOne_(() => Announcements, {nullable: true})
     announcement!: Announcements | undefined | null
 
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
+    callData!: ProposedCall | undefined | null
+
+    @Column_("text", {nullable: true})
+    description!: string | undefined | null
+
+    @Column_("int4", {nullable: true})
+    parentBountyIndex!: number | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
+    proposalArguments!: ProposedCall | undefined | null
+
+    @Column_("text", {nullable: true})
+    proposalArgumentHash!: string | undefined | null
+
     @OneToMany_(() => Vote, e => e.proposal)
     voting!: Vote[]
 
-    @Column_("varchar", {length: 11, nullable: false})
+    @Index_()
+    @ManyToOne_(() => Preimage, {nullable: true})
+    preimage!: Preimage | undefined | null
+
+    @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
     @OneToMany_(() => StatusHistory, e => e.proposal)
     statusHistory!: StatusHistory[]
+
+    @Column_("int4", {nullable: true})
+    trackNumber!: number | undefined | null
+
+    @Column_("text", {nullable: true})
+    origin!: string | undefined | null
+
+    @Column_("int4", {nullable: true})
+    enactmentAtBlock!: number | undefined | null
+
+    @Column_("int4", {nullable: true})
+    enactmentAfterBlock!: number | undefined | null
+
+    @Column_("int4", {nullable: true})
+    submittedAtBlock!: number | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new SubmissionDeposit(undefined, obj)}, nullable: true})
+    submissionDeposit!: SubmissionDeposit | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new DecisionDeposit(undefined, obj)}, nullable: true})
+    decisionDeposit!: DecisionDeposit | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Deciding(undefined, obj)}, nullable: true})
+    deciding!: Deciding | undefined | null
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tally(undefined, obj)}, nullable: true})
     tally!: Tally | undefined | null

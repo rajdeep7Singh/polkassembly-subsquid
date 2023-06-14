@@ -13,6 +13,10 @@ import {
     Announcements,
     AnnouncementType,
     ProposedCall,
+    Preimage,
+    Deciding,
+    DecisionDeposit,
+    SubmissionDeposit,
 } from '../../model'
 import {
     AnnouncementsData,
@@ -21,8 +25,14 @@ import {
     IndexProposal,
     TallyData,
     ProposedCallData,
+    FellowshipReferendumData,
+    DecidingData,
+    DecisionDepositData,
+    PreimageData,
+    SubmissionDepositData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
+import { ss58codec } from '../../common/tools'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -225,6 +235,144 @@ export async function createAnnouncements(
     return announcementRow
 }
 
+async function getPreimageId(store: Store) {
+    const count = await store.count(Preimage)
+
+    return count.toString().padStart(8, '0')
+}
+
+export async function createPreimageV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+    const { status, hash, proposer, call, section, method, deposit, length } = data
+
+    // const type = ProposalType.Preimage
+
+    const id = await getPreimageId(ctx.store)
+
+    // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
+
+    const preimage = new Preimage({
+        id,
+        hash,
+        proposer,
+        status,
+        proposedCall: call ? createProposedCall(call) : null,
+        deposit,
+        length,
+        section: section,
+        method: method,
+        createdAtBlock: header.height,
+        createdAt: new Date(header.timestamp),
+        updatedAt: new Date(header.timestamp),
+    })
+
+    await ctx.store.insert(preimage)
+
+    const associatedProposal = await ctx.store.get(Proposal, { where: { hash, type: ProposalType.FellowshipReferendum }, order: { createdAt: 'DESC' } })
+
+    if(associatedProposal && !associatedProposal.preimage) {
+        associatedProposal.preimage = preimage
+        await ctx.store.save(associatedProposal)
+    }
+
+    return preimage
+}
+
+export async function createFellowshipReferendum( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: FellowshipReferendumData, type: ProposalType): Promise<Proposal> {
+
+    const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
+
+    const id = await getProposalId(ctx.store, type)
+
+    const preimage: any = await ctx.store.get(Preimage, {
+        where: {
+            hash: data.hash,
+        },
+        order: { createdAtBlock: 'DESC' },
+    })
+
+    let group = null;
+
+    const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
+
+    let decDeposit = undefined
+
+    if (decisionDeposit) {
+        decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
+    }
+
+    const proposal = new Proposal({
+        id,
+        index,
+        type,
+        hash,
+        trackNumber,
+        preimage: preimage,
+        status,
+        proposer,
+        tally: tally ? createTally(tally) : undefined,
+        origin,
+        submissionDeposit: subDeposit ? createSubmissionDeposit(subDeposit) : undefined,
+        submittedAtBlock: submittedAt,
+        enactmentAfterBlock: enactmentAfter,
+        enactmentAtBlock: enactmentAt,
+        deciding: deciding ? createDeciding(deciding) : undefined,
+        decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
+        createdAtBlock: header.height,
+        createdAt: new Date(header.timestamp),
+        updatedAt: new Date(header.timestamp),
+    })
+
+    await ctx.store.insert(proposal)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.createdAtBlock,
+            timestamp: proposal.createdAt,
+            status: proposal.status,
+            proposal,
+        })
+    )
+    return proposal
+}
+
+export async function updatePreimageStatusV2(
+    ctx: BatchContext<Store, unknown>,
+    header: SubstrateBlock,
+    hash: string,
+    options: {
+        status: ProposalStatus
+        isEnded?: boolean
+        data?: ProposalUpdateData
+    }
+) {
+    const proposal = await ctx.store.get(Preimage, { where: { hash: hash }, order: {createdAtBlock: 'DESC'}})
+
+    if (!proposal) {
+        ctx.log.warn(MissingProposalRecordWarn('PreimageV2', `with hash ${hash} not found`,))
+        return
+    }
+
+    Object.assign(proposal, options.data)
+    proposal.updatedAt = new Date(header.timestamp)
+    proposal.updatedAtBlock = header.height
+    proposal.status = options.status
+
+    await ctx.store.save(proposal)
+}
+
 function createProposedCall(data: ProposedCallData): ProposedCall {
     return new ProposedCall(toJSON(data))
+}
+
+export function createDeciding(data: DecidingData): Deciding {
+    return new Deciding(toJSON(data))
+}
+
+export function createDecisionDeposit(data: DecisionDepositData): DecisionDeposit {
+    return new DecisionDeposit(toJSON(data))
+}
+
+export function createSubmissionDeposit(data: SubmissionDepositData): SubmissionDeposit {
+    return new SubmissionDeposit(toJSON(data))
 }

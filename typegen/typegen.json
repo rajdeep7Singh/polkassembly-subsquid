@@ -6,7 +6,11 @@
     "AllianceMotion.Proposals",
     "Alliance.Announcements",
     "Alliance.UnscrupulousAccounts",
-    "Alliance.UnscrupulousWebsites"
+    "Alliance.UnscrupulousWebsites",
+    "FellowshipReferenda.ReferendumInfoFor",
+    "Preimage.StatusFor",
+    "Preimage.PreimageFor",
+    "Scheduler.Agenda"
   ],
   "events": [
     "AllianceMotion.Disapproved",
@@ -18,7 +22,24 @@
     "Alliance.Announced",
     "Alliance.AnnouncementRemoved",
     "Alliance.UnscrupulousItemAdded",
-    "Alliance.UnscrupulousItemRemoved"
+    "Alliance.UnscrupulousItemRemoved",
+    "FellowshipReferenda.Submitted",
+    "FellowshipReferenda.DecisionDepositPlaced",
+    "FellowshipReferenda.DecisionStarted",
+    "FellowshipReferenda.ConfirmStarted",
+    "FellowshipReferenda.ConfirmAborted",
+    "FellowshipReferenda.Confirmed",
+    "FellowshipReferenda.Approved",
+    "FellowshipReferenda.Rejected",
+    "FellowshipReferenda.TimedOut",
+    "FellowshipReferenda.Cancelled",
+    "FellowshipReferenda.Killed",
+    "FellowshipCollective.Voted",
+    "Preimage.Noted",
+    "Preimage.Requested",
+    "Preimage.Cleared",
+    "Scheduler.Dispatched",
+    "Scheduler.Scheduled"
   ],
   "calls": [
     "AllianceMotion.propose",
@@ -26,6 +47,7 @@
     "AllianceMotion.close",
     "AllianceMotion.vote",
     "Alliance.announce",
-    "Alliance.vote"
+    "Alliance.vote",
+    "FellowshipCollective.vote"
   ]
 }

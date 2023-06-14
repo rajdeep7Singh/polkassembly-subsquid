@@ -3,9 +3,11 @@ import { Multihash } from '../../types/v9370'
 
 export type IndexProposal =
     | ProposalType.AllianceMotion
+    | ProposalType.FellowshipReferendum
 
 export type HashProposal =
     | ProposalType.AllianceMotion
+    | ProposalType.FellowshipReferendum
 
 export interface ProposedCallData {
     section: string
@@ -116,7 +118,7 @@ export interface PreimageData extends BaseProposalData {
 //     length?: number
 // }
 
-export interface ReferendumDataV2 extends BaseProposalData {
+export interface FellowshipReferendumData extends BaseProposalData {
     index: number
     hash: string
     trackNumber: number

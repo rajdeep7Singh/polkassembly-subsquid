@@ -3,6 +3,7 @@ import {Block, BlockContext, Chain, ChainContext, Option, Result, StorageBase} f
 import * as v9290 from './v9290'
 import * as v9360 from './v9360'
 import * as v9370 from './v9370'
+import * as v9420 from './v9420'
 
 export class AllianceAnnouncementsStorage extends StorageBase {
     protected getPrefix() {
@@ -156,6 +157,21 @@ export class AllianceMotionProposalOfStorage extends StorageBase {
         assert(this.isV9370)
         return this as any
     }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === 'f5f86f30cbddeb9ce525a3ff8cecc0624a2f7aca3ec9afb84264851e2a7baddd'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV9420(): AllianceMotionProposalOfStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
 }
 
 /**
@@ -209,6 +225,23 @@ export interface AllianceMotionProposalOfStorageV9370 {
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v9370.Call][]>
 }
 
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface AllianceMotionProposalOfStorageV9420 {
+    get(key: Uint8Array): Promise<(v9420.Call | undefined)>
+    getAll(): Promise<v9420.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v9420.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v9420.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v9420.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v9420.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v9420.Call][]>
+}
+
 export class AllianceMotionProposalsStorage extends StorageBase {
     protected getPrefix() {
         return 'AllianceMotion'
@@ -239,4 +272,163 @@ export class AllianceMotionProposalsStorage extends StorageBase {
  */
 export interface AllianceMotionProposalsStorageV9290 {
     get(): Promise<Uint8Array[]>
+}
+
+export class FellowshipReferendaReferendumInfoForStorage extends StorageBase {
+    protected getPrefix() {
+        return 'FellowshipReferenda'
+    }
+
+    protected getName() {
+        return 'ReferendumInfoFor'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === '4553026b1224f5eb81c93072d4d04e418d01cb95934d61fdecf1f0d6e38b735e'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV9420(): FellowshipReferendaReferendumInfoForStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface FellowshipReferendaReferendumInfoForStorageV9420 {
+    get(key: number): Promise<(v9420.ReferendumInfo | undefined)>
+    getAll(): Promise<v9420.ReferendumInfo[]>
+    getMany(keys: number[]): Promise<(v9420.ReferendumInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v9420.ReferendumInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v9420.ReferendumInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v9420.ReferendumInfo][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9420.ReferendumInfo][]>
+}
+
+export class PreimagePreimageForStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Preimage'
+    }
+
+    protected getName() {
+        return 'PreimageFor'
+    }
+
+    get isV9420(): boolean {
+        return this.getTypeHash() === '55fa1a08a9fac4bcf15d53fce590e3fb5af7fbc408ac4b8e1ed28f5f8a242534'
+    }
+
+    get asV9420(): PreimagePreimageForStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
+}
+
+export interface PreimagePreimageForStorageV9420 {
+    get(key: [Uint8Array, number]): Promise<(Uint8Array | undefined)>
+    getAll(): Promise<Uint8Array[]>
+    getMany(keys: [Uint8Array, number][]): Promise<(Uint8Array | undefined)[]>
+    getKeys(): Promise<[Uint8Array, number][]>
+    getKeys(key: [Uint8Array, number]): Promise<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[Uint8Array, number][]>
+    getPairs(): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairs(key: [Uint8Array, number]): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
+}
+
+export class PreimageStatusForStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Preimage'
+    }
+
+    protected getName() {
+        return 'StatusFor'
+    }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === '16647d6a818ed8802ff108ffe98014d8de07d069008bb466b26b7367e684d574'
+    }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get asV9420(): PreimageStatusForStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface PreimageStatusForStorageV9420 {
+    get(key: Uint8Array): Promise<(v9420.RequestStatus | undefined)>
+    getAll(): Promise<v9420.RequestStatus[]>
+    getMany(keys: Uint8Array[]): Promise<(v9420.RequestStatus | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v9420.RequestStatus][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v9420.RequestStatus][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v9420.RequestStatus][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v9420.RequestStatus][]>
+}
+
+export class SchedulerAgendaStorage extends StorageBase {
+    protected getPrefix() {
+        return 'Scheduler'
+    }
+
+    protected getName() {
+        return 'Agenda'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV9420(): boolean {
+        return this.getTypeHash() === '3d730b51afb86f8afc4d1792272e9cbb7b3a01b303f937dd941e093edc0e3aed'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV9420(): SchedulerAgendaStorageV9420 {
+        assert(this.isV9420)
+        return this as any
+    }
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV9420 {
+    get(key: number): Promise<(v9420.Scheduled | undefined)[]>
+    getAll(): Promise<(v9420.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v9420.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
 }

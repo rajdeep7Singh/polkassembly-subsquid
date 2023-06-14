@@ -20,7 +20,7 @@ export class StatusHistory {
     @ManyToOne_(() => Announcements, {nullable: true})
     announcement!: Announcements | undefined | null
 
-    @Column_("varchar", {length: 11, nullable: false})
+    @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
     @Column_("int4", {nullable: false})

@@ -3,6 +3,7 @@ import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
 import * as v9290 from './v9290'
 import * as v9360 from './v9360'
 import * as v9370 from './v9370'
+import * as v9420 from './v9420'
 
 export class AllianceAnnounceCall {
     private readonly _chain: Chain
@@ -351,6 +352,37 @@ export class AllianceMotionExecuteCall {
         assert(this.isV9370)
         return this._chain.decodeCall(this.call)
     }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * ## Complexity:
+     * - `O(B + M + P)` where:
+     * - `B` is `proposal` size in bytes (length-fee-bounded)
+     * - `M` members-count (code-bounded)
+     * - `P` complexity of dispatching `proposal`
+     */
+    get isV9420(): boolean {
+        return this._chain.getCallHash('AllianceMotion.execute') === '21725a5565ead056182c35caaf24bd706636432b22a3bb83a1d162bce43cfb64'
+    }
+
+    /**
+     * Dispatch a proposal from a member using the `Member` origin.
+     * 
+     * Origin must be a member of the collective.
+     * 
+     * ## Complexity:
+     * - `O(B + M + P)` where:
+     * - `B` is `proposal` size in bytes (length-fee-bounded)
+     * - `M` members-count (code-bounded)
+     * - `P` complexity of dispatching `proposal`
+     */
+    get asV9420(): {proposal: v9420.Call, lengthBound: number} {
+        assert(this.isV9420)
+        return this._chain.decodeCall(this.call)
+    }
 }
 
 export class AllianceMotionProposeCall {
@@ -566,6 +598,47 @@ export class AllianceMotionProposeCall {
         assert(this.isV9370)
         return this._chain.decodeCall(this.call)
     }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * ## Complexity
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     */
+    get isV9420(): boolean {
+        return this._chain.getCallHash('AllianceMotion.propose') === '13ed52ed64b8167876a50aa2c7b8449cf317e631de61623f904a33eda102114d'
+    }
+
+    /**
+     * Add a new proposal to either be voted on or executed directly.
+     * 
+     * Requires the sender to be member.
+     * 
+     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
+     * or put up for voting.
+     * 
+     * ## Complexity
+     * - `O(B + M + P1)` or `O(B + M + P2)` where:
+     *   - `B` is `proposal` size in bytes (length-fee-bounded)
+     *   - `M` is members-count (code- and governance-bounded)
+     *   - branching is influenced by `threshold` where:
+     *     - `P1` is proposal execution complexity (`threshold < 2`)
+     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
+     */
+    get asV9420(): {threshold: number, proposal: v9420.Call, lengthBound: number} {
+        assert(this.isV9420)
+        return this._chain.decodeCall(this.call)
+    }
 }
 
 export class AllianceMotionVoteCall {
@@ -621,6 +694,55 @@ export class AllianceMotionVoteCall {
      */
     get asV9290(): {proposal: Uint8Array, index: number, approve: boolean} {
         assert(this.isV9290)
+        return this._chain.decodeCall(this.call)
+    }
+}
+
+export class FellowshipCollectiveVoteCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'FellowshipCollective.vote')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     * Add an aye or nay vote for the sender to the given proposal.
+     * 
+     * - `origin`: Must be `Signed` by a member account.
+     * - `poll`: Index of a poll which is ongoing.
+     * - `aye`: `true` if the vote is to approve the proposal, `false` otherwise.
+     * 
+     * Transaction fees are be waived if the member is voting on any particular proposal
+     * for the first time and the call is successful. Subsequent vote changes will charge a
+     * fee.
+     * 
+     * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
+     */
+    get isV9420(): boolean {
+        return this._chain.getCallHash('FellowshipCollective.vote') === '3b92ae59b712230cb36e2d4be01eaefb25ea0777001bbd698d8598221faca7d3'
+    }
+
+    /**
+     * Add an aye or nay vote for the sender to the given proposal.
+     * 
+     * - `origin`: Must be `Signed` by a member account.
+     * - `poll`: Index of a poll which is ongoing.
+     * - `aye`: `true` if the vote is to approve the proposal, `false` otherwise.
+     * 
+     * Transaction fees are be waived if the member is voting on any particular proposal
+     * for the first time and the call is successful. Subsequent vote changes will charge a
+     * fee.
+     * 
+     * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
+     */
+    get asV9420(): {poll: number, aye: boolean} {
+        assert(this.isV9420)
         return this._chain.decodeCall(this.call)
     }
 }

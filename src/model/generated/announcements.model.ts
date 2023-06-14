@@ -55,7 +55,7 @@ export class Announcements {
     @Column_("bool", {nullable: true})
     isRemoved!: boolean | undefined | null
 
-    @Column_("varchar", {length: 11, nullable: false})
+    @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
     @OneToMany_(() => StatusHistory, e => e.announcement)

@@ -2,24 +2,48 @@ enum ProposalType {
   AllianceMotion
   Announcement
   UnscrupulousItem
+  FellowshipReferendum
 }
 
 enum ProposalStatus {
+  Noted
   Proposed
+  Tabled
+  Started
+  Announced
   Passed
   NotPassed
   Cancelled
   Executed
+  ExecutionFailed
+  Used
+  Invalid
+  Missing
+  Reaped
   Approved
   Disapproved
   Closed
-  Announced
-  Removed
+  Awarded
   Added
   Rejected
+  Retracted
+  Slashed
   Active
+  Removed
+  Extended
+  Claimed
+  Unrequested
+  Requested
+  Submitted
+  Killed
+  Cleared
+  Deciding
+  ConfirmStarted
+  ConfirmAborted
   Confirmed
+  DecisionDepositPlaced
   TimedOut
+  Opened
 }
 
 type MotionThreshold {
@@ -38,6 +62,22 @@ type ReferendumThreshold {
 
 union Threshold = MotionThreshold | ReferendumThreshold
 
+type Preimage @entity {
+  id: ID!
+  proposer: String
+  hash: String! @index
+  deposit: BigInt
+  length: Int
+  proposedCall: ProposedCall
+  section: String
+  method: String
+  status: ProposalStatus!
+  createdAtBlock: Int! @index
+  createdAt: DateTime! @index
+  updatedAtBlock: Int
+  updatedAt: DateTime
+}
+
 type Proposal @entity {
   id: ID!
   type: ProposalType! @index
@@ -47,14 +87,31 @@ type Proposal @entity {
   deposit: BigInt
   threshold: Threshold
   end: Int
-  description: String
-  proposalArgumentHash: String
-  callData: ProposedCall
+  delay: Int
+  curator: String
+  payee: String
+  reward: BigInt
+  fee: BigInt
+  bond: BigInt
   digest: String
   announcement: Announcements
+  callData: ProposedCall
+  description: String
+  parentBountyIndex: Int
+  proposalArguments: ProposedCall
+  proposalArgumentHash: String
   voting: [Vote!] @derivedFrom(field: "proposal")
+  preimage: Preimage
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
+  trackNumber: Int
+  origin: String
+  enactmentAtBlock: Int
+  enactmentAfterBlock: Int
+  submittedAtBlock: Int
+  submissionDeposit: SubmissionDeposit
+  decisionDeposit: DecisionDeposit
+  deciding: Deciding
   tally: Tally
   executeAtBlockNumber: Int
   executedAt: DateTime
@@ -64,6 +121,21 @@ type Proposal @entity {
   endedAt: DateTime
   updatedAtBlock: Int @index
   updatedAt: DateTime @index
+}
+
+type DecisionDeposit {
+  who: String
+  amount: BigInt
+}
+
+type SubmissionDeposit {
+  who: String
+  amount: BigInt
+}
+
+type Deciding {
+  since: Int
+  confirming: Int
 }
 
 enum AnnouncementType {
@@ -139,12 +211,14 @@ union VoteBalance = StandardVoteBalance | SplitVoteBalance
 
 enum VoteType {
   AllianceMotion
+  Fellowship
 }
 
 type Vote @entity {
   id: ID!
   voter: String
   proposalId: ID!
+  proposalIndex: Int! @index
   proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index

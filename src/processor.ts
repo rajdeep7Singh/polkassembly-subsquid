@@ -21,6 +21,25 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Alliance.UnscrupulousItemAdded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Alliance.UnscrupulousItemRemoved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     
+    .addEvent('Preimage.Noted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Preimage.Cleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Preimage.Requested', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+
+    .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+
+    .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
         for (let item of block.items) {
@@ -54,6 +73,54 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Alliance.UnscrupulousItemRemoved'){
                     await modules.alliance.events.handleUnscrupulousItemRemoved(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Noted'){
+                    await modules.preimageV2.events.handlePreimageV2Noted(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Cleared'){
+                    await modules.preimageV2.events.handlePreimageV2Cleared(ctx, item, block.header)
+                }
+                if (item.name == 'Preimage.Requested'){
+                    await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Submitted'){
+                    await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Approved'){
+                    await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Cancelled'){
+                    await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.ConfirmAborted'){
+                    await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Confirmed'){
+                    await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.ConfirmStarted'){
+                    await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
+                    await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.DecisionStarted'){
+                    await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Killed'){
+                    await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.Rejected'){
+                    await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.TimedOut'){
+                    await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipCollective.Voted'){
+                    await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
+                }
+                if(item.name == 'Scheduler.Dispatched'){
+                    await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                 }
             }
         }
