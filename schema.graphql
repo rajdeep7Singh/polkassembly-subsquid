@@ -20,6 +20,7 @@ enum ProposalStatus {
   NotPassed
   Cancelled
   Executed
+  ExecutionFailed
   Used
   Invalid
   Missing
@@ -256,4 +257,14 @@ type VotingDelegation @entity {
   createdAtBlock: Int! @index
   endedAt: DateTime
   endedAtBlock: Int
+}
+
+type CurveData @entity {
+  id: ID!
+  block: Int! @index
+  proposal: Proposal!
+  index: Int! @index
+  timestamp: DateTime! @index
+  approvalPercent: Float @index
+  supportPercent: Float @index
 }

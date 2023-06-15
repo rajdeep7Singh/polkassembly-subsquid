@@ -132,6 +132,14 @@ export interface Proposal_ElectionProviderMultiPhase {
     value: ElectionProviderMultiPhaseCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_52
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export type SystemCall = SystemCall_fill_block | SystemCall_remark | SystemCall_set_heap_pages | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_changes_trie_config | SystemCall_set_storage | SystemCall_kill_storage | SystemCall_kill_prefix | SystemCall_remark_with_event
 
 /**
@@ -3823,11 +3831,6 @@ export interface ElectionProviderMultiPhaseCall_submit {
     numSignedSubmissions: number
 }
 
-export interface ChangesTrieConfiguration {
-    digestInterval: number
-    digestLevels: number
-}
-
 export type Type_52 = Type_52_System | Type_52_Scheduler | Type_52_Babe | Type_52_Timestamp | Type_52_Indices | Type_52_Balances | Type_52_Authorship | Type_52_Staking | Type_52_Session | Type_52_Grandpa | Type_52_ImOnline | Type_52_Democracy | Type_52_Council | Type_52_TechnicalCommittee | Type_52_PhragmenElection | Type_52_TechnicalMembership | Type_52_Treasury | Type_52_Claims | Type_52_Vesting | Type_52_Utility | Type_52_Identity | Type_52_Proxy | Type_52_Multisig | Type_52_Bounties | Type_52_Tips | Type_52_ElectionProviderMultiPhase
 
 export interface Type_52_System {
@@ -3958,6 +3961,28 @@ export interface Type_52_Tips {
 export interface Type_52_ElectionProviderMultiPhase {
     __kind: 'ElectionProviderMultiPhase'
     value: ElectionProviderMultiPhaseCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
 }
 
 export interface BabeEquivocationProof {
@@ -4420,6 +4445,33 @@ export interface SolutionOrSnapshotSize {
 export interface SolutionSupport {
     total: bigint
     voters: [Uint8Array, bigint][]
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface NextConfigDescriptorV1 {

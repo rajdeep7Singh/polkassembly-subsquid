@@ -137,6 +137,14 @@ export interface Proposal_Tips {
     value: TipsCall
 }
 
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Type_52
+    maybePeriodic: ([number, number] | undefined)
+    origin: PalletsOrigin
+}
+
 export interface AccountInfo {
     nonce: number
     consumers: number
@@ -3806,18 +3814,6 @@ export interface TipsCall_slash_tip {
     hash: Uint8Array
 }
 
-export interface AccountData {
-    free: bigint
-    reserved: bigint
-    miscFrozen: bigint
-    feeFrozen: bigint
-}
-
-export interface ChangesTrieConfiguration {
-    digestInterval: number
-    digestLevels: number
-}
-
 export type Type_52 = Type_52_System | Type_52_Scheduler | Type_52_Babe | Type_52_Timestamp | Type_52_Indices | Type_52_Balances | Type_52_Authorship | Type_52_Staking | Type_52_Offences | Type_52_Session | Type_52_Grandpa | Type_52_ImOnline | Type_52_AuthorityDiscovery | Type_52_Democracy | Type_52_Council | Type_52_TechnicalCommittee | Type_52_ElectionsPhragmen | Type_52_TechnicalMembership | Type_52_Treasury | Type_52_Claims | Type_52_Vesting | Type_52_Utility | Type_52_Identity | Type_52_Proxy | Type_52_Multisig | Type_52_Bounties | Type_52_Tips
 
 export interface Type_52_System {
@@ -3953,6 +3949,35 @@ export interface Type_52_Bounties {
 export interface Type_52_Tips {
     __kind: 'Tips'
     value: TipsCall
+}
+
+export type PalletsOrigin = PalletsOrigin_System | PalletsOrigin_Council | PalletsOrigin_TechnicalCommittee
+
+export interface PalletsOrigin_System {
+    __kind: 'System'
+    value: SystemOrigin
+}
+
+export interface PalletsOrigin_Council {
+    __kind: 'Council'
+    value: CollectiveOrigin
+}
+
+export interface PalletsOrigin_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: CollectiveOrigin
+}
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    miscFrozen: bigint
+    feeFrozen: bigint
+}
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
 }
 
 export interface BabeEquivocationProof {
@@ -4412,6 +4437,33 @@ export interface ProxyType_Auction {
 export interface Timepoint {
     height: number
     index: number
+}
+
+export type SystemOrigin = SystemOrigin_Root | SystemOrigin_Signed | SystemOrigin_None
+
+export interface SystemOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface SystemOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface SystemOrigin_None {
+    __kind: 'None'
+}
+
+export type CollectiveOrigin = CollectiveOrigin_Members | CollectiveOrigin_Member
+
+export interface CollectiveOrigin_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface CollectiveOrigin_Member {
+    __kind: 'Member'
+    value: Uint8Array
 }
 
 export interface Digest {

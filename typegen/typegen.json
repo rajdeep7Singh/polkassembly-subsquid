@@ -29,8 +29,12 @@
     "Instance2Collective.ProposalOf",
     "System.Account",
     "Balances.Account",
+    "Balances.InactiveIssuance",
+    "Referenda.ReferendumInfoFor",
+    "ConvictionVoting.VotingFor",
     "Preimage.StatusFor",
-    "Preimage.PreimageFor"
+    "Preimage.PreimageFor",
+    "Scheduler.Agenda"
   ],
   "events": [
     "Democracy.Proposed",
@@ -87,9 +91,23 @@
     "TechnicalCommittee.Disapproved",
     "TechnicalCommittee.Executed",
     "TechnicalCommittee.Closed",
+    "Referenda.Submitted",
+    "Referenda.DecisionDepositPlaced",
+    "Referenda.DecisionStarted",
+    "Referenda.ConfirmStarted",
+    "Referenda.ConfirmAborted",
+    "Referenda.Confirmed",
+    "Referenda.Approved",
+    "Referenda.Rejected",
+    "Referenda.TimedOut",
+    "Referenda.Cancelled",
+    "Referenda.Killed",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared"
+    "Preimage.Cleared",
+    "Scheduler.Scheduled",
+    "Scheduler.Dispatched",
+    "Treasury.SpendApproved"
   ],
   "calls": [
     "Democracy.vote",
@@ -104,6 +122,11 @@
     "ChildBounties.unassign_curator",
     "Treasury.accept_curator",
     "Bounties.unassign_curator",
-    "Treasury.unassign_curator"
+    "Treasury.unassign_curator",
+    "ConvictionVoting.vote",
+    "ConvictionVoting.delegate",
+    "ConvictionVoting.undelegate",
+    "ConvictionVoting.remove_vote",
+    "ConvictionVoting.remove_other_vote"
   ]
 }

@@ -260,6 +260,14 @@ export interface ReferendumInfo_Finished {
     end: number
 }
 
+export interface ScheduledV2 {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Call
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
 export interface OpenTip {
     reason: Uint8Array
     who: Uint8Array
@@ -5036,6 +5044,33 @@ export interface ReferendumStatus {
     tally: Tally
 }
 
+export type OriginCaller = OriginCaller_system | OriginCaller_Council | OriginCaller_TechnicalCommittee | OriginCaller_ParachainsOrigin | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Council {
+    __kind: 'Council'
+    value: Type_359
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_360
+}
+
+export interface OriginCaller_ParachainsOrigin {
+    __kind: 'ParachainsOrigin'
+    value: Origin
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
 
 export interface TokenError_NoFunds {
@@ -5602,6 +5637,62 @@ export interface Tally {
     nays: bigint
     turnout: bigint
 }
+
+export type RawOrigin = RawOrigin_Root | RawOrigin_Signed | RawOrigin_None
+
+export interface RawOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface RawOrigin_Signed {
+    __kind: 'Signed'
+    value: Uint8Array
+}
+
+export interface RawOrigin_None {
+    __kind: 'None'
+}
+
+export type Type_359 = Type_359_Members | Type_359_Member | Type_359__Phantom
+
+export interface Type_359_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_359_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_359__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Type_360 = Type_360_Members | Type_360_Member | Type_360__Phantom
+
+export interface Type_360_Members {
+    __kind: 'Members'
+    value: [number, number]
+}
+
+export interface Type_360_Member {
+    __kind: 'Member'
+    value: Uint8Array
+}
+
+export interface Type_360__Phantom {
+    __kind: '_Phantom'
+}
+
+export type Origin = Origin_Parachain
+
+export interface Origin_Parachain {
+    __kind: 'Parachain'
+    value: number
+}
+
+export type Void = never
 
 export type AllowedSlots = AllowedSlots_PrimarySlots | AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots
 
