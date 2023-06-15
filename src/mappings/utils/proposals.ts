@@ -1015,8 +1015,9 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
 
-    // if difference between proposal update time and current time < 10 mins return
-    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) < 600000){
+    // if difference between proposal update time and current time > 10 mins return
+    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
         return
     }
 
@@ -1073,6 +1074,8 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         return
     }
 
+    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+
     const response = await fetch(NOTIFICATION_URL, {
         method: 'POST',
         headers: {
@@ -1082,6 +1085,8 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         },
         body: JSON.stringify(notification),
     })
+
+    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
     if (response.status !== 200) {
         ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
