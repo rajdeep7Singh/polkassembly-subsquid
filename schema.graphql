@@ -212,6 +212,7 @@ union VoteBalance = StandardVoteBalance | SplitVoteBalance
 enum VoteType {
   AllianceMotion
   Fellowship
+  Referendum
 }
 
 type Vote @entity {

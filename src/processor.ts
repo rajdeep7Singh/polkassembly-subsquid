@@ -6,7 +6,7 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://ollectives-rpc.polkadot.io',
+        chain: 'wss://sys.dotters.network/collectives-polkadot',
         archive: 'https://collectives.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
