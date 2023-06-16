@@ -17,7 +17,6 @@ export async function handleDecisionStarted(ctx: BatchContext<Store, unknown>,
     const deciding = createDeciding({confirming: undefined, since: header.height})
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.Deciding,
         data: {
             tally: tallyData,

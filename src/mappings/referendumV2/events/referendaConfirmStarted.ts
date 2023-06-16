@@ -32,7 +32,6 @@ export async function handleConfirmStarted(ctx: BatchContext<Store, unknown>,
     }
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.ConfirmStarted,
         data: {
             deciding: deciding
