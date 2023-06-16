@@ -3,6 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
+import fetch from 'node-fetch'
 import { NOTIFICATION_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
