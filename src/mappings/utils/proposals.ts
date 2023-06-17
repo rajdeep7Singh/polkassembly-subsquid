@@ -1062,10 +1062,10 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         args : {
             network: 'kusama',
             postType: type,
-            postId: index || hash,
+            postId: String(index) || hash,
             proposerAddress: proposer || curator,
             newStatus: status,
-            track: trackNumber,
+            track: String(trackNumber),
             statusName: statusName,
           }
     }

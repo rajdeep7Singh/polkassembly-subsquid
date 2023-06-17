@@ -13,7 +13,6 @@ export async function handleApproved(ctx: BatchContext<Store, unknown>,
     const { index } = getApprovedData(ctx, item.event)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.Approved,
     })
 }
