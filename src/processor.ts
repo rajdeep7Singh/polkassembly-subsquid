@@ -126,6 +126,35 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
         let multisigOrigins = new Map<string, any>()
         for (let item of block.items) {
             let multisigAddress: string
+            if (item.name == 'Multisig.MultisigExecuted') {
+                if (Array.isArray(item.event.args)) {
+                    assert(item.event.args.length >= 3)
+                    multisigAddress = item.event.args[2]
+                } else if (typeof item.event.args === 'object') {
+                    assert('multisig' in item.event.args)
+                    multisigAddress = item.event.args.multisig
+                } else {
+                    throw new Error('Unextpected case')
+                }
+
+                let extrinsicHash = item.event.extrinsic!.hash
+                multisigOrigins.set(extrinsicHash, {
+                    __kind: 'system',
+                    value: {
+                        __kind: 'Signed',
+                        value: multisigAddress,
+                    },
+                })
+            }
+        }
+        if (multisigOrigins.size > 0) {
+            for (let item of block.items) {
+                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
+                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
+                }
+            }
+        }
+        for (let item of block.items) {
             if (item.kind === 'call') {
                 if (item.name == 'ConvictionVoting.vote'){
                     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
@@ -375,75 +404,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Referenda.TimedOut'){
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
                 }
-                // if (item.name == 'FellowshipReferenda.Submitted'){
-                //     await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.Approved'){
-                //     await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.Cancelled'){
-                //     await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.ConfirmAborted'){
-                //     await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.Confirmed'){
-                //     await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.ConfirmStarted'){
-                //     await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
-                //     await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.DecisionStarted'){
-                //     await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.Killed'){
-                //     await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.Rejected'){
-                //     await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipReferenda.TimedOut'){
-                //     await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
-                // }
-                // if (item.name == 'FellowshipCollective.Voted'){
-                //     await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
-                // }
-                // if(item.name == 'Scheduler.Scheduled'){
-                //     await modules.fellowshipReferendum.events.   (ctx, item, block.header)
-                //     await modules.referendumV2.events.handleReferendumV2ExecutionSchedule(ctx, item, block.header)
-                // }
                 if(item.name == 'Scheduler.Dispatched'){
+                    await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
-                }
-                if (item.name == 'Multisig.MultisigExecuted') {
-                    if (Array.isArray(item.event.args)) {
-                        assert(item.event.args.length >= 3)
-                        multisigAddress = item.event.args[2]
-                    } else if (typeof item.event.args === 'object') {
-                        assert('multisig' in item.event.args)
-                        multisigAddress = item.event.args.multisig
-                    } else {
-                        throw new Error('Unextpected case')
-                    }
-    
-                    let extrinsicHash = item.event.extrinsic!.hash
-                    multisigOrigins.set(extrinsicHash, {
-                        __kind: 'system',
-                        value: {
-                            __kind: 'Signed',
-                            value: multisigAddress,
-                        },
-                    })
-                }
-            }
-        }
-        if (multisigOrigins.size > 0) {
-            for (let item of block.items) {
-                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
-                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
                 }
             }
         }
