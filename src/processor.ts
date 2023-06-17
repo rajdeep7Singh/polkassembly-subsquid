@@ -405,7 +405,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
                 }
                 if(item.name == 'Scheduler.Dispatched'){
-                    await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
                 }
             }
