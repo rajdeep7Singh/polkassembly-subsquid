@@ -126,6 +126,35 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
         let multisigOrigins = new Map<string, any>()
         for (let item of block.items) {
             let multisigAddress: string
+            if (item.name == 'Multisig.MultisigExecuted') {
+                if (Array.isArray(item.event.args)) {
+                    assert(item.event.args.length >= 3)
+                    multisigAddress = item.event.args[2]
+                } else if (typeof item.event.args === 'object') {
+                    assert('multisig' in item.event.args)
+                    multisigAddress = item.event.args.multisig
+                } else {
+                    throw new Error('Unextpected case')
+                }
+
+                let extrinsicHash = item.event.extrinsic!.hash
+                multisigOrigins.set(extrinsicHash, {
+                    __kind: 'system',
+                    value: {
+                        __kind: 'Signed',
+                        value: multisigAddress,
+                    },
+                })
+            }
+        }
+        if (multisigOrigins.size > 0) {
+            for (let item of block.items) {
+                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
+                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
+                }
+            }
+        }
+        for (let item of block.items) {
             if (item.kind === 'call') {
                 if (item.name == 'ConvictionVoting.vote'){
                     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
@@ -418,33 +447,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if(item.name == 'Scheduler.Dispatched'){
                     await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
                     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
-                }
-                if (item.name == 'Multisig.MultisigExecuted') {
-                    if (Array.isArray(item.event.args)) {
-                        assert(item.event.args.length >= 3)
-                        multisigAddress = item.event.args[2]
-                    } else if (typeof item.event.args === 'object') {
-                        assert('multisig' in item.event.args)
-                        multisigAddress = item.event.args.multisig
-                    } else {
-                        throw new Error('Unextpected case')
-                    }
-    
-                    let extrinsicHash = item.event.extrinsic!.hash
-                    multisigOrigins.set(extrinsicHash, {
-                        __kind: 'system',
-                        value: {
-                            __kind: 'Signed',
-                            value: multisigAddress,
-                        },
-                    })
-                }
-            }
-        }
-        if (multisigOrigins.size > 0) {
-            for (let item of block.items) {
-                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
-                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
                 }
             }
         }
