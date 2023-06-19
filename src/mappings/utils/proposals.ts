@@ -1064,9 +1064,9 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
             postType: type,
             postId: String(index) || hash,
             proposerAddress: proposer || curator,
-            newStatus: status,
+            statusType: statusName,
             track: String(trackNumber),
-            statusName: statusName,
+            statusName: status,
           }
     }
 
