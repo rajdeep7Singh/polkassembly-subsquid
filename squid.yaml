@@ -9,6 +9,8 @@ build:
 deploy:
   addons:
     postgres:
+  secrets:
+      - NOTIFICATION_API_KEY
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
