@@ -1051,7 +1051,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     const notification = {
         trigger: trigger,
         args : {
-            network: 'kusama',
+            network: 'polkadex',
             postType: type,
             postId: String(index) || hash,
             proposerAddress: proposer || curator,
