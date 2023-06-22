@@ -35,6 +35,8 @@
     "FellowshipReferenda.Cancelled",
     "FellowshipReferenda.Killed",
     "FellowshipCollective.Voted",
+    "FellowshipReferenda.MetadataSet",
+    "FellowshipReferenda.MetadataCleared",
     "Preimage.Noted",
     "Preimage.Requested",
     "Preimage.Cleared",

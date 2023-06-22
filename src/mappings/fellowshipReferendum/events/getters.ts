@@ -8,7 +8,9 @@ import { FellowshipReferendaSubmittedEvent,
     FellowshipReferendaDecisionStartedEvent,
     FellowshipReferendaConfirmStartedEvent,
     FellowshipReferendaRejectedEvent,
-    FellowshipReferendaTimedOutEvent, FellowshipCollectiveVotedEvent } from '../../../types/events'
+    FellowshipReferendaTimedOutEvent, FellowshipCollectiveVotedEvent,
+    FellowshipReferendaMetadataSetEvent,
+    FellowshipReferendaMetadataClearedEvent } from '../../../types/events'
 import { UnknownVersionError } from '../../../common/errors'
 import { EventContext } from '../../../types/support'
 import { TallyData } from '../../types/data'
@@ -224,6 +226,41 @@ export function getFellowshipVoteData(ctx: BatchContext<Store, unknown>, itemEve
             decision,
             amount,
             tally
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+export interface ReferendaMetadataSetData {
+    index: number,
+    hash: Uint8Array,
+}
+
+export function getMetadataSetData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataSetData {
+    const event = new FellowshipReferendaMetadataSetEvent(ctx, itemEvent)
+    if (event.isV9420) {
+        const { index, hash } = event.asV9420
+        return {
+            index,
+            hash
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export interface ReferendaMetadataCleared {
+    index: number,
+    hash: Uint8Array,
+}
+
+export function getMetadataClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataCleared {
+    const event = new FellowshipReferendaMetadataClearedEvent(ctx, itemEvent)
+    if (event.isV9420) {
+        const { index, hash } = event.asV9420
+        return {
+            index,
+            hash
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)

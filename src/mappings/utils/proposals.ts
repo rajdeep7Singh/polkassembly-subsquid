@@ -430,7 +430,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         args : {
             network: 'polkadot',
             postType: type,
-            postId: String(index) || hash,
+            postId: String(index),
             proposerAddress: proposer || curator,
             statusType: statusName,
             track: String(trackNumber),

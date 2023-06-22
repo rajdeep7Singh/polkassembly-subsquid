@@ -36,6 +36,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataSet', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -115,6 +117,12 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'FellowshipReferenda.TimedOut'){
                     await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.MetadataSet'){
+                    await modules.fellowshipReferendum.events.handleMetadataSet(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.MetadataCleared'){
+                    await modules.fellowshipReferendum.events.handleMetadataCleared(ctx, item, block.header)
                 }
                 if (item.name == 'FellowshipCollective.Voted'){
                     await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
