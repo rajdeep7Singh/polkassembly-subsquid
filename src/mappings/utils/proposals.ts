@@ -3,6 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { NOTIFICATION_URL } from '../../consts/consts'
+import fetch from 'node-fetch'
 
 import {
     MotionThreshold,
