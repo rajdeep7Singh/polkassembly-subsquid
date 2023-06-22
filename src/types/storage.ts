@@ -5,6 +5,8 @@ import * as v108 from './v108'
 import * as v115 from './v115'
 import * as v125 from './v125'
 import * as v138 from './v138'
+import * as v148 from './v148'
+import * as v160 from './v160'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -218,6 +220,36 @@ export class CouncilProposalOfStorage extends StorageBase {
         assert(this.isV138)
         return this as any
     }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV148(): boolean {
+        return this.getTypeHash() === 'e9a9c37441f2860c7c91dd0a3e76cef9ed6150cd65454a592b17f67fabe6c15b'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV148(): CouncilProposalOfStorageV148 {
+        assert(this.isV148)
+        return this as any
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV160(): boolean {
+        return this.getTypeHash() === 'd0417d928d536a95fc2dd07b8e0285a9e562fca7f45a5908d336cc553675ef23'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV160(): CouncilProposalOfStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -286,6 +318,40 @@ export interface CouncilProposalOfStorageV138 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v138.Call][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v138.Call][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v138.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface CouncilProposalOfStorageV148 {
+    get(key: Uint8Array): Promise<(v148.Call | undefined)>
+    getAll(): Promise<v148.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v148.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v148.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v148.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v148.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v148.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface CouncilProposalOfStorageV160 {
+    get(key: Uint8Array): Promise<(v160.Call | undefined)>
+    getAll(): Promise<v160.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v160.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v160.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v160.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v160.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v160.Call][]>
 }
 
 export class DemocracyPreimagesStorage extends StorageBase {
@@ -388,6 +454,21 @@ export class DemocracyPublicPropsStorage extends StorageBase {
         assert(this.isV108)
         return this as any
     }
+
+    /**
+     *  The public proposals. Unsorted. The second item is the proposal.
+     */
+    get isV160(): boolean {
+        return this.getTypeHash() === '3472d1c9441381a2b9709395dfc47ee60b049d41fbd71ce557eb1a61ef656bec'
+    }
+
+    /**
+     *  The public proposals. Unsorted. The second item is the proposal.
+     */
+    get asV160(): DemocracyPublicPropsStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -395,6 +476,13 @@ export class DemocracyPublicPropsStorage extends StorageBase {
  */
 export interface DemocracyPublicPropsStorageV108 {
     get(): Promise<[number, Uint8Array, Uint8Array][]>
+}
+
+/**
+ *  The public proposals. Unsorted. The second item is the proposal.
+ */
+export interface DemocracyPublicPropsStorageV160 {
+    get(): Promise<[number, v160.Bounded, Uint8Array][]>
 }
 
 export class DemocracyReferendumInfoOfStorage extends StorageBase {
@@ -424,6 +512,25 @@ export class DemocracyReferendumInfoOfStorage extends StorageBase {
         assert(this.isV108)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     * 
+     *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+     */
+    get isV160(): boolean {
+        return this.getTypeHash() === 'ba926738202889ee118b1f40d70a1edbd71f0893c703c708a73330af6ca468e1'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     * 
+     *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+     */
+    get asV160(): DemocracyReferendumInfoOfStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -443,6 +550,25 @@ export interface DemocracyReferendumInfoOfStorageV108 {
     getPairs(key: number): Promise<[k: number, v: v108.ReferendumInfo][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v108.ReferendumInfo][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v108.ReferendumInfo][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ * 
+ *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+ */
+export interface DemocracyReferendumInfoOfStorageV160 {
+    get(key: number): Promise<(v160.ReferendumInfo | undefined)>
+    getAll(): Promise<v160.ReferendumInfo[]>
+    getMany(keys: number[]): Promise<(v160.ReferendumInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v160.ReferendumInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v160.ReferendumInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v160.ReferendumInfo][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v160.ReferendumInfo][]>
 }
 
 export class PreimagePreimageForStorage extends StorageBase {
@@ -468,6 +594,15 @@ export class PreimagePreimageForStorage extends StorageBase {
         assert(this.isV108)
         return this as any
     }
+
+    get isV160(): boolean {
+        return this.getTypeHash() === '55fa1a08a9fac4bcf15d53fce590e3fb5af7fbc408ac4b8e1ed28f5f8a242534'
+    }
+
+    get asV160(): PreimagePreimageForStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -485,6 +620,20 @@ export interface PreimagePreimageForStorageV108 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: Uint8Array][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: Uint8Array][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: Uint8Array][]>
+}
+
+export interface PreimagePreimageForStorageV160 {
+    get(key: [Uint8Array, number]): Promise<(Uint8Array | undefined)>
+    getAll(): Promise<Uint8Array[]>
+    getMany(keys: [Uint8Array, number][]): Promise<(Uint8Array | undefined)[]>
+    getKeys(): Promise<[Uint8Array, number][]>
+    getKeys(key: [Uint8Array, number]): Promise<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[Uint8Array, number][]>
+    getPairs(): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairs(key: [Uint8Array, number]): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
 }
 
 export class PreimageStatusForStorage extends StorageBase {
@@ -510,6 +659,21 @@ export class PreimageStatusForStorage extends StorageBase {
         assert(this.isV108)
         return this as any
     }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get isV160(): boolean {
+        return this.getTypeHash() === '16647d6a818ed8802ff108ffe98014d8de07d069008bb466b26b7367e684d574'
+    }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get asV160(): PreimageStatusForStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -527,6 +691,23 @@ export interface PreimageStatusForStorageV108 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v108.RequestStatus][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v108.RequestStatus][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v108.RequestStatus][]>
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface PreimageStatusForStorageV160 {
+    get(key: Uint8Array): Promise<(v160.RequestStatus | undefined)>
+    getAll(): Promise<v160.RequestStatus[]>
+    getMany(keys: Uint8Array[]): Promise<(v160.RequestStatus | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v160.RequestStatus][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v160.RequestStatus][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v160.RequestStatus][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v160.RequestStatus][]>
 }
 
 export class SystemAccountStorage extends StorageBase {
@@ -639,6 +820,36 @@ export class TechnicalCommitteeProposalOfStorage extends StorageBase {
         assert(this.isV138)
         return this as any
     }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV148(): boolean {
+        return this.getTypeHash() === 'e9a9c37441f2860c7c91dd0a3e76cef9ed6150cd65454a592b17f67fabe6c15b'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV148(): TechnicalCommitteeProposalOfStorageV148 {
+        assert(this.isV148)
+        return this as any
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV160(): boolean {
+        return this.getTypeHash() === 'd0417d928d536a95fc2dd07b8e0285a9e562fca7f45a5908d336cc553675ef23'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV160(): TechnicalCommitteeProposalOfStorageV160 {
+        assert(this.isV160)
+        return this as any
+    }
 }
 
 /**
@@ -707,6 +918,40 @@ export interface TechnicalCommitteeProposalOfStorageV138 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v138.Call][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v138.Call][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v138.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface TechnicalCommitteeProposalOfStorageV148 {
+    get(key: Uint8Array): Promise<(v148.Call | undefined)>
+    getAll(): Promise<v148.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v148.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v148.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v148.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v148.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v148.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface TechnicalCommitteeProposalOfStorageV160 {
+    get(key: Uint8Array): Promise<(v160.Call | undefined)>
+    getAll(): Promise<v160.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v160.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v160.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v160.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v160.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v160.Call][]>
 }
 
 export class TipsReasonsStorage extends StorageBase {

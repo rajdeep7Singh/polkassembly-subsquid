@@ -2,6 +2,7 @@ import assert from 'assert'
 import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
 import * as v108 from './v108'
 import * as v115 from './v115'
+import * as v160 from './v160'
 
 export class CouncilApprovedEvent {
     private readonly _chain: Chain
@@ -130,6 +131,21 @@ export class CouncilExecutedEvent {
      */
     get asV115(): {proposalHash: Uint8Array, result: v115.Type_31} {
         assert(this.isV115)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV160(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV160(): {proposalHash: Uint8Array, result: v160.Type_34} {
+        assert(this.isV160)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -586,6 +602,21 @@ export class DemocracyTabledEvent {
         assert(this.isV108)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get isV160(): boolean {
+        return this._chain.getEventHash('Democracy.Tabled') === '02ae149915d453560f4d12074a380744b3bbb2fe4c235e963f440e2d79243477'
+    }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get asV160(): {proposalIndex: number, deposit: bigint} {
+        assert(this.isV160)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class DemocracyVotedEvent {
@@ -746,6 +777,21 @@ export class SchedulerDispatchedEvent {
         assert(this.isV115)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV160(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === 'b67102cc706599639b8e52e776b81c51142dad43652e91e7e72197b7df9a63f4'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV160(): {task: [number, number], id: (Uint8Array | undefined), result: v160.Type_34} {
+        assert(this.isV160)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class SchedulerScheduledEvent {
@@ -904,6 +950,21 @@ export class TechnicalCommitteeExecutedEvent {
      */
     get asV115(): {proposalHash: Uint8Array, result: v115.Type_31} {
         assert(this.isV115)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV160(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV160(): {proposalHash: Uint8Array, result: v160.Type_34} {
+        assert(this.isV160)
         return this._chain.decodeEvent(this.event)
     }
 }
