@@ -2,6 +2,8 @@ import { UnknownVersionError } from '../../common/errors'
 import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
 import * as v108 from '../../types/v108'
+import * as v160 from '../../types/v160'
+
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -33,6 +35,35 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
             const { proposalHash: hash, end, delay, threshold } = (storageData as v108.ReferendumInfo_Ongoing).value
+            return {
+                status,
+                hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = storageData as v108.ReferendumInfo_Finished
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
+    }else if (storage.isV160) {
+        const storageData = await storage.asV160.get(index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            const { proposal, end, delay, threshold } = (storageData as v160.ReferendumInfo_Ongoing).value
+            let hash: Uint8Array = new Uint8Array(32);
+            if (proposal.__kind == 'Inline') {
+                hash = proposal.value
+            }
+            else{
+                hash = proposal.hash
+            }
             return {
                 status,
                 hash,

@@ -24,6 +24,25 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, block: Substrat
                 proposer,
             }
         })
+    }else if (storage.isV160) {
+        const storageData = await storage.asV160.get()
+        if (!storageData) return undefined
+
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, bounded, proposer] = proposal
+            let hash: Uint8Array = new Uint8Array(32);
+            if(bounded.__kind == 'Inline'){
+                hash = bounded.value
+            }
+            else{
+                hash = bounded.hash
+            }
+            return {
+                index,
+                hash,
+                proposer,
+            }
+        })
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
