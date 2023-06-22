@@ -1062,7 +1062,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         args : {
             network: 'kusama',
             postType: type,
-            postId: String(index) || hash,
+            postId: type == ProposalType.Tip ? String(index) : hash,
             proposerAddress: proposer || curator,
             statusType: statusName,
             track: String(trackNumber),
