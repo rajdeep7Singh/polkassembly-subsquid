@@ -8,7 +8,9 @@ import { ReferendaSubmittedEvent,
     ReferendaDecisionStartedEvent,
     ReferendaConfirmStartedEvent,
     ReferendaRejectedEvent,
-    ReferendaTimedOutEvent } from '../../../types/events'
+    ReferendaTimedOutEvent,
+    ReferendaMetadataSetEvent,
+    ReferendaMetadataClearedEvent } from '../../../types/events'
 import { UnknownVersionError } from '../../../common/errors'
 import { TallyData } from '../../types/data'
 import { Event } from '../../../types/support'
@@ -195,6 +197,41 @@ export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEv
             index,
             track,
             tally,
+            hash
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+export interface ReferendaMetadataSetData {
+    index: number,
+    hash: Uint8Array,
+}
+
+export function getMetadataSetData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataSetData {
+    const event = new ReferendaMetadataSetEvent(ctx, itemEvent)
+    if (event.isV9420) {
+        const { index, hash } = event.asV9420
+        return {
+            index,
+            hash
+        }
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export interface ReferendaMetadataCleared {
+    index: number,
+    hash: Uint8Array,
+}
+
+export function getMetadataClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataCleared {
+    const event = new ReferendaMetadataClearedEvent(ctx, itemEvent)
+    if (event.isV9420) {
+        const { index, hash } = event.asV9420
+        return {
+            index,
             hash
         }
     } else {

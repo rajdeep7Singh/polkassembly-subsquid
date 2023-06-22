@@ -109,6 +109,7 @@ type Proposal @entity {
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
   trackNumber: Int
   origin: String
+  metadata: String
   enactmentAtBlock: Int
   enactmentAfterBlock: Int
   submittedAtBlock: Int

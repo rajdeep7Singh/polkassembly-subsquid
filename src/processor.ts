@@ -87,6 +87,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Referenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Metadataset', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     // .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     // .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -403,6 +405,12 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Referenda.TimedOut'){
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.MetadataSet'){
+                    await modules.referendumV2.events.handleMetadataSet(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.MetadataCleared'){
+                    await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
                 }
                 if(item.name == 'Scheduler.Dispatched'){
                     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)

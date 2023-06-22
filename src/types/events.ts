@@ -1750,6 +1750,64 @@ export class ReferendaKilledEvent {
     }
 }
 
+export class ReferendaMetadataClearedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Referenda.MetadataCleared')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * Metadata for a referendum has been cleared.
+     */
+    get isV9420(): boolean {
+        return this._chain.getEventHash('Referenda.MetadataCleared') === 'bcccfeca753f71fa9a69022a68c8a101a4dcc752e055426850d08a4ccc07337d'
+    }
+
+    /**
+     * Metadata for a referendum has been cleared.
+     */
+    get asV9420(): {index: number, hash: Uint8Array} {
+        assert(this.isV9420)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class ReferendaMetadataSetEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Referenda.MetadataSet')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * Metadata for a referendum has been set.
+     */
+    get isV9420(): boolean {
+        return this._chain.getEventHash('Referenda.MetadataSet') === 'bcccfeca753f71fa9a69022a68c8a101a4dcc752e055426850d08a4ccc07337d'
+    }
+
+    /**
+     * Metadata for a referendum has been set.
+     */
+    get asV9420(): {index: number, hash: Uint8Array} {
+        assert(this.isV9420)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class ReferendaRejectedEvent {
     private readonly _chain: Chain
     private readonly event: Event
