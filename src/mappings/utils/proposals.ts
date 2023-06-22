@@ -5,6 +5,7 @@ import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 import { NOTIFICATION_URL } from '../../consts/consts'
+import fetch from 'node-fetch'
 
 import {
     MotionThreshold,
