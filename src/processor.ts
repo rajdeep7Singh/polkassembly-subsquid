@@ -87,6 +87,8 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Referenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Metadataset', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -100,8 +102,9 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataSet', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Multisig.MultisigExecuted', { data: {  event: { args: true, extrinsic: { hash: true, } }, } } as const)
-
 
     // .addEvent('Scheduler.Scheduled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -403,6 +406,12 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Referenda.TimedOut'){
                     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
+                }                
+                if (item.name == 'Referenda.MetadataSet'){
+                    await modules.referendumV2.events.handleMetadataSet(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.MetadataCleared'){
+                    await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
                 }
                 if (item.name == 'FellowshipReferenda.Submitted'){
                     await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
@@ -439,6 +448,12 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'FellowshipCollective.Voted'){
                     await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.MetadataSet'){
+                    await modules.fellowshipReferendum.events.handleMetadataSet(ctx, item, block.header)
+                }
+                if (item.name == 'FellowshipReferenda.MetadataCleared'){
+                    await modules.fellowshipReferendum.events.handleMetadataCleared(ctx, item, block.header)
                 }
                 // if(item.name == 'Scheduler.Scheduled'){
                 //     await modules.fellowshipReferendum.events.   (ctx, item, block.header)
