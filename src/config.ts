@@ -5,7 +5,7 @@ import { Store } from '@subsquid/typeorm-store'
 const config: ProcessorConfig<Store> = {
     chain: {
         name: 'pendulum',
-        prefix: 58,
+        prefix: 56,
     },
     dataSource: {
         archive: 'https://app.subsquid.io/archives/pendulum/subsquid',
