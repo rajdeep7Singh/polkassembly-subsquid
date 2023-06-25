@@ -2,6 +2,7 @@ import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
 import * as v273 from './v273'
 import * as v274 from './v274'
+import * as v283 from './v283'
 
 export class BountiesAcceptCuratorCall {
     private readonly _chain: Chain
@@ -334,6 +335,59 @@ export class DemocracyDelegateCall {
         assert(this.isV273)
         return this._chain.decodeCall(this.call)
     }
+
+    /**
+     * Delegate the voting power (with some given conviction) of the sending account.
+     * 
+     * The balance delegated is locked for as long as it's delegated, and thereafter for the
+     * time appropriate for the conviction's lock period.
+     * 
+     * The dispatch origin of this call must be _Signed_, and the signing account must either:
+     *   - be delegating already; or
+     *   - have no voting activity (if there is, then it will need to be removed/consolidated
+     *     through `reap_vote` or `unvote`).
+     * 
+     * - `to`: The account whose voting the `target` account's voting power will follow.
+     * - `conviction`: The conviction that will be attached to the delegated votes. When the
+     *   account is undelegated, the funds will be locked for the corresponding period.
+     * - `balance`: The amount of the account's balance to be used in delegating. This must not
+     *   be more than the account's current balance.
+     * 
+     * Emits `Delegated`.
+     * 
+     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *   voted on. Weight is charged as if maximum votes.
+     */
+    get isV283(): boolean {
+        return this._chain.getCallHash('Democracy.delegate') === 'db1dd187dadcd6aeb77ad01c1101f445ff84405d1edf14f83f5cb3bde184925d'
+    }
+
+    /**
+     * Delegate the voting power (with some given conviction) of the sending account.
+     * 
+     * The balance delegated is locked for as long as it's delegated, and thereafter for the
+     * time appropriate for the conviction's lock period.
+     * 
+     * The dispatch origin of this call must be _Signed_, and the signing account must either:
+     *   - be delegating already; or
+     *   - have no voting activity (if there is, then it will need to be removed/consolidated
+     *     through `reap_vote` or `unvote`).
+     * 
+     * - `to`: The account whose voting the `target` account's voting power will follow.
+     * - `conviction`: The conviction that will be attached to the delegated votes. When the
+     *   account is undelegated, the funds will be locked for the corresponding period.
+     * - `balance`: The amount of the account's balance to be used in delegating. This must not
+     *   be more than the account's current balance.
+     * 
+     * Emits `Delegated`.
+     * 
+     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
+     *   voted on. Weight is charged as if maximum votes.
+     */
+    get asV283(): {to: v283.MultiAddress, conviction: v283.Conviction, balance: bigint} {
+        assert(this.isV283)
+        return this._chain.decodeCall(this.call)
+    }
 }
 
 export class DemocracyRemoveOtherVoteCall {
@@ -389,6 +443,49 @@ export class DemocracyRemoveOtherVoteCall {
      */
     get asV273(): {target: Uint8Array, index: number} {
         assert(this.isV273)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Remove a vote for a referendum.
+     * 
+     * If the `target` is equal to the signer, then this function is exactly equivalent to
+     * `remove_vote`. If not equal to the signer, then the vote must have expired,
+     * either because the referendum was cancelled, because the voter lost the referendum or
+     * because the conviction period is over.
+     * 
+     * The dispatch origin of this call must be _Signed_.
+     * 
+     * - `target`: The account of the vote to be removed; this account must have voted for
+     *   referendum `index`.
+     * - `index`: The index of referendum of the vote to be removed.
+     * 
+     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *   Weight is calculated for the maximum number of vote.
+     */
+    get isV283(): boolean {
+        return this._chain.getCallHash('Democracy.remove_other_vote') === 'aa27aa9ca79b071acb7c348d5debf4b8542cab46a065a81173a118cc67e763b9'
+    }
+
+    /**
+     * Remove a vote for a referendum.
+     * 
+     * If the `target` is equal to the signer, then this function is exactly equivalent to
+     * `remove_vote`. If not equal to the signer, then the vote must have expired,
+     * either because the referendum was cancelled, because the voter lost the referendum or
+     * because the conviction period is over.
+     * 
+     * The dispatch origin of this call must be _Signed_.
+     * 
+     * - `target`: The account of the vote to be removed; this account must have voted for
+     *   referendum `index`.
+     * - `index`: The index of referendum of the vote to be removed.
+     * 
+     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *   Weight is calculated for the maximum number of vote.
+     */
+    get asV283(): {target: v283.MultiAddress, index: number} {
+        assert(this.isV283)
         return this._chain.decodeCall(this.call)
     }
 }

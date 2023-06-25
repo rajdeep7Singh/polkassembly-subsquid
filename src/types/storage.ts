@@ -8,6 +8,7 @@ import * as v277 from './v277'
 import * as v278 from './v278'
 import * as v280 from './v280'
 import * as v281 from './v281'
+import * as v283 from './v283'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -36,6 +37,67 @@ export class BalancesAccountStorage extends StorageBase {
         assert(this.isV268)
         return this as any
     }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === '12d9e780c790f66e9c340b94cabd98da447e1087819d4acb4b1fe22bbb2783fb'
+    }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get asV283(): BalancesAccountStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -55,6 +117,46 @@ export interface BalancesAccountStorageV268 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v268.AccountData][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v268.AccountData][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v268.AccountData][]>
+}
+
+/**
+ *  The Balances pallet example of storing the balance of an account.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+ *   }
+ *  ```
+ * 
+ *  You can also store the balance of an account in the `System` pallet.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *    type AccountStore = System
+ *   }
+ *  ```
+ * 
+ *  But this comes with tradeoffs, storing account balances in the system pallet stores
+ *  `frame_system` data alongside the account data contrary to storing account balances in the
+ *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+ *  NOTE: This is only used in the case that this pallet is used to store balances.
+ */
+export interface BalancesAccountStorageV283 {
+    get(key: Uint8Array): Promise<v283.AccountData>
+    getAll(): Promise<v283.AccountData[]>
+    getMany(keys: Uint8Array[]): Promise<v283.AccountData[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v283.AccountData][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v283.AccountData][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v283.AccountData][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v283.AccountData][]>
 }
 
 export class BalancesTotalIssuanceStorage extends StorageBase {
@@ -423,6 +525,21 @@ export class CouncilProposalOfStorage extends StorageBase {
         assert(this.isV281)
         return this as any
     }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === '25763837983422ba58f6d6fa8865a8f57b4ef05a7f0d61f2ae5e49df31c21b2a'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV283(): CouncilProposalOfStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -525,6 +642,23 @@ export interface CouncilProposalOfStorageV281 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v281.Call][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v281.Call][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v281.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface CouncilProposalOfStorageV283 {
+    get(key: Uint8Array): Promise<(v283.Call | undefined)>
+    getAll(): Promise<v283.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v283.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v283.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v283.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v283.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v283.Call][]>
 }
 
 export class DemocracyPreimagesStorage extends StorageBase {
@@ -662,6 +796,21 @@ export class DemocracyPublicPropsStorage extends StorageBase {
         assert(this.isV273)
         return this as any
     }
+
+    /**
+     *  The public proposals. Unsorted. The second item is the proposal.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === '3472d1c9441381a2b9709395dfc47ee60b049d41fbd71ce557eb1a61ef656bec'
+    }
+
+    /**
+     *  The public proposals. Unsorted. The second item is the proposal.
+     */
+    get asV283(): DemocracyPublicPropsStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -669,6 +818,13 @@ export class DemocracyPublicPropsStorage extends StorageBase {
  */
 export interface DemocracyPublicPropsStorageV273 {
     get(): Promise<[number, Uint8Array, Uint8Array][]>
+}
+
+/**
+ *  The public proposals. Unsorted. The second item is the proposal.
+ */
+export interface DemocracyPublicPropsStorageV283 {
+    get(): Promise<[number, v283.Bounded, Uint8Array][]>
 }
 
 export class DemocracyReferendumInfoOfStorage extends StorageBase {
@@ -717,6 +873,25 @@ export class DemocracyReferendumInfoOfStorage extends StorageBase {
         assert(this.isV274)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     * 
+     *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === 'ba926738202889ee118b1f40d70a1edbd71f0893c703c708a73330af6ca468e1'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     * 
+     *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+     */
+    get asV283(): DemocracyReferendumInfoOfStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -755,6 +930,25 @@ export interface DemocracyReferendumInfoOfStorageV274 {
     getPairs(key: number): Promise<[k: number, v: v274.ReferendumInfo][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v274.ReferendumInfo][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v274.ReferendumInfo][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ * 
+ *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+ */
+export interface DemocracyReferendumInfoOfStorageV283 {
+    get(key: number): Promise<(v283.ReferendumInfo | undefined)>
+    getAll(): Promise<v283.ReferendumInfo[]>
+    getMany(keys: number[]): Promise<(v283.ReferendumInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v283.ReferendumInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v283.ReferendumInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v283.ReferendumInfo][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v283.ReferendumInfo][]>
 }
 
 export class Instance1CollectiveMembersStorage extends StorageBase {
@@ -992,6 +1186,15 @@ export class PreimagePreimageForStorage extends StorageBase {
         assert(this.isV274)
         return this as any
     }
+
+    get isV283(): boolean {
+        return this.getTypeHash() === '55fa1a08a9fac4bcf15d53fce590e3fb5af7fbc408ac4b8e1ed28f5f8a242534'
+    }
+
+    get asV283(): PreimagePreimageForStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -1009,6 +1212,20 @@ export interface PreimagePreimageForStorageV274 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: Uint8Array][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: Uint8Array][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: Uint8Array][]>
+}
+
+export interface PreimagePreimageForStorageV283 {
+    get(key: [Uint8Array, number]): Promise<(Uint8Array | undefined)>
+    getAll(): Promise<Uint8Array[]>
+    getMany(keys: [Uint8Array, number][]): Promise<(Uint8Array | undefined)[]>
+    getKeys(): Promise<[Uint8Array, number][]>
+    getKeys(key: [Uint8Array, number]): Promise<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number): AsyncIterable<[Uint8Array, number][]>
+    getKeysPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[Uint8Array, number][]>
+    getPairs(): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairs(key: [Uint8Array, number]): Promise<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
+    getPairsPaged(pageSize: number, key: [Uint8Array, number]): AsyncIterable<[k: [Uint8Array, number], v: Uint8Array][]>
 }
 
 export class PreimageStatusForStorage extends StorageBase {
@@ -1034,6 +1251,21 @@ export class PreimageStatusForStorage extends StorageBase {
         assert(this.isV274)
         return this as any
     }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === '16647d6a818ed8802ff108ffe98014d8de07d069008bb466b26b7367e684d574'
+    }
+
+    /**
+     *  The request status of a given hash.
+     */
+    get asV283(): PreimageStatusForStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -1051,6 +1283,23 @@ export interface PreimageStatusForStorageV274 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v274.RequestStatus][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v274.RequestStatus][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v274.RequestStatus][]>
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface PreimageStatusForStorageV283 {
+    get(key: Uint8Array): Promise<(v283.RequestStatus | undefined)>
+    getAll(): Promise<v283.RequestStatus[]>
+    getMany(keys: Uint8Array[]): Promise<(v283.RequestStatus | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v283.RequestStatus][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v283.RequestStatus][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v283.RequestStatus][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v283.RequestStatus][]>
 }
 
 export class SystemAccountStorage extends StorageBase {
@@ -1076,6 +1325,21 @@ export class SystemAccountStorage extends StorageBase {
         assert(this.isV268)
         return this as any
     }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === 'd6b7a816e0cf6dc8f60cb2bd55c5c5ae7ad928521a6e98aafbe6e954f5c54878'
+    }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get asV283(): SystemAccountStorageV283 {
+        assert(this.isV283)
+        return this as any
+    }
 }
 
 /**
@@ -1093,6 +1357,23 @@ export interface SystemAccountStorageV268 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v268.AccountInfo][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v268.AccountInfo][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v268.AccountInfo][]>
+}
+
+/**
+ *  The full account information for a particular account ID.
+ */
+export interface SystemAccountStorageV283 {
+    get(key: Uint8Array): Promise<v283.AccountInfo>
+    getAll(): Promise<v283.AccountInfo[]>
+    getMany(keys: Uint8Array[]): Promise<v283.AccountInfo[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v283.AccountInfo][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v283.AccountInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v283.AccountInfo][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v283.AccountInfo][]>
 }
 
 export class TechnicalCommitteeProposalOfStorage extends StorageBase {
@@ -1191,6 +1472,21 @@ export class TechnicalCommitteeProposalOfStorage extends StorageBase {
      */
     get asV281(): TechnicalCommitteeProposalOfStorageV281 {
         assert(this.isV281)
+        return this as any
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get isV283(): boolean {
+        return this.getTypeHash() === '25763837983422ba58f6d6fa8865a8f57b4ef05a7f0d61f2ae5e49df31c21b2a'
+    }
+
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    get asV283(): TechnicalCommitteeProposalOfStorageV283 {
+        assert(this.isV283)
         return this as any
     }
 }
@@ -1295,6 +1591,23 @@ export interface TechnicalCommitteeProposalOfStorageV281 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v281.Call][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v281.Call][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v281.Call][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface TechnicalCommitteeProposalOfStorageV283 {
+    get(key: Uint8Array): Promise<(v283.Call | undefined)>
+    getAll(): Promise<v283.Call[]>
+    getMany(keys: Uint8Array[]): Promise<(v283.Call | undefined)[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v283.Call][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v283.Call][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v283.Call][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v283.Call][]>
 }
 
 export class TreasuryProposalsStorage extends StorageBase {

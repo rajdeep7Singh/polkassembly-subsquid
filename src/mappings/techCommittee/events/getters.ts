@@ -52,6 +52,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
         return event.asV268[0]
     } else if (event.isV274) {
         return event.asV274.proposalHash
+    }  else if (event.isV283) {
+        return event.asV283.proposalHash
     } else {
         const data = ctx._chain.decodeEvent(itemEvent)
         assert(Buffer.isBuffer(data.proposalHash))

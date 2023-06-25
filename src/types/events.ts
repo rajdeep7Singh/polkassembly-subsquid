@@ -3,6 +3,7 @@ import {Chain, ChainContext, EventContext, Event, Result, Option} from './suppor
 import * as v268 from './v268'
 import * as v273 from './v273'
 import * as v274 from './v274'
+import * as v283 from './v283'
 
 export class BountiesBountyAwardedEvent {
     private readonly _chain: Chain
@@ -608,6 +609,21 @@ export class CouncilExecutedEvent {
      */
     get asV274(): {proposalHash: Uint8Array, result: v274.Type_28} {
         assert(this.isV274)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV283(): boolean {
+        return this._chain.getEventHash('Council.Executed') === '6820679ab2706380fa3eaa694e707b2dd6bcd901fb46cdcafbea7b2f05d8feba'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV283(): {proposalHash: Uint8Array, result: v283.Type_31} {
+        assert(this.isV283)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -1277,6 +1293,21 @@ export class DemocracyTabledEvent {
         assert(this.isV274)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get isV283(): boolean {
+        return this._chain.getEventHash('Democracy.Tabled') === '02ae149915d453560f4d12074a380744b3bbb2fe4c235e963f440e2d79243477'
+    }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get asV283(): {proposalIndex: number, deposit: bigint} {
+        assert(this.isV283)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class DemocracyVotedEvent {
@@ -1435,6 +1466,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV274(): {task: [number, number], id: (Uint8Array | undefined), result: v274.Type_28} {
         assert(this.isV274)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV283(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '6eb5580f3023aa9d8b919b2e4d4c348b6d18e7b61b4d3362b70f19480d1767fc'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV283(): {task: [number, number], id: (Uint8Array | undefined), result: v283.Type_31} {
+        assert(this.isV283)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -1663,6 +1709,21 @@ export class TechnicalCommitteeExecutedEvent {
      */
     get asV274(): {proposalHash: Uint8Array, result: v274.Type_28} {
         assert(this.isV274)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV283(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === '6820679ab2706380fa3eaa694e707b2dd6bcd901fb46cdcafbea7b2f05d8feba'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV283(): {proposalHash: Uint8Array, result: v283.Type_31} {
+        assert(this.isV283)
         return this._chain.decodeEvent(this.event)
     }
 }

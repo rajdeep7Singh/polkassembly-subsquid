@@ -24,6 +24,24 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, block: Substrat
                 proposer,
             }
         })
+    }else if (storage.isV283) {
+        const storageData = await storage.asV283.get()
+        if (!storageData) return undefined
+
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, bounded, proposer] = proposal
+            let hash = null
+            if (bounded.__kind === 'Inline') {
+                hash = bounded.value
+            }else{
+                hash = bounded.hash
+            }
+            return {
+                index,
+                hash,
+                proposer,
+            }
+        })
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
