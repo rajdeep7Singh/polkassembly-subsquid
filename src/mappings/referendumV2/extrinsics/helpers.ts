@@ -60,6 +60,9 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
             let nestedDelegations = []
             for (let i = 0; i < delegations.length; i++) {
                 const delegation = delegations[i]
+                if(delegation.from == voter || delegation.to == voter){
+                    continue
+                }
                 nestedDelegations.push(...(await getAllNestedDelegations(ctx, delegation.from, track)))
             }
             return [...delegations, ...nestedDelegations]

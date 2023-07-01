@@ -1028,6 +1028,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         ProposalStatus.Retracted,
         ProposalStatus.Slashed,
         ProposalStatus.TimedOut,
+        ProposalStatus.Confirmed,
     ].includes(status)){
         statusName = 'closed'
     }
