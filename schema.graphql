@@ -241,6 +241,7 @@ type ConvictionVote @entity {
   removedAt: DateTime @index
   decision: VoteDecision!
   balance: VoteBalance!
+  votingPower: BigInt @index
   lockPeriod: Int
   delegatedTo: String 
   isDelegated: Boolean

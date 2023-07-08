@@ -50,6 +50,10 @@ export class ConvictionVote {
     @Column_("jsonb", {transformer: {to: obj => obj.toJSON(), from: obj => obj == null ? undefined : fromJsonVoteBalance(obj)}, nullable: false})
     balance!: VoteBalance
 
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    votingPower!: bigint | undefined | null
+
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null
 

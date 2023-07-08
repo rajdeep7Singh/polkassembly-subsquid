@@ -56,6 +56,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             createdAt: new Date(header.timestamp),
         })
     )
+    let votingPower = BigInt(0)
     // add votes for ongoing referenda for this track
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
@@ -79,6 +80,11 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             })
             const voter = from
             // const count = await getConvictionVotesCount(ctx, referendum.id)
+            if (lockPeriod === 0 && balance) {
+                votingPower = balance/BigInt(10)
+            }else{
+                votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
+            }
             await ctx.store.insert(
                 new ConvictionVote({
                     id: randomUUID(),
@@ -89,6 +95,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     lockPeriod,
                     proposal: referendum,
                     balance: voteBalance,
+                    votingPower: votingPower,
                     createdAt: new Date(header.timestamp),
                     delegatedTo: toWallet,
                     isDelegated: true,
