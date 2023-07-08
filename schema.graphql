@@ -239,6 +239,7 @@ type ConvictionVote @entity {
   removedAtBlock: Int @index
   createdAt: DateTime! @index
   removedAt: DateTime @index
+  votingPower: BigInt @index
   decision: VoteDecision!
   balance: VoteBalance!
   lockPeriod: Int

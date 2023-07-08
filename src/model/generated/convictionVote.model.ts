@@ -44,6 +44,10 @@ export class ConvictionVote {
     @Column_("timestamp with time zone", {nullable: true})
     removedAt!: Date | undefined | null
 
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    votingPower!: bigint | undefined | null
+
     @Column_("varchar", {length: 12, nullable: false})
     decision!: VoteDecision
 

@@ -26,6 +26,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         return
     }
     const vote = votes[0]
+    let votingPower = BigInt(0)
     for (let i = 0; i < nestedDelegations.length; i++) {
         //add votes
         const delegation = nestedDelegations[i]
@@ -33,6 +34,11 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         const voteBalance = new StandardVoteBalance({
             value: delegation.balance,
         })
+        if (delegation.lockPeriod === 0 && delegation.balance) {
+            votingPower = delegation.balance/BigInt(10)
+        }else{
+            votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
+        }      
         await ctx.store.insert(
             new ConvictionVote({
                 id: randomUUID(),
@@ -40,6 +46,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
                 voter: delegation.from,
                 createdAtBlock: block,
                 decision: vote.decision,
+                votingPower: votingPower,
                 lockPeriod: delegation.lockPeriod,
                 proposal: referendum,
                 balance: voteBalance,
@@ -153,6 +160,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
             return
         }
         const vote = votes[0]
+        let votingPower = BigInt(0)
         for (let i = 0; i < nestedDelegations.length; i++) {
             //add votes
             const delegation = nestedDelegations[i]
@@ -160,6 +168,11 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
             const voteBalance = new StandardVoteBalance({
                 value: delegation.balance,
             })
+            if (delegation.lockPeriod === 0 && delegation.balance) {
+                votingPower = delegation.balance/BigInt(10)
+            }else{
+                votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
+            }
             await ctx.store.insert(
                 new ConvictionVote({
                     id: randomUUID(),
@@ -167,6 +180,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
                     voter: delegation.from,
                     createdAtBlock: block,
                     decision: vote.decision,
+                    votingPower: votingPower,
                     lockPeriod: delegation.lockPeriod,
                     proposal: referendum,
                     balance: voteBalance,

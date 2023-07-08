@@ -77,6 +77,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
 
     let lockPeriod: number | undefined
     let balance: VoteBalance | undefined
+    let votingPower: bigint | undefined = BigInt(0)
     if (vote.type === 'Split') {
         balance = new SplitVoteBalance({
             aye: vote.aye,
@@ -87,6 +88,13 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             value: vote.balance,
         })
         lockPeriod = vote.value < 128 ? vote.value : vote.value - 128
+        if (lockPeriod === 0 && vote.balance) {
+            votingPower = vote.balance/BigInt(10)
+        }
+        else{
+            votingPower = lockPeriod && vote.balance ? (vote.balance) * BigInt(lockPeriod) : BigInt(0)
+        }
+
     }
     else if (vote.type === 'SplitAbstain') {
         balance = new SplitVoteBalance({
@@ -111,6 +119,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             balance,
             isDelegated: false,
             createdAt: new Date(header.timestamp),
+            votingPower: votingPower,
             type: VoteType.ReferendumV2,
         })
     )
