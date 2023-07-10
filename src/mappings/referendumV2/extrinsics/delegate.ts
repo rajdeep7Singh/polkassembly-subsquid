@@ -9,6 +9,7 @@ import { IsNull } from 'typeorm'
 import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
 import { randomUUID } from 'crypto'
+import { getConvictionVotesCount } from '../../utils/votes'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
@@ -79,7 +80,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 value: balance,
             })
             const voter = from
-            // const count = await getConvictionVotesCount(ctx, referendum.id)
+            const count = await getConvictionVotesCount(ctx, referendum.index)
             if (lockPeriod === 0 && balance) {
                 votingPower = balance/BigInt(10)
             }else{
@@ -87,7 +88,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }
             await ctx.store.insert(
                 new ConvictionVote({
-                    id: randomUUID(),
+                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
                     proposalIndex: referendum.index,
                     voter,
                     createdAtBlock: header.height,

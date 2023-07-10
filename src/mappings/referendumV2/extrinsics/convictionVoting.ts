@@ -13,14 +13,14 @@ import {
 } from '../../../model'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { getOriginAccountId } from '../../../common/tools'
-import { getVotesCount } from '../../utils/votes'
+import { getConvictionVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
-import { randomUUID } from 'crypto'
+// import { randomUUID } from 'crypto'
 import { updateCurveData } from '../../../common/curveData'
 
 export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
@@ -104,11 +104,11 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         })
     }
 
-    // const count = await getVotesCount(ctx, proposal.id)
+    const count = await getConvictionVotesCount(ctx, index)
 
     await ctx.store.insert(
         new ConvictionVote({
-            id: randomUUID(),
+            id: `${index}-${count.toString().padStart(8, '0')}`,
             voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
             createdAtBlock: header.height,
             proposalIndex: index,
