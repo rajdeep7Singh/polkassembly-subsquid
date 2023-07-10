@@ -30,7 +30,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
     for (let i = 0; i < nestedDelegations.length; i++) {
         //add votes
         const delegation = nestedDelegations[i]
-        // const count = await getConvictionVotesCount(ctx, referendum.id)
+        const count = await getConvictionVotesCount(ctx, referendum.index)
         const voteBalance = new StandardVoteBalance({
             value: delegation.balance,
         })
@@ -41,7 +41,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         }  
         await ctx.store.insert(
             new ConvictionVote({
-                id: randomUUID(),
+                id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
                 proposalIndex: referendum.index,
                 voter: delegation.from,
                 createdAtBlock: block,
@@ -164,7 +164,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
         for (let i = 0; i < nestedDelegations.length; i++) {
             //add votes
             const delegation = nestedDelegations[i]
-            // const count = await getConvictionVotesCount(ctx, referendum.id)
+            const count = await getConvictionVotesCount(ctx, referendum.index)
             const voteBalance = new StandardVoteBalance({
                 value: delegation.balance,
             })
@@ -175,7 +175,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
             }
             await ctx.store.insert(
                 new ConvictionVote({
-                    id: randomUUID(),
+                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
                     proposalIndex: referendum.index,
                     voter: delegation.from,
                     createdAtBlock: block,
