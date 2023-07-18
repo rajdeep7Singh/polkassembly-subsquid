@@ -3,6 +3,7 @@ import {Chain, ChainContext, EventContext, Event, Result, Option} from './suppor
 import * as v9290 from './v9290'
 import * as v9360 from './v9360'
 import * as v9420 from './v9420'
+import * as v9430 from './v9430'
 
 export class AllianceAnnouncedEvent {
     private readonly _chain: Chain
@@ -262,6 +263,21 @@ export class AllianceMotionExecutedEvent {
      */
     get asV9420(): {proposalHash: Uint8Array, result: v9420.Type_100} {
         assert(this.isV9420)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV9430(): boolean {
+        return this._chain.getEventHash('AllianceMotion.Executed') === '6820679ab2706380fa3eaa694e707b2dd6bcd901fb46cdcafbea7b2f05d8feba'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV9430(): {proposalHash: Uint8Array, result: v9430.Type_100} {
+        assert(this.isV9430)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -836,6 +852,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV9420(): {task: [number, number], id: (Uint8Array | undefined), result: v9420.Type_100} {
         assert(this.isV9420)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV9430(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '6eb5580f3023aa9d8b919b2e4d4c348b6d18e7b61b4d3362b70f19480d1767fc'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV9430(): {task: [number, number], id: (Uint8Array | undefined), result: v9430.Type_100} {
+        assert(this.isV9430)
         return this._chain.decodeEvent(this.event)
     }
 }

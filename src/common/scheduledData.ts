@@ -20,7 +20,14 @@ export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEv
             result: result.__kind
         }
         return undefined
-    } else {
+    } else if (event.isV9430) {
+        const { task, id, result } = event.asV9430
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+        return undefined
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
