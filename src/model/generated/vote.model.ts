@@ -26,6 +26,10 @@ export class Vote {
 
     @Index_()
     @Column_("int4", {nullable: false})
+    proposalIndex!: number
+
+    @Index_()
+    @Column_("int4", {nullable: false})
     blockNumber!: number
 
     @Index_()
@@ -37,6 +41,19 @@ export class Vote {
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : fromJsonVoteBalance(obj)}, nullable: true})
     balance!: VoteBalance | undefined | null
+
+    @Index_()
+    @Column_("int4", {nullable: true})
+    removedAtBlock!: number | undefined | null
+
+    @Column_("timestamp with time zone", {nullable: true})
+    removedAt!: Date | undefined | null
+
+    @Column_("text", {nullable: true})
+    delegatedTo!: string | undefined | null
+
+    @Column_("bool", {nullable: true})
+    isDelegated!: boolean | undefined | null
 
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null

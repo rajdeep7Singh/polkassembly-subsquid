@@ -29,6 +29,7 @@ export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
             voter: ss58codec.encode(accountId),
             blockNumber: header.height,
             decision: VoteDecision.yes,
+            proposalIndex: refIndex,
             proposal,
             balance: new StandardVoteBalance({
                 value: amount ? BigInt(amount) : BigInt(0),
