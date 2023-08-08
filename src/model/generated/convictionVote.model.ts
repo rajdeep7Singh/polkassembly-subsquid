@@ -61,4 +61,7 @@ export class ConvictionVote {
 
     @Column_("varchar", {length: 17, nullable: false})
     type!: VoteType
+
+    @Column_("text", {nullable: true})
+    txnHash!: string | undefined | null
 }

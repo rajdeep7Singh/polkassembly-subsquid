@@ -47,6 +47,7 @@ enum ProposalStatus {
   DecisionDepositPlaced
   TimedOut
   Opened
+  ExecutionFailed
 }
 
 type Preimage @entity {
@@ -247,6 +248,7 @@ type ConvictionVote @entity {
   delegatedTo: String 
   isDelegated: Boolean
   type: VoteType!
+  txnHash: String
 }
 
 type VotingDelegation @entity {
@@ -260,4 +262,14 @@ type VotingDelegation @entity {
   createdAtBlock: Int! @index
   endedAt: DateTime
   endedAtBlock: Int
+}
+
+type CurveData @entity {
+  id: ID!
+  block: Int! @index
+  proposal: Proposal!
+  index: Int! @index
+  timestamp: DateTime! @index
+  approvalPercent: Float @index
+  supportPercent: Float @index
 }

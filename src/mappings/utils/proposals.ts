@@ -166,12 +166,12 @@ export async function updateProposalStatus(
         proposal.endedAt = proposal.updatedAt
     }
 
-    if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.Confirmed && proposal.origin){
-        proposal.executeAtBlockNumber = header.height + referendumV2EnactmentBlocks[proposal.origin]
-    }
-    if(type == ProposalType.FellowshipReferendum && options.status == ProposalStatus.Confirmed && proposal.trackNumber){
-        proposal.executeAtBlockNumber = header.height + fellowshipEnactmentBlocks[proposal.trackNumber]
-    }
+    // if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.Confirmed && proposal.origin){
+    //     proposal.executeAtBlockNumber = header.height + referendumV2EnactmentBlocks[proposal.origin]
+    // }
+    // if(type == ProposalType.FellowshipReferendum && options.status == ProposalStatus.Confirmed && proposal.trackNumber){
+    //     proposal.executeAtBlockNumber = header.height + fellowshipEnactmentBlocks[proposal.trackNumber]
+    // }
 
     await ctx.store.save(proposal)
 
@@ -455,7 +455,6 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
     if(!proposer && preimage && preimage.proposer){
         proposer = preimage.proposer
     }
-
 
     const proposal = new Proposal({
         id,

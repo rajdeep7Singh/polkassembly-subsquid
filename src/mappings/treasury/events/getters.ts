@@ -1,5 +1,5 @@
 import { UnknownVersionError } from '../../../common/errors'
-import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent } from '../../../types/events'
+import { TreasuryAwardedEvent, TreasuryProposedEvent, TreasuryRejectedEvent, TreasurySpendApprovedEvent } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
 import { Event } from '../../../types/support'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -74,18 +74,18 @@ interface SpendApprovedData {
 
 }
 
-// export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
-//     const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
-//     if (event.isV1800) {
-//         const { proposalIndex, amount, beneficiary}= event.asV1800
-//         return {
-//             proposalIndex,
-//             amount,
-//             beneficiary
-//         }
-//     }
-//     else {
-//         throw new UnknownVersionError(event.constructor.name)
-//     }
+export function getSpendApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SpendApprovedData {
+    const event = new TreasurySpendApprovedEvent(ctx, itemEvent)
+    if (event.isV1802) {
+        const { proposalIndex, amount, beneficiary}= event.asV1802
+        return {
+            proposalIndex,
+            amount,
+            beneficiary
+        }
+    }
+    else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
 
-// }
+}

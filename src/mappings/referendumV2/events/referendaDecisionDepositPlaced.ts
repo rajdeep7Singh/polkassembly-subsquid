@@ -1,25 +1,25 @@
-// import { ProposalStatus, ProposalType } from '../../../model'
-// import { EventHandlerContext } from '../../types/contexts'
-// import { updateProposalStatus } from '../../utils/proposals'
-// import { getDecisionDepositPlacedData } from './getters'
-// import {createDecisionDeposit} from '../../utils/proposals'
-// import { toHex } from '@subsquid/substrate-processor'
-// import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-// import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-// import { Store } from '@subsquid/typeorm-store'
+import { ProposalStatus, ProposalType } from '../../../model'
+import { EventHandlerContext } from '../../types/contexts'
+import { updateProposalStatus } from '../../utils/proposals'
+import { getDecisionDepositPlacedData } from './getters'
+import {createDecisionDeposit} from '../../utils/proposals'
+import { toHex } from '@subsquid/substrate-processor'
+import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Store } from '@subsquid/typeorm-store'
 
-// export async function handleDecisionDepositPlaced(ctx: BatchContext<Store, unknown>,
-//     item: EventItem<'Referenda.DecisionDepositPlaced', { event: { args: true; extrinsic: { hash: true } } }>,
-//     header: SubstrateBlock) {
-//     const { index, who, amount } = getDecisionDepositPlacedData(ctx, item.event)
+export async function handleDecisionDepositPlaced(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'Referenda.DecisionDepositPlaced', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock) {
+    const { index, who, amount } = getDecisionDepositPlacedData(ctx, item.event)
 
-//     const decisionDeposit = createDecisionDeposit({who: toHex(who), amount})
+    const decisionDeposit = createDecisionDeposit({who: toHex(who), amount})
 
-//     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-//         isEnded: true,
-//         status: ProposalStatus.DecisionDepositPlaced,
-//         data: {
-//             decisionDeposit: decisionDeposit
-//         }
-//     })
-// }
+    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
+        isEnded: true,
+        status: ProposalStatus.DecisionDepositPlaced,
+        data: {
+            decisionDeposit: decisionDeposit
+        }
+    })
+}

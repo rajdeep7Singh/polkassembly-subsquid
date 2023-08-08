@@ -34,4 +34,5 @@ export enum ProposalStatus {
     DecisionDepositPlaced = "DecisionDepositPlaced",
     TimedOut = "TimedOut",
     Opened = "Opened",
+    ExecutionFailed = "ExecutionFailed",
 }
