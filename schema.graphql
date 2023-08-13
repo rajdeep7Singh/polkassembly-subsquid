@@ -1,53 +1,20 @@
 enum ProposalType {
-  DemocracyProposal
-  TechCommitteeProposal
-  TreasuryProposal
-  Referendum
-  CouncilMotion
-  Bounty
-  Tip
-  ChildBounty
-  ReferendumV2
-  FellowshipReferendum
+  TechnicalCommittee
+  UpgradeCommittee
+  Community
 }
 
 enum ProposalStatus {
-  Noted
   Proposed
-  Tabled
-  Started
-  Passed
-  NotPassed
-  Cancelled
+  Scheduled
+  Closed
+  Skipped
+  Pending
   Executed
   ExecutionFailed
-  Used
-  Invalid
-  Missing
-  Reaped
-  Approved
-  Disapproved
-  Closed
-  Awarded
-  Added
+  Failed
+  Expired
   Rejected
-  Retracted
-  Slashed
-  Active
-  Extended
-  Claimed
-  Unrequested
-  Requested
-  Submitted
-  Killed
-  Cleared
-  Deciding
-  ConfirmStarted
-  ConfirmAborted
-  Confirmed
-  DecisionDepositPlaced
-  TimedOut
-  Opened
 }
 
 type Preimage @entity {
@@ -88,38 +55,24 @@ type Proposal @entity {
   hash: String @index
   index: Int @index
   proposer: String
+  identity: String
   deposit: BigInt
   threshold: Threshold
   end: Int
   delay: Int
-  curator: String
-  payee: String
-  reward: BigInt
   fee: BigInt
   bond: BigInt
-  curatorDeposit: BigInt
   description: String
-  parentBountyIndex: Int
+  url: String
   proposalArguments: ProposedCall
-  proposalArgumentHash: String
   voting: [Vote!] @derivedFrom(field: "proposal")
-  convictionVoting: [ConvictionVote!] @derivedFrom(field: "proposal")
-  preimage: Preimage
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
-  trackNumber: Int
-  origin: String
   metadata: String
-  enactmentAtBlock: Int
-  enactmentAfterBlock: Int
-  submittedAtBlock: Int
-  submissionDeposit: SubmissionDeposit
-  decisionDeposit: DecisionDeposit
-  deciding: Deciding
   tally: Tally
+  expiryTime: Int
   executeAtBlockNumber: Int
   executedAt: DateTime
-  group: ProposalGroup
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   endedAtBlock: Int
@@ -133,21 +86,7 @@ type Tally {
   nays: BigInt
   support: BigInt
   bareAyes: BigInt
-}
-
-type DecisionDeposit {
-  who: String
-  amount: BigInt
-}
-
-type SubmissionDeposit {
-  who: String
-  amount: BigInt
-}
-
-type Deciding {
-  since: Int
-  confirming: Int
+  totalSeats: BigInt
 }
 
 type StatusHistory @entity {
@@ -185,88 +124,17 @@ type SplitVoteBalance {
 
 union VoteBalance = StandardVoteBalance | SplitVoteBalance
 
-enum VoteType {
-  Referendum
-  Motion
-  ReferendumV2
-  Fellowship
-  DemocracyProposal
-}
-
 type Vote @entity {
   id: ID!
   voter: String
-  proposalId: ID!
   proposal: Proposal!
+  proposalIndex: Int!
   blockNumber: Int! @index
   timestamp: DateTime! @index
   decision: VoteDecision
   balance: VoteBalance
   lockPeriod: Int
-  type: VoteType
-}
-
-type Tippers @entity {
-  id: ID!
-  hash: String! @index
-  tipper: String
-  value: BigInt
-  proposal: Proposal!
-  createdAtBlock: Int! @index
-  createdAt: DateTime! @index
-}
-
-type ProposalGroup @entity {
-  id: ID!
-  treasuryIndex: Int @index
-  bountyIndex: Int @index
-  tipHash: String @index
-  councilMotionIndex: Int @index
-  democracyProposalIndex: Int @index
-  referendumIndex: Int @index
-  techCommitteeProposalIndex: Int @index
-  referendumV2Index: Int @index
-  proposals: [Proposal] @derivedFrom(field: "group")
-}
-
-type ConvictionVote @entity {
-  id: ID!
-  voter: String
-  proposalId: ID!
-  proposalIndex: Int! @index
-  proposal: Proposal!
-  createdAtBlock: Int! @index
-  removedAtBlock: Int @index
-  createdAt: DateTime! @index
-  removedAt: DateTime @index
-  votingPower: BigInt @index
-  decision: VoteDecision!
-  balance: VoteBalance!
-  lockPeriod: Int
-  delegatedTo: String 
-  isDelegated: Boolean
-  type: VoteType!
-}
-
-type VotingDelegation @entity {
-  id: ID!
-  from: String! @index
-  to: String! @index
-  balance: BigInt
-  lockPeriod: Int!
-  track: Int
-  createdAt: DateTime!
-  createdAtBlock: Int! @index
-  endedAt: DateTime
-  endedAtBlock: Int
-}
-
-type CurveData @entity {
-  id: ID!
-  block: Int! @index
-  proposal: Proposal!
-  index: Int! @index
-  timestamp: DateTime! @index
-  approvalPercent: Float @index
-  supportPercent: Float @index
+  identityId: String
+  removedAtBlock: Int
+  removedAt: DateTime
 }

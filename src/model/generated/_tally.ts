@@ -6,6 +6,7 @@ export class Tally {
     private _nays!: bigint | undefined | null
     private _support!: bigint | undefined | null
     private _bareAyes!: bigint | undefined | null
+    private _totalSeats!: bigint | undefined | null
 
     constructor(props?: Partial<Omit<Tally, 'toJSON'>>, json?: any) {
         Object.assign(this, props)
@@ -14,6 +15,7 @@ export class Tally {
             this._nays = json.nays == null ? undefined : marshal.bigint.fromJSON(json.nays)
             this._support = json.support == null ? undefined : marshal.bigint.fromJSON(json.support)
             this._bareAyes = json.bareAyes == null ? undefined : marshal.bigint.fromJSON(json.bareAyes)
+            this._totalSeats = json.totalSeats == null ? undefined : marshal.bigint.fromJSON(json.totalSeats)
         }
     }
 
@@ -49,12 +51,21 @@ export class Tally {
         this._bareAyes = value
     }
 
+    get totalSeats(): bigint | undefined | null {
+        return this._totalSeats
+    }
+
+    set totalSeats(value: bigint | undefined | null) {
+        this._totalSeats = value
+    }
+
     toJSON(): object {
         return {
             ayes: this.ayes == null ? undefined : marshal.bigint.toJSON(this.ayes),
             nays: this.nays == null ? undefined : marshal.bigint.toJSON(this.nays),
             support: this.support == null ? undefined : marshal.bigint.toJSON(this.support),
             bareAyes: this.bareAyes == null ? undefined : marshal.bigint.toJSON(this.bareAyes),
+            totalSeats: this.totalSeats == null ? undefined : marshal.bigint.toJSON(this.totalSeats),
         }
     }
 }

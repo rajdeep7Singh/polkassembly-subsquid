@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'polymesh',
+        prefix: 12,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        archive: "https://polymesh.archive.subsquid.io/graphql",
+        chain: 'wss://mainnet-rpc.polymesh.network',
     },
-    typesBundle: 'kusama',
+    typesBundle: 'polymesh',
     batchSize: 500,
     blockRange: {
         from: 0,

@@ -34,7 +34,7 @@ export class Preimage {
     @Column_("text", {nullable: true})
     method!: string | undefined | null
 
-    @Column_("varchar", {length: 21, nullable: false})
+    @Column_("varchar", {length: 15, nullable: false})
     status!: ProposalStatus
 
     @Index_()

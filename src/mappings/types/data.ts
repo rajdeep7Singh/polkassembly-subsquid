@@ -1,20 +1,10 @@
-import { ProposalStatus, ProposalType, ReferendumThresholdType } from '../../model'
+import { ProposalStatus, ProposalType, ProposedCall, ReferendumThresholdType } from '../../model'
 
 export type IndexProposal =
-    | ProposalType.DemocracyProposal
-    | ProposalType.Referendum
-    | ProposalType.TreasuryProposal
-    | ProposalType.Bounty
-    | ProposalType.TechCommitteeProposal
-    | ProposalType.CouncilMotion
-    | ProposalType.ChildBounty
-    | ProposalType.ReferendumV2
-    | ProposalType.FellowshipReferendum
+    | ProposalType.TechnicalCommittee
+    | ProposalType.UpgradeCommittee
+    | ProposalType.Community
 
-export type HashProposal =
-    | ProposalType.Tip
-    | ProposalType.CouncilMotion
-    | ProposalType.TechCommitteeProposal
 
 export interface ProposedCallData {
     section: string
@@ -108,19 +98,18 @@ export interface PreimageData extends BaseProposalData {
 //     length?: number
 // }
 
-export interface ReferendumDataV2 extends BaseProposalData {
+// did, pipType, proposerAddress, pipId, deposit, url, description, expriyTime, proposalData
+
+export interface PipData extends BaseProposalData {
     index: number
     hash: string
-    trackNumber: number
-    origin: string
-    proposer: string
-    enactmentAt?: number
-    enactmentAfter?: number
-    submittedAt: number
-    submissionDeposit: {who: Uint8Array, amount: bigint}
-    decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
-    deciding: {since: number, confirming: number | undefined} | undefined
-    tally: {ayes: bigint | number, nays: bigint | number, support?: bigint | number, bareAyegs?: bigint | number}
+    proposer?: string
+    did: string
+    expiryTime?: number | null
+    deposit?: bigint
+    url?: string
+    description?: string
+    proposedCall?: ProposedCall | null
 }
 
 export interface TallyData {
