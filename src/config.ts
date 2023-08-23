@@ -8,7 +8,7 @@ const config: ProcessorConfig<Store> = {
         prefix: 49,
     },
     dataSource: {
-        archive: 'https://subsquid-archive.composablenodes.tech/graphql',
+        archive: 'https://picasso.archive.subsquid.io/graphql',
         chain: 'wss://picasso-rpc.composable.finance',
     },
     typesBundle: 'kusama',

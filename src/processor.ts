@@ -7,7 +7,7 @@ import * as modules from './mappings'
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://picasso-rpc.composable.finance',
-        archive: 'https://subsquid-archive.composablenodes.tech/graphql',
+        archive: 'https://picasso.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

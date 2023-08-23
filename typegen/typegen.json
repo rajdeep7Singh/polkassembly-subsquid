@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://subsquid-archive.composablenodes.tech/graphql",
+  "specVersions": "https://picasso.archive.subsquid.io/graphql",
   "storage": [
     "Council.Members",
     "Council.ProposalCount",
