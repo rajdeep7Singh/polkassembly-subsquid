@@ -6,6 +6,7 @@ import {
     PolymeshCommitteeVotedEvent,
     PolymeshCommitteeVoteRetractedEvent,
     PipsVotedEvent,
+    PolymeshCommitteeFinalVotesEvent,
     PolymeshCommitteeProposedEvent
 } from '../../../types/events'
 import { Event } from '../../../types/support'
@@ -245,6 +246,31 @@ export function getPolymeshCommitteeProposedEvent(ctx: BatchContext<Store, unkno
             index: pipId,
             identityId,
             hash,
+        }
+    }
+    else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+interface polymeshCommitteeFinalVotesData {
+    index: number
+    identityId: Uint8Array
+    hash: Uint8Array
+    ayes: Uint8Array[]
+    nays: Uint8Array[]
+}
+
+export function getPolymeshCommitteeFinalVotesDataEvent(ctx: BatchContext<Store, unknown>, itemEvent: Event): polymeshCommitteeFinalVotesData {
+    const event = new PolymeshCommitteeFinalVotesEvent(ctx, itemEvent)
+    if (event.isV3000) {
+        const [identityId, pipId, hash, ayes, nays] = event.asV3000
+        return {
+            index: pipId,
+            identityId,
+            hash,
+            ayes,
+            nays
         }
     }
     else {

@@ -117,6 +117,7 @@ export interface TallyData {
     nays: bigint | number
     support?: bigint | number
     bareAyes?: bigint | number
+    totalSeats?: bigint | number
 
 }
 export interface DecisionDepositData {

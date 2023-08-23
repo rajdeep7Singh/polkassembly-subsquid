@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { Proposal, StandardVoteBalance, Vote, VoteDecision } from '../../../model'
-import { getVoteData, getVoteRetractedData, getCommunityVoteData } from './getters'
+import { getVoteData, getVoteRetractedData, getCommunityVoteData, getPolymeshCommitteeFinalVotesDataEvent } from './getters'
 
 import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
@@ -121,3 +121,31 @@ export async function handleCommunityVote(ctx: BatchContext<Store, unknown>,
         })
     )
 }
+
+export async function handlePolymeshCommitteefinalVotesData(ctx: BatchContext<Store, unknown>,
+    item: EventItem<'PolymeshCommittee.FinalVotes', { event: { args: true; extrinsic: { hash: true } } }>,
+    header: SubstrateBlock){
+        const { identityId, index, hash, ayes, nays } = getPolymeshCommitteeFinalVotesDataEvent(ctx, item.event)
+
+        const proposal = await ctx.store.get(Proposal, { where: { index } })
+        if (!proposal) {
+            ctx.log.warn(MissingProposalRecordWarn(index))
+            console.log(`MissingProposalRecordWarn at block ${header.height} for proposal ${index}`)
+            return
+        }
+        let tally;
+        if (!proposal.tally) {
+            tally = {
+                ayes: ayes.length,
+                nays: nays.length,
+                totalSeats: 0,
+            }
+            proposal.tally = createTally(tally)
+        }
+        else {
+            proposal.tally.nays = BigInt(nays?.length)
+            proposal.tally.ayes = BigInt(ayes?.length)
+        }
+        
+        await ctx.store.save(proposal)
+    }

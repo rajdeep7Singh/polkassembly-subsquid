@@ -1,8 +1,6 @@
-import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
-import assert from 'assert'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
@@ -10969,6 +10967,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Pips.PipSkipped', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Pips.PipClosed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Pips.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('PolymeshCommittee.FinalVotes', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
   for (let block of ctx.blocks) {
@@ -10994,7 +10993,10 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
               }      
               if (item.name == 'Pips.Voted'){
                 await modules.pip.events.handleCommunityVote(ctx, item, block.header)
-              }           
+              }
+              if (item.name == 'PolymeshCommittee.FinalVotes'){
+                await modules.pip.events.handlePolymeshCommitteefinalVotesData(ctx, item, block.header)
+              }             
           }
       }
   }
