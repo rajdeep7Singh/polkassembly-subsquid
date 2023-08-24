@@ -6,6 +6,7 @@ import { getFellowshipVoteData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { createTally } from '../../utils/proposals'
 
 export async function handleFellowshipVotes(ctx: BatchContext<Store, unknown>,
     item: EventItem<'FellowshipCollective.Voted', { event: { args: true; extrinsic: { hash: true } } }>,
@@ -19,6 +20,8 @@ export async function handleFellowshipVotes(ctx: BatchContext<Store, unknown>,
     }
 
     //const count = await getVotesCount(ctx, proposal.id)
+    proposal.tally = createTally(tally)
+    await ctx.store.save(proposal)
 
     await ctx.store.insert(
         new Vote({
