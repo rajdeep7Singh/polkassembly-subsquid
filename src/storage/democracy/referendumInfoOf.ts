@@ -3,6 +3,7 @@ import { BlockContext } from '../../types/support'
 import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
 import * as v25 from '../../types/v25'
 import * as v16 from '../../types/v16'
+import * as v101 from '../../types/v101'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
@@ -49,13 +50,20 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 approved,
             }
         }
-    }else if (storage.isV25) {
-        const storageData = await storage.asV25.get(index)
+    }else if (storage.isV101) {
+        const storageData = await storage.asV101.get(index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
         if (status === 'Ongoing') {
-            const { proposalHash: hash, end, delay, threshold } = (storageData as v25.ReferendumInfo_Ongoing).value
+            let hash
+            const { proposal, end, delay, threshold } = (storageData as v101.ReferendumInfo_Ongoing).value
+            if(proposal.__kind == "Inline") {
+                hash = proposal.value
+            }
+            else{
+                hash = proposal.hash
+            }
             return {
                 status,
                 hash,
@@ -64,13 +72,14 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 threshold: threshold.__kind,
             }
         } else {
-            const { end, approved } = storageData as v25.ReferendumInfo_Finished
+            const { end, approved } = storageData as v101.ReferendumInfo_Finished
             return {
                 status,
                 end,
                 approved,
             }
         }
+
     }
      else {
         throw new UnknownVersionError(storage.constructor.name)
