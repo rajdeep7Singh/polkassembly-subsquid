@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { Proposal, StandardVoteBalance, Vote, VoteDecision } from '../../../model'
 import { getVoteData, getVoteRetractedData, getCommunityVoteData, getPolymeshCommitteeFinalVotesDataEvent } from './getters'
-
+import { In, IsNull } from 'typeorm'
 import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
 import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
@@ -36,7 +36,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
     }
     proposal.tally = createTally(tally)
 
-    const vote = await ctx.store.get(Vote, {where: {proposalIndex: index, identityId: hexDid}})
+    const vote = await ctx.store.get(Vote, {where: {proposalIndex: index, identityId: hexDid, removedAtBlock: IsNull()}})
 
     if (vote){
         vote.removedAtBlock = header.height
@@ -72,7 +72,7 @@ export async function handleVoteRetracted(ctx: BatchContext<Store, unknown>,
 
     const decision = currentVote ? VoteDecision.yes : VoteDecision.no
 
-    const vote = await ctx.store.get(Vote, { where: { proposalIndex: index, identityId: toHex(did), decision: decision } })
+    const vote = await ctx.store.get(Vote, { where: { proposalIndex: index, identityId: toHex(did), decision: decision, removedAtBlock: IsNull() } })
 
     if (!vote) {
         ctx.log.warn(`Vote for proposal ${index} by ${toHex(did)} is not found`)
@@ -90,8 +90,6 @@ export async function handleCommunityVote(ctx: BatchContext<Store, unknown>,
     item: EventItem<'Pips.Voted', { event: { args: true; extrinsic: { hash: true } } }>,
     header: SubstrateBlock) {
     const { index, did, accountId, currentVote, deposit } = getCommunityVoteData(ctx, item.event)
-
-    console.log(`handlePipVote at block ${header.height} for proposal ${index}, did ${toHex(did)}, currentVote ${currentVote}`)
     
     const proposal = await ctx.store.get(Proposal, { where: { index } })
     if (!proposal) {
@@ -133,6 +131,82 @@ export async function handlePolymeshCommitteefinalVotesData(ctx: BatchContext<St
             console.log(`MissingProposalRecordWarn at block ${header.height} for proposal ${index}`)
             return
         }
+
+        const hexAyes = ayes.map((aye) => toHex(aye))
+        const hexNays = nays.map((nay) => toHex(nay))
+
+        const obj: any = {}
+        
+        for (let i = 0; i < hexAyes.length; i++){
+            obj[hexAyes[i]] = VoteDecision.yes
+        }
+
+        for (let i = 0; i < hexNays.length; i++){
+            obj[hexNays[i]] = VoteDecision.no
+        }
+
+        const votes = await ctx.store.find(Vote, { where: { proposalIndex: index, identityId: In([...hexAyes, ...hexNays]), removedAtBlock: IsNull()} })
+
+        for (const i in obj){
+            for (let j = 0; j < votes.length; j++){
+                const id = votes[j].identityId
+                if(id == i){
+                    if(obj[i] != votes[j].decision){
+                        votes[j].decision = obj[i]
+                    }
+                    delete obj[i]
+                }
+            }
+        }
+
+        for (let k = 0; k < ayes.length; k++){
+            if(toHex(ayes[k]) in obj){
+                const hexDid = toHex(ayes[k])
+                let decodedProposerAddress = null
+                const didStorageData = await storage.pips.getSubstrateAddressOfDid(ctx, ayes[k], header)
+                if(didStorageData){
+                    decodedProposerAddress = didStorageData
+                }
+                await ctx.store.insert(
+                    new Vote({
+                        id: randomUUID(),
+                        identityId: hexDid,
+                        voter: decodedProposerAddress ? ss58codec.encode(decodedProposerAddress) : null,
+                        proposalIndex: index,
+                        blockNumber: header.height,
+                        decision: VoteDecision.yes,
+                        proposal,
+                        timestamp: new Date(header.timestamp),
+                    })
+                )
+            }
+        }
+
+        for (let k = 0; k < nays.length; k++){
+            if(toHex(nays[k]) in obj){
+                const hexDid = toHex(nays[k])
+                let decodedProposerAddress = null
+                const didStorageData = await storage.pips.getSubstrateAddressOfDid(ctx, ayes[k], header)
+                if(didStorageData){
+                    decodedProposerAddress = didStorageData
+                }
+                await ctx.store.insert(
+                    new Vote({
+                        id: randomUUID(),
+                        identityId: hexDid,
+                        voter: decodedProposerAddress ? ss58codec.encode(decodedProposerAddress) : null,
+                        proposalIndex: index,
+                        blockNumber: header.height,
+                        decision: VoteDecision.no,
+                        proposal,
+                        timestamp: new Date(header.timestamp),
+                    })
+                )
+            }
+        }
+
+        await ctx.store.save(votes)
+        
         let tally;
         if (!proposal.tally) {
             tally = {
