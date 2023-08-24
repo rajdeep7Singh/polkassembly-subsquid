@@ -5,6 +5,7 @@ import * as v25 from './v25'
 import * as v38 from './v38'
 import * as v43 from './v43'
 import * as v81 from './v81'
+import * as v101 from './v101'
 
 export class CouncilApprovedEvent {
     private readonly _chain: Chain
@@ -233,6 +234,21 @@ export class CouncilExecutedEvent {
      */
     get asV81(): {proposalHash: Uint8Array, result: v81.Type_33} {
         assert(this.isV81)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV101(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV101(): {proposalHash: Uint8Array, result: v101.Type_34} {
+        assert(this.isV101)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -945,6 +961,21 @@ export class DemocracyTabledEvent {
         assert(this.isV38)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get isV101(): boolean {
+        return this._chain.getEventHash('Democracy.Tabled') === '02ae149915d453560f4d12074a380744b3bbb2fe4c235e963f440e2d79243477'
+    }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get asV101(): {proposalIndex: number, deposit: bigint} {
+        assert(this.isV101)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class DemocracyVotedEvent {
@@ -1148,6 +1179,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV81(): {task: [number, number], id: (Uint8Array | undefined), result: v81.Type_33} {
         assert(this.isV81)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV101(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === 'b67102cc706599639b8e52e776b81c51142dad43652e91e7e72197b7df9a63f4'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV101(): {task: [number, number], id: (Uint8Array | undefined), result: v101.Type_34} {
+        assert(this.isV101)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -1423,6 +1469,21 @@ export class TechnicalCommitteeExecutedEvent {
      */
     get asV81(): {proposalHash: Uint8Array, result: v81.Type_33} {
         assert(this.isV81)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV101(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV101(): {proposalHash: Uint8Array, result: v101.Type_34} {
+        assert(this.isV101)
         return this._chain.decodeEvent(this.event)
     }
 }

@@ -28,6 +28,12 @@ function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Tabl
             index,
             deposit,
         }
+    }else if (event.isV101) {
+        const { proposalIndex: index, deposit } = event.asV101
+        return {
+            index,
+            deposit,
+        }
     }
      else {
         throw new UnknownVersionError(event.constructor.name)

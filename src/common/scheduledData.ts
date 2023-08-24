@@ -70,7 +70,15 @@ export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEv
             }
         }
         return undefined
-    } else {
+    }else if (event.isV101) {
+        const { task, id, result } = event.asV101
+        if(result.__kind == 'Ok'){
+            return {
+                blockNumber: task[0]
+            }
+        }
+        return undefined
+    }  else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

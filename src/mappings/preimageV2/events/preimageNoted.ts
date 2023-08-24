@@ -40,6 +40,18 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
             data: storageData,
             ...preimageStatus
         }
+    } else if (storage.isV101) {
+        if(preimageStatus && preimageStatus.len){
+            const storageData = await storage.asV101.get([hash, preimageStatus.len])
+            if (!storageData) return undefined
+            return {
+                data: storageData,
+                ...preimageStatus
+            }
+        }
+        else {
+            throw new UnknownVersionError(storage.constructor.name)
+        }
     }
     else {
         throw new UnknownVersionError(storage.constructor.name)
@@ -61,6 +73,14 @@ export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, h
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
+        }
+    }else if (preimageStorage.isV101) {
+        const storageData = await preimageStorage.asV101.get(hash)
+        if (!storageData) return undefined
+        return {
+            status: storageData.__kind,
+            value: storageData.deposit,
+            len: storageData.len
         }
     }
     else {
