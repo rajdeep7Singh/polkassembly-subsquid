@@ -197,6 +197,7 @@ type Vote @entity {
   id: ID!
   voter: String
   proposalId: ID!
+  proposalIndex: Int! @index
   proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index
