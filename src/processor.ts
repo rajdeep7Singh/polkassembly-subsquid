@@ -115,42 +115,42 @@ processor.run(new TypeormDatabase(), async (ctx) => {
                 }
             }
             if (item.kind === 'event') {
-                if (item.name == 'Council.Proposed') {
-                    await modules.council.events.handleProposed(ctx, item, block.header)
-                }
-                if (item.name == 'Council.Voted') {
-                    await modules.council.events.handleVoted(ctx, item, block.header)
-                }
-                if (item.name == 'Council.Closed') {
-                    await modules.council.events.handleClosed(ctx, item, block.header)
-                }
-                if (item.name == 'Council.Disapproved') {
-                    await modules.council.events.handleDisapproved(ctx, item, block.header)
-                }
-                if (item.name == 'Council.Executed') {
-                    await modules.council.events.handleExecuted(ctx, item, block.header)
-                }
-                if (item.name == 'Council.Approved') {
-                    await modules.council.events.handleApproved(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Proposed') {
-                    await modules.techComittee.events.handleProposed(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Approved') {
-                    await modules.techComittee.events.handleApproved(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Disapproved') {
-                    await modules.techComittee.events.handleDisapproved(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Closed') {
-                    await modules.techComittee.events.handleClosed(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Voted') {
-                    await modules.techComittee.events.handleVoted(ctx, item, block.header)
-                }
-                if (item.name == 'TechnicalCommittee.Executed') {
-                    await modules.techComittee.events.handleExecuted(ctx, item, block.header)
-                }
+                // if (item.name == 'Council.Proposed') {
+                //     await modules.council.events.handleProposed(ctx, item, block.header)
+                // }
+                // if (item.name == 'Council.Voted') {
+                //     await modules.council.events.handleVoted(ctx, item, block.header)
+                // }
+                // if (item.name == 'Council.Closed') {
+                //     await modules.council.events.handleClosed(ctx, item, block.header)
+                // }
+                // if (item.name == 'Council.Disapproved') {
+                //     await modules.council.events.handleDisapproved(ctx, item, block.header)
+                // }
+                // if (item.name == 'Council.Executed') {
+                //     await modules.council.events.handleExecuted(ctx, item, block.header)
+                // }
+                // if (item.name == 'Council.Approved') {
+                //     await modules.council.events.handleApproved(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Proposed') {
+                //     await modules.techComittee.events.handleProposed(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Approved') {
+                //     await modules.techComittee.events.handleApproved(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Disapproved') {
+                //     await modules.techComittee.events.handleDisapproved(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Closed') {
+                //     await modules.techComittee.events.handleClosed(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Voted') {
+                //     await modules.techComittee.events.handleVoted(ctx, item, block.header)
+                // }
+                // if (item.name == 'TechnicalCommittee.Executed') {
+                //     await modules.techComittee.events.handleExecuted(ctx, item, block.header)
+                // }
                 if (item.name == 'Treasury.Proposed') {
                     await modules.treasury.events.handleProposed(ctx, item, block.header)
                 }

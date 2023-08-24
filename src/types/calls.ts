@@ -1,7 +1,6 @@
 import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
-import * as v110 from './v110'
-import * as v120 from './v120'
+import * as v100 from './v100'
 
 export class BountiesAcceptCuratorCall {
     private readonly _chain: Chain
@@ -22,11 +21,10 @@ export class BountiesAcceptCuratorCall {
      * 
      * May only be called from the curator.
      * 
-     * # <weight>
+     * ## Complexity
      * - O(1).
-     * # </weight>
      */
-    get isV110(): boolean {
+    get isV310(): boolean {
         return this._chain.getCallHash('Bounties.accept_curator') === '77b779cfa161e4e6eeffa4c35f55ae2bd68aba06e4b5d48766892991c97064c9'
     }
 
@@ -36,12 +34,11 @@ export class BountiesAcceptCuratorCall {
      * 
      * May only be called from the curator.
      * 
-     * # <weight>
+     * ## Complexity
      * - O(1).
-     * # </weight>
      */
-    get asV110(): {bountyId: number} {
-        assert(this.isV110)
+    get asV310(): {bountyId: number} {
+        assert(this.isV310)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -75,11 +72,10 @@ export class BountiesUnassignCuratorCall {
      * anyone in the community to call out that a curator is not doing their due diligence, and
      * we should pick a new curator. In this case the curator should also be slashed.
      * 
-     * # <weight>
+     * ## Complexity
      * - O(1).
-     * # </weight>
      */
-    get isV110(): boolean {
+    get isV310(): boolean {
         return this._chain.getCallHash('Bounties.unassign_curator') === '77b779cfa161e4e6eeffa4c35f55ae2bd68aba06e4b5d48766892991c97064c9'
     }
 
@@ -99,12 +95,11 @@ export class BountiesUnassignCuratorCall {
      * anyone in the community to call out that a curator is not doing their due diligence, and
      * we should pick a new curator. In this case the curator should also be slashed.
      * 
-     * # <weight>
+     * ## Complexity
      * - O(1).
-     * # </weight>
      */
-    get asV110(): {bountyId: number} {
-        assert(this.isV110)
+    get asV310(): {bountyId: number} {
+        assert(this.isV310)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -143,7 +138,7 @@ export class ChildBountiesAcceptCuratorCall {
      * - `parent_bounty_id`: Index of parent bounty.
      * - `child_bounty_id`: Index of child bounty.
      */
-    get isV110(): boolean {
+    get isV310(): boolean {
         return this._chain.getCallHash('ChildBounties.accept_curator') === '3dca7b9fd6bc92337517a800e3ddd90a757f5b4e8ccfd63c20fde7d675eed25e'
     }
 
@@ -168,8 +163,8 @@ export class ChildBountiesAcceptCuratorCall {
      * - `parent_bounty_id`: Index of parent bounty.
      * - `child_bounty_id`: Index of child bounty.
      */
-    get asV110(): {parentBountyId: number, childBountyId: number} {
-        assert(this.isV110)
+    get asV310(): {parentBountyId: number, childBountyId: number} {
+        assert(this.isV310)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -223,7 +218,7 @@ export class ChildBountiesUnassignCuratorCall {
      * - `parent_bounty_id`: Index of parent bounty.
      * - `child_bounty_id`: Index of child bounty.
      */
-    get isV110(): boolean {
+    get isV310(): boolean {
         return this._chain.getCallHash('ChildBounties.unassign_curator') === '3dca7b9fd6bc92337517a800e3ddd90a757f5b4e8ccfd63c20fde7d675eed25e'
     }
 
@@ -263,8 +258,8 @@ export class ChildBountiesUnassignCuratorCall {
      * - `parent_bounty_id`: Index of parent bounty.
      * - `child_bounty_id`: Index of child bounty.
      */
-    get asV110(): {parentBountyId: number, childBountyId: number} {
-        assert(this.isV110)
+    get asV310(): {parentBountyId: number, childBountyId: number} {
+        assert(this.isV310)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -307,7 +302,7 @@ export class ConvictionVotingDelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get isV110(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.delegate') === '563d5eab734fe469b3fd1a773588895c1e243f7cab2958e6049514318be32953'
     }
 
@@ -336,8 +331,8 @@ export class ConvictionVotingDelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get asV110(): {class: number, to: v110.MultiAddress, conviction: v110.Conviction, balance: bigint} {
-        assert(this.isV110)
+    get asV100(): {class: number, to: v100.MultiAddress, conviction: v100.Conviction, balance: bigint} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -373,7 +368,7 @@ export class ConvictionVotingRemoveOtherVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get isV110(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.remove_other_vote') === '852f4a0a1605e3f516a2a6871f4fb69a9ef09ca1678667ccfea4b04852621c76'
     }
 
@@ -395,8 +390,8 @@ export class ConvictionVotingRemoveOtherVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get asV110(): {target: v110.MultiAddress, class: number, index: number} {
-        assert(this.isV110)
+    get asV100(): {target: v100.MultiAddress, class: number, index: number} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -445,7 +440,7 @@ export class ConvictionVotingRemoveVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get isV110(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.remove_vote') === 'be8a5ba82f77b6bda5e0784b678fdfe0fe9d28837d87406cb5d907269bb45b25'
     }
 
@@ -480,8 +475,8 @@ export class ConvictionVotingRemoveVoteCall {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    get asV110(): {class: (number | undefined), index: number} {
-        assert(this.isV110)
+    get asV100(): {class: (number | undefined), index: number} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -515,7 +510,7 @@ export class ConvictionVotingUndelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get isV110(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.undelegate') === '55363f75c61dc45265060eec3a1e578e86c93c9059f3f1b3d63fc1f2da6e7ea5'
     }
 
@@ -535,8 +530,8 @@ export class ConvictionVotingUndelegateCall {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    get asV110(): {class: number} {
-        assert(this.isV110)
+    get asV100(): {class: number} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -565,38 +560,7 @@ export class ConvictionVotingVoteCall {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    get isV110(): boolean {
-        return this._chain.getCallHash('ConvictionVoting.vote') === 'd10ef1b298a681ecd2445c4d8c083dbabfcf6f60a2f8103238e6ab7895b95b86'
-    }
-
-    /**
-     * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
-     * otherwise it is a vote to keep the status quo.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `poll_index`: The index of the poll to vote for.
-     * - `vote`: The vote configuration.
-     * 
-     * Weight: `O(R)` where R is the number of polls the voter has voted on.
-     */
-    get asV110(): {pollIndex: number, vote: v110.AccountVote} {
-        assert(this.isV110)
-        return this._chain.decodeCall(this.call)
-    }
-
-    /**
-     * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
-     * otherwise it is a vote to keep the status quo.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `poll_index`: The index of the poll to vote for.
-     * - `vote`: The vote configuration.
-     * 
-     * Weight: `O(R)` where R is the number of polls the voter has voted on.
-     */
-    get isV120(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('ConvictionVoting.vote') === 'c659a6e0d84861cd97f11d84780117a5b61201e70e1e5533a740761dc9489558'
     }
 
@@ -611,305 +575,8 @@ export class ConvictionVotingVoteCall {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    get asV120(): {pollIndex: number, vote: v120.Type_260} {
-        assert(this.isV120)
-        return this._chain.decodeCall(this.call)
-    }
-}
-
-export class DemocracyDelegateCall {
-    private readonly _chain: Chain
-    private readonly call: Call
-
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Democracy.delegate')
-        this._chain = ctx._chain
-        this.call = call
-    }
-
-    /**
-     * Delegate the voting power (with some given conviction) of the sending account.
-     * 
-     * The balance delegated is locked for as long as it's delegated, and thereafter for the
-     * time appropriate for the conviction's lock period.
-     * 
-     * The dispatch origin of this call must be _Signed_, and the signing account must either:
-     *   - be delegating already; or
-     *   - have no voting activity (if there is, then it will need to be removed/consolidated
-     *     through `reap_vote` or `unvote`).
-     * 
-     * - `to`: The account whose voting the `target` account's voting power will follow.
-     * - `conviction`: The conviction that will be attached to the delegated votes. When the
-     *   account is undelegated, the funds will be locked for the corresponding period.
-     * - `balance`: The amount of the account's balance to be used in delegating. This must not
-     *   be more than the account's current balance.
-     * 
-     * Emits `Delegated`.
-     * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
-     */
-    get isV110(): boolean {
-        return this._chain.getCallHash('Democracy.delegate') === '789db36a1c43e1ffdad52288f8573a492f529890632f51821e7bd1d74ba6cffc'
-    }
-
-    /**
-     * Delegate the voting power (with some given conviction) of the sending account.
-     * 
-     * The balance delegated is locked for as long as it's delegated, and thereafter for the
-     * time appropriate for the conviction's lock period.
-     * 
-     * The dispatch origin of this call must be _Signed_, and the signing account must either:
-     *   - be delegating already; or
-     *   - have no voting activity (if there is, then it will need to be removed/consolidated
-     *     through `reap_vote` or `unvote`).
-     * 
-     * - `to`: The account whose voting the `target` account's voting power will follow.
-     * - `conviction`: The conviction that will be attached to the delegated votes. When the
-     *   account is undelegated, the funds will be locked for the corresponding period.
-     * - `balance`: The amount of the account's balance to be used in delegating. This must not
-     *   be more than the account's current balance.
-     * 
-     * Emits `Delegated`.
-     * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
-     */
-    get asV110(): {to: v110.MultiAddress, conviction: v110.Conviction, balance: bigint} {
-        assert(this.isV110)
-        return this._chain.decodeCall(this.call)
-    }
-}
-
-export class DemocracyRemoveOtherVoteCall {
-    private readonly _chain: Chain
-    private readonly call: Call
-
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Democracy.remove_other_vote')
-        this._chain = ctx._chain
-        this.call = call
-    }
-
-    /**
-     * Remove a vote for a referendum.
-     * 
-     * If the `target` is equal to the signer, then this function is exactly equivalent to
-     * `remove_vote`. If not equal to the signer, then the vote must have expired,
-     * either because the referendum was cancelled, because the voter lost the referendum or
-     * because the conviction period is over.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `target`: The account of the vote to be removed; this account must have voted for
-     *   referendum `index`.
-     * - `index`: The index of referendum of the vote to be removed.
-     * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
-     */
-    get isV110(): boolean {
-        return this._chain.getCallHash('Democracy.remove_other_vote') === '43d317508cc3ba04dcadb411eb6499f25532d64ab5a169b27410116c72f40a26'
-    }
-
-    /**
-     * Remove a vote for a referendum.
-     * 
-     * If the `target` is equal to the signer, then this function is exactly equivalent to
-     * `remove_vote`. If not equal to the signer, then the vote must have expired,
-     * either because the referendum was cancelled, because the voter lost the referendum or
-     * because the conviction period is over.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `target`: The account of the vote to be removed; this account must have voted for
-     *   referendum `index`.
-     * - `index`: The index of referendum of the vote to be removed.
-     * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
-     */
-    get asV110(): {target: v110.MultiAddress, index: number} {
-        assert(this.isV110)
-        return this._chain.decodeCall(this.call)
-    }
-}
-
-export class DemocracyRemoveVoteCall {
-    private readonly _chain: Chain
-    private readonly call: Call
-
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Democracy.remove_vote')
-        this._chain = ctx._chain
-        this.call = call
-    }
-
-    /**
-     * Remove a vote for a referendum.
-     * 
-     * If:
-     * - the referendum was cancelled, or
-     * - the referendum is ongoing, or
-     * - the referendum has ended such that
-     *   - the vote of the account was in opposition to the result; or
-     *   - there was no conviction to the account's vote; or
-     *   - the account made a split vote
-     * ...then the vote is removed cleanly and a following call to `unlock` may result in more
-     * funds being available.
-     * 
-     * If, however, the referendum has ended and:
-     * - it finished corresponding to the vote of the account, and
-     * - the account made a standard vote with conviction, and
-     * - the lock period of the conviction is not over
-     * ...then the lock will be aggregated into the overall account's lock, which may involve
-     * *overlocking* (where the two locks are combined into a single lock that is the maximum
-     * of both the amount locked and the time is it locked for).
-     * 
-     * The dispatch origin of this call must be _Signed_, and the signer must have a vote
-     * registered for referendum `index`.
-     * 
-     * - `index`: The index of referendum of the vote to be removed.
-     * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
-     */
-    get isV110(): boolean {
-        return this._chain.getCallHash('Democracy.remove_vote') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
-    }
-
-    /**
-     * Remove a vote for a referendum.
-     * 
-     * If:
-     * - the referendum was cancelled, or
-     * - the referendum is ongoing, or
-     * - the referendum has ended such that
-     *   - the vote of the account was in opposition to the result; or
-     *   - there was no conviction to the account's vote; or
-     *   - the account made a split vote
-     * ...then the vote is removed cleanly and a following call to `unlock` may result in more
-     * funds being available.
-     * 
-     * If, however, the referendum has ended and:
-     * - it finished corresponding to the vote of the account, and
-     * - the account made a standard vote with conviction, and
-     * - the lock period of the conviction is not over
-     * ...then the lock will be aggregated into the overall account's lock, which may involve
-     * *overlocking* (where the two locks are combined into a single lock that is the maximum
-     * of both the amount locked and the time is it locked for).
-     * 
-     * The dispatch origin of this call must be _Signed_, and the signer must have a vote
-     * registered for referendum `index`.
-     * 
-     * - `index`: The index of referendum of the vote to be removed.
-     * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
-     */
-    get asV110(): {index: number} {
-        assert(this.isV110)
-        return this._chain.decodeCall(this.call)
-    }
-}
-
-export class DemocracyUndelegateCall {
-    private readonly _chain: Chain
-    private readonly call: Call
-
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Democracy.undelegate')
-        this._chain = ctx._chain
-        this.call = call
-    }
-
-    /**
-     * Undelegate the voting power of the sending account.
-     * 
-     * Tokens may be unlocked following once an amount of time consistent with the lock period
-     * of the conviction with which the delegation was issued.
-     * 
-     * The dispatch origin of this call must be _Signed_ and the signing account must be
-     * currently delegating.
-     * 
-     * Emits `Undelegated`.
-     * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
-     */
-    get isV110(): boolean {
-        return this._chain.getCallHash('Democracy.undelegate') === '01f2f9c28aa1d4d36a81ff042620b6677d25bf07c2bf4acc37b58658778a4fca'
-    }
-
-    /**
-     * Undelegate the voting power of the sending account.
-     * 
-     * Tokens may be unlocked following once an amount of time consistent with the lock period
-     * of the conviction with which the delegation was issued.
-     * 
-     * The dispatch origin of this call must be _Signed_ and the signing account must be
-     * currently delegating.
-     * 
-     * Emits `Undelegated`.
-     * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
-     */
-    get asV110(): null {
-        assert(this.isV110)
-        return this._chain.decodeCall(this.call)
-    }
-}
-
-export class DemocracyVoteCall {
-    private readonly _chain: Chain
-    private readonly call: Call
-
-    constructor(ctx: CallContext)
-    constructor(ctx: ChainContext, call: Call)
-    constructor(ctx: CallContext, call?: Call) {
-        call = call || ctx.call
-        assert(call.name === 'Democracy.vote')
-        this._chain = ctx._chain
-        this.call = call
-    }
-
-    /**
-     * Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
-     * otherwise it is a vote to keep the status quo.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `ref_index`: The index of the referendum to vote for.
-     * - `vote`: The vote configuration.
-     */
-    get isV110(): boolean {
-        return this._chain.getCallHash('Democracy.vote') === '3936a4cb49f77280bd94142d4ec458afcf5cb8a5e5b0d602b1b1530928021e28'
-    }
-
-    /**
-     * Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
-     * otherwise it is a vote to keep the status quo.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `ref_index`: The index of the referendum to vote for.
-     * - `vote`: The vote configuration.
-     */
-    get asV110(): {refIndex: number, vote: v110.AccountVote} {
-        assert(this.isV110)
+    get asV100(): {pollIndex: number, vote: v100.AccountVote} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -940,7 +607,7 @@ export class FellowshipCollectiveVoteCall {
      * 
      * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
      */
-    get isV121(): boolean {
+    get isV100(): boolean {
         return this._chain.getCallHash('FellowshipCollective.vote') === '3b92ae59b712230cb36e2d4be01eaefb25ea0777001bbd698d8598221faca7d3'
     }
 
@@ -957,8 +624,8 @@ export class FellowshipCollectiveVoteCall {
      * 
      * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
      */
-    get asV121(): {poll: number, aye: boolean} {
-        assert(this.isV121)
+    get asV100(): {poll: number, aye: boolean} {
+        assert(this.isV100)
         return this._chain.decodeCall(this.call)
     }
 }

@@ -26,8 +26,8 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new FellowshipReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const {index, track, proposal } = event.asV121
+    if (event.isV100) {
+        const {index, track, proposal } = event.asV100
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -52,8 +52,8 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index, tally } = event.asV121
+    if (event.isV100) {
+        const { index, tally } = event.asV100
         return {
             index,
             tally
@@ -69,8 +69,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index } = event.asV121
+    if (event.isV100) {
+        const { index } = event.asV100
         return {
             index
         }
@@ -81,8 +81,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index, tally } = event.asV121
+    if (event.isV100) {
+        const { index, tally } = event.asV100
         return {
             index,
             tally
@@ -94,8 +94,8 @@ export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index } = event.asV121
+    if (event.isV100) {
+        const { index } = event.asV100
         return {
             index
         }
@@ -106,8 +106,8 @@ export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index, tally } = event.asV121
+    if (event.isV100) {
+        const { index, tally } = event.asV100
         return {
             index,
             tally
@@ -119,8 +119,8 @@ export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index } = event.asV121
+    if (event.isV100) {
+        const { index } = event.asV100
         return {
             index
         }
@@ -131,8 +131,8 @@ export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index, tally } = event.asV121
+    if (event.isV100) {
+        const { index, tally } = event.asV100
         return {
             index,
             tally
@@ -144,8 +144,8 @@ export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index } = event.asV121
+    if (event.isV100) {
+        const { index } = event.asV100
         return {
             index,
         }
@@ -162,8 +162,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
     const event = new FellowshipReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { index, who, amount } = event.asV121
+    if (event.isV100) {
+        const { index, who, amount } = event.asV100
         return {
             index,
             who,
@@ -183,9 +183,9 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
     const event = new FellowshipReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV121) {
+    if (event.isV100) {
         let hash = undefined;
-        const { index, track, proposal, tally} = event.asV121
+        const { index, track, proposal, tally} = event.asV100
         if(proposal.__kind == "Inline") {
             hash = proposal.value
         }
@@ -214,8 +214,8 @@ interface FellowshipCollectiveVoteData {
 
 export function getFellowshipVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event): FellowshipCollectiveVoteData {
     const event = new FellowshipCollectiveVotedEvent(ctx, itemEvent)
-    if (event.isV121) {
-        const { who, poll, vote, tally  } = event.asV121
+    if (event.isV100) {
+        const { who, poll, vote, tally  } = event.asV100
         const decision = vote.__kind == "Aye" ? VoteDecision.yes : VoteDecision.no
         const amount = vote.value
         return {

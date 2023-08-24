@@ -22,6 +22,9 @@ export class Preimage {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     deposit!: bigint | undefined | null
 
+    @Column_("int4", {nullable: true})
+    length!: number | undefined | null
+
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
     proposedCall!: ProposedCall | undefined | null
 
@@ -33,9 +36,6 @@ export class Preimage {
 
     @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
-
-    @Column_("int4", {nullable: false})
-    length!: number
 
     @Index_()
     @Column_("int4", {nullable: false})

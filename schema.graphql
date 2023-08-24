@@ -20,6 +20,7 @@ enum ProposalStatus {
   NotPassed
   Cancelled
   Executed
+  ExecutionFailed
   Used
   Invalid
   Missing
@@ -54,11 +55,11 @@ type Preimage @entity {
   proposer: String
   hash: String! @index
   deposit: BigInt
+  length: Int
   proposedCall: ProposedCall
   section: String
   method: String
   status: ProposalStatus!
-  length: Int!
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   updatedAtBlock: Int
@@ -108,15 +109,16 @@ type Proposal @entity {
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
   trackNumber: Int
   origin: String
+  metadata: String
   enactmentAtBlock: Int
   enactmentAfterBlock: Int
-  executeAtBlockNumber: Int
-  executedAt: DateTime
   submittedAtBlock: Int
   submissionDeposit: SubmissionDeposit
   decisionDeposit: DecisionDeposit
   deciding: Deciding
   tally: Tally
+  executeAtBlockNumber: Int
+  executedAt: DateTime
   group: ProposalGroup
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
@@ -188,6 +190,7 @@ enum VoteType {
   Motion
   ReferendumV2
   Fellowship
+  DemocracyProposal
 }
 
 type Vote @entity {
@@ -221,8 +224,8 @@ type ProposalGroup @entity {
   councilMotionIndex: Int @index
   democracyProposalIndex: Int @index
   referendumIndex: Int @index
-  referendumV2Index: Int @index
   techCommitteeProposalIndex: Int @index
+  referendumV2Index: Int @index
   proposals: [Proposal] @derivedFrom(field: "group")
 }
 
@@ -236,6 +239,7 @@ type ConvictionVote @entity {
   removedAtBlock: Int @index
   createdAt: DateTime! @index
   removedAt: DateTime @index
+  votingPower: BigInt @index
   decision: VoteDecision!
   balance: VoteBalance!
   lockPeriod: Int
@@ -255,4 +259,14 @@ type VotingDelegation @entity {
   createdAtBlock: Int! @index
   endedAt: DateTime
   endedAtBlock: Int
+}
+
+type CurveData @entity {
+  id: ID!
+  block: Int! @index
+  proposal: Proposal!
+  index: Int! @index
+  timestamp: DateTime! @index
+  approvalPercent: Float @index
+  supportPercent: Float @index
 }

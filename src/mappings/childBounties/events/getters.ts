@@ -19,8 +19,8 @@ interface ChildBountyAwardedData {
 
 export function getChildBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAwardedData {
     const event = new ChildBountiesAwardedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, childIndex, beneficiary } = event.asV110
+    if (event.isV310) {
+        const { index, childIndex, beneficiary } = event.asV310
         return {
             parentIndex: index,
             childIndex,
@@ -38,8 +38,8 @@ interface ChildBountyCancelledData {
 
 export function getChildBountyCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyCancelledData {
     const event = new ChildBountiesCanceledEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, childIndex } = event.asV110
+    if (event.isV310) {
+        const { index, childIndex } = event.asV310
         return {
             parentIndex: index,
             childIndex
@@ -58,8 +58,8 @@ interface ChildBountyClaimedData {
 
 export function getChildBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyClaimedData {
     const event = new ChildBountiesClaimedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, childIndex, payout, beneficiary } = event.asV110
+    if (event.isV310) {
+        const { index, childIndex, payout, beneficiary } = event.asV310
         return {
             parentIndex: index,
             childIndex,
@@ -78,8 +78,8 @@ interface ChildBountyAddedData {
 
 export function getChildBountyAddedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAddedData {
     const event = new ChildBountiesAddedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, childIndex } = event.asV110
+    if (event.isV310) {
+        const { index, childIndex } = event.asV310
         return {
             parentIndex: index,
             childIndex

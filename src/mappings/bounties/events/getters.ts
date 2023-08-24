@@ -20,8 +20,8 @@ interface BountyAwardedData {
 
 export function getBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
     const event = new BountiesBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, beneficiary } = event.asV110
+    if (event.isV310) {
+        const { index, beneficiary } = event.asV310
         return {
             index,
             beneficiary,
@@ -37,8 +37,8 @@ interface BountyBacameActiveData {
 
 export function getBountyBacameActiveData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
     const event = new BountiesBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index } = event.asV110
+    if (event.isV310) {
+        const { index } = event.asV310
         return {
             index,
         }
@@ -53,8 +53,8 @@ interface BountyCanceledData {
 
 export function getBountyCanceledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
     const event = new BountiesBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index } = event.asV110
+    if (event.isV310) {
+        const { index } = event.asV310
         return {
             index,
         }
@@ -72,8 +72,8 @@ interface BountyClaimedData {
 
 export function getBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
     const event = new BountiesBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index, payout, beneficiary } = event.asV110
+    if (event.isV310) {
+        const { index, payout, beneficiary } = event.asV310
         return {
             index,
             payout,
@@ -90,8 +90,8 @@ interface BountyExtendedData {
 
 export function getBountyExtendedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
     const event = new BountiesBountyExtendedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index } = event.asV110
+    if (event.isV310) {
+        const { index } = event.asV310
         return {
             index,
         }
@@ -106,8 +106,8 @@ interface BountyProposedData {
 
 export function getBountyProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
     const event = new BountiesBountyProposedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index } = event.asV110
+    if (event.isV310) {
+        const { index } = event.asV310
         return {
             index,
         }
@@ -122,8 +122,8 @@ interface BountyRejectedData {
 
 export function getBountyRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
     const event = new BountiesBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV110) {
-        const { index } = event.asV110
+    if (event.isV310) {
+        const { index } = event.asV310
         return {
             index,
         }

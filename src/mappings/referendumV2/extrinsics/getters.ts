@@ -33,31 +33,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
     const event = new ConvictionVotingVoteCall(ctx, itemCall)
-    if (event.isV110) {
-        const { pollIndex, vote } = event.asV110
-        if(vote.__kind === 'Standard') {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Standard',
-                    balance: vote.balance,
-                    value: vote.vote
-                },
-            }
-        }
-         else {
-            return {
-                index: pollIndex,
-                vote: {
-                    type: 'Split',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                },
-            }
-        }
-    }
-    else if(event.isV120){
-        const { pollIndex, vote } = event.asV120
+    if(event.isV100){
+        const { pollIndex, vote } = event.asV100
         if (vote.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -105,9 +82,9 @@ export interface ConvictionVoteDelegateCallData {
 export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
     const event = new ConvictionVotingDelegateCall(ctx, itemCall)
    
-    if (event.isV110) {
+    if (event.isV100) {
         //{ class, to, conviction, balance}
-        const eventData = event.asV110
+        const eventData = event.asV100
         return {
             track: eventData.class,
             to: eventData.to.value,
@@ -125,8 +102,8 @@ export interface ConvictionVoteUndelegateCallData {
 export function getUndelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteUndelegateCallData {
     const event = new ConvictionVotingUndelegateCall(ctx, itemCall)
    
-    if (event.isV110) {
-        const eventData = event.asV110
+    if (event.isV100) {
+        const eventData = event.asV100
         return {
             track: eventData.class
         }
@@ -142,8 +119,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
     const event = new ConvictionVotingRemoveVoteCall(ctx, itemCall)
-    if (event.isV110) {
-        const eventData = event.asV110
+    if (event.isV100) {
+        const eventData = event.asV100
         return {
             index: eventData.index,
             track: eventData.class
@@ -161,8 +138,8 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 
 export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
     const event = new ConvictionVotingRemoveOtherVoteCall(ctx, itemCall)
-    if (event.isV110) {
-        const eventData = event.asV110
+    if (event.isV100) {
+        const eventData = event.asV100
         return {
             index: eventData.index,
             track: eventData.class,

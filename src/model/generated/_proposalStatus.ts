@@ -7,6 +7,7 @@ export enum ProposalStatus {
     NotPassed = "NotPassed",
     Cancelled = "Cancelled",
     Executed = "Executed",
+    ExecutionFailed = "ExecutionFailed",
     Used = "Used",
     Invalid = "Invalid",
     Missing = "Missing",

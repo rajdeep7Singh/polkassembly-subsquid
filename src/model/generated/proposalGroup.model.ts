@@ -36,11 +36,11 @@ export class ProposalGroup {
 
     @Index_()
     @Column_("int4", {nullable: true})
-    referendumV2Index!: number | undefined | null
+    techCommitteeProposalIndex!: number | undefined | null
 
     @Index_()
     @Column_("int4", {nullable: true})
-    techCommitteeProposalIndex!: number | undefined | null
+    referendumV2Index!: number | undefined | null
 
     @OneToMany_(() => Proposal, e => e.group)
     proposals!: Proposal[]

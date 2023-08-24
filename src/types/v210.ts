@@ -1,33 +1,33 @@
 import type {Result, Option} from './support'
 
-export type Type_482 = Type_482_Ongoing | Type_482_Approved | Type_482_Rejected | Type_482_Cancelled | Type_482_TimedOut | Type_482_Killed
+export type Type_399 = Type_399_Ongoing | Type_399_Approved | Type_399_Rejected | Type_399_Cancelled | Type_399_TimedOut | Type_399_Killed
 
-export interface Type_482_Ongoing {
+export interface Type_399_Ongoing {
     __kind: 'Ongoing'
-    value: Type_483
+    value: Type_400
 }
 
-export interface Type_482_Approved {
+export interface Type_399_Approved {
     __kind: 'Approved'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_482_Rejected {
+export interface Type_399_Rejected {
     __kind: 'Rejected'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_482_Cancelled {
+export interface Type_399_Cancelled {
     __kind: 'Cancelled'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_482_TimedOut {
+export interface Type_399_TimedOut {
     __kind: 'TimedOut'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_482_Killed {
+export interface Type_399_Killed {
     __kind: 'Killed'
     value: number
 }
@@ -64,7 +64,15 @@ export interface ReferendumInfo_Killed {
     value: number
 }
 
-export interface Type_483 {
+export interface Scheduled {
+    maybeId: (Uint8Array | undefined)
+    priority: number
+    call: Bounded
+    maybePeriodic: ([number, number] | undefined)
+    origin: OriginCaller
+}
+
+export interface Type_400 {
     track: number
     origin: OriginCaller
     proposal: Bounded
@@ -73,7 +81,7 @@ export interface Type_483 {
     submissionDeposit: Deposit
     decisionDeposit: (Deposit | undefined)
     deciding: (DecidingStatus | undefined)
-    tally: Type_292
+    tally: Type_210
     inQueue: boolean
     alarm: ([number, [number, number]] | undefined)
 }
@@ -97,23 +105,6 @@ export interface ReferendumStatus {
     alarm: ([number, [number, number]] | undefined)
 }
 
-export type OriginCaller = OriginCaller_system | OriginCaller_Origins | OriginCaller_Void
-
-export interface OriginCaller_system {
-    __kind: 'system'
-    value: RawOrigin
-}
-
-export interface OriginCaller_Origins {
-    __kind: 'Origins'
-    value: Origin
-}
-
-export interface OriginCaller_Void {
-    __kind: 'Void'
-    value: Void
-}
-
 export type Bounded = Bounded_Legacy | Bounded_Inline | Bounded_Lookup
 
 export interface Bounded_Legacy {
@@ -130,6 +121,23 @@ export interface Bounded_Lookup {
     __kind: 'Lookup'
     hash: Uint8Array
     len: number
+}
+
+export type OriginCaller = OriginCaller_system | OriginCaller_Origins | OriginCaller_Void
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export interface OriginCaller_Origins {
+    __kind: 'Origins'
+    value: Origin
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
 }
 
 export type DispatchTime = DispatchTime_At | DispatchTime_After
@@ -149,7 +157,7 @@ export interface DecidingStatus {
     confirming: (number | undefined)
 }
 
-export interface Type_292 {
+export interface Type_210 {
     bareAyes: number
     ayes: number
     nays: number
@@ -176,7 +184,7 @@ export interface RawOrigin_None {
     __kind: 'None'
 }
 
-export type Origin = Origin_StakingAdmin | Origin_Treasurer | Origin_FellowshipAdmin | Origin_GeneralAdmin | Origin_ReferendumCanceller | Origin_ReferendumKiller | Origin_WhitelistedCaller | Origin_FellowshipInitiates | Origin_Fellows | Origin_FellowshipExperts | Origin_FellowshipMasters
+export type Origin = Origin_StakingAdmin | Origin_Treasurer | Origin_FellowshipAdmin | Origin_GeneralAdmin | Origin_ReferendumCanceller | Origin_ReferendumKiller | Origin_SmallTipper | Origin_BigTipper | Origin_SmallSpender | Origin_MediumSpender | Origin_BigSpender | Origin_WhitelistedCaller | Origin_FellowshipInitiates | Origin_Fellows | Origin_FellowshipExperts | Origin_FellowshipMasters | Origin_Fellowship1Dan | Origin_Fellowship2Dan | Origin_Fellowship3Dan | Origin_Fellowship4Dan | Origin_Fellowship5Dan | Origin_Fellowship6Dan | Origin_Fellowship7Dan | Origin_Fellowship8Dan | Origin_Fellowship9Dan
 
 export interface Origin_StakingAdmin {
     __kind: 'StakingAdmin'
@@ -202,6 +210,26 @@ export interface Origin_ReferendumKiller {
     __kind: 'ReferendumKiller'
 }
 
+export interface Origin_SmallTipper {
+    __kind: 'SmallTipper'
+}
+
+export interface Origin_BigTipper {
+    __kind: 'BigTipper'
+}
+
+export interface Origin_SmallSpender {
+    __kind: 'SmallSpender'
+}
+
+export interface Origin_MediumSpender {
+    __kind: 'MediumSpender'
+}
+
+export interface Origin_BigSpender {
+    __kind: 'BigSpender'
+}
+
 export interface Origin_WhitelistedCaller {
     __kind: 'WhitelistedCaller'
 }
@@ -220,6 +248,42 @@ export interface Origin_FellowshipExperts {
 
 export interface Origin_FellowshipMasters {
     __kind: 'FellowshipMasters'
+}
+
+export interface Origin_Fellowship1Dan {
+    __kind: 'Fellowship1Dan'
+}
+
+export interface Origin_Fellowship2Dan {
+    __kind: 'Fellowship2Dan'
+}
+
+export interface Origin_Fellowship3Dan {
+    __kind: 'Fellowship3Dan'
+}
+
+export interface Origin_Fellowship4Dan {
+    __kind: 'Fellowship4Dan'
+}
+
+export interface Origin_Fellowship5Dan {
+    __kind: 'Fellowship5Dan'
+}
+
+export interface Origin_Fellowship6Dan {
+    __kind: 'Fellowship6Dan'
+}
+
+export interface Origin_Fellowship7Dan {
+    __kind: 'Fellowship7Dan'
+}
+
+export interface Origin_Fellowship8Dan {
+    __kind: 'Fellowship8Dan'
+}
+
+export interface Origin_Fellowship9Dan {
+    __kind: 'Fellowship9Dan'
 }
 
 export type Void = never

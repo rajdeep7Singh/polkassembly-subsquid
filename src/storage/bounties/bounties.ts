@@ -18,8 +18,8 @@ async function getBountyStorageData(ctx: BatchContext<Store, unknown>, index: nu
     const storage = new BountiesBountiesStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV110) {
-        return await storage.asV110.get(index)
+    if (storage.isV310) {
+        return await storage.asV310.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }
@@ -40,8 +40,8 @@ async function getBountyDescriptionStorageData(ctx: BatchContext<Store, unknown>
     const storage = new BountiesBountyDescriptionsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV110) {
-        return await storage.asV110.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (storage.isV310) {
+        return await storage.asV310.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

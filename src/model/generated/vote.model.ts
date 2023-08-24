@@ -41,6 +41,6 @@ export class Vote {
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null
 
-    @Column_("varchar", {length: 12, nullable: true})
+    @Column_("varchar", {length: 17, nullable: true})
     type!: VoteType | undefined | null
 }

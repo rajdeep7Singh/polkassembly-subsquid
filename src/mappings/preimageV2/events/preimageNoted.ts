@@ -35,8 +35,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
     if(!preimageStatus?.len){
         return undefined
     }
-    if (storage.isV110) {
-        const storageData = await storage.asV110.get([hash, preimageStatus?.len])
+    if (storage.isV100) {
+        const storageData = await storage.asV100.get([hash, preimageStatus?.len])
         if (!storageData) return undefined
 
         return {
@@ -57,8 +57,8 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx, block)
-    if (preimageStorage.isV110) {
-        const storageData = await preimageStorage.asV110.get(hash)
+    if (preimageStorage.isV100) {
+        const storageData = await preimageStorage.asV100.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,

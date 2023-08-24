@@ -3,7 +3,8 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
-import { Event } from '../../types/support'
+import fetch from 'node-fetch'
+import { NOTIFICATION_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
@@ -183,6 +184,7 @@ export async function updateProposalStatus(
             proposal,
         })
     )
+    await sendNotification(ctx, proposal, 'proposalStatusChanged')
 }
 
 async function getOrCreateProposalGroup(
@@ -380,6 +382,8 @@ export async function createDemocracyProposal(
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -425,7 +429,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
                 createdAtBlock: 'DESC'
             }
         })
-        if(associatedProposal && associatedProposal.index != null && associatedProposal.type){
+        if(associatedProposal && associatedProposal.index !=null && associatedProposal.index != undefined && associatedProposal.type){
             group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
             associatedProposal.group = group
             await ctx.store.save(associatedProposal)
@@ -448,9 +452,10 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
         })
     }
 
-    if(!proposer && preimage && preimage.proposer){
+    if (!proposer && preimage && preimage.proposer) {
         proposer = preimage.proposer
     }
+
 
     const proposal = new Proposal({
         id,
@@ -483,6 +488,8 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -510,6 +517,21 @@ export async function createCoucilMotion(
                     createdAtBlock: 'DESC'
                 }
             })
+        }
+        if(call.args['proposal']){
+            const prop = call.args['proposal'] as any
+            if(prop.hash){
+                hexHash = prop.hash
+                preimage = await ctx.store.get(Preimage, {
+                    where: {
+                        hash: hexHash,
+                        status: ProposalStatus.Noted,
+                    },
+                    order: {
+                        createdAtBlock: 'DESC'
+                    }
+                })
+            }
         }
     }
 
@@ -580,7 +602,7 @@ export async function createCoucilMotion(
                     createdAtBlock: 'DESC'
                 }
             })
-            if (counciMotion && counciMotion.index != null) {
+            if (counciMotion && counciMotion.index != null && counciMotion.index != undefined) {
                 group = await getOrCreateProposalGroup(ctx, counciMotion.index, ProposalType.CouncilMotion, index, type)
                 counciMotion.group = group
                 await ctx.store.save(counciMotion)
@@ -618,6 +640,8 @@ export async function createCoucilMotion(
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -663,6 +687,8 @@ export async function createTip( ctx: BatchContext<Store, unknown>, header: Subs
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -703,6 +729,8 @@ export async function createBounty( ctx: BatchContext<Store, unknown>, header: S
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -742,6 +770,8 @@ export async function createChildBounty( ctx: BatchContext<Store, unknown>, head
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -760,17 +790,15 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Confirmed,
-                proposer: proposer,
             }
         }) || await ctx.store.get(Proposal, {
             where: {
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Executed,
-                proposer: proposer,
             }
         })
-        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index != null) {
+        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index !== null && referendumV2.index !== undefined) {
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if(group) {
                 referendumV2.group = group
@@ -806,6 +834,8 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -870,6 +900,13 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
 
     await ctx.store.insert(preimage)
 
+    const associatedProposal = await ctx.store.get(Proposal, { where: { hash, type: ProposalType.ReferendumV2 }, order: { createdAt: 'DESC' } })
+
+    if(associatedProposal && !associatedProposal.preimage) {
+        associatedProposal.preimage = preimage
+        await ctx.store.save(associatedProposal)
+    }
+
     return preimage
 }
 
@@ -879,12 +916,33 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
+    const preimage: any = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
         },
         order: { createdAtBlock: 'DESC' },
     })
+
+    let group = null;
+
+    // if(preimage && preimage.proposedCall) {
+    //     if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
+    //         const bounty = await ctx.store.get(Proposal, {
+    //             where: {
+    //                 index: preimage.proposedCall.args.bountyId,
+    //                 type: ProposalType.Bounty,
+    //             },
+    //             order: { createdAtBlock: 'DESC' },
+    //         })
+    //         if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
+    //             group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
+    //             if(group) {
+    //                 bounty.group = group
+    //                 await ctx.store.save(bounty)
+    //             }
+    //         }
+    //     }
+    // }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
@@ -909,6 +967,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
         submittedAtBlock: submittedAt,
         enactmentAfterBlock: enactmentAfter,
         enactmentAtBlock: enactmentAt,
+        group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
         createdAtBlock: header.height,
@@ -927,6 +986,8 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -949,4 +1010,87 @@ export function createDecisionDeposit(data: DecisionDepositData): DecisionDeposi
 
 export function createSubmissionDeposit(data: SubmissionDepositData): SubmissionDeposit {
     return new SubmissionDeposit(toJSON(data))
+}
+
+export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
+    const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+    let statusName = null
+
+    // if difference between proposal update time and current time > 10 mins return
+    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+        return
+    }
+
+    if([ProposalStatus.Started, 
+        ProposalStatus.Submitted, 
+        ProposalStatus.Added, 
+        ProposalStatus.Proposed, 
+        ProposalStatus.Opened,
+    ].includes(status)){
+        statusName = 'submitted'
+    }
+    else if([ProposalStatus.Executed,
+        ProposalStatus.Cancelled,
+        ProposalStatus.Killed,
+        ProposalStatus.Rejected,
+        ProposalStatus.Executed,
+        ProposalStatus.ExecutionFailed,
+        ProposalStatus.Closed,
+        ProposalStatus.Approved,
+        ProposalStatus.Disapproved,
+        ProposalStatus.Awarded,
+        ProposalStatus.Claimed,
+        ProposalStatus.NotPassed,
+        ProposalStatus.Passed,
+        ProposalStatus.Tabled,
+        ProposalStatus.Retracted,
+        ProposalStatus.Slashed,
+        ProposalStatus.TimedOut,
+    ].includes(status)){
+        statusName = 'closed'
+    }
+    else if([ProposalStatus.Deciding,
+        ProposalStatus.ConfirmStarted,
+        ProposalStatus.ConfirmAborted,
+    ].includes(status)){
+        statusName = 'voting'
+    }
+
+    const notification = {
+        trigger: trigger,
+        args : {
+            network: 'vara',
+            postType: type,
+            postId: type != ProposalType.Tip ? String(index) : hash,
+            proposerAddress: proposer || curator,
+            statusType: statusName,
+            track: String(trackNumber),
+            statusName: status,
+          }
+    }
+
+    if(!process.env.NOTIFICATION_API_KEY){
+        ctx.log.error(`Notification Api Key not found`)
+        return
+    }
+
+    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+
+    const response = await fetch(NOTIFICATION_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+            'x-source': 'polkassembly'
+        },
+        body: JSON.stringify(notification),
+    })
+
+    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+
+    if (response.status !== 200) {
+        ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+        return
+    }
 }
