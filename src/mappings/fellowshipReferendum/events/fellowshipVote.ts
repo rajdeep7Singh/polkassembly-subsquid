@@ -14,7 +14,7 @@ export async function handleFellowshipVotes(ctx: BatchContext<Store, unknown>,
     const { accountId, index, decision, amount, tally } = getFellowshipVoteData(ctx, item.event)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.FellowshipReferendum } })
-    if (!proposal) {
+    if (!proposal || !proposal.index) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.FellowshipReferendum, index))
         return
     }
@@ -29,6 +29,7 @@ export async function handleFellowshipVotes(ctx: BatchContext<Store, unknown>,
             voter: ss58codec.encode(accountId),
             blockNumber: header.height,
             decision: decision,
+            proposalIndex: proposal.index,
             proposal,
             balance: new StandardVoteBalance({
                 value: amount ? BigInt(amount) : BigInt(0),
