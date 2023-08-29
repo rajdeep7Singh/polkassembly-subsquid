@@ -13,3 +13,15 @@ deploy:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server" ]
+  
+scale:
+  dedicated: true
+  addons:
+     postgres:
+         storage: 60Gi
+         profile: medium
+  processor:
+     profile: medium
+  api:
+     profile: large
+     replicas: 3
