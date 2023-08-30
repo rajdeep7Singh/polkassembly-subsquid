@@ -3,7 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
-import { NOTIFICATION_URL } from '../../consts/consts'
+import { NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 import fetch from 'node-fetch'
 
@@ -44,6 +44,7 @@ import {
     TallyData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
+import config from '../../config'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -1073,6 +1074,42 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
 
     if (response.status !== 200) {
         ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+        return
+    }
+}
+
+export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
+    const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+
+    try{
+        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+            const redisData = {
+                network: config.chain.name,
+                govType: 'OpenGov',
+                postId: index,
+                track: trackNumber,
+                proposalType: type,
+            }
+            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+
+            const response = await fetch(REDIS_CF_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(redisData),
+            })
+
+            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+
+            if (response.status !== 200) {
+                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+                return
+            }
+        }
+    }
+    catch(e){
+        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
         return
     }
 }
