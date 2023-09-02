@@ -186,6 +186,7 @@ export async function updateProposalStatus(
         })
     )
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
+    await updateRedis(ctx, proposal)
 }
 
 async function getOrCreateProposalGroup(
@@ -970,6 +971,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
     )
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
+    await updateRedis(ctx, proposal)
 
     return proposal
 }
