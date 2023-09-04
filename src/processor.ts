@@ -10976,9 +10976,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
               if (item.name == 'Pips.ProposalCreated'){
                   await modules.pip.events.handleProposed(ctx, item, block.header)
               }
-              if (item.name == 'PolymeshCommittee.Proposed'){
-                await modules.pip.events.handlePolymeshCommitteeProposed(ctx, item, block.header)
-            }
+              // if (item.name == 'PolymeshCommittee.Proposed'){
+              //   await modules.pip.events.handlePolymeshCommitteeProposed(ctx, item, block.header)
+              // }
               if (item.name == 'Pips.ProposalStateUpdated'){
                   await modules.pip.events.handleStatusChange(ctx, item, block.header)
               }
