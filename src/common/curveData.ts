@@ -30,7 +30,7 @@ export async function updateCurveData(ctx: BatchContext<Store, unknown>, header:
         const inactiveIssuance = await getTotalInactiveIssuanceStorageData(ctx, header)
         const activeIssuance = totalIssuance - inactiveIssuance;
         approvalPercent = Number(tally.ayes) / Number((tally.ayes + tally.nays)) * 100
-        supportPercent = Number(tally.ayes) / Number(activeIssuance) * 100
+        supportPercent = Number(tally.support) / Number(activeIssuance) * 100
     }
 
     await ctx.store.insert(
