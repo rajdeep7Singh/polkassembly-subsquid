@@ -9,7 +9,7 @@ const config: ProcessorConfig<Store> = {
     },
     dataSource: {
         archive: 'https://robonomics.archive.subsquid.io/graphql',
-        chain: 'wss://robonomics.api.onfinality.io/public-ws',
+        chain: 'wss://kusama.rpc.robonomics.network/',
     },
     typesBundle: 'kusama',
     batchSize: 500,

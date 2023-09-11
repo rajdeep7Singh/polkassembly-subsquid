@@ -6,7 +6,7 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://robonomics.api.onfinality.io/public-ws',
+        chain: 'wss://kusama.rpc.robonomics.network/',
         archive: 'https://robonomics.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
