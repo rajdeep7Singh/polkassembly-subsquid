@@ -1,6 +1,7 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
     DemocracyCancelledEvent,
+    DemocracyProposalCanceledEvent,
     DemocracyExecutedEvent,
     DemocracyNotPassedEvent,
     DemocracyPassedEvent,
@@ -21,6 +22,15 @@ export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: E
         return event.asV266
     } else if (event.isV297) {
         return event.asV297.refIndex
+    } else {
+        throw new UnknownVersionError(event.constructor.name)
+    }
+}
+
+export function getProposalCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
+    const event = new DemocracyProposalCanceledEvent(ctx, itemEvent)
+    if (event.isV43000) {
+        return event.asV43000.propIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }

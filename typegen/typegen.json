@@ -37,6 +37,7 @@
     "Democracy.Passed",
     "Democracy.NotPassed",
     "Democracy.Cancelled",
+    "Democracy.ProposalCanceled",
     "Democracy.Executed",
     "Democracy.PreimageNoted",
     "Democracy.PreimageUsed",

@@ -1,7 +1,7 @@
 import { toHex } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getOriginAccountId } from '../../../common/tools'
-import { Proposal, ProposalType, Tippers } from '../../../model'
+import { Proposal, ProposalType, Tippers, ProposalStatus } from '../../../model'
 import { CallHandlerContext } from '../../types/contexts'
 import { getTipsTipData, getTreasuryTipData } from './getters'
 import { randomUUID } from 'crypto'
@@ -16,7 +16,7 @@ export async function handleNewTipValue(ctx: BatchContext<Store, unknown>,
 
     const { hash, tipValue } = getTipsTipData(ctx, item.call)
     const hexHash = toHex(hash)
-    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip } })
+    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip, status: ProposalStatus.Opened } } )
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hexHash))
         return
@@ -49,7 +49,7 @@ export async function handleNewTipValueOld(ctx: BatchContext<Store, unknown>,
 
     const { hash, tipValue } = getTreasuryTipData(ctx, item.call)
     const hexHash = toHex(hash)
-    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip } })
+    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip, status: ProposalStatus.Opened } })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hexHash))
         return

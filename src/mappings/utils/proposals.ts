@@ -659,7 +659,7 @@ export async function createTip( ctx: BatchContext<Store, unknown>, header: Subs
 
     const type = ProposalType.Tip
 
-    const id = await getProposalId(ctx.store, type)
+    const id = `${header.height}-${hash}`
 
     const proposal = new Proposal({
         id,

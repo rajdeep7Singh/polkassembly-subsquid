@@ -1257,6 +1257,35 @@ export class DemocracyPreimageUsedEvent {
     }
 }
 
+export class DemocracyProposalCanceledEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Democracy.ProposalCanceled')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A proposal got canceled.
+     */
+    get isV43000(): boolean {
+        return this._chain.getEventHash('Democracy.ProposalCanceled') === '4229a060ed682a59f5b96a0a1d18ae4a471b42fbbe5beff110f3dbb41e7d7224'
+    }
+
+    /**
+     * A proposal got canceled.
+     */
+    get asV43000(): {propIndex: number} {
+        assert(this.isV43000)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class DemocracyProposedEvent {
     private readonly _chain: Chain
     private readonly event: Event

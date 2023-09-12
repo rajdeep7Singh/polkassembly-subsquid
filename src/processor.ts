@@ -95,6 +95,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Democracy.Executed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Seconded', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageNoted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Democracy.ProposalCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageUsed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageInvalid', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.PreimageMissing', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -263,6 +264,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Democracy.Cancelled'){
                     await modules.democracy.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.ProposalCanceled'){
+                    await modules.democracy.events.handleProposalCancelled(ctx, item, block.header)
                 }
                 if (item.name == 'Democracy.Executed'){
                     await modules.democracy.events.handleExecuted(ctx, item, block.header)
