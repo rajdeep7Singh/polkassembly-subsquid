@@ -3,9 +3,9 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
+import fetch from 'node-fetch'
 import { NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
-import fetch from 'node-fetch'
 
 import {
     MotionThreshold,
@@ -45,6 +45,7 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import config from '../../config'
+import referendumV2 from '../referendumV2'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -785,6 +786,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
     const id = await getProposalId(ctx.store, type)
 
     let group = null;
+    let refProposer = null;
 
     if(status === ProposalStatus.Approved) {
         const referendumV2 = await ctx.store.get(Proposal, {
@@ -801,6 +803,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
             }
         })
         if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index !== null && referendumV2.index !== undefined) {
+            refProposer = referendumV2.proposer
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if(group) {
                 referendumV2.group = group
@@ -814,7 +817,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
         id,
         type,
         index,
-        proposer,
+        proposer: refProposer || proposer,
         deposit,
         reward,
         status,
@@ -927,6 +930,25 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
 
     let group = null;
 
+    // if(preimage && preimage.proposedCall) {
+    //     if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
+    //         const bounty = await ctx.store.get(Proposal, {
+    //             where: {
+    //                 index: preimage.proposedCall.args.bountyId,
+    //                 type: ProposalType.Bounty,
+    //             },
+    //             order: { createdAtBlock: 'DESC' },
+    //         })
+    //         if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
+    //             group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
+    //             if(group) {
+    //                 bounty.group = group
+    //                 await ctx.store.save(bounty)
+    //             }
+    //         }
+    //     }
+    // }
+
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
     let decDeposit = undefined
@@ -1000,118 +1022,120 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
 
+    return
+
     // if difference between proposal update time and current time > 10 mins return
-    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
-        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
-        return
-    }
+    // if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+    //     ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+    //     return
+    // }
 
-    if([ProposalStatus.Started, 
-        ProposalStatus.Submitted, 
-        ProposalStatus.Added, 
-        ProposalStatus.Proposed, 
-        ProposalStatus.Opened,
-    ].includes(status)){
-        statusName = 'submitted'
-    }
-    else if([ProposalStatus.Executed,
-        ProposalStatus.Cancelled,
-        ProposalStatus.Killed,
-        ProposalStatus.Rejected,
-        ProposalStatus.Executed,
-        ProposalStatus.ExecutionFailed,
-        ProposalStatus.Closed,
-        ProposalStatus.Approved,
-        ProposalStatus.Disapproved,
-        ProposalStatus.Awarded,
-        ProposalStatus.Claimed,
-        ProposalStatus.NotPassed,
-        ProposalStatus.Passed,
-        ProposalStatus.Tabled,
-        ProposalStatus.Retracted,
-        ProposalStatus.Slashed,
-        ProposalStatus.TimedOut,
-        ProposalStatus.Confirmed,
-    ].includes(status)){
-        statusName = 'closed'
-    }
-    else if([ProposalStatus.Deciding,
-        ProposalStatus.ConfirmStarted,
-        ProposalStatus.ConfirmAborted,
-    ].includes(status)){
-        statusName = 'voting'
-    }
+    // if([ProposalStatus.Started, 
+    //     ProposalStatus.Submitted, 
+    //     ProposalStatus.Added, 
+    //     ProposalStatus.Proposed, 
+    //     ProposalStatus.Opened,
+    // ].includes(status)){
+    //     statusName = 'submitted'
+    // }
+    // else if([ProposalStatus.Executed,
+    //     ProposalStatus.Cancelled,
+    //     ProposalStatus.Killed,
+    //     ProposalStatus.Rejected,
+    //     ProposalStatus.Executed,
+    //     ProposalStatus.ExecutionFailed,
+    //     ProposalStatus.Closed,
+    //     ProposalStatus.Approved,
+    //     ProposalStatus.Disapproved,
+    //     ProposalStatus.Awarded,
+    //     ProposalStatus.Claimed,
+    //     ProposalStatus.NotPassed,
+    //     ProposalStatus.Passed,
+    //     ProposalStatus.Tabled,
+    //     ProposalStatus.Retracted,
+    //     ProposalStatus.Slashed,
+    //     ProposalStatus.TimedOut,
+    // ].includes(status)){
+    //     statusName = 'closed'
+    // }
+    // else if([ProposalStatus.Deciding,
+    //     ProposalStatus.ConfirmStarted,
+    //     ProposalStatus.ConfirmAborted,
+    // ].includes(status)){
+    //     statusName = 'voting'
+    // }
 
-    const notification = {
-        trigger: trigger,
-        args : {
-            network: 'polkadot',
-            postType: type,
-            postId: type != ProposalType.Tip ? String(index) : hash,
-            proposerAddress: proposer || curator,
-            statusType: statusName,
-            track: String(trackNumber),
-            statusName: status,
-          }
-    }
+    // const notification = {
+    //     trigger: trigger,
+    //     args : {
+    //         network: 'kusama',
+    //         postType: type,
+    //         postId: type != ProposalType.Tip ? String(index) : hash,
+    //         proposerAddress: proposer || curator,
+    //         statusType: statusName,
+    //         track: String(trackNumber),
+    //         statusName: status,
+    //       }
+    // }
 
-    if(!process.env.NOTIFICATION_API_KEY){
-        ctx.log.error(`Notification Api Key not found`)
-        return
-    }
+    // if(!process.env.NOTIFICATION_API_KEY){
+    //     ctx.log.error(`Notification Api Key not found`)
+    //     return
+    // }
 
-    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+    // ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
 
-    const response = await fetch(NOTIFICATION_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': process.env.NOTIFICATION_API_KEY || '',
-            'x-source': 'polkassembly'
-        },
-        body: JSON.stringify(notification),
-    })
+    // const response = await fetch(NOTIFICATION_URL, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+    //         'x-source': 'polkassembly'
+    //     },
+    //     body: JSON.stringify(notification),
+    // })
 
-    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+    // ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-    if (response.status !== 200) {
-        ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
-        return
-    }
+    // if (response.status !== 200) {
+    //     ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+    //     return
+    // }
 }
 
 export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+    return
 
-    try{
-        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
-            const redisData = {
-                network: config.chain.name,
-                govType: 'OpenGov',
-                postId: index,
-                track: trackNumber,
-                proposalType: type,
-            }
-            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+    // try{
+    //     if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+    //         const redisData = {
+    //             network: config.chain.name,
+    //             govType: 'OpenGov',
+    //             postId: index,
+    //             track: trackNumber,
+    //             proposalType: type,
+    //         }
+    //         ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
 
-            const response = await fetch(REDIS_CF_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(redisData),
-            })
-
-            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
-
-            if (response.status !== 200) {
-                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
-                return
-            }
-        }
-    }
-    catch(e){
-        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
-        return
-    }
+    //         const response = await fetch(REDIS_CF_URL, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(redisData),
+    //         })
+        
+    //         ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+        
+    //         if (response.status !== 200) {
+    //             ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+    //             return
+    //         }
+    //     }
+    // }
+    // catch(e){
+    //     ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
+    //     return
+    // }
 }
