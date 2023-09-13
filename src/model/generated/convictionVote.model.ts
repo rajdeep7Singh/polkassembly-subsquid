@@ -57,6 +57,7 @@ export class ConvictionVote {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     totalVotingPower!: bigint | undefined | null
 
+    @Index_()
     @Column_("varchar", {length: 12, nullable: false})
     decision!: VoteDecision
 

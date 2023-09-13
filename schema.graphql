@@ -242,7 +242,7 @@ type ConvictionVote @entity {
   selfVotingPower: BigInt @index
   delegatedVotingPower: BigInt @index
   totalVotingPower: BigInt @index
-  decision: VoteDecision!
+  decision: VoteDecision! @index
   balance: VoteBalance!
   lockPeriod: Int
   delegatedVotes: [ConvictionDelegatedVotes!] @derivedFrom(field: "delegatedTo")
@@ -259,7 +259,7 @@ type ConvictionDelegatedVotes @entity {
   createdAt: DateTime! @index
   removedAt: DateTime @index
   votingPower: BigInt @index
-  decision: VoteDecision!
+  decision: VoteDecision! @index
   balance: VoteBalance!
   lockPeriod: Int
   type: VoteType!
