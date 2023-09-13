@@ -239,12 +239,29 @@ type ConvictionVote @entity {
   removedAtBlock: Int @index
   createdAt: DateTime! @index
   removedAt: DateTime @index
+  selfVotingPower: BigInt @index
+  delegatedVotingPower: BigInt @index
+  totalVotingPower: BigInt @index
+  decision: VoteDecision!
+  balance: VoteBalance!
+  lockPeriod: Int
+  delegatedVotes: [ConvictionDelegatedVotes!] @derivedFrom(field: "delegatedTo")
+  type: VoteType!
+}
+
+type ConvictionDelegatedVotes @entity {
+  id: ID!
+  voter: String @index
+  delegatedTo: ConvictionVote!
+  proposalIndex: Int! @index
+  createdAtBlock: Int! @index
+  removedAtBlock: Int @index
+  createdAt: DateTime! @index
+  removedAt: DateTime @index
   votingPower: BigInt @index
   decision: VoteDecision!
   balance: VoteBalance!
   lockPeriod: Int
-  delegatedTo: String 
-  isDelegated: Boolean
   type: VoteType!
 }
 

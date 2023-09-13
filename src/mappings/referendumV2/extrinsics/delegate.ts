@@ -6,10 +6,9 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
-import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
-import { randomUUID } from 'crypto'
-import { getConvictionVotesCount } from '../../utils/votes'
+import { addDelegatedVotesReferendum, getAllNestedDelegations, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
+import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes } from '../../../model'
+import { getConvictionDelegatedVotesCount } from '../../utils/votes'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
@@ -24,11 +23,11 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
 
     if (delegations != null && delegations != undefined && delegations.length > 1) {
-        //should never be the case
         ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
     }
-    //get ongoingReferenda for track
+
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAtBlock: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
+
     if (delegations.length > 0) {
         const delegation = delegations[0]
         delegation.endedAtBlock = header.height
@@ -38,12 +37,12 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         for (let i = 0; i < ongoingReferenda.length; i++) {
             const referendum = ongoingReferenda[i]
             if(referendum.index || referendum.index === 0){
-                await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
+                await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false)
             }
         }
     }
 
-    await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
+    // await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 
     await ctx.store.insert(
         new VotingDelegation({
@@ -59,6 +58,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     )
     // add votes for ongoing referenda for this track
     let votingPower = BigInt(0)
+    const nestedDelegations = await getAllNestedDelegations(ctx, from, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
@@ -80,30 +80,50 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 value: balance,
             })
             const voter = from
-            const count = await getConvictionVotesCount(ctx, referendum.index)
+            const count = await getConvictionDelegatedVotesCount(ctx)
             if (lockPeriod === 0 && balance) {
                 votingPower = balance/BigInt(10)
             }else{
                 votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
             }
-            await ctx.store.insert(
-                new ConvictionVote({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
-                    proposalIndex: referendum.index,
+
+            const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, referendum, nestedDelegations, vote)
+
+            delegatedVotes.push(
+                new ConvictionDelegatedVotes ({
+                    id: `${count.toString().padStart(8, '0')}`,
                     voter,
                     createdAtBlock: header.height,
                     decision: vote.decision,
                     lockPeriod,
-                    proposal: referendum,
+                    proposalIndex: referendum.index,
                     balance: voteBalance,
-                    votingPower: votingPower,
-                    createdAt: new Date(header.timestamp),
-                    delegatedTo: toWallet,
-                    isDelegated: true,
+                    votingPower,
                     type: VoteType.ReferendumV2,
+                    createdAt: new Date(header.timestamp),
+                    delegatedTo: vote
                 })
             )
+            vote.delegatedVotingPower = delegatedVotePower + votingPower
+            vote.totalVotingPower = vote.selfVotingPower ? delegatedVotePower + vote.selfVotingPower : delegatedVotePower
+            await ctx.store.save(vote)
+            await ctx.store.insert(delegatedVotes)
+
+            // await ctx.store.insert(
+            //     new ConvictionVote({
+            //         id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
+            //         proposalIndex: referendum.index,
+            //         voter,
+            //         createdAtBlock: header.height,
+            //         decision: vote.decision,
+            //         lockPeriod,
+            //         proposal: referendum,
+            //         balance: voteBalance,
+            //         votingPower: votingPower,
+            //         createdAt: new Date(header.timestamp),
+            //         type: VoteType.ReferendumV2,
+            //     })
+            // )
         }
     }
-    await addOngoingReferendaDelegatedVotes(ctx, from, header, track)
 }

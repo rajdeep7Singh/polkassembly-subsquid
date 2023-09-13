@@ -1,36 +1,22 @@
-import { SubstrateBlock } from '@subsquid/substrate-processor'
 import { IsNull } from 'typeorm'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
-import { ConvictionVote, Proposal, ProposalType, StandardVoteBalance, VoteType, VotingDelegation } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
-import { getConvictionVotesCount } from '../../utils/votes'
-import { randomUUID } from 'crypto'
+import { ConvictionDelegatedVotes, ConvictionVote, Proposal, ProposalType, StandardVoteBalance, VoteType, VotingDelegation } from '../../../model'
+import { getConvictionDelegatedVotesCount } from '../../utils/votes'
 
-export function convictionToLockPeriod(convictionKind: string): number {
-    return convictionKind === 'None' ? 0 : Number(convictionKind[convictionKind.search(/\d/)])
+export function convictionToLockPeriod(conviction: string): number {
+    return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number): Promise<void> {
-    //get top toWallet vote
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
-    if (votes.length > 1) {
-        ctx.log.warn(TooManyOpenVotes(block, referendum.index, toWallet))
-        return
-    }
-    else if (votes.length === 0) {
-        //to wallet didn't vote yet
-        // ctx.log.warn(NoOpenVoteFound(header.height, ongoingReferendum.index, toAddress))
-        return
-    }
-    const vote = votes[0]
+export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, nestedDelegations: VotingDelegation[], track: number, convictionVote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint}> {
     let votingPower = BigInt(0)
+    const delegatedVotes = [];
+    let delegatedVotePower = BigInt(0)
     for (let i = 0; i < nestedDelegations.length; i++) {
-        //add votes
         const delegation = nestedDelegations[i]
-        const count = await getConvictionVotesCount(ctx, referendum.index)
+        const count = await getConvictionDelegatedVotesCount(ctx)
         const voteBalance = new StandardVoteBalance({
             value: delegation.balance,
         })
@@ -39,23 +25,26 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         }else{
             votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
         }      
-        await ctx.store.insert(
-            new ConvictionVote({
-                id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
-                proposalIndex: referendum.index,
+        delegatedVotes.push(
+            new ConvictionDelegatedVotes({
+                id: `${count.toString().padStart(8, '0')}`,
                 voter: delegation.from,
                 createdAtBlock: block,
-                decision: vote.decision,
+                proposalIndex: convictionVote.proposalIndex,
+                decision: convictionVote.decision,
                 votingPower: votingPower,
                 lockPeriod: delegation.lockPeriod,
-                proposal: referendum,
                 balance: voteBalance,
                 createdAt: new Date(blockTime),
-                delegatedTo: delegation.to,
+                delegatedTo: convictionVote,
                 type: VoteType.ReferendumV2,
-                isDelegated: true,
             })
         )
+        delegatedVotePower += votingPower
+    }
+    return {
+        delegatedVotes,
+        delegatedVotePower
     }
 }
 
@@ -84,40 +73,39 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
 }
 
 export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Store, unknown>, wallet: string | undefined, block: number, blockTime: number, track: number): Promise<void> {
-    //get any ongoing referenda in this track
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
-    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const ongoingReferendum = ongoingReferenda[i]
         if(ongoingReferendum.index === undefined || ongoingReferendum.index === null) {
             continue
         }
-        await removeDelegatedVotesReferendum(ctx, block, blockTime, ongoingReferendum.index, nestedDelegations)
-    }
-}
-
-export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, index: number, nestedDelegations: VotingDelegation[]): Promise<void> {
-    for (let i = 0; i < nestedDelegations.length; i++) {
-        const delegation = nestedDelegations[i]
-        const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.from, delegatedTo: delegation.to, proposalIndex: index, removedAtBlock: IsNull(), isDelegated: true } })
+        const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex: ongoingReferendum.index, removedAtBlock: IsNull() } })
         if(votes){
             if (votes.length > 1) {
-                ctx.log.warn(TooManyOpenVotes(block, index, delegation.from))
+                ctx.log.warn(TooManyOpenVotes(block, ongoingReferendum.index, wallet))
                 return
-            }
-            else if (votes.length === 0) {
+            } else if (votes.length === 0) {
                 return
             }
             const vote = votes[0]
-            vote.removedAtBlock = block
-            vote.removedAt = new Date(blockTime)
-            await ctx.store.save(vote)
+            if(vote.delegatedVotes){
+                await removeDelegatedVotesReferendum(ctx, block, blockTime, vote.delegatedVotes)
+            }
         }
     }
 }
 
-export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, isDelegated: boolean = false, delegatedTo?: string): Promise<void> {
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), isDelegated, delegatedTo, type: VoteType.ReferendumV2 } })
+export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, delegatedVotes: ConvictionDelegatedVotes[]): Promise<void> {
+    for (let i = 0; i < delegatedVotes.length; i++) {
+        const vote = delegatedVotes[i]
+        vote.removedAtBlock = block
+        vote.removedAt = new Date(blockTime)
+        await ctx.store.save(vote)
+    }
+}
+
+export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean): Promise<void> {
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
     if(votes){
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(block, proposalIndex, wallet))
@@ -134,62 +122,44 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
         vote.removedAtBlock = block
         vote.removedAt = new Date(blockTime)
         await ctx.store.save(vote)
+        if(vote.delegatedVotes){
+            await removeDelegatedVotesReferendum(ctx, block, blockTime, vote.delegatedVotes)
+        }
     }
 }
 
-export async function addOngoingReferendaDelegatedVotes(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, header: SubstrateBlock, track: number): Promise<void> {
-    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
-    const nestedDelegations = await getAllNestedDelegations(ctx, toWallet, track)
-    for (let i = 0; i < ongoingReferenda.length; i++) {
-        const ongoingReferendum = ongoingReferenda[i]
-        await addDelegatedVotesReferendum(ctx, toWallet, header.height, header.timestamp, ongoingReferendum, nestedDelegations, track)
-    }
-}
+export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], vote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint}> {
+    let votingPower = BigInt(0)
+    const delegatedVotes = []
+    let delegatedVotePower = BigInt(0)
 
-export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number): Promise<void> {
-    //get top toWallet vote
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull() } })
-    if(votes){
-        if (votes.length > 1) {
-            ctx.log.warn(TooManyOpenVotes(block, referendum.index, toWallet))
-            return
+    for (let i = 0; i < nestedDelegations.length; i++) {
+        const delegation = nestedDelegations[i]
+        const count = await getConvictionDelegatedVotesCount(ctx)
+        const voteBalance = new StandardVoteBalance({
+            value: delegation.balance,
+        })
+        if (delegation.lockPeriod === 0 && delegation.balance) {
+            votingPower = delegation.balance/BigInt(10)
+        }else{
+            votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
         }
-        else if (votes.length === 0) {
-            //to wallet didn't vote yet
-            // ctx.log.warn(NoOpenVoteFound(header.height, ongoingReferendum.index, toAddress))
-            return
-        }
-        const vote = votes[0]
-        let votingPower = BigInt(0)
-        for (let i = 0; i < nestedDelegations.length; i++) {
-            //add votes
-            const delegation = nestedDelegations[i]
-            const count = await getConvictionVotesCount(ctx, referendum.index)
-            const voteBalance = new StandardVoteBalance({
-                value: delegation.balance,
+        delegatedVotes.push(
+            new ConvictionDelegatedVotes({
+                id: `${count.toString().padStart(8, '0')}`,
+                proposalIndex: referendum.index,
+                voter: delegation.from,
+                createdAtBlock: block,
+                decision: vote.decision,
+                votingPower: votingPower,
+                lockPeriod: delegation.lockPeriod,
+                balance: voteBalance,
+                createdAt: new Date(blockTime),
+                delegatedTo: vote,
+                type: VoteType.ReferendumV2,
             })
-            if (delegation.lockPeriod === 0 && delegation.balance) {
-                votingPower = delegation.balance/BigInt(10)
-            }else{
-                votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
-            }
-            await ctx.store.insert(
-                new ConvictionVote({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
-                    proposalIndex: referendum.index,
-                    voter: delegation.from,
-                    createdAtBlock: block,
-                    decision: vote.decision,
-                    votingPower: votingPower,
-                    lockPeriod: delegation.lockPeriod,
-                    proposal: referendum,
-                    balance: voteBalance,
-                    createdAt: new Date(blockTime),
-                    delegatedTo: delegation.to,
-                    type: VoteType.ReferendumV2,
-                    isDelegated: true,
-                })
-            )
-        }
+        )
+        delegatedVotePower += votingPower
     }
+    return { delegatedVotes, delegatedVotePower }
 }

@@ -1,9 +1,7 @@
 import { getOriginAccountId } from '../../../common/tools'
-import { CallHandlerContext } from '../../types/contexts' 
 import { NoDelegationFound, TooManyOpenDelegations } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
-import { Proposal, ProposalType } from '../../../model'
+import { ConvictionVote, Proposal, ProposalType, VoteType } from '../../../model'
 import { getUndelegateData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
@@ -22,11 +20,9 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
     if(delegations != undefined && delegations != null){
         if (delegations.length > 1) {
-            //should never be the case
             ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
         }
         else if (delegations.length === 0) {
-            //should never be the case
             ctx.log.warn(NoDelegationFound(header.height, track, from))
             return
         }
@@ -35,16 +31,32 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
         delegation.endedAt = new Date(header.timestamp)
         await ctx.store.save(delegation)
     }
-    //remove currently delegated votes from ongoing referenda for this wallet
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index == undefined || referendum.index == null){
             continue
         }
-        if(delegation){
-            await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, true, delegation.to)
+        if(delegation && referendum){
+            const vote = await ctx.store.get(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+            if(vote && vote.delegatedVotes){
+                for(let j = 0; j < vote.delegatedVotes.length; j++){
+                    const delegatedVote = vote.delegatedVotes[j]
+                    if(delegatedVote && delegatedVote.voter == from){
+                        delegatedVote.removedAtBlock = header.height
+                        delegatedVote.removedAt = new Date(header.timestamp)
+                        await ctx.store.save(delegatedVote)
+                        if(delegatedVote.votingPower && vote.totalVotingPower){
+                            vote.totalVotingPower -= delegatedVote.votingPower
+                        }
+                        if(delegatedVote.votingPower && vote.delegatedVotingPower){
+                            vote.delegatedVotingPower -= delegatedVote.votingPower
+                        }
+                        await ctx.store.save(vote)
+                        break;
+                    }
+                }
+            }
         }
     }
-    await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 }
