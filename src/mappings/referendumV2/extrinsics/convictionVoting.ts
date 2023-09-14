@@ -125,9 +125,9 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     })
     const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, nestedDelegations, proposal.trackNumber, convictionVote)
     
-    convictionVote.delegatedVotingPower = delegatedVotePower
-    convictionVote.totalVotingPower = votingPower + delegatedVotePower
-    
+    convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
+    convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
+        
     await ctx.store.insert(convictionVote)
 
     await ctx.store.insert(delegatedVotes)

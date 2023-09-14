@@ -104,26 +104,12 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     delegatedTo: vote
                 })
             )
-            vote.delegatedVotingPower = delegatedVotePower + votingPower
-            vote.totalVotingPower = vote.selfVotingPower ? delegatedVotePower + vote.selfVotingPower : delegatedVotePower
+
+            vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
+            vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
+
             await ctx.store.save(vote)
             await ctx.store.insert(delegatedVotes)
-
-            // await ctx.store.insert(
-            //     new ConvictionVote({
-            //         id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
-            //         proposalIndex: referendum.index,
-            //         voter,
-            //         createdAtBlock: header.height,
-            //         decision: vote.decision,
-            //         lockPeriod,
-            //         proposal: referendum,
-            //         balance: voteBalance,
-            //         votingPower: votingPower,
-            //         createdAt: new Date(header.timestamp),
-            //         type: VoteType.ReferendumV2,
-            //     })
-            // )
         }
     }
 }
