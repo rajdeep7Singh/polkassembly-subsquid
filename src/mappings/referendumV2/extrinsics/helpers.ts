@@ -105,7 +105,11 @@ export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, un
 }
 
 export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean): Promise<void> {
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },
+        relations: {
+            delegatedVotes: true
+        }
+    })
     if(votes){
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(block, proposalIndex, wallet))

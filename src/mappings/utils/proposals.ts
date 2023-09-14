@@ -1064,6 +1064,48 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     // ].includes(status)){
     //     statusName = 'voting'
     // }
+    return
+
+    // if difference between proposal update time and current time > 10 mins return
+    // if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+    //     ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+    //     return
+    // }
+
+    // if([ProposalStatus.Started, 
+    //     ProposalStatus.Submitted, 
+    //     ProposalStatus.Added, 
+    //     ProposalStatus.Proposed, 
+    //     ProposalStatus.Opened,
+    // ].includes(status)){
+    //     statusName = 'submitted'
+    // }
+    // else if([ProposalStatus.Executed,
+    //     ProposalStatus.Cancelled,
+    //     ProposalStatus.Killed,
+    //     ProposalStatus.Rejected,
+    //     ProposalStatus.Executed,
+    //     ProposalStatus.ExecutionFailed,
+    //     ProposalStatus.Closed,
+    //     ProposalStatus.Approved,
+    //     ProposalStatus.Disapproved,
+    //     ProposalStatus.Awarded,
+    //     ProposalStatus.Claimed,
+    //     ProposalStatus.NotPassed,
+    //     ProposalStatus.Passed,
+    //     ProposalStatus.Tabled,
+    //     ProposalStatus.Retracted,
+    //     ProposalStatus.Slashed,
+    //     ProposalStatus.TimedOut,
+    // ].includes(status)){
+    //     statusName = 'closed'
+    // }
+    // else if([ProposalStatus.Deciding,
+    //     ProposalStatus.ConfirmStarted,
+    //     ProposalStatus.ConfirmAborted,
+    // ].includes(status)){
+    //     statusName = 'voting'
+    // }
 
     // const notification = {
     //     trigger: trigger,

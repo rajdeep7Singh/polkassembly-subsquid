@@ -21,7 +21,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         from = getOriginAccountId(item.extrinsic.call.origin)
     }
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
-
     if (delegations != null && delegations != undefined && delegations.length > 1) {
         ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
     }
@@ -86,9 +85,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }else{
                 votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
             }
-
             const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, referendum, nestedDelegations, vote)
-
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
                     id: `${count.toString().padStart(8, '0')}`,
@@ -107,7 +104,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
 
             vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
             vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
-
             await ctx.store.save(vote)
             await ctx.store.insert(delegatedVotes)
         }
