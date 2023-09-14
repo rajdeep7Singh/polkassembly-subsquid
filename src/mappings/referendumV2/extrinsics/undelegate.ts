@@ -1,5 +1,5 @@
 import { getOriginAccountId } from '../../../common/tools'
-import { NoDelegationFound, TooManyOpenDelegations } from '../../../common/errors'
+import { NoDelegationFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { ConvictionVote, Proposal, ProposalType, VoteType } from '../../../model'
 import { getUndelegateData } from './getters'
@@ -38,22 +38,35 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
             continue
         }
         if(delegation && referendum){
-            const vote = await ctx.store.get(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
-            if(vote && vote.delegatedVotes){
-                for(let j = 0; j < vote.delegatedVotes.length; j++){
-                    const delegatedVote = vote.delegatedVotes[j]
-                    if(delegatedVote && delegatedVote.voter == from){
-                        delegatedVote.removedAtBlock = header.height
-                        delegatedVote.removedAt = new Date(header.timestamp)
-                        await ctx.store.save(delegatedVote)
-                        if(delegatedVote.votingPower && vote.totalVotingPower){
-                            vote.totalVotingPower -= delegatedVote.votingPower
+            const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },
+                relations: {
+                    delegatedVotes: true
+                }
+            })
+            if(votes){
+                if (votes.length > 1) {
+                    //should never be the case
+                    ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, from))
+                }
+                if(votes.length > 0){
+                    const vote = votes[0]
+                    if (vote.delegatedVotes){
+                        for(let j = 0; j < vote?.delegatedVotes?.length; j++){
+                            const delegatedVote = vote.delegatedVotes[j]
+                            if(delegatedVote && delegatedVote.voter == from){
+                                delegatedVote.removedAtBlock = header.height
+                                delegatedVote.removedAt = new Date(header.timestamp)
+                                await ctx.store.save(delegatedVote)
+                                if(delegatedVote.votingPower && vote.totalVotingPower){
+                                    vote.totalVotingPower -= delegatedVote.votingPower
+                                }
+                                if(delegatedVote.votingPower && vote.delegatedVotingPower){
+                                    vote.delegatedVotingPower -= delegatedVote.votingPower
+                                }
+                                await ctx.store.save(vote)
+                                break;
+                            }
                         }
-                        if(delegatedVote.votingPower && vote.delegatedVotingPower){
-                            vote.delegatedVotingPower -= delegatedVote.votingPower
-                        }
-                        await ctx.store.save(vote)
-                        break;
                     }
                 }
             }
