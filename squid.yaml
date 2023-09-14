@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: kusama-polkassembly
-version: 4
+version: 2
 description: |-
   Kusama's governance proposals
 
@@ -9,9 +9,6 @@ build:
 deploy:
   addons:
     postgres:
-      config:
-        max_locks_per_transaction: 256
-        max_pred_locks_per_transaction: 256
   secrets:
     - NOTIFICATION_API_KEY
   processor:
