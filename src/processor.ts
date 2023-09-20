@@ -2,6 +2,7 @@ import { lookupArchive } from '@subsquid/archive-registry'
 import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
+import assert from 'assert'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
@@ -51,7 +52,7 @@ const processor = new SubstrateBatchProcessor()
     // .addEvent('Treasury.BountyClaimed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     // .addEvent('Treasury.BountyCanceled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     // .addEvent('Treasury.BountyExtended', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Treasury.SpendApproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Treasury.SpendApproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
 
     // .addEvent('Tips.NewTip', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -75,39 +76,44 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Preimage.Cleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Preimage.Requested', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
-    // .addEvent('Referenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.Metadataset', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Referenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
-    // .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Submitted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Rejected', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Approved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Killed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.TimedOut', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionDepositPlaced', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.DecisionStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Confirmed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmStarted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.ConfirmAborted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.Cancelled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipCollective.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataSet', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('FellowshipReferenda.MetadataCleared', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Multisig.MultisigExecuted', { data: {  event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     // .addEvent('Scheduler.Scheduled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    // .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     
-    // .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
-    // .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
-    // .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
-    // .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
-    // .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('Treasury.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('Treasury.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('Bounties.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
@@ -120,23 +126,54 @@ const processor = new SubstrateBatchProcessor()
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
+        let multisigOrigins = new Map<string, any>()
+        for (let item of block.items) {
+            let multisigAddress: string
+            if (item.name == 'Multisig.MultisigExecuted') {
+                if (Array.isArray(item.event.args)) {
+                    assert(item.event.args.length >= 3)
+                    multisigAddress = item.event.args[2]
+                } else if (typeof item.event.args === 'object') {
+                    assert('multisig' in item.event.args)
+                    multisigAddress = item.event.args.multisig
+                } else {
+                    throw new Error('Unextpected case')
+                }
+
+                let extrinsicHash = item.event.extrinsic!.hash
+                multisigOrigins.set(extrinsicHash, {
+                    __kind: 'system',
+                    value: {
+                        __kind: 'Signed',
+                        value: multisigAddress,
+                    },
+                })
+            }
+        }
+        if (multisigOrigins.size > 0) {
+            for (let item of block.items) {
+                if (item.kind === 'call' && 'extrinsic' in item && 'origin' in item.call && item.call.origin == null) {
+                    item.call.origin = multisigOrigins.get(item.extrinsic.hash)
+                }
+            }
+        }
         for (let item of block.items) {
             if (item.kind === 'call') {
-                // if (item.name == 'ConvictionVoting.vote'){
-                //     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
-                // }
-                // if (item.name == 'ConvictionVoting.delegate'){
-                //     await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
-                // }
-                // if (item.name == 'ConvictionVoting.undelegate'){
-                //     await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
-                // }
-                // if (item.name == 'ConvictionVoting.remove_vote'){
-                //     await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
-                // }
-                // if (item.name == 'ConvictionVoting.remove_other_vote'){
-                //     await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
-                // }
+                if (item.name == 'ConvictionVoting.vote'){
+                    await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.delegate'){
+                    await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.undelegate'){
+                    await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.remove_vote'){
+                    await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
+                }
+                if (item.name == 'ConvictionVoting.remove_other_vote'){
+                    await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
+                }
                 // if (item.name == 'Bounties.accept_curator'){
                 //     await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
                 // }
@@ -250,9 +287,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Treasury.Rejected'){
                     await modules.treasury.events.handleRejected(ctx, item, block.header)
                 }
-                // if (item.name == 'Treasury.SpendApproved'){
-                //     await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
-                // }
+                if (item.name == 'Treasury.SpendApproved'){
+                    await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
+                }
                 // if (item.name == 'Treasury.BountyProposed'){
                 //     await modules.bounties.events.handleProposedOld(ctx, item, block.header)
                 // }
@@ -337,39 +374,45 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Preimage.Requested'){
                     await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
                 }
-                // if (item.name == 'Referenda.Submitted'){
-                //     await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.Approved'){
-                //     await modules.referendumV2.events.handleApproved(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.Cancelled'){
-                //     await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.ConfirmAborted'){
-                //     await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.Confirmed'){
-                //     await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.ConfirmStarted'){
-                //     await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.DecisionDepositPlaced'){
-                //     await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.DecisionStarted'){
-                //     await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.Killed'){
-                //     await modules.referendumV2.events.handleKilled(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.Rejected'){
-                //     await modules.referendumV2.events.handleRejected(ctx, item, block.header)
-                // }
-                // if (item.name == 'Referenda.TimedOut'){
-                //     await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
-                // }
+                if (item.name == 'Referenda.Submitted'){
+                    await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Approved'){
+                    await modules.referendumV2.events.handleApproved(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Cancelled'){
+                    await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.ConfirmAborted'){
+                    await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Confirmed'){
+                    await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.ConfirmStarted'){
+                    await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.DecisionDepositPlaced'){
+                    await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.DecisionStarted'){
+                    await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Killed'){
+                    await modules.referendumV2.events.handleKilled(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.Rejected'){
+                    await modules.referendumV2.events.handleRejected(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.TimedOut'){
+                    await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
+                }                
+                if (item.name == 'Referenda.MetadataSet'){
+                    await modules.referendumV2.events.handleMetadataSet(ctx, item, block.header)
+                }
+                if (item.name == 'Referenda.MetadataCleared'){
+                    await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
+                }
                 // if (item.name == 'FellowshipReferenda.Submitted'){
                 //     await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
                 // }
@@ -406,15 +449,21 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 // if (item.name == 'FellowshipCollective.Voted'){
                 //     await modules.fellowshipReferendum.events.handleFellowshipVotes(ctx, item, block.header)
                 // }
+                // if (item.name == 'FellowshipReferenda.MetadataSet'){
+                //     await modules.fellowshipReferendum.events.handleMetadataSet(ctx, item, block.header)
+                // }
+                // if (item.name == 'FellowshipReferenda.MetadataCleared'){
+                //     await modules.fellowshipReferendum.events.handleMetadataCleared(ctx, item, block.header)
+                // }
                 // if(item.name == 'Scheduler.Scheduled'){
                 //     await modules.fellowshipReferendum.events.   (ctx, item, block.header)
                 //     await modules.referendumV2.events.handleReferendumV2ExecutionSchedule(ctx, item, block.header)
                 // }
-                // if(item.name == 'Scheduler.Dispatched'){
-                //     await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
-                //     await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
-                // }
+                if(item.name == 'Scheduler.Dispatched'){
+                    // await modules.fellowshipReferendum.events.handleFellowshipExecution(ctx, item, block.header)
+                    await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
+                }
             }
         }
-    }  
+    }
 });

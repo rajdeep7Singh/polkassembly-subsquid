@@ -15,8 +15,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
     const storage = new TreasuryProposalsStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    if (storage.isV1400) {
-        return await storage.asV1400.get(index)
+    if (storage.isV200) {
+        return await storage.asV200.get(index)
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

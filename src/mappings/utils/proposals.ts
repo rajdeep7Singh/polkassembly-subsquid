@@ -3,9 +3,9 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
-import { NOTIFICATION_URL } from '../../consts/consts'
-import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 import fetch from 'node-fetch'
+import { NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
+import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
     MotionThreshold,
@@ -44,6 +44,7 @@ import {
     TallyData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
+import config from '../../config'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -185,6 +186,7 @@ export async function updateProposalStatus(
         })
     )
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
+    await updateRedis(ctx, proposal)
 }
 
 async function getOrCreateProposalGroup(
@@ -429,7 +431,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
                 createdAtBlock: 'DESC'
             }
         })
-        if(associatedProposal && associatedProposal.index != null && associatedProposal.type){
+        if(associatedProposal && associatedProposal.index !=null && associatedProposal.index != undefined && associatedProposal.type){
             group = await getOrCreateProposalGroup(ctx, associatedProposal.index, associatedProposal.type as ProposalType, index, type)
             associatedProposal.group = group
             await ctx.store.save(associatedProposal)
@@ -452,7 +454,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
         })
     }
 
-    if(!proposer && preimage && preimage.proposer){
+    if (!proposer && preimage && preimage.proposer) {
         proposer = preimage.proposer
     }
 
@@ -517,6 +519,21 @@ export async function createCoucilMotion(
                     createdAtBlock: 'DESC'
                 }
             })
+        }
+        if(call.args['proposal']){
+            const prop = call.args['proposal'] as any
+            if(prop.hash){
+                hexHash = prop.hash
+                preimage = await ctx.store.get(Preimage, {
+                    where: {
+                        hash: hexHash,
+                        status: ProposalStatus.Noted,
+                    },
+                    order: {
+                        createdAtBlock: 'DESC'
+                    }
+                })
+            }
         }
     }
 
@@ -587,7 +604,7 @@ export async function createCoucilMotion(
                     createdAtBlock: 'DESC'
                 }
             })
-            if (counciMotion && counciMotion.index != null) {
+            if (counciMotion && counciMotion.index != null && counciMotion.index != undefined) {
                 group = await getOrCreateProposalGroup(ctx, counciMotion.index, ProposalType.CouncilMotion, index, type)
                 counciMotion.group = group
                 await ctx.store.save(counciMotion)
@@ -775,17 +792,15 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Confirmed,
-                proposer: proposer,
             }
         }) || await ctx.store.get(Proposal, {
             where: {
                 type: ProposalType.ReferendumV2,
                 executeAtBlockNumber: header.height,
                 status: ProposalStatus.Executed,
-                proposer: proposer,
             }
         })
-        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index != null) {
+        if(referendumV2 && referendumV2.trackNumber && [11, 30, 31, 32, 33, 34].includes(referendumV2.trackNumber) && referendumV2.index !== null && referendumV2.index !== undefined) {
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if(group) {
                 referendumV2.group = group
@@ -887,6 +902,13 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
 
     await ctx.store.insert(preimage)
 
+    const associatedProposal = await ctx.store.get(Proposal, { where: { hash, type: ProposalType.ReferendumV2 }, order: { createdAt: 'DESC' } })
+
+    if(associatedProposal && !associatedProposal.preimage) {
+        associatedProposal.preimage = preimage
+        await ctx.store.save(associatedProposal)
+    }
+
     return preimage
 }
 
@@ -896,12 +918,33 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage = await ctx.store.get(Preimage, {
+    const preimage: any = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
         },
         order: { createdAtBlock: 'DESC' },
     })
+
+    let group = null;
+
+    // if(preimage && preimage.proposedCall) {
+    //     if(preimage.proposedCall.args && preimage.proposedCall.args.bountyId) {
+    //         const bounty = await ctx.store.get(Proposal, {
+    //             where: {
+    //                 index: preimage.proposedCall.args.bountyId,
+    //                 type: ProposalType.Bounty,
+    //             },
+    //             order: { createdAtBlock: 'DESC' },
+    //         })
+    //         if(bounty && bounty.index != null && bounty.index != undefined && bounty.type) {
+    //             group = await getOrCreateProposalGroup(ctx, index, ProposalType.ReferendumV2, bounty.index, bounty.type)
+    //             if(group) {
+    //                 bounty.group = group
+    //                 await ctx.store.save(bounty)
+    //             }
+    //         }
+    //     }
+    // }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
@@ -926,6 +969,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
         submittedAtBlock: submittedAt,
         enactmentAfterBlock: enactmentAfter,
         enactmentAtBlock: enactmentAt,
+        group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
         createdAtBlock: header.height,
@@ -946,6 +990,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
     )
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
+    await updateRedis(ctx, proposal)
 
     return proposal
 }
@@ -993,6 +1038,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
         ProposalStatus.Killed,
         ProposalStatus.Rejected,
         ProposalStatus.Executed,
+        ProposalStatus.ExecutionFailed,
         ProposalStatus.Closed,
         ProposalStatus.Approved,
         ProposalStatus.Disapproved,
@@ -1017,7 +1063,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     const notification = {
         trigger: trigger,
         args : {
-            network: 'picasso',
+            network: config.chain.name,
             postType: type,
             postId: type != ProposalType.Tip ? String(index) : hash,
             proposerAddress: proposer || curator,
@@ -1048,6 +1094,42 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
 
     if (response.status !== 200) {
         ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+        return
+    }
+}
+
+export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
+    const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+
+    try{
+        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+            const redisData = {
+                network: config.chain.name,
+                govType: 'OpenGov',
+                postId: index,
+                track: trackNumber,
+                proposalType: type,
+            }
+            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+
+            const response = await fetch(REDIS_CF_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(redisData),
+            })
+        
+            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+        
+            if (response.status !== 200) {
+                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+                return
+            }
+        }
+    }
+    catch(e){
+        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
         return
     }
 }

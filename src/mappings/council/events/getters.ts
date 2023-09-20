@@ -15,8 +15,8 @@ import { Store } from '@subsquid/typeorm-store'
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new CouncilApprovedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.proposalHash
+    if (event.isV200) {
+        return event.asV200.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -24,8 +24,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new CouncilClosedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.proposalHash
+    if (event.isV200) {
+        return event.asV200.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -33,8 +33,8 @@ export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new CouncilDisapprovedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.proposalHash
+    if (event.isV200) {
+        return event.asV200.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -42,8 +42,12 @@ export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent:
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
     const event = new CouncilExecutedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.proposalHash
+    if (event.isV200) {
+        return event.asV200.proposalHash
+    }   if (event.isV1000) {
+        return event.asV1000.proposalHash
+    }   if (event.isV1200) {
+        return event.asV1200.proposalHash
     } else if (event.isV10009) {
         return event.asV10009.proposalHash
     } else {
@@ -62,8 +66,8 @@ export interface ProposedData {
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
     const event = new CouncilProposedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV1400
+    if (event.isV200) {
+        const { account, proposalIndex, proposalHash, threshold } = event.asV200
         return {
             proposer: account,
             index: proposalIndex,
@@ -83,8 +87,8 @@ export interface VotedData {
 
 export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
     const event = new CouncilVotedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { account, proposalHash, voted } = event.asV1400
+    if (event.isV200) {
+        const { account, proposalHash, voted } = event.asV200
         return {
             voter: account,
             hash: proposalHash,

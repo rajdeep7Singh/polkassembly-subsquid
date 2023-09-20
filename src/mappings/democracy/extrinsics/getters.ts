@@ -23,8 +23,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
     const event = new DemocracyVoteCall(ctx, itemCall)
-    if (event.isV1400) {
-        const { refIndex, vote } = event.asV1400
+    if (event.isV200) {
+        const { refIndex, vote } = event.asV200
         if (vote.__kind === 'Standard') {
             return {
                 index: refIndex,

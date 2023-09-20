@@ -17,8 +17,8 @@ import { Store } from '@subsquid/typeorm-store'
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyCancelledEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.refIndex
+    if (event.isV200) {
+        return event.asV200.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -26,9 +26,13 @@ export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyExecutedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.refIndex
-    } else {
+    if (event.isV200) {
+        return event.asV200.refIndex
+    } else if (event.isV1000) {
+        return event.asV1000.refIndex
+    } else if (event.isV1200) {
+        return event.asV1200.refIndex
+    }  else {
         const data = ctx._chain.decodeEvent(itemEvent)
         return data.refIndex
     }
@@ -36,8 +40,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getNotPassedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyNotPassedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.refIndex
+    if (event.isV200) {
+        return event.asV200.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -45,8 +49,8 @@ export function getNotPassedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getPassedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): number {
     const event = new DemocracyPassedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        return event.asV1400.refIndex
+    if (event.isV200) {
+        return event.asV200.refIndex
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
@@ -59,8 +63,8 @@ export interface PreimageInvalidData {
 
 export function getPreimageInvalidData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageInvalidData {
     const event = new DemocracyPreimageInvalidEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { proposalHash: hash, refIndex: index } = event.asV1400
+    if (event.isV200) {
+        const { proposalHash: hash, refIndex: index } = event.asV200
         return {
             hash,
             index,
@@ -77,8 +81,8 @@ export interface PreimageMissingData {
 
 export function getPreimageMissingData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageMissingData {
     const event = new DemocracyPreimageMissingEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { proposalHash: hash, refIndex: index } = event.asV1400
+    if (event.isV200) {
+        const { proposalHash: hash, refIndex: index } = event.asV200
         return {
             hash,
             index,
@@ -96,8 +100,8 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
     const event = new DemocracyPreimageNotedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { proposalHash: hash, who: provider, deposit } = event.asV1400
+    if (event.isV200) {
+        const { proposalHash: hash, who: provider, deposit } = event.asV200
         return {
             hash,
             provider,
@@ -116,8 +120,8 @@ export interface PreimageReapedData {
 
 export function getPreimageReapedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageReapedData {
     const event = new DemocracyPreimageReapedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { proposalHash: hash, provider, deposit } = event.asV1400
+    if (event.isV200) {
+        const { proposalHash: hash, provider, deposit } = event.asV200
         return {
             hash,
             provider,
@@ -136,8 +140,8 @@ export interface PreimageUsedData {
 
 export function getPreimageUsedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageUsedData {
     const event = new DemocracyPreimageUsedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const { proposalHash: hash, provider, deposit } = event.asV1400
+    if (event.isV200) {
+        const { proposalHash: hash, provider, deposit } = event.asV200
         return {
             hash,
             provider,
@@ -155,8 +159,8 @@ interface DemocracySecondedData {
 
 export function getDemocracySecondedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracySecondedData {
     const event = new DemocracySecondedEvent(ctx, itemEvent)
-    if (event.isV1400) {
-        const {seconder, propIndex} = event.asV1400
+    if (event.isV1000) {
+        const {seconder, propIndex} = event.asV1000
         return {
             accountId: seconder,
             refIndex: propIndex

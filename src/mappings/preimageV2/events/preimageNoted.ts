@@ -7,7 +7,7 @@ import { PreimagePreimageForStorage, PreimageStatusForStorage } from '../../../t
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec, parseProposalCall } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v10009'
+import { Call } from '../../../types/v10038'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -32,8 +32,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
     const storage = new PreimagePreimageForStorage(ctx, block)
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
 
-    if (storage.isV1400) {
-        const storageData = await storage.asV1400.get(hash)
+    if (storage.isV1000) {
+        const storageData = await storage.asV1000.get(hash)
         if (!storageData) return undefined
 
         return {
@@ -67,8 +67,8 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx, block)
-    if (preimageStorage.isV1400) {
-        const storageData = await preimageStorage.asV1400.get(hash)
+    if (preimageStorage.isV1000) {
+        const storageData = await preimageStorage.asV1000.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,

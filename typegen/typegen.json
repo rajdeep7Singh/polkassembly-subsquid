@@ -15,7 +15,10 @@
     "System.Account",
     "Balances.Account",
     "Preimage.StatusFor",
-    "Preimage.PreimageFor"
+    "Preimage.PreimageFor",
+    "Balances.InactiveIssuance",
+    "Referenda.ReferendumInfoFor",
+    "ConvictionVoting.VotingFor"
   ],
   "events": [
     "Democracy.Proposed",
@@ -49,13 +52,37 @@
     "TechnicalCommittee.Closed",
     "Preimage.Noted",
     "Preimage.Requested",
-    "Preimage.Cleared"
+    "Preimage.Cleared",
+    "Referenda.Submitted",
+    "Referenda.DecisionDepositPlaced",
+    "Referenda.DecisionStarted",
+    "Referenda.ConfirmStarted",
+    "Referenda.ConfirmAborted",
+    "Referenda.Confirmed",
+    "Referenda.Approved",
+    "Referenda.Rejected",
+    "Referenda.TimedOut",
+    "Referenda.Cancelled",
+    "Referenda.MetadataSet",
+    "Referenda.MetadataCleared",
+    "Referenda.Killed",
+    "Preimage.Noted",
+    "Preimage.Requested",
+    "Preimage.Cleared",
+    "Scheduler.Scheduled",
+    "Scheduler.Dispatched",
+    "Treasury.SpendApproved"
   ],
   "calls": [
     "Democracy.vote",
     "Democracy.remove_vote",
     "Democracy.remove_other_vote",
     "Democracy.delegate",
-    "Democracy.undelegate"
+    "Democracy.undelegate",
+    "ConvictionVoting.vote",
+    "ConvictionVoting.delegate",
+    "ConvictionVoting.undelegate",
+    "ConvictionVoting.remove_vote",
+    "ConvictionVoting.remove_other_vote"
   ]
 }

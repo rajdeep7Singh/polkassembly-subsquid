@@ -1,81 +1,5 @@
 import type {Result, Option} from './support'
 
-export type Type_28 = Type_28_Ok | Type_28_Err
-
-export interface Type_28_Ok {
-    __kind: 'Ok'
-}
-
-export interface Type_28_Err {
-    __kind: 'Err'
-    value: DispatchError
-}
-
-export type VoteThreshold = VoteThreshold_SuperMajorityApprove | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SimpleMajority
-
-export interface VoteThreshold_SuperMajorityApprove {
-    __kind: 'SuperMajorityApprove'
-}
-
-export interface VoteThreshold_SuperMajorityAgainst {
-    __kind: 'SuperMajorityAgainst'
-}
-
-export interface VoteThreshold_SimpleMajority {
-    __kind: 'SimpleMajority'
-}
-
-export type AccountVote = AccountVote_Standard | AccountVote_Split
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    vote: number
-    balance: bigint
-}
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    aye: bigint
-    nay: bigint
-}
-
-export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
-
-export interface Conviction_None {
-    __kind: 'None'
-}
-
-export interface Conviction_Locked1x {
-    __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-    __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-    __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-    __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-    __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-    __kind: 'Locked6x'
-}
-
-export interface AccountData {
-    free: bigint
-    reserved: bigint
-    miscFrozen: bigint
-    feeFrozen: bigint
-}
-
 export type Call = Call_System | Call_Timestamp | Call_Sudo | Call_Indices | Call_Balances | Call_Identity | Call_Multisig | Call_ParachainSystem | Call_Authorship | Call_CollatorSelection | Call_Session | Call_Council | Call_CouncilMembership | Call_Treasury | Call_Democracy | Call_Scheduler | Call_Utility | Call_Preimage | Call_XcmpQueue | Call_RelayerXcm | Call_CumulusXcm | Call_DmpQueue | Call_XTokens | Call_Tokens | Call_GovernanceRegistry | Call_Assets | Call_CrowdloanRewards | Call_Vesting | Call_BondedFinance | Call_AssetsRegistry
 
 export interface Call_System {
@@ -226,108 +150,6 @@ export interface Call_BondedFinance {
 export interface Call_AssetsRegistry {
     __kind: 'AssetsRegistry'
     value: AssetsRegistryCall
-}
-
-export type PreimageStatus = PreimageStatus_Missing | PreimageStatus_Available
-
-export interface PreimageStatus_Missing {
-    __kind: 'Missing'
-    value: number
-}
-
-export interface PreimageStatus_Available {
-    __kind: 'Available'
-    data: Uint8Array
-    provider: Uint8Array
-    deposit: bigint
-    since: number
-    expiry: (number | undefined)
-}
-
-export type ReferendumInfo = ReferendumInfo_Ongoing | ReferendumInfo_Finished
-
-export interface ReferendumInfo_Ongoing {
-    __kind: 'Ongoing'
-    value: ReferendumStatus
-}
-
-export interface ReferendumInfo_Finished {
-    __kind: 'Finished'
-    approved: boolean
-    end: number
-}
-
-export type RequestStatus = RequestStatus_Unrequested | RequestStatus_Requested
-
-export interface RequestStatus_Unrequested {
-    __kind: 'Unrequested'
-    value: ([Uint8Array, bigint] | undefined)
-}
-
-export interface RequestStatus_Requested {
-    __kind: 'Requested'
-    value: number
-}
-
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
-}
-
-export interface Proposal {
-    proposer: Uint8Array
-    value: bigint
-    beneficiary: Uint8Array
-    bond: bigint
-}
-
-export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_TooManyConsumers | DispatchError_Token | DispatchError_Arithmetic | DispatchError_Transactional
-
-export interface DispatchError_Other {
-    __kind: 'Other'
-}
-
-export interface DispatchError_CannotLookup {
-    __kind: 'CannotLookup'
-}
-
-export interface DispatchError_BadOrigin {
-    __kind: 'BadOrigin'
-}
-
-export interface DispatchError_Module {
-    __kind: 'Module'
-    value: ModuleError
-}
-
-export interface DispatchError_ConsumerRemaining {
-    __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_NoProviders {
-    __kind: 'NoProviders'
-}
-
-export interface DispatchError_TooManyConsumers {
-    __kind: 'TooManyConsumers'
-}
-
-export interface DispatchError_Token {
-    __kind: 'Token'
-    value: TokenError
-}
-
-export interface DispatchError_Arithmetic {
-    __kind: 'Arithmetic'
-    value: ArithmeticError
-}
-
-export interface DispatchError_Transactional {
-    __kind: 'Transactional'
-    value: TransactionalError
 }
 
 /**
@@ -3472,73 +3294,6 @@ export interface AssetsRegistryCall_set_min_fee {
     amount: (bigint | undefined)
 }
 
-export interface ReferendumStatus {
-    end: number
-    proposalHash: Uint8Array
-    threshold: VoteThreshold
-    delay: number
-    tally: Tally
-}
-
-export interface ModuleError {
-    index: number
-    error: Uint8Array
-}
-
-export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
-
-export interface TokenError_NoFunds {
-    __kind: 'NoFunds'
-}
-
-export interface TokenError_WouldDie {
-    __kind: 'WouldDie'
-}
-
-export interface TokenError_BelowMinimum {
-    __kind: 'BelowMinimum'
-}
-
-export interface TokenError_CannotCreate {
-    __kind: 'CannotCreate'
-}
-
-export interface TokenError_UnknownAsset {
-    __kind: 'UnknownAsset'
-}
-
-export interface TokenError_Frozen {
-    __kind: 'Frozen'
-}
-
-export interface TokenError_Unsupported {
-    __kind: 'Unsupported'
-}
-
-export type ArithmeticError = ArithmeticError_Underflow | ArithmeticError_Overflow | ArithmeticError_DivisionByZero
-
-export interface ArithmeticError_Underflow {
-    __kind: 'Underflow'
-}
-
-export interface ArithmeticError_Overflow {
-    __kind: 'Overflow'
-}
-
-export interface ArithmeticError_DivisionByZero {
-    __kind: 'DivisionByZero'
-}
-
-export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
-
-export interface TransactionalError_LimitReached {
-    __kind: 'LimitReached'
-}
-
-export interface TransactionalError_NoLayer {
-    __kind: 'NoLayer'
-}
-
 export type MultiAddress = MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw | MultiAddress_Address32 | MultiAddress_Address20
 
 export interface MultiAddress_Id {
@@ -3824,6 +3579,50 @@ export interface SessionKeys {
     aura: Uint8Array
 }
 
+export type AccountVote = AccountVote_Standard | AccountVote_Split
+
+export interface AccountVote_Standard {
+    __kind: 'Standard'
+    vote: number
+    balance: bigint
+}
+
+export interface AccountVote_Split {
+    __kind: 'Split'
+    aye: bigint
+    nay: bigint
+}
+
+export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
 export type MaybeHashed = MaybeHashed_Value | MaybeHashed_Hash
 
 export interface MaybeHashed_Value {
@@ -3991,12 +3790,6 @@ export interface BondOffer {
 export interface XcmAssetLocation {
     parents: number
     interior: V1Junctions
-}
-
-export interface Tally {
-    ayes: bigint
-    nays: bigint
-    turnout: bigint
 }
 
 export interface V2PersistedValidationData {
