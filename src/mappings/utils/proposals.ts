@@ -28,6 +28,7 @@ import { randomUUID } from 'crypto'
 import { bigint } from '../../model/generated/marshal'
 import { storage } from '../../storage'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
+import config from '../../config'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -82,7 +83,7 @@ export async function updateProposalStatus(
             proposal,
         })
     )
-    // await sendNotification(ctx, proposal, 'proposalStatusChanged')
+    await sendNotification(ctx, proposal, 'proposalStatusChanged')
 }
 
 // async function getOrCreateProposalGroup(
@@ -841,7 +842,7 @@ export async function createPip(ctx: BatchContext<Store, unknown>, header: Subst
         })
     )
 
-    // await sendNotification(ctx, proposal, 'newProposalCreated')
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -902,85 +903,66 @@ export function createTally(data: TallyData): Tally {
 //     return new SubmissionDeposit(toJSON(data))
 // }
 
-// export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
-//     const { hash, type, index, proposer, status } = proposal
-//     let statusName = null
+export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
+    const { hash, type, index, proposer, status } = proposal
+    let statusName = null
 
-//     // if difference between proposal update time and current time > 10 mins return
-//     if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
-//         ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
-//         return
-//     }
+    // if difference between proposal update time and current time > 10 mins return
+    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+        return
+    }
 
-//     if([ProposalStatus.Started, 
-//         ProposalStatus.Submitted, 
-//         ProposalStatus.Added, 
-//         ProposalStatus.Proposed, 
-//         ProposalStatus.Opened,
-//     ].includes(status)){
-//         statusName = 'submitted'
-//     }
-//     else if([ProposalStatus.Executed,
-//         ProposalStatus.Cancelled,
-//         ProposalStatus.Killed,
-//         ProposalStatus.Rejected,
-//         ProposalStatus.Executed,
-//         ProposalStatus.ExecutionFailed,
-//         ProposalStatus.Closed,
-//         ProposalStatus.Approved,
-//         ProposalStatus.Disapproved,
-//         ProposalStatus.Awarded,
-//         ProposalStatus.Claimed,
-//         ProposalStatus.NotPassed,
-//         ProposalStatus.Passed,
-//         ProposalStatus.Tabled,
-//         ProposalStatus.Retracted,
-//         ProposalStatus.Slashed,
-//         ProposalStatus.TimedOut,
-//     ].includes(status)){
-//         statusName = 'closed'
-//     }
-//     else if([ProposalStatus.Deciding,
-//         ProposalStatus.ConfirmStarted,
-//         ProposalStatus.ConfirmAborted,
-//     ].includes(status)){
-//         statusName = 'voting'
-//     }
+    if([
+        ProposalStatus.Proposed, 
+        ProposalStatus.Scheduled,
+    ].includes(status)){
+        statusName = 'submitted'
+    }
+    else if([ProposalStatus.Executed,
+        ProposalStatus.Rejected,
+        ProposalStatus.Executed,
+        ProposalStatus.ExecutionFailed,
+        ProposalStatus.Closed,
+        ProposalStatus.Expired,
+    ].includes(status)){
+        statusName = 'closed'
+    }
 
-//     const notification = {
-//         trigger: trigger,
-//         args : {
-//             network: 'kusama',
-//             postType: type,
-//             postId: type != ProposalType.Tip ? String(index) : hash,
-//             proposerAddress: proposer || curator,
-//             statusType: statusName,
-//             track: String(trackNumber),
-//             statusName: status,
-//           }
-//     }
+    const notification = {
+        trigger: trigger,
+        args : {
+            network: config.chain.name,
+            postType: type,
+            postId: String(index),
+            proposerAddress: proposer,
+            statusType: statusName,
+            track: "",
+            statusName: status,
+          }
+    }
 
-//     if(!process.env.NOTIFICATION_API_KEY){
-//         ctx.log.error(`Notification Api Key not found`)
-//         return
-//     }
+    if(!process.env.NOTIFICATION_API_KEY){
+        ctx.log.error(`Notification Api Key not found`)
+        return
+    }
 
-//     ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
 
-//     const response = await fetch(NOTIFICATION_URL, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'x-api-key': process.env.NOTIFICATION_API_KEY || '',
-//             'x-source': 'polkassembly'
-//         },
-//         body: JSON.stringify(notification),
-//     })
+    const response = await fetch(NOTIFICATION_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+            'x-source': 'polkassembly'
+        },
+        body: JSON.stringify(notification),
+    })
 
-//     ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-//     if (response.status !== 200) {
-//         ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
-//         return
-//     }
-// }
+    if (response.status !== 200) {
+        ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+        return
+    }
+}
