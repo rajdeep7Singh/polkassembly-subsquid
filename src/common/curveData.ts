@@ -3,7 +3,7 @@ import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto';
 import { getStorageData } from '../mappings/referendumV2/events/referendaSubmitted';
 import { Proposal, CurveData, ProposalType } from '../model'
-import { getTotalInactiveIssuanceStorageData, getTotalIssuanceStorageData } from '../storage/balances';
+import { getOpenGovTotalInactiveIssuanceStorageData, getOpenGovTotalIssuanceStorageData } from '../storage/balances';
 import { StorageNotExistsWarn } from './errors';
 
 
@@ -19,8 +19,8 @@ export async function updateCurveData(ctx: BatchContext<Store, unknown>, header:
     if (storageData) {
         
         const tally = storageData.tally
-        const totalIssuance = await getTotalIssuanceStorageData(ctx, header)
-        const inactiveIssuance = await getTotalInactiveIssuanceStorageData(ctx, header)
+        const totalIssuance = await getOpenGovTotalIssuanceStorageData(ctx, header)
+        const inactiveIssuance = await getOpenGovTotalInactiveIssuanceStorageData(ctx, header)
         const activeIssuance = totalIssuance - inactiveIssuance;
         approvalPercent = Number(tally.ayes) / Number((tally.ayes + tally.nays)) * 100
         supportPercent = Number(tally.support) / Number(activeIssuance) * 100

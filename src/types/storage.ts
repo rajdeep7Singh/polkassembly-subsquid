@@ -1080,6 +1080,70 @@ export interface DemocracyReferendumInfoOfStorageV10009 {
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v10009.ReferendumInfo][]>
 }
 
+export class OpenGovBalancesInactiveIssuanceStorage extends StorageBase {
+    protected getPrefix() {
+        return 'OpenGovBalances'
+    }
+
+    protected getName() {
+        return 'InactiveIssuance'
+    }
+
+    /**
+     *  The total units of outstanding deactivated balance in the system.
+     */
+    get isV10038(): boolean {
+        return this.getTypeHash() === 'f8ebe28eb30158172c0ccf672f7747c46a244f892d08ef2ebcbaadde34a26bc0'
+    }
+
+    /**
+     *  The total units of outstanding deactivated balance in the system.
+     */
+    get asV10038(): OpenGovBalancesInactiveIssuanceStorageV10038 {
+        assert(this.isV10038)
+        return this as any
+    }
+}
+
+/**
+ *  The total units of outstanding deactivated balance in the system.
+ */
+export interface OpenGovBalancesInactiveIssuanceStorageV10038 {
+    get(): Promise<bigint>
+}
+
+export class OpenGovBalancesTotalIssuanceStorage extends StorageBase {
+    protected getPrefix() {
+        return 'OpenGovBalances'
+    }
+
+    protected getName() {
+        return 'TotalIssuance'
+    }
+
+    /**
+     *  The total units issued in the system.
+     */
+    get isV10038(): boolean {
+        return this.getTypeHash() === 'f8ebe28eb30158172c0ccf672f7747c46a244f892d08ef2ebcbaadde34a26bc0'
+    }
+
+    /**
+     *  The total units issued in the system.
+     */
+    get asV10038(): OpenGovBalancesTotalIssuanceStorageV10038 {
+        assert(this.isV10038)
+        return this as any
+    }
+}
+
+/**
+ *  The total units issued in the system.
+ */
+export interface OpenGovBalancesTotalIssuanceStorageV10038 {
+    get(): Promise<bigint>
+}
+
 export class PreimagePreimageForStorage extends StorageBase {
     protected getPrefix() {
         return 'Preimage'

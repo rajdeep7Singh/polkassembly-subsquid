@@ -2,7 +2,7 @@ import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
 import { bigint } from '../../model/generated/marshal'
-import { BalancesInactiveIssuanceStorage, BalancesTotalIssuanceStorage } from '../../types/storage'
+import { BalancesInactiveIssuanceStorage, BalancesTotalIssuanceStorage, OpenGovBalancesInactiveIssuanceStorage, OpenGovBalancesTotalIssuanceStorage } from '../../types/storage'
 
 
 export async function getTotalIssuanceStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<bigint> {
@@ -22,6 +22,28 @@ export async function getTotalInactiveIssuanceStorageData(ctx: BatchContext<Stor
 
     if (storage.isV10009) {
         return BigInt(await storage.asV10009.get())
+    } else {
+        throw new UnknownVersionError(storage.constructor.name)
+    }
+}
+
+export async function getOpenGovTotalIssuanceStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<bigint> {
+    const storage = new OpenGovBalancesTotalIssuanceStorage(ctx, block)
+    if (!storage.isExists) return BigInt(0)
+
+    if (storage.isV10038) {
+        return await storage.asV10038.get()
+    } else {
+        throw new UnknownVersionError(storage.constructor.name)
+    }
+}
+
+export async function getOpenGovTotalInactiveIssuanceStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<bigint> {
+    const storage = new OpenGovBalancesInactiveIssuanceStorage(ctx, block)
+    if (!storage.isExists) return BigInt(0)
+
+    if (storage.isV10038) {
+        return BigInt(await storage.asV10038.get())
     } else {
         throw new UnknownVersionError(storage.constructor.name)
     }

@@ -17,6 +17,8 @@
     "Preimage.StatusFor",
     "Preimage.PreimageFor",
     "Balances.InactiveIssuance",
+    "OpenGovBalances.TotalIssuance",
+    "OpenGovBalances.InactiveIssuance",
     "Referenda.ReferendumInfoFor",
     "ConvictionVoting.VotingFor"
   ],
