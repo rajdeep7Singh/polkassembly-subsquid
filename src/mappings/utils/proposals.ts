@@ -1103,8 +1103,6 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
 
 export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
-    return
-
     try{
         if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
             const redisData = {
