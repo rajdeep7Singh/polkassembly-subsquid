@@ -9,7 +9,7 @@ const config: ProcessorConfig<Store> = {
     },
     dataSource: {
         archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama.api.onfinality.io/public-ws',
+        chain: 'wss://kusama-rpc.polkadot.io',
     },
     typesBundle: 'kusama',
     batchSize: 500,

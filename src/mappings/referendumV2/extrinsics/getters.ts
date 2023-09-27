@@ -1,10 +1,7 @@
-import { IsNull } from 'typeorm'
-import { TooManyOpenVotes, UnknownVersionError } from '../../../common/errors'
-import { ConvictionVote, VotingDelegation } from '../../../model'
+import {  UnknownVersionError } from '../../../common/errors'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
-import { CallContext, CallHandlerContext } from '../../types/contexts'
 import { convictionToLockPeriod } from './helpers'
 
 type DemocracyVote =

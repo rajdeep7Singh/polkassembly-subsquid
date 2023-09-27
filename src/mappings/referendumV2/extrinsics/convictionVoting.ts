@@ -1,4 +1,3 @@
-import { CallHandlerContext } from '../../types/contexts'
 import { MissingProposalRecordWarn, TooManyOpenVotes } from '../../../common/errors'
 import {
     ConvictionVote,
@@ -20,7 +19,6 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
-// import { randomUUID } from 'crypto'
 import { updateCurveData } from '../../../common/curveData'
 
 export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
@@ -46,7 +44,6 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull() } })
     if(votes){
         if (votes.length > 1) {
-            //should never be the case
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
         }
 
@@ -55,11 +52,14 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             vote.removedAtBlock = header.height
             vote.removedAt = new Date(header.timestamp)
             await ctx.store.save(vote)
+            const delegatedVotes = vote.delegatedVotes
+            if(delegatedVotes){
+                await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, delegatedVotes)
+            }
         }
     }
 
     const nestedDelegations = await getAllNestedDelegations(ctx, from, proposal.trackNumber)
-    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 
     let decision: VoteDecision
     switch (vote.type) {
@@ -106,24 +106,29 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
 
     const count = await getConvictionVotesCount(ctx, index)
 
-    await ctx.store.insert(
-        new ConvictionVote({
-            id: `${index}-${count.toString().padStart(8, '0')}`,
-            voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
-            createdAtBlock: header.height,
-            proposalIndex: index,
-            proposalId: proposal.id,
-            decision,
-            lockPeriod,
-            proposal,
-            balance,
-            isDelegated: false,
-            createdAt: new Date(header.timestamp),
-            votingPower: votingPower,
-            type: VoteType.ReferendumV2,
-        })
-    )
+    const convictionVote = new ConvictionVote({
+        id: `${index}-${count.toString().padStart(8, '0')}`,
+        voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+        createdAtBlock: header.height,
+        proposalIndex: index,
+        proposalId: proposal.id,
+        decision,
+        lockPeriod,
+        proposal,
+        balance,
+        createdAt: new Date(header.timestamp),
+        selfVotingPower: votingPower,
+        type: VoteType.ReferendumV2,
+    })
+    const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, nestedDelegations, proposal.trackNumber, convictionVote)
+    
+    convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
+    convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
+    
+    await ctx.store.insert(convictionVote)
+
+    await ctx.store.insert(delegatedVotes)
+
     await updateCurveData(ctx, header, proposal)
-    await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
 
 }
