@@ -5,7 +5,7 @@ import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
 import { CallContext, CallHandlerContext } from '../../types/contexts'
-import { convictionToLockPeriod } from './helpers'
+import { convictionToLockPeriod } from './utils'
 
 type DemocracyVote =
     | {

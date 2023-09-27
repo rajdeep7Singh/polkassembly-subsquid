@@ -2,10 +2,8 @@ import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto';
 import { getStorageData } from '../mappings/referendumV2/events/referendaSubmitted';
-import { Proposal, CurveData, ProposalType } from '../model'
+import { Proposal, CurveData } from '../model'
 import { getTotalInactiveIssuanceStorageData, getTotalIssuanceStorageData } from '../storage/balances';
-import { StorageNotExistsWarn } from './errors';
-
 
 export async function updateCurveData(ctx: BatchContext<Store, unknown>, header: SubstrateBlock, proposal: Proposal) {
     if(proposal.index == null || proposal.index == undefined){
@@ -30,8 +28,8 @@ export async function updateCurveData(ctx: BatchContext<Store, unknown>, header:
                 id: randomUUID(),
                 index: proposal.index,
                 timestamp: new Date(header.timestamp),
-                approvalPercent: approvalPercent,
-                supportPercent: supportPercent,
+                approvalPercent: !isNaN(approvalPercent) ? Number(approvalPercent.toFixed(5)) : 0.00,
+                supportPercent:!isNaN(approvalPercent) ? Number(supportPercent.toFixed(5)) : 0.00,
                 block: header.height,
             })
         )
