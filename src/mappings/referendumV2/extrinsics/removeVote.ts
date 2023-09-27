@@ -20,12 +20,9 @@ export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
         return
     }
     if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
-        //ref already ended probably removing vote for democracy_unlock
         return
     }
     const wallet = getOriginAccountId(item.call.origin)
     await removeVote(ctx, wallet, index, header.height, header.timestamp, true)
     await updateCurveData(ctx, header, referendum)
-    // let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
-    // await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
 }

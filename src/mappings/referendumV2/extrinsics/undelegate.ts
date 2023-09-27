@@ -45,7 +45,6 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
             })
             if(votes){
                 if (votes.length > 1) {
-                    //should never be the case
                     ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, from))
                 }
                 if(votes.length > 0){

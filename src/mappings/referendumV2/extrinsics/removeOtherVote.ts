@@ -19,7 +19,6 @@ export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
         return
     }
     if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
-        //ref already ended probably removing vote for democracy_unlock
         return
     }
     if (!target){

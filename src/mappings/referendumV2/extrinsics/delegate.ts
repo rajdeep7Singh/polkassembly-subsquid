@@ -33,7 +33,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         delegation.endedAtBlock = header.height
         delegation.endedAt = new Date(header.timestamp)
         await ctx.store.save(delegation)
-        //remove votes for ongoing referenda
         for (let i = 0; i < ongoingReferenda.length; i++) {
             const referendum = ongoingReferenda[i]
             if(referendum.index || referendum.index === 0){
@@ -41,8 +40,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }
         }
     }
-
-    // await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 
     await ctx.store.insert(
         new VotingDelegation({
@@ -56,7 +53,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             createdAt: new Date(header.timestamp),
         })
     )
-    // add votes for ongoing referenda for this track
     let votingPower = BigInt(0)
     const nestedDelegations = await getAllNestedDelegations(ctx, from, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
@@ -71,7 +67,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 return
             }
             else if (votes.length === 0) {
-                //to wallet didn't vote yet
                 ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
                 return
             }

@@ -44,7 +44,6 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull() } })
     if(votes){
         if (votes.length > 1) {
-            //should never be the case
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
         }
 
@@ -61,8 +60,6 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     }
 
     const nestedDelegations = await getAllNestedDelegations(ctx, from, proposal.trackNumber)
-    // await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
-
 
     let decision: VoteDecision
     switch (vote.type) {
