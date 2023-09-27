@@ -16,6 +16,6 @@ export async function handleSlashed(ctx: BatchContext<Store, unknown>,
 
     await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
         isEnded: true,
-        status: ProposalStatus.Retracted,
+        status: ProposalStatus.Slashed,
     })
 }
