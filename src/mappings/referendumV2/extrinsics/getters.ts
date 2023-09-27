@@ -2,7 +2,7 @@ import {  UnknownVersionError } from '../../../common/errors'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
-import { convictionToLockPeriod } from './helpers'
+import { convictionToLockPeriod } from './utils'
 
 type DemocracyVote =
     | {

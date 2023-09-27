@@ -10,7 +10,7 @@ export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, nestedDelegations: VotingDelegation[], track: number, convictionVote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint}> {
+export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, nestedDelegations: VotingDelegation[], convictionVote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint}> {
     let votingPower = BigInt(0)
     const delegatedVotes = [];
     let delegatedVotePower = BigInt(0)
@@ -49,7 +49,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
 }
 
 
-export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>, voter: string | undefined, track: number): Promise<any> {
+export async function getDelegations(ctx: BatchContext<Store, unknown>, voter: string | undefined, track: number): Promise<any> {
     try{
         let delegations = await ctx.store.find(VotingDelegation, { where: { to: voter, endedAtBlock: IsNull(), track} })
         if (delegations != null && delegations != undefined && delegations.length > 0) {
@@ -59,7 +59,7 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
                 if(delegation.from == voter || delegation.to == voter){
                     continue
                 }
-                nestedDelegations.push(...(await getAllNestedDelegations(ctx, delegation.from, track)))
+                nestedDelegations.push(...(await getDelegations(ctx, delegation.from, track)))
             }
             return [...delegations, ...nestedDelegations]
         }
@@ -69,29 +69,6 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
     }
     catch(e) {
         return []
-    }
-}
-
-export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Store, unknown>, wallet: string | undefined, block: number, blockTime: number, track: number): Promise<void> {
-    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
-    for (let i = 0; i < ongoingReferenda.length; i++) {
-        const ongoingReferendum = ongoingReferenda[i]
-        if(ongoingReferendum.index === undefined || ongoingReferendum.index === null) {
-            continue
-        }
-        const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex: ongoingReferendum.index, removedAtBlock: IsNull() } })
-        if(votes){
-            if (votes.length > 1) {
-                ctx.log.warn(TooManyOpenVotes(block, ongoingReferendum.index, wallet))
-                return
-            } else if (votes.length === 0) {
-                return
-            }
-            const vote = votes[0]
-            if(vote.delegatedVotes){
-                await removeDelegatedVotesReferendum(ctx, block, blockTime, vote.delegatedVotes)
-            }
-        }
     }
 }
 
@@ -130,40 +107,4 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
             await removeDelegatedVotesReferendum(ctx, block, blockTime, vote.delegatedVotes)
         }
     }
-}
-
-export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], vote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint}> {
-    let votingPower = BigInt(0)
-    const delegatedVotes = []
-    let delegatedVotePower = BigInt(0)
-
-    for (let i = 0; i < nestedDelegations.length; i++) {
-        const delegation = nestedDelegations[i]
-        const count = await getConvictionDelegatedVotesCount(ctx)
-        const voteBalance = new StandardVoteBalance({
-            value: delegation.balance,
-        })
-        if (delegation.lockPeriod === 0 && delegation.balance) {
-            votingPower = delegation.balance/BigInt(10)
-        }else{
-            votingPower = delegation.balance ? BigInt(delegation.lockPeriod) * delegation.balance : BigInt(0)
-        }
-        delegatedVotes.push(
-            new ConvictionDelegatedVotes({
-                id: `${count.toString().padStart(8, '0')}`,
-                proposalIndex: referendum.index,
-                voter: delegation.from,
-                createdAtBlock: block,
-                decision: vote.decision,
-                votingPower: votingPower,
-                lockPeriod: delegation.lockPeriod,
-                balance: voteBalance,
-                createdAt: new Date(blockTime),
-                delegatedTo: vote,
-                type: VoteType.ReferendumV2,
-            })
-        )
-        delegatedVotePower += votingPower
-    }
-    return { delegatedVotes, delegatedVotePower }
 }

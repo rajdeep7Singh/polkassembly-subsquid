@@ -6,7 +6,7 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { addDelegatedVotesReferendum, getAllNestedDelegations, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
+import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes } from '../../../model'
 import { getConvictionDelegatedVotesCount } from '../../utils/votes'
 
@@ -54,7 +54,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         })
     )
     let votingPower = BigInt(0)
-    const nestedDelegations = await getAllNestedDelegations(ctx, from, track)
+    const nestedDelegations = await getDelegations(ctx, from, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
@@ -82,7 +82,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
             }
 
-            const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, referendum, nestedDelegations, vote)
+            const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
 
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({

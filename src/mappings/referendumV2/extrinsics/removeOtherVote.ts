@@ -5,7 +5,7 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { ss58codec } from '../../../common/tools'
 import { getRemoveOtherVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
-import { removeVote } from './helpers'
+import { removeVote } from './utils'
 import { updateCurveData } from '../../../common/curveData'
 
 export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,

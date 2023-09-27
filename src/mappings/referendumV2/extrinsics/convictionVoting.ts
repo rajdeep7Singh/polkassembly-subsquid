@@ -16,8 +16,8 @@ import { getConvictionVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
-import { addDelegatedVotesReferendumV2 }  from './helpers'
+import { getDelegations, removeDelegatedVotesReferendum } from './utils'
+import { addDelegatedVotesReferendumV2 }  from './utils'
 import { IsNull } from 'typeorm'
 import { updateCurveData } from '../../../common/curveData'
 
@@ -59,7 +59,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         }
     }
 
-    const nestedDelegations = await getAllNestedDelegations(ctx, from, proposal.trackNumber)
+    const nestedDelegations = await getDelegations(ctx, from, proposal.trackNumber)
 
     let decision: VoteDecision
     switch (vote.type) {
@@ -120,7 +120,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         selfVotingPower: votingPower,
         type: VoteType.ReferendumV2,
     })
-    const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, nestedDelegations, proposal.trackNumber, convictionVote)
+    const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
     
     convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
     convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower

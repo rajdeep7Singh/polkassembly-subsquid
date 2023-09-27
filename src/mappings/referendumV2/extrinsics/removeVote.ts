@@ -5,7 +5,7 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { getOriginAccountId } from '../../../common/tools'
 import { getRemoveVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
-import { getAllNestedDelegations, removeDelegatedVotesReferendum, removeVote } from './helpers'
+import { removeVote } from './utils'
 import { CallHandlerContext } from '../../types/contexts'
 import { updateCurveData } from '../../../common/curveData'
 
