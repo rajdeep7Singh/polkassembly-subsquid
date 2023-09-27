@@ -5,8 +5,7 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { getOriginAccountId } from '../../../common/tools'
 import { getRemoveVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
-import { getAllNestedDelegations, removeDelegatedVotesReferendum, removeVote } from './helpers'
-import { CallHandlerContext } from '../../types/contexts'
+import { removeVote } from './utils'
 import { updateCurveData } from '../../../common/curveData'
 
 export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
@@ -20,7 +19,6 @@ export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
         return
     }
     if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
-        //ref already ended probably removing vote for democracy_unlock
         return
     }
     const wallet = getOriginAccountId(item.call.origin)

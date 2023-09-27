@@ -6,7 +6,7 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { addDelegatedVotesReferendum, getAllNestedDelegations, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
+import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes } from '../../../model'
 import { getConvictionDelegatedVotesCount } from '../../utils/votes'
 
@@ -32,7 +32,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         delegation.endedAtBlock = header.height
         delegation.endedAt = new Date(header.timestamp)
         await ctx.store.save(delegation)
-        //remove votes for ongoing referenda
         for (let i = 0; i < ongoingReferenda.length; i++) {
             const referendum = ongoingReferenda[i]
             if(referendum.index || referendum.index === 0){
@@ -40,8 +39,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }
         }
     }
-
-    // await removeDelegatedVotesOngoingReferenda(ctx, from, header.height, header.timestamp, track)
 
     await ctx.store.insert(
         new VotingDelegation({
@@ -55,9 +52,8 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             createdAt: new Date(header.timestamp),
         })
     )
-    // add votes for ongoing referenda for this track
     let votingPower = BigInt(0)
-    const nestedDelegations = await getAllNestedDelegations(ctx, from, track)
+    const nestedDelegations = await getDelegations(ctx, from, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
@@ -85,7 +81,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }else{
                 votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
             }
-            const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, referendum, nestedDelegations, vote)
+            const { delegatedVotes, delegatedVotePower } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
                     id: `${count.toString().padStart(8, '0')}`,
