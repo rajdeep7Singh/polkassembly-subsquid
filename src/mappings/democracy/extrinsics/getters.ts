@@ -1,11 +1,8 @@
-import { IsNull } from 'typeorm'
-import { TooManyOpenVotes, UnknownVersionError } from '../../../common/errors'
-import { ConvictionVote, VotingDelegation } from '../../../model'
+import {  UnknownVersionError } from '../../../common/errors'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { DemocracyDelegateCall, DemocracyRemoveOtherVoteCall, DemocracyRemoveVoteCall, DemocracyVoteCall } from '../../../types/calls'
-import { CallContext, CallHandlerContext } from '../../types/contexts'
-import { convictionToLockPeriod } from './helpers'
+import { convictionToLockPeriod } from './utils'
 
 type DemocracyVote =
     | {
@@ -27,19 +24,18 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
     const event = new DemocracyVoteCall(ctx, itemCall)
-    if(event.isV266){
+    if (event.isV266) {
         const { refIndex, vote } = event.asV266
         if (vote.__kind === 'Standard') {
             return {
                 index: refIndex,
                 vote: {
                     type: 'Standard',
+                    value: vote.value.vote,
                     balance: vote.value.balance,
-                    value: vote.value.vote
                 },
             }
-        }
-        else {
+        } else {
             return {
                 index: refIndex,
                 vote: {
@@ -49,19 +45,18 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-    }else if(event.isV295){
+    } else if (event.isV295) {
         const { refIndex, vote } = event.asV295
         if (vote.__kind === 'Standard') {
             return {
                 index: refIndex,
                 vote: {
                     type: 'Standard',
+                    value: vote.vote,
                     balance: vote.balance,
-                    value: vote.vote
                 },
             }
-        }
-        else {
+        } else {
             return {
                 index: refIndex,
                 vote: {
@@ -71,55 +66,47 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-    }
+    }   
     else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
-export interface DemocracyVoteDelegateCallData {
+export interface ConvictionVoteDelegateCallData {
     to: any
     lockPeriod: number
     balance?: bigint
 }
 
-export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteDelegateCallData {
+export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
     const event = new DemocracyDelegateCall(ctx, itemCall)
-   
     if (event.isV266) {
-        //{ class, to, conviction, balance}
-        const eventData = event.asV266
+        const { to, conviction, balance } = event.asV266
         return {
-            to: eventData.to,
-            lockPeriod:convictionToLockPeriod(eventData.conviction.__kind),
-            balance: eventData.balance
+            to: to,
+            lockPeriod: convictionToLockPeriod(conviction.__kind),
+            balance
+        }
+    } else if (event.isV47000) {
+        const { to, conviction, balance } = event.asV47000
+        return {
+            to: to.value,
+            lockPeriod: convictionToLockPeriod(conviction.__kind),
+            balance
         }
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
-// export interface DemocracyVoteUndelegateCallData {
-//     index: number
-// }
+export interface ConvictionVoteUndelegateCallData {
+    track: number
+}
 
-// export function getUndelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteUndelegateCallData {
-//     const event = new DemocracyUndelegateCall(ctx, itemCall)
-   
-//     if (event.isV266) {
-//         const eventData = event.asV266
-//         return {
-            
-//         }
-//     } else {
-//         throw new UnknownVersionError(event.constructor.name)
-//     }
-// }
-
-export interface DemocracyRemoveVoteCallData {
+export interface ConvictionVotingRemoveVoteCallData {
     index: number
 }
 
-export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyRemoveVoteCallData {
+export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
     const event = new DemocracyRemoveVoteCall(ctx, itemCall)
     if (event.isV266) {
         const eventData = event.asV266
@@ -131,20 +118,26 @@ export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: a
     }
 }
 
-export interface DemocracyRemoveOtherVoteCallData {
-    target: any
+export interface ConvictionVotingRemoveOtherVoteCallData {
     index: number
+    target: any
 }
 
-export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyRemoveOtherVoteCallData {
+export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
     const event = new DemocracyRemoveOtherVoteCall(ctx, itemCall)
     if (event.isV266) {
-        const { target, index} = event.asV266
+        const { target, index } = event.asV266
         return {
-            index: index,
-            target: target
+            target,
+            index
         }
-    } else {
+    } else if (event.isV47000) {
+        const { target, index } = event.asV47000
+        return {
+            target: target.value,
+            index
+        }
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

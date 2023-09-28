@@ -204,7 +204,7 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             let multisigAddress: string
             if (item.kind === 'call') {
                 if (item.name == 'Democracy.vote'){
-                    await modules.democracy.extrinsics.handleDemocracyVote(ctx, item, block.header)
+                    await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
                 }
                 if (item.name == 'Democracy.delegate'){
                     await modules.democracy.extrinsics.handleDelegate(ctx, item, block.header)
@@ -242,9 +242,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Treasury.tip'){
                     await modules.tips.extrinsics.handleNewTipValueOld(ctx, item, block.header)
                 }
-                // if (item.name == 'Democracy.vote'){
-                //     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
-                // }
             }
             if (item.kind === 'event'){
                 if (item.name == 'Democracy.Proposed'){

@@ -1,4 +1,4 @@
-export {handleDemocracyVote} from './vote'
+export {handleVote} from './democracyVote'
 export {handleDelegate} from './delegate'
 export {handleUndelegate} from './undelegate'
 export {handleRemoveVote} from './removeVote'
