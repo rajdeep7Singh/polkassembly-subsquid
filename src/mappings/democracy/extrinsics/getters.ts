@@ -59,14 +59,21 @@ export interface ConvictionVoteDelegateCallData {
 
 export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
     const event = new DemocracyDelegateCall(ctx, itemCall)
-    if (event.isV1) {
-        const { to, conviction, balance } = event.asV1
+    if (event.isV21) {
+        const { to, conviction, balance } = event.asV21
         return {
             to: to,
             lockPeriod: convictionToLockPeriod(conviction.__kind),
             balance
         }
-    }   else {
+    }else if (event.isV28) {
+        const { to, conviction, balance } = event.asV28
+        return {
+            to: to,
+            lockPeriod: convictionToLockPeriod(conviction.__kind),
+            balance
+        }
+    }    else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
@@ -80,8 +87,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
     const event = new DemocracyRemoveVoteCall(ctx, itemCall)
-    if (event.isV1) {
-        const eventData = event.asV1
+    if (event.isV21) {
+        const eventData = event.asV21
         return {
             index: eventData.index,
         }
@@ -97,10 +104,16 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 
 export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
     const event = new DemocracyRemoveOtherVoteCall(ctx, itemCall)
-    if (event.isV1) {
-        const { target, index } = event.asV1
+    if (event.isV21) {
+        const { target, index } = event.asV21
         return {
             target,
+            index
+        }
+    }else if (event.isV28) {
+        const { target, index } = event.asV28
+        return {
+            target: target.value,
             index
         }
     }else {
