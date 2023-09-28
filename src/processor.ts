@@ -77,6 +77,10 @@ const processor = new SubstrateBatchProcessor()
     // .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
@@ -99,6 +103,18 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 // }
                 if (item.name == 'Democracy.vote'){
                     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.delegate'){
+                    await modules.democracy.extrinsics.handleDelegate(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.undelegate'){
+                    await modules.democracy.extrinsics.handleUndelegate(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_vote'){
+                    await modules.democracy.extrinsics.handleRemoveVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_other_vote'){
+                    await modules.democracy.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
                 }
             }
             if (item.kind === 'event'){
