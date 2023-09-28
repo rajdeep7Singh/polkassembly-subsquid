@@ -1,5 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {DelegationType} from "./_delegationType"
 
 @Entity_()
 export class VotingDelegation {
@@ -26,6 +27,9 @@ export class VotingDelegation {
 
     @Column_("int4", {nullable: true})
     track!: number | undefined | null
+
+    @Column_("varchar", {length: 9, nullable: false})
+    type!: DelegationType
 
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date

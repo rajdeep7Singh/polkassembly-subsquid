@@ -102,6 +102,9 @@ export class Proposal {
     @Column_("text", {nullable: true})
     origin!: string | undefined | null
 
+    @Column_("text", {nullable: true})
+    metadata!: string | undefined | null
+
     @Column_("int4", {nullable: true})
     enactmentAtBlock!: number | undefined | null
 
