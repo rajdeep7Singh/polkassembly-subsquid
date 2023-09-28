@@ -13,6 +13,9 @@ import * as v900 from './v900'
 import * as v2000 from './v2000'
 import * as v2100 from './v2100'
 import * as v2201 from './v2201'
+import * as v2302 from './v2302'
+import * as v2401 from './v2401'
+import * as v2500 from './v2500'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -41,6 +44,67 @@ export class BalancesAccountStorage extends StorageBase {
         assert(this.isV49)
         return this as any
     }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get isV2500(): boolean {
+        return this.getTypeHash() === 'ee2115b027893d1c56456aa70c4c809a607243f8ae340fcc3174a4fda6b5fa60'
+    }
+
+    /**
+     *  The Balances pallet example of storing the balance of an account.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
+     */
+    get asV2500(): BalancesAccountStorageV2500 {
+        assert(this.isV2500)
+        return this as any
+    }
 }
 
 /**
@@ -60,6 +124,46 @@ export interface BalancesAccountStorageV49 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v49.AccountData][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v49.AccountData][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v49.AccountData][]>
+}
+
+/**
+ *  The Balances pallet example of storing the balance of an account.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+ *   }
+ *  ```
+ * 
+ *  You can also store the balance of an account in the `System` pallet.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *    type AccountStore = System
+ *   }
+ *  ```
+ * 
+ *  But this comes with tradeoffs, storing account balances in the system pallet stores
+ *  `frame_system` data alongside the account data contrary to storing account balances in the
+ *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+ *  NOTE: This is only used in the case that this pallet is used to store balances.
+ */
+export interface BalancesAccountStorageV2500 {
+    get(key: Uint8Array): Promise<v2500.AccountData>
+    getAll(): Promise<v2500.AccountData[]>
+    getMany(keys: Uint8Array[]): Promise<v2500.AccountData[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v2500.AccountData][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v2500.AccountData][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v2500.AccountData][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v2500.AccountData][]>
 }
 
 export class BalancesInactiveIssuanceStorage extends StorageBase {
@@ -1033,6 +1137,36 @@ export class ReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV2201)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV2302(): boolean {
+        return this.getTypeHash() === 'e2fb702c55ce3613e43aeecdfeb77405f72a71dc08c11e0661d3ed14530c404c'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV2302(): ReferendaReferendumInfoForStorageV2302 {
+        assert(this.isV2302)
+        return this as any
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV2401(): boolean {
+        return this.getTypeHash() === '2391acb69682bfc2b37325726afeadd96b5588a1a812398414eacb8bd3c94d59'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV2401(): ReferendaReferendumInfoForStorageV2401 {
+        assert(this.isV2401)
+        return this as any
+    }
 }
 
 /**
@@ -1069,6 +1203,40 @@ export interface ReferendaReferendumInfoForStorageV2201 {
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2201.Type_479][]>
 }
 
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV2302 {
+    get(key: number): Promise<(v2302.Type_487 | undefined)>
+    getAll(): Promise<v2302.Type_487[]>
+    getMany(keys: number[]): Promise<(v2302.Type_487 | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v2302.Type_487][]>
+    getPairs(key: number): Promise<[k: number, v: v2302.Type_487][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2302.Type_487][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2302.Type_487][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV2401 {
+    get(key: number): Promise<(v2401.Type_511 | undefined)>
+    getAll(): Promise<v2401.Type_511[]>
+    getMany(keys: number[]): Promise<(v2401.Type_511 | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v2401.Type_511][]>
+    getPairs(key: number): Promise<[k: number, v: v2401.Type_511][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v2401.Type_511][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v2401.Type_511][]>
+}
+
 export class SystemAccountStorage extends StorageBase {
     protected getPrefix() {
         return 'System'
@@ -1092,6 +1260,21 @@ export class SystemAccountStorage extends StorageBase {
         assert(this.isV49)
         return this as any
     }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get isV2500(): boolean {
+        return this.getTypeHash() === '7983bbc1ae8edba4f5e13a7cd91a68076c89d6d422e9438dacd92a53008c3751'
+    }
+
+    /**
+     *  The full account information for a particular account ID.
+     */
+    get asV2500(): SystemAccountStorageV2500 {
+        assert(this.isV2500)
+        return this as any
+    }
 }
 
 /**
@@ -1109,6 +1292,23 @@ export interface SystemAccountStorageV49 {
     getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v49.AccountInfo][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v49.AccountInfo][]>
     getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v49.AccountInfo][]>
+}
+
+/**
+ *  The full account information for a particular account ID.
+ */
+export interface SystemAccountStorageV2500 {
+    get(key: Uint8Array): Promise<v2500.AccountInfo>
+    getAll(): Promise<v2500.AccountInfo[]>
+    getMany(keys: Uint8Array[]): Promise<v2500.AccountInfo[]>
+    getKeys(): Promise<Uint8Array[]>
+    getKeys(key: Uint8Array): Promise<Uint8Array[]>
+    getKeysPaged(pageSize: number): AsyncIterable<Uint8Array[]>
+    getKeysPaged(pageSize: number, key: Uint8Array): AsyncIterable<Uint8Array[]>
+    getPairs(): Promise<[k: Uint8Array, v: v2500.AccountInfo][]>
+    getPairs(key: Uint8Array): Promise<[k: Uint8Array, v: v2500.AccountInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: Uint8Array, v: v2500.AccountInfo][]>
+    getPairsPaged(pageSize: number, key: Uint8Array): AsyncIterable<[k: Uint8Array, v: v2500.AccountInfo][]>
 }
 
 export class TreasuryProposalsStorage extends StorageBase {

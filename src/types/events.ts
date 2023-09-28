@@ -11,6 +11,8 @@ import * as v1701 from './v1701'
 import * as v1801 from './v1801'
 import * as v2000 from './v2000'
 import * as v2100 from './v2100'
+import * as v2401 from './v2401'
+import * as v2500 from './v2500'
 
 export class DemocracyCancelledEvent {
     private readonly _chain: Chain
@@ -784,6 +786,21 @@ export class EthereumExecutedEvent {
         assert(this.isV1801)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * An ethereum transaction was successfully executed.
+     */
+    get isV2401(): boolean {
+        return this._chain.getEventHash('Ethereum.Executed') === '4da35f3b1cb63c6084839486f6cc44465f31d4dbf24abce9ef5d05b899d9309e'
+    }
+
+    /**
+     * An ethereum transaction was successfully executed.
+     */
+    get asV2401(): {from: Uint8Array, to: Uint8Array, transactionHash: Uint8Array, exitReason: v2401.ExitReason, extraData: Uint8Array} {
+        assert(this.isV2401)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class PreimageClearedEvent {
@@ -1280,6 +1297,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV2000(): {task: [number, number], id: (Uint8Array | undefined), result: v2000.Type_50} {
         assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV2500(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '6eb5580f3023aa9d8b919b2e4d4c348b6d18e7b61b4d3362b70f19480d1767fc'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV2500(): {task: [number, number], id: (Uint8Array | undefined), result: v2500.Type_52} {
+        assert(this.isV2500)
         return this._chain.decodeEvent(this.event)
     }
 }
