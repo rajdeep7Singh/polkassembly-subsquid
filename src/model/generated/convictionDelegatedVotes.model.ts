@@ -1,33 +1,30 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
 import * as marshal from "./marshal"
-import {Proposal} from "./proposal.model"
+import {ConvictionVote} from "./convictionVote.model"
 import {VoteDecision} from "./_voteDecision"
 import {VoteBalance, fromJsonVoteBalance} from "./_voteBalance"
-import {ConvictionDelegatedVotes} from "./convictionDelegatedVotes.model"
 import {VoteType} from "./_voteType"
 
 @Entity_()
-export class ConvictionVote {
-    constructor(props?: Partial<ConvictionVote>) {
+export class ConvictionDelegatedVotes {
+    constructor(props?: Partial<ConvictionDelegatedVotes>) {
         Object.assign(this, props)
     }
 
     @PrimaryColumn_()
     id!: string
 
+    @Index_()
     @Column_("text", {nullable: true})
     voter!: string | undefined | null
 
-    @Column_("text", {nullable: false})
-    proposalId!: string
+    @Index_()
+    @ManyToOne_(() => ConvictionVote, {nullable: true})
+    delegatedTo!: ConvictionVote
 
     @Index_()
     @Column_("int4", {nullable: false})
     proposalIndex!: number
-
-    @Index_()
-    @ManyToOne_(() => Proposal, {nullable: true})
-    proposal!: Proposal
 
     @Index_()
     @Column_("int4", {nullable: false})
@@ -47,15 +44,7 @@ export class ConvictionVote {
 
     @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-    selfVotingPower!: bigint | undefined | null
-
-    @Index_()
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-    delegatedVotingPower!: bigint | undefined | null
-
-    @Index_()
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-    totalVotingPower!: bigint | undefined | null
+    votingPower!: bigint | undefined | null
 
     @Index_()
     @Column_("varchar", {length: 12, nullable: false})
@@ -66,9 +55,6 @@ export class ConvictionVote {
 
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null
-
-    @OneToMany_(() => ConvictionDelegatedVotes, e => e.delegatedTo)
-    delegatedVotes!: ConvictionDelegatedVotes[]
 
     @Column_("varchar", {length: 17, nullable: false})
     type!: VoteType

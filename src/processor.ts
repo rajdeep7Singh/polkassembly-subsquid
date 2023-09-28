@@ -123,6 +123,10 @@ const processor = new SubstrateBatchProcessor()
     // .addCall('Tips.tip', { data: { call: { origin: true, args: true, }, } } as const)
     // .addCall('Treasury.tip', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
@@ -174,32 +178,20 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'ConvictionVoting.remove_other_vote'){
                     await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
                 }
-                // if (item.name == 'Bounties.accept_curator'){
-                //     await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.unassign_curator'){
-                //     await modules.bounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.accept_curator'){
-                //     await modules.bounties.extrinsic.handleAcceptCuratorOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.unassign_curator'){
-                //     await modules.bounties.extrinsic.handleUnassignCuratorOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.accept_curator'){
-                //     await modules.childBounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.unassign_curator'){
-                //     await modules.childBounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
-                // }
-                // if (item.name == 'Tips.tip'){
-                //     await modules.tips.extrinsics.handleNewTipValue(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.tip'){
-                //     await modules.tips.extrinsics.handleNewTipValueOld(ctx, item, block.header)
-                // }
                 if (item.name == 'Democracy.vote'){
                     await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.delegate'){
+                    await modules.democracy.extrinsics.handleDelegate(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.undelegate'){
+                    await modules.democracy.extrinsics.handleUndelegate(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_vote'){
+                    await modules.democracy.extrinsics.handleRemoveVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_other_vote'){
+                    await modules.democracy.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
                 }
             }
             if (item.kind === 'event'){
@@ -290,81 +282,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Treasury.SpendApproved'){
                     await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
                 }
-                // if (item.name == 'Treasury.BountyProposed'){
-                //     await modules.bounties.events.handleProposedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyRejected'){
-                //     await modules.bounties.events.handleRejectedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyBecameActive'){
-                //     await modules.bounties.events.handleBecameActiveOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyAwarded'){
-                //     await modules.bounties.events.handleAwardedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyClaimed'){
-                //     await modules.bounties.events.handleClaimedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyCanceled'){
-                //     await modules.bounties.events.handleCanceledOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.BountyExtended'){
-                //     await modules.bounties.events.handleExtendedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.NewTip'){
-                //     await modules.tips.events.handleNewTipOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.TipRetracted'){
-                //     await modules.tips.events.handleRetractedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Treasury.TipClosed'){
-                //     await modules.tips.events.handleClosedOld(ctx, item, block.header)
-                // }
-                // if (item.name == 'Tips.TipClosed'){
-                //     await modules.tips.events.handleClosed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Tips.NewTip'){
-                //     await modules.tips.events.handleNewTip(ctx, item, block.header)
-                // }
-                // if (item.name == 'Tips.TipRetracted'){
-                //     await modules.tips.events.handleRetracted(ctx, item, block.header)
-                // }
-                // if (item.name == 'Tips.TipSlashed'){
-                //     await modules.tips.events.handleSlashed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyProposed'){
-                //     await modules.bounties.events.handleProposed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyRejected'){
-                //     await modules.bounties.events.handleRejected(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyBecameActive'){
-                //     await modules.bounties.events.handleBecameActive(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyAwarded'){
-                //     await modules.bounties.events.handleAwarded(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyClaimed'){
-                //     await modules.bounties.events.handleClaimed(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyCanceled'){
-                //     await modules.bounties.events.handleCanceled(ctx, item, block.header)
-                // }
-                // if (item.name == 'Bounties.BountyExtended'){
-                //     await modules.bounties.events.handleExtended(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.Added'){
-                //     await modules.childBounties.events.handleProposed(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.Awarded'){
-                //     await modules.childBounties.events.handleAwarded(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.Claimed'){
-                //     await modules.childBounties.events.handleClaimed(ctx, item, block.header)
-                // }
-                // if (item.name == 'ChildBounties.Canceled'){
-                //     await modules.childBounties.events.handleCancelled(ctx, item, block.header)
-                // }
                 if (item.name == 'Preimage.Noted'){
                     await modules.preimageV2.events.handlePreimageV2Noted(ctx, item, block.header)
                 }

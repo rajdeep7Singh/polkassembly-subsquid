@@ -1,11 +1,8 @@
-import { IsNull } from 'typeorm'
-import { TooManyOpenVotes, UnknownVersionError } from '../../../common/errors'
-import { ConvictionVote, VotingDelegation } from '../../../model'
+import {  UnknownVersionError } from '../../../common/errors'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
-import { CallContext, CallHandlerContext } from '../../types/contexts'
-import { convictionToLockPeriod } from './helpers'
+import { convictionToLockPeriod } from './utils'
 
 type DemocracyVote =
     | {
@@ -133,7 +130,7 @@ export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: a
 export interface ConvictionVotingRemoveOtherVoteCallData {
     index: number
     track: number | undefined
-    target: Uint8Array | null | number
+    target: any
 }
 
 export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
