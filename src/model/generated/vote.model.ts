@@ -26,6 +26,10 @@ export class Vote {
 
     @Index_()
     @Column_("int4", {nullable: false})
+    proposalIndex!: number
+
+    @Index_()
+    @Column_("int4", {nullable: false})
     blockNumber!: number
 
     @Index_()
