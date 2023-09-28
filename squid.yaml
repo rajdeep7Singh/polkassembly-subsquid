@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: integritee-polkassembly
-version: 1
+version: 2
 description: |-
   Integritee's governance proposals
 
@@ -16,14 +16,15 @@ deploy:
   api:
     cmd: [ "npx", "squid-graphql-server" ]
 
+
 scale:
   dedicated: true
   addons:
      postgres:
-         storage: 60Gi
-         profile: medium
+         storage: 10Gi
+         profile: small
   processor:
-     profile: medium
+     profile: small
   api:
-     profile: large
-     replicas: 3
+     profile: small
+     replicas: 1

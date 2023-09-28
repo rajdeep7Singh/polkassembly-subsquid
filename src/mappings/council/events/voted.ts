@@ -21,7 +21,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
         where: { hash: hexHash, type: ProposalType.CouncilMotion },
         order: { createdAtBlock: 'DESC'}
     })
-    if (!proposal) {
+    if (!proposal || proposal.index == undefined || proposal.index == null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.CouncilMotion, hexHash))
         return
     }
@@ -35,6 +35,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
             blockNumber: header.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
             proposal,
+            proposalIndex: proposal.index,
             timestamp: new Date(header.timestamp),
             type: VoteType.Motion,
         })
