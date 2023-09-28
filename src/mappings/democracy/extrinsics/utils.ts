@@ -106,7 +106,9 @@ export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, un
             addresses.push(vote.voter)
         }
     }
-    await removeFlattenedVotes(ctx, addresses, delegatedVotes[0].proposalIndex, block, blockTime)
+    if(addresses.length > 0){
+        await removeFlattenedVotes(ctx, addresses, delegatedVotes[0].proposalIndex, block, blockTime)
+    }
 }
 
 export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean): Promise<void> {
