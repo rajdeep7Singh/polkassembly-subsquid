@@ -19,7 +19,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
     const proposal = await ctx.store.get(Proposal, {
         where: { hash: hexHash, type: ProposalType.TechCommitteeProposal },
     })
-    if (!proposal) {
+    if (!proposal || proposal.index === undefined || proposal.index === null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.TechCommitteeProposal, hexHash))
         return
     }
@@ -32,6 +32,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
             voter: ss58codec.encode(voter),
             blockNumber: header.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
+            proposalIndex: proposal.index,
             proposal,
             timestamp: new Date(header.timestamp),
             type: VoteType.Motion,

@@ -50,6 +50,28 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 approved,
             }
         }
+    }else if (storage.isV25) {
+        const storageData = await storage.asV25.get(index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            const { proposalHash: hash, end, delay, threshold } = (storageData as v25.ReferendumInfo_Ongoing).value
+            return {
+                status,
+                hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = (storageData as v25.ReferendumInfo_Finished)
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
     }else if (storage.isV101) {
         const storageData = await storage.asV101.get(index)
         if (!storageData) return undefined
