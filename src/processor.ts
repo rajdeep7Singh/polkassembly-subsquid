@@ -7,7 +7,7 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://kusama-rpc.polkadot.io',
+        chain: 'wss://kusama.api.onfinality.io/public-ws',
         archive: lookupArchive('kusama', { release: 'FireSquid' }),
     })
     .setBlockRange({from: 0})
@@ -108,7 +108,13 @@ const processor = new SubstrateBatchProcessor()
 
     // .addEvent('Scheduler.Scheduled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    
+
+
+    .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Democracy.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
@@ -122,7 +128,6 @@ const processor = new SubstrateBatchProcessor()
     .addCall('ChildBounties.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Tips.tip', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Treasury.tip', { data: { call: { origin: true, args: true, }, } } as const)
-    .addCall('Democracy.vote', { data: { call: { origin: true, args: true, }, } } as const)
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
@@ -159,6 +164,21 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
         }
         for (let item of block.items) {
             if (item.kind === 'call') {
+                if (item.name == 'Democracy.vote') {
+                    await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_vote') {
+                    await modules.democracy.extrinsics.handleRemoveVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.remove_other_vote') {
+                    await modules.democracy.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.delegate') {
+                    await modules.democracy.extrinsics.handleDelegate(ctx, item, block.header)
+                }
+                if (item.name == 'Democracy.undelegate') {
+                    await modules.democracy.extrinsics.handleUndelegate(ctx, item, block.header)
+                }
                 if (item.name == 'ConvictionVoting.vote'){
                     await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
                 }
@@ -197,9 +217,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'Treasury.tip'){
                     await modules.tips.extrinsics.handleNewTipValueOld(ctx, item, block.header)
-                }
-                if (item.name == 'Democracy.vote'){
-                    await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
                 }
             }
             if (item.kind === 'event'){

@@ -265,6 +265,29 @@ type ConvictionDelegatedVotes @entity {
   type: VoteType!
 }
 
+type FlattenedConvictionVotes @entity {
+  id: ID!
+  voter: String @index
+  parentVote: ConvictionVote
+  isDelegated: Boolean
+  delegatedTo: String @index
+  proposalIndex: Int! @index
+  proposal: Proposal!
+  createdAtBlock: Int!
+  removedAtBlock: Int @index
+  createdAt: DateTime!
+  removedAt: DateTime
+  decision: VoteDecision! @index
+  balance: VoteBalance!
+  lockPeriod: Int
+  type: VoteType!
+}
+
+enum DelegationType {
+  OpenGov
+  Democracy
+}
+
 type VotingDelegation @entity {
   id: ID!
   from: String! @index
@@ -272,6 +295,7 @@ type VotingDelegation @entity {
   balance: BigInt
   lockPeriod: Int!
   track: Int
+  type: DelegationType!
   createdAt: DateTime!
   createdAtBlock: Int! @index
   endedAt: DateTime
