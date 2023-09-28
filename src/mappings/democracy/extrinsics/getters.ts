@@ -90,7 +90,7 @@ export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any
     }else if (event.isV10750) {
         const { to, conviction, balance } = event.asV10750
         return {
-            to: to,
+            to: to.value,
             lockPeriod: convictionToLockPeriod(conviction.__kind),
             balance
         }
