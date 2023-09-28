@@ -73,7 +73,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent('Scheduler.Dispatched', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
 
     .addCall('ConvictionVoting.vote', { data: { call: { origin: true, args: true, }, } } as const)
-    .addCall('ConvictionVoting.delegate', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ConvictionVoting.delegate', { data: { call: { args: true, origin: true}, extrinsic: true } } as const)
     .addCall('ConvictionVoting.undelegate', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.remove_vote', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ConvictionVoting.remove_other_vote', { data: { call: { origin: true, args: true, }, } } as const)

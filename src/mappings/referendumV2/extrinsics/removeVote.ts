@@ -5,8 +5,9 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { getOriginAccountId } from '../../../common/tools'
 import { getRemoveVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
-import { getAllNestedDelegations, removeDelegatedVotesReferendum, removeVote } from './helpers'
+import { removeVote } from './utils'
 import { CallHandlerContext } from '../../types/contexts'
+import { updateCurveData } from '../../../common/curveData'
 
 export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.remove_vote', { call: { args: true; origin: true } }>,
@@ -19,11 +20,12 @@ export async function handleRemoveVote(ctx: BatchContext<Store, unknown>,
         return
     }
     if (referendum.endedAtBlock && referendum.endedAtBlock < header.height) {
-        //ref already ended probably removing vote for democracy_unlock
         return
     }
     const wallet = getOriginAccountId(item.call.origin)
+    if(!wallet){
+        return
+    }
     await removeVote(ctx, wallet, index, header.height, header.timestamp, true)
-    let nestedDelegations = await getAllNestedDelegations(ctx, wallet, referendum.trackNumber)
-    await removeDelegatedVotesReferendum(ctx, header.height, header.timestamp, index, nestedDelegations)
+    await updateCurveData(ctx, header, referendum)
 }

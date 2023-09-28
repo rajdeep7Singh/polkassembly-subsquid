@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
 import {Proposal} from "./proposal.model"
 import {VoteDecision} from "./_voteDecision"
@@ -21,12 +21,12 @@ export class Vote {
     proposalId!: string
 
     @Index_()
-    @Column_("int4", {nullable: false})
-    proposalIndex!: number
-
-    @Index_()
     @ManyToOne_(() => Proposal, {nullable: true})
     proposal!: Proposal
+
+    @Index_()
+    @Column_("int4", {nullable: false})
+    proposalIndex!: number
 
     @Index_()
     @Column_("int4", {nullable: false})

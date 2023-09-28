@@ -14,7 +14,7 @@ export async function handleFellowshipVotes(ctx: BatchContext<Store, unknown>,
     const { accountId, index, decision, amount, tally } = getFellowshipVoteData(ctx, item.event)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.FellowshipReferendum } })
-    if (!proposal || !proposal.index) {
+    if (!proposal || proposal.index == undefined || proposal.index == null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.FellowshipReferendum, index))
         return
     }

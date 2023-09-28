@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: vara-polkassembly
-version: 2
+version: 1
 description: |-
   Kusama's governance proposals
 
@@ -18,10 +18,10 @@ scale:
   dedicated: true
   addons:
      postgres:
-         storage: 60Gi
-         profile: medium
+         storage: 10Gi
+         profile: small
   processor:
-     profile: medium
+     profile: small
   api:
-     profile: large
-     replicas: 3
+     profile: small
+     replicas: 1

@@ -197,8 +197,8 @@ type Vote @entity {
   id: ID!
   voter: String
   proposalId: ID!
-  proposalIndex: Int! @index
   proposal: Proposal!
+  proposalIndex: Int! @index
   blockNumber: Int! @index
   timestamp: DateTime! @index
   decision: VoteDecision
@@ -240,13 +240,53 @@ type ConvictionVote @entity {
   removedAtBlock: Int @index
   createdAt: DateTime! @index
   removedAt: DateTime @index
-  votingPower: BigInt @index
-  decision: VoteDecision!
+  selfVotingPower: BigInt @index
+  delegatedVotingPower: BigInt @index
+  totalVotingPower: BigInt @index
+  decision: VoteDecision! @index
   balance: VoteBalance!
   lockPeriod: Int
-  delegatedTo: String 
-  isDelegated: Boolean
+  delegatedVotes: [ConvictionDelegatedVotes!] @derivedFrom(field: "delegatedTo")
   type: VoteType!
+}
+
+type ConvictionDelegatedVotes @entity {
+  id: ID!
+  voter: String @index
+  delegatedTo: ConvictionVote!
+  proposalIndex: Int! @index
+  createdAtBlock: Int! @index
+  removedAtBlock: Int @index
+  createdAt: DateTime! @index
+  removedAt: DateTime @index
+  votingPower: BigInt @index
+  decision: VoteDecision! @index
+  balance: VoteBalance!
+  lockPeriod: Int
+  type: VoteType!
+}
+
+type FlattenedConvictionVotes @entity {
+  id: ID!
+  voter: String @index
+  parentVote: ConvictionVote
+  isDelegated: Boolean
+  delegatedTo: String @index
+  proposalIndex: Int! @index
+  proposal: Proposal!
+  createdAtBlock: Int!
+  removedAtBlock: Int @index
+  createdAt: DateTime!
+  removedAt: DateTime
+  decision: VoteDecision! @index
+  balance: VoteBalance!
+  lockPeriod: Int
+  type: VoteType!
+}
+
+enum DelegationType {
+  OpenGov
+  Democracy
 }
 
 type VotingDelegation @entity {
@@ -256,6 +296,7 @@ type VotingDelegation @entity {
   balance: BigInt
   lockPeriod: Int!
   track: Int
+  type: DelegationType!
   createdAt: DateTime!
   createdAtBlock: Int! @index
   endedAt: DateTime
