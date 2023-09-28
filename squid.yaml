@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: centrifuge-polkassembly
-version: 1
+version: 2
 description: |-
   Centrifuge's governance proposals
 
@@ -13,3 +13,16 @@ deploy:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server" ]
+
+
+scale:
+  dedicated: true
+  addons:
+     postgres:
+         storage: 10Gi
+         profile: small
+  processor:
+     profile: small
+  api:
+     profile: small
+     replicas: 1
