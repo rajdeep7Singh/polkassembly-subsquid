@@ -2,7 +2,6 @@ import { getOriginAccountId } from '../../../common/tools'
 import { NoDelegationFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { ConvictionVote, DelegationType, Proposal, ProposalType, VoteType } from '../../../model'
-import { getUndelegateData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
@@ -12,19 +11,18 @@ import {
 import { removeFlattenedVotes } from './utils'
 
 export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.undelegate', { call: { args: true; origin: true } }>,
+    item: CallItem<'Democracy.undelegate', { call: { args: true; origin: true } }>,
     header: SubstrateBlock): Promise<void> {
     if (!(item.call as any).success) return
     const from = getOriginAccountId(item.call.origin)
-    const { track } = getUndelegateData(ctx, item.call)
     let delegation = null;
-    const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track, type: DelegationType.OpenGov } })
+    const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
     if(delegations != undefined && delegations != null){
         if (delegations.length > 1) {
-            ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
+            ctx.log.warn(TooManyOpenDelegations(header.height, undefined, from))
         }
         else if (delegations.length === 0) {
-            ctx.log.warn(NoDelegationFound(header.height, track, from))
+            ctx.log.warn(NoDelegationFound(header.height, undefined, from))
             return
         }
         delegation = delegations[0]
@@ -32,7 +30,7 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
         delegation.endedAt = new Date(header.timestamp)
         await ctx.store.save(delegation)
     }
-    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
+    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), type: ProposalType.Referendum } })
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         const wallets: string[] = []
@@ -40,7 +38,7 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
             continue
         }
         if(delegation && referendum){
-            const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },
+            const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.Referendum },
                 relations: {
                     delegatedVotes: true
                 }

@@ -6,15 +6,15 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './utils'
+import { addDelegatedVotesReferendum, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType } from '../../../model'
 import { getConvictionDelegatedVotesCount } from '../../utils/votes'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
+    item: CallItem<'Democracy.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
     header: SubstrateBlock): Promise<void> {
     if (!(item.call as any).success) return
-    const { to, lockPeriod, balance, track } = getDelegateData(ctx, item.call)
+    const { to, lockPeriod, balance } = getDelegateData(ctx, item.call)
     const toWallet = ss58codec.encode(to)
     let from = getOriginAccountId(item.call.origin)
     if(!from){
@@ -23,13 +23,13 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     if(!from){
         return
     }
-    const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track, type: DelegationType.OpenGov } })
+    const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
 
     if (delegations != null && delegations != undefined && delegations.length > 1) {
-        ctx.log.warn(TooManyOpenDelegations(header.height, track, from))
+        ctx.log.warn(TooManyOpenDelegations(header.height, undefined, from))
     }
 
-    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAtBlock: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
+    const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAtBlock: IsNull(), type: ProposalType.Referendum } })
 
     if (delegations.length > 0) {
         const delegation = delegations[0]
@@ -52,19 +52,18 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             to: toWallet,
             balance,
             lockPeriod,
-            type: DelegationType.OpenGov,
-            track,
+            type: DelegationType.Democracy,
             createdAt: new Date(header.timestamp),
         })
     )
     let votingPower = BigInt(0)
-    const nestedDelegations = await getDelegations(ctx, from, track)
+    const nestedDelegations = await getDelegations(ctx, from)
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
             continue
         }
-        const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+        const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
         if(votes){
             if (votes.length > 1) {
                 ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, toWallet))
@@ -86,7 +85,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
             }
 
-            const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
+            const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, nestedDelegations, vote)
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
                     id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
@@ -97,7 +96,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     proposalIndex: referendum.index,
                     balance: voteBalance,
                     votingPower,
-                    type: VoteType.ReferendumV2,
+                    type: VoteType.Referendum,
                     createdAt: new Date(header.timestamp),
                     delegatedTo: vote
                 })

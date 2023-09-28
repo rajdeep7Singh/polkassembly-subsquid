@@ -1,5 +1,5 @@
-module.exports = class Data1694630294102 {
-    name = 'Data1694630294102'
+module.exports = class Data1695908978385 {
+    name = 'Data1695908978385'
 
     async up(db) {
         await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "deposit" numeric, "length" integer, "proposed_call" jsonb, "section" text, "method" text, "status" character varying(21) NOT NULL, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
@@ -57,7 +57,15 @@ module.exports = class Data1694630294102 {
         await db.query(`CREATE INDEX "IDX_47ecc5feffcf76b5b2563589e0" ON "tippers" ("proposal_id") `)
         await db.query(`CREATE INDEX "IDX_fd92a47108139fec4e1acab558" ON "tippers" ("created_at_block") `)
         await db.query(`CREATE INDEX "IDX_ae5de6533ddb0975e1bcd6146a" ON "tippers" ("created_at") `)
-        await db.query(`CREATE TABLE "voting_delegation" ("id" character varying NOT NULL, "from" text NOT NULL, "to" text NOT NULL, "balance" numeric, "lock_period" integer NOT NULL, "track" integer, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "ended_at" TIMESTAMP WITH TIME ZONE, "ended_at_block" integer, CONSTRAINT "PK_32c0d967d3995c8873ad01220bb" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "flattened_conviction_votes" ("id" character varying NOT NULL, "voter" text, "is_delegated" boolean, "delegated_to" text, "proposal_index" integer NOT NULL, "created_at_block" integer NOT NULL, "removed_at_block" integer, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "removed_at" TIMESTAMP WITH TIME ZONE, "decision" character varying(12) NOT NULL, "balance" jsonb NOT NULL, "lock_period" integer, "type" character varying(17) NOT NULL, "parent_vote_id" character varying, "proposal_id" character varying, CONSTRAINT "PK_5f80973ec60c4750d23e84d1faf" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_98327813e58125c32456557018" ON "flattened_conviction_votes" ("voter") `)
+        await db.query(`CREATE INDEX "IDX_3da31b553e99d221ce295148cd" ON "flattened_conviction_votes" ("parent_vote_id") `)
+        await db.query(`CREATE INDEX "IDX_bf4971079d7a8a3c28fc13511c" ON "flattened_conviction_votes" ("delegated_to") `)
+        await db.query(`CREATE INDEX "IDX_869e977623b41d0f485936ccbe" ON "flattened_conviction_votes" ("proposal_index") `)
+        await db.query(`CREATE INDEX "IDX_323cfb16bdf135ac3cf2f8a7cd" ON "flattened_conviction_votes" ("proposal_id") `)
+        await db.query(`CREATE INDEX "IDX_c9e9ba659a1b72bb48f1d3bcd0" ON "flattened_conviction_votes" ("removed_at_block") `)
+        await db.query(`CREATE INDEX "IDX_2812e591b36d1f096362f489be" ON "flattened_conviction_votes" ("decision") `)
+        await db.query(`CREATE TABLE "voting_delegation" ("id" character varying NOT NULL, "from" text NOT NULL, "to" text NOT NULL, "balance" numeric, "lock_period" integer NOT NULL, "track" integer, "type" character varying(9) NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "ended_at" TIMESTAMP WITH TIME ZONE, "ended_at_block" integer, CONSTRAINT "PK_32c0d967d3995c8873ad01220bb" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_28ce581f13ce6368b87d0da18e" ON "voting_delegation" ("from") `)
         await db.query(`CREATE INDEX "IDX_2362eae049e9b15d72d4462a84" ON "voting_delegation" ("to") `)
         await db.query(`CREATE INDEX "IDX_5a1b74d2f522f505bd242f18bd" ON "voting_delegation" ("created_at_block") `)
@@ -75,6 +83,8 @@ module.exports = class Data1694630294102 {
         await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_73ae2cd51401d164204182bd690" FOREIGN KEY ("preimage_id") REFERENCES "preimage"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "proposal" ADD CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438" FOREIGN KEY ("group_id") REFERENCES "proposal_group"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "tippers" ADD CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "flattened_conviction_votes" ADD CONSTRAINT "FK_3da31b553e99d221ce295148cd1" FOREIGN KEY ("parent_vote_id") REFERENCES "conviction_vote"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "flattened_conviction_votes" ADD CONSTRAINT "FK_323cfb16bdf135ac3cf2f8a7cd8" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
         await db.query(`ALTER TABLE "curve_data" ADD CONSTRAINT "FK_032c5c4648dfa5c9501832c470b" FOREIGN KEY ("proposal_id") REFERENCES "proposal"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     }
 
@@ -134,6 +144,14 @@ module.exports = class Data1694630294102 {
         await db.query(`DROP INDEX "public"."IDX_47ecc5feffcf76b5b2563589e0"`)
         await db.query(`DROP INDEX "public"."IDX_fd92a47108139fec4e1acab558"`)
         await db.query(`DROP INDEX "public"."IDX_ae5de6533ddb0975e1bcd6146a"`)
+        await db.query(`DROP TABLE "flattened_conviction_votes"`)
+        await db.query(`DROP INDEX "public"."IDX_98327813e58125c32456557018"`)
+        await db.query(`DROP INDEX "public"."IDX_3da31b553e99d221ce295148cd"`)
+        await db.query(`DROP INDEX "public"."IDX_bf4971079d7a8a3c28fc13511c"`)
+        await db.query(`DROP INDEX "public"."IDX_869e977623b41d0f485936ccbe"`)
+        await db.query(`DROP INDEX "public"."IDX_323cfb16bdf135ac3cf2f8a7cd"`)
+        await db.query(`DROP INDEX "public"."IDX_c9e9ba659a1b72bb48f1d3bcd0"`)
+        await db.query(`DROP INDEX "public"."IDX_2812e591b36d1f096362f489be"`)
         await db.query(`DROP TABLE "voting_delegation"`)
         await db.query(`DROP INDEX "public"."IDX_28ce581f13ce6368b87d0da18e"`)
         await db.query(`DROP INDEX "public"."IDX_2362eae049e9b15d72d4462a84"`)
@@ -152,6 +170,8 @@ module.exports = class Data1694630294102 {
         await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_73ae2cd51401d164204182bd690"`)
         await db.query(`ALTER TABLE "proposal" DROP CONSTRAINT "FK_a55a5b4a31bbfc52ae411bdc438"`)
         await db.query(`ALTER TABLE "tippers" DROP CONSTRAINT "FK_47ecc5feffcf76b5b2563589e0b"`)
+        await db.query(`ALTER TABLE "flattened_conviction_votes" DROP CONSTRAINT "FK_3da31b553e99d221ce295148cd1"`)
+        await db.query(`ALTER TABLE "flattened_conviction_votes" DROP CONSTRAINT "FK_323cfb16bdf135ac3cf2f8a7cd8"`)
         await db.query(`ALTER TABLE "curve_data" DROP CONSTRAINT "FK_032c5c4648dfa5c9501832c470b"`)
     }
 }

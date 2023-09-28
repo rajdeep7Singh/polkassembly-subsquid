@@ -17,21 +17,19 @@ import { getConvictionVotesCount, getFlattenedConvictionVotesCount } from '../..
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { getDelegations, removeDelegatedVotesReferendum } from './utils'
-import { addDelegatedVotesReferendumV2 }  from './utils'
+import { getDelegations, removeDelegatedVotesReferendum, addDelegatedVotesReferendum } from './utils'
 import { IsNull } from 'typeorm'
-import { updateCurveData } from '../../../common/curveData'
 
-export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.vote', { call: { args: true; origin: true } }>,
+export async function handleVote(ctx: BatchContext<Store, unknown>,
+    item: CallItem<'Democracy.vote', { call: { args: true; origin: true } }>,
     header: SubstrateBlock) {
     if (!(item.call as any).success) return
 
     const { index, vote } = getVoteData(ctx, item.call)
 
-    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
-    if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
+    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Referendum } })
+    if (!proposal) {
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
         return
     }
 
@@ -42,7 +40,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
     if(votes){
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
@@ -52,7 +50,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             const vote = votes[0]
             vote.removedAtBlock = header.height
             vote.removedAt = new Date(header.timestamp)
-            const flattenedVote = await ctx.store.get(FlattenedConvictionVotes, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+            const flattenedVote = await ctx.store.get(FlattenedConvictionVotes, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
             if(flattenedVote){
                 flattenedVote.removedAtBlock = header.height
                 flattenedVote.removedAt = new Date(header.timestamp)
@@ -66,18 +64,14 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         }
     }
 
-    const nestedDelegations = await getDelegations(ctx, from, proposal.trackNumber)
+    const nestedDelegations = await getDelegations(ctx, from)
 
-    let decision: VoteDecision
+    let decision: VoteDecision | undefined = undefined
     switch (vote.type) {
         case 'Standard':
             decision = vote.value < 128 ? VoteDecision.no : VoteDecision.yes
             break
         case 'Split':
-            decision = VoteDecision.abstain
-            break
-        
-        case 'SplitAbstain':
             decision = VoteDecision.abstain
             break
     }
@@ -103,13 +97,6 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         }
 
     }
-    else if (vote.type === 'SplitAbstain') {
-        balance = new SplitVoteBalance({
-            aye: vote.aye,
-            nay: vote.nay,
-            abstain: vote.abstain,
-        })
-    }
 
     const count = await getConvictionVotesCount(ctx, index)
 
@@ -125,12 +112,12 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         balance,
         createdAt: new Date(header.timestamp),
         selfVotingPower: votingPower,
-        type: VoteType.ReferendumV2,
+        type: VoteType.Referendum,
     })
 
     const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
 
-    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
+    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
     
     convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
     convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
@@ -154,11 +141,8 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         decision: decision,
         balance: balance,
         lockPeriod: lockPeriod,
-        type: VoteType.ReferendumV2,
+        type: VoteType.Referendum,
     }))
 
     await ctx.store.insert(flattenedVotes)
-
-    await updateCurveData(ctx, header, proposal)
-
 }
