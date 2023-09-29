@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: polkadot-polkassembly
-version: 3
+version: 1
 description: |-
   Polkadot's governance proposals
 
@@ -20,10 +20,10 @@ scale:
   dedicated: true
   addons:
      postgres:
-         storage: 30Gi
+         storage: 20Gi
          profile: medium
   processor:
      profile: medium
   api:
-     profile: large
-     replicas: 3
+     profile: medium
+     replicas: 1
