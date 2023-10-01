@@ -9,6 +9,7 @@ import * as v1701 from './v1701'
 import * as v1802 from './v1802'
 import * as v2000 from './v2000'
 import * as v2403 from './v2403'
+import * as v2501 from './v2501'
 
 export class DemocracyCancelledEvent {
     private readonly _chain: Chain
@@ -1250,6 +1251,21 @@ export class SchedulerDispatchedEvent {
      */
     get asV2000(): {task: [number, number], id: (Uint8Array | undefined), result: v2000.Type_50} {
         assert(this.isV2000)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV2501(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '6eb5580f3023aa9d8b919b2e4d4c348b6d18e7b61b4d3362b70f19480d1767fc'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV2501(): {task: [number, number], id: (Uint8Array | undefined), result: v2501.Type_52} {
+        assert(this.isV2501)
         return this._chain.decodeEvent(this.event)
     }
 }
