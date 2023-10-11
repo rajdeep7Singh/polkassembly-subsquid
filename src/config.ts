@@ -9,7 +9,7 @@ const config: ProcessorConfig<Store> = {
     },
     dataSource: {
         archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://polkadot.api.onfinality.io/public-ws',
+        chain: 'wss://rpc.polkadot.io',
     },
     typesBundle: 'polkadot',
     batchSize: 500,
