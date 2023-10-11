@@ -7,7 +7,7 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://kusama.public.curie.radiumblock.co/ws',
+        chain: 'wss://kusama-rpc.polkadot.io',
         archive: lookupArchive('kusama', { release: 'FireSquid' }),
     })
     .setBlockRange({from: 0})
