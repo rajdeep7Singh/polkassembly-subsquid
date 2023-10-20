@@ -16,7 +16,6 @@ export async function handleDecisionDepositPlaced(ctx: BatchContext<Store, unkno
     const decisionDeposit = createDecisionDeposit({who: toHex(who), amount})
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.DecisionDepositPlaced,
         data: {
             decisionDeposit: decisionDeposit

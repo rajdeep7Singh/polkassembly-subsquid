@@ -12,7 +12,6 @@ export async function handleConfirmAborted(ctx: BatchContext<Store, unknown>,
     const { index } = getConfirmAbortedData(ctx, item.event)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.ConfirmAborted,
     })
 }
