@@ -16,7 +16,6 @@ export async function handleConfirmed(ctx: BatchContext<Store, unknown>,
     const tallyData = createTally(tally)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
-        isEnded: true,
         status: ProposalStatus.Confirmed,
         data: {
             tally: tallyData
