@@ -67,13 +67,24 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-         else {
+         else if(vote.__kind === 'Split') {
             return {
                 index: pollIndex,
                 vote: {
                     type: 'Split',
                     aye: vote.aye,
                     nay: vote.nay,
+                },
+            }
+        }
+        else {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'SplitAbstain',
+                    aye: vote.aye,
+                    nay: vote.nay,
+                    abstain: vote.abstain
                 },
             }
         }
