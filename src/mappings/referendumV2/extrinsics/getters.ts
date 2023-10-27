@@ -45,7 +45,7 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 },
             }
         }
-         else {
+         else if(vote.__kind === 'Split') {
             return {
                 index: pollIndex,
                 vote: {
@@ -54,6 +54,20 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                     nay: vote.nay,
                 },
             }
+        }
+        else if(vote.__kind === 'SplitAbstain') {
+            return {
+                index: pollIndex,
+                vote: {
+                    type: 'SplitAbstain',
+                    aye: vote.aye,
+                    nay: vote.nay,
+                    abstain: vote.abstain
+                }
+            }
+        }
+        else {
+            throw new UnknownVersionError(event.constructor.name)
         }
     }
     else {
