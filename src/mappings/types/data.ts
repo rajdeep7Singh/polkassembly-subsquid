@@ -96,6 +96,7 @@ export interface PreimageData extends BaseProposalData {
     section?: string
     method?: string
     length?: number
+    extrinsicIndex?: number
 }
 
 // export interface PreimageDataV2 extends BaseProposalData {

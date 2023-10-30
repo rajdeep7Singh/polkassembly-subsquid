@@ -23,6 +23,9 @@ export class CurveData {
     @Column_("int4", {nullable: false})
     index!: number
 
+    @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
     @Index_()
     @Column_("timestamp with time zone", {nullable: false})
     timestamp!: Date

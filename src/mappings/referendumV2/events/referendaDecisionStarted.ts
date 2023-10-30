@@ -1,17 +1,15 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { createDeciding, updateProposalStatus } from '../../utils/proposals'
 import { getDecisionStartedData } from './getters'
 import {createTally} from '../../utils/proposals'
 import { toHex } from '@subsquid/substrate-processor'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { Block, Event, ProcessorContext } from '../../../processor'
 
-export async function handleDecisionStarted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.DecisionStarted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, tally, track, hash } = getDecisionStartedData(ctx, item.event)
+export async function handleDecisionStarted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { index, tally, track, hash } = getDecisionStartedData(item)
     const tallyData = createTally(tally)
 
     const deciding = createDeciding({confirming: undefined, since: header.height})
@@ -21,7 +19,7 @@ export async function handleDecisionStarted(ctx: BatchContext<Store, unknown>,
         data: {
             tally: tallyData,
             trackNumber: track,
-            hash: toHex(hash),
+            hash: hash,
             deciding: deciding
         }
     })

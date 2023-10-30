@@ -1,72 +1,72 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://moonbase.archive.subsquid.io/graphql",
+  "specVersions": "https://v2.archive.subsquid.io/metadata/moonbase",
   "typesBundle": "moonbase",
-  "storage": [
-    "Instance1Collective.Members",
-    "Instance1Collective.ProposalCount",
-    "Democracy.PublicPropCount",
-    "Balances.TotalIssuance",
-    "Balances.InactiveIssuance",
-    "Democracy.Preimages",
-    "Democracy.PublicProps",
-    "Democracy.ReferendumInfoOf",
-    "Instance1Collective.ProposalOf",
-    "Treasury.Proposals",
-    "System.Account",
-    "Balances.Account",
-    "Referenda.ReferendumInfoFor",
-    "ConvictionVoting.VotingFor",
-    "Preimage.StatusFor",
-    "Preimage.PreimageFor",
-    "Ethereum.CurrentTransactionStatuses"
-  ],
-  "events": [
-    "Democracy.Proposed",
-    "Democracy.Tabled",
-    "Democracy.Started",
-    "Democracy.Passed",
-    "Democracy.NotPassed",
-    "Democracy.Cancelled",
-    "Democracy.Executed",
-    "Democracy.Seconded",
-    "Democracy.PreimageNoted",
-    "Democracy.PreimageUsed",
-    "Democracy.PreimageInvalid",
-    "Democracy.PreimageMissing",
-    "Democracy.PreimageReaped",
-    "Treasury.Proposed",
-    "Treasury.Awarded",
-    "Treasury.Rejected",
-    "Treasury.SpendApproved",
-    "Referenda.Submitted",
-    "Referenda.DecisionDepositPlaced",
-    "Referenda.DecisionStarted",
-    "Referenda.ConfirmStarted",
-    "Referenda.ConfirmAborted",
-    "Referenda.Confirmed",
-    "Referenda.Approved",
-    "Referenda.Rejected",
-    "Referenda.TimedOut",
-    "Referenda.Cancelled",
-    "Referenda.Killed",
-    "Preimage.Noted",
-    "Preimage.Requested",
-    "Preimage.Cleared",
-    "Scheduler.Dispatched",
-    "Ethereum.Executed"
-  ],
-  "calls": [
-    "Democracy.vote",
-    "Democracy.remove_vote",
-    "Democracy.remove_other_vote",
-    "Democracy.delegate",
-    "Democracy.undelegate",
-    "ConvictionVoting.vote",
-    "ConvictionVoting.delegate",
-    "ConvictionVoting.undelegate",
-    "ConvictionVoting.remove_vote",
-    "ConvictionVoting.remove_other_vote",
-    "Ethereum.transact"
-  ]
+  "pallets": {
+    "Democracy": {
+      "events": [
+        "Proposed", "Tabled", "Started", "Passed", "NotPassed", "Cancelled", "Executed", "Seconded", "PreimageNoted", "PreimageUsed", "PreimageInvalid", "PreimageMissing", "PreimageReaped"
+      ],
+      "calls": ["vote", "remove_vote", "remove_other_vote", "delegate", "undelegate"],
+      "storage": ["Preimages", "PublicProps", "ReferendumInfoOf"],
+      "constants": []
+    },
+    "Treasury": {
+      "events": [
+        "Proposed", "Awarded", "Rejected", "SpendApproved"
+      ],
+      "calls": [],
+      "storage": ["Proposals"],
+      "constants": []
+    },
+    "Referenda": {
+      "events": [
+        "Submitted", "DecisionDepositPlaced", "DecisionStarted", "ConfirmStarted", "ConfirmAborted", "Confirmed", "Approved", "Executed", "Rejected", "TimedOut", "Cancelled", "Killed"
+      ],
+      "calls": ["vote", "remove_vote", "remove_other_vote", "delegate", "undelegate"],
+      "storage": ["ReferendumInfoFor"],
+      "constants": []
+    },
+    "Preimage": {
+      "events": [
+        "Noted", "Requested", "Cleared"
+      ],
+      "calls": [],
+      "storage": ["StatusFor", "PreimageFor"],
+      "constants": []
+    },
+    "Scheduler": {
+      "events": [
+        "Dispatched"
+      ],
+      "calls": [],
+      "storage": [],
+      "constants": []
+    },
+    "Instance1Collective": {
+      "events": [
+      ],
+      "calls": [],
+      "storage": ["Members", "ProposalCount", "ProposalOf"],
+      "constants": []
+    },
+    "Balances": {
+      "events": [],
+      "calls": [],
+      "storage": ["TotalIssuance", "InactiveIssuance", "Account"],
+      "constants": []
+    },
+    "ConvictionVoting": {
+      "events": [],
+      "calls": ["vote", "remove_vote", "remove_other_vote", "delegate", "undelegate"],
+      "storage": ["VotingFor"],
+      "constants": []
+    },
+    "Ethereum": {
+      "events": [],
+      "calls": ["transact"],
+      "storage": ["Preimages", "PublicProps", "ReferendumInfoOf"],
+      "constants": ["transact"]
+    }
+  }
 }

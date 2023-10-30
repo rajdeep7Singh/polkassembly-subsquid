@@ -1,4 +1,4 @@
-import { CallHandlerContext } from '../../types/contexts'
+// import { CallHandlerContext } from '../../types/contexts'
 import { MissingProposalRecordWarn, TooManyOpenVotes } from '../../../common/errors'
 import {
     ConvictionVote,
@@ -11,24 +11,25 @@ import {
     VoteDecision,
     VoteType,
 } from '../../../model'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+// import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { getOriginAccountId } from '../../../common/tools'
 import { getVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+// import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getAllNestedDelegations, removeDelegatedVotesReferendum } from './helpers'
 import { addDelegatedVotesReferendumV2 }  from './helpers'
 import { IsNull } from 'typeorm'
 import { randomUUID } from 'crypto'
-import { updateCurveData } from '../../../common/curveData'
+// import { updateCurveData } from '../../../common/curveData'
+import { Call, ProcessorContext } from '../../../processor'
 
-export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.vote', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!(item.call as any).success) return
+export async function handleConvictionVote(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!(item as any).success) return
 
-    const { index, vote } = getVoteData(ctx, item.call)
+    const { index, vote } = getVoteData(ctx, item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
@@ -36,7 +37,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const from = getOriginAccountId(item.call.origin)
+    const from = getOriginAccountId(item.origin)
 
     if(!from){
         ctx.log.warn('No from address found for Conviction.vote call')
@@ -99,7 +100,7 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     await ctx.store.insert(
         new ConvictionVote({
             id: randomUUID(),
-            voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+            voter: item.origin ? getOriginAccountId(item.origin) : null,
             createdAtBlock: header.height,
             proposalIndex: index,
             proposalId: proposal.id,
@@ -112,12 +113,12 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
             type: VoteType.ReferendumV2,
         })
     )
-    await updateCurveData(ctx, header, proposal)
+    // await updateCurveData(ctx, header, proposal)
     await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber)
 
 }
 
-export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, aye: boolean = true, originAccountId: string, txnHash: string) {
+export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<Store>, itemCall: any, header: any, data: any, aye: boolean = true, originAccountId: string, txnHash: string) {
     const [ index, amount, conviction ] = data
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
@@ -163,7 +164,7 @@ export async function handleConvictionVotesFromPrecompile(ctx: BatchContext<Stor
             type: VoteType.ReferendumV2,
         })
     )
-    await updateCurveData(ctx, header, proposal)
+    // await updateCurveData(ctx, header, proposal)
     await addDelegatedVotesReferendumV2(ctx, from, header.height, header.timestamp, proposal, nestedDelegations, proposal.trackNumber, txnHash)
 
 }

@@ -61,6 +61,7 @@ type Preimage @entity {
   status: ProposalStatus!
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
+  extrinsicIndex: Int
   updatedAtBlock: Int
   updatedAt: DateTime
 }
@@ -120,6 +121,7 @@ type Proposal @entity {
   group: ProposalGroup
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
+  extrinsicIndex: Int
   endedAtBlock: Int
   endedAt: DateTime
   updatedAtBlock: Int @index
@@ -153,6 +155,7 @@ type StatusHistory @entity {
   proposal: Proposal!
   status: ProposalStatus!
   block: Int!
+  extrinsicIndex: Int
   timestamp: DateTime!
 }
 
@@ -201,6 +204,7 @@ type Vote @entity {
   decision: VoteDecision
   balance: VoteBalance
   lockPeriod: Int
+  extrinsicIndex: Int
   type: VoteType
 }
 
@@ -210,6 +214,7 @@ type Tippers @entity {
   tipper: String
   value: BigInt
   proposal: Proposal!
+  extrinsicIndex: Int
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
 }
@@ -240,7 +245,8 @@ type ConvictionVote @entity {
   decision: VoteDecision!
   balance: VoteBalance!
   lockPeriod: Int
-  delegatedTo: String 
+  delegatedTo: String
+  extrinsicIndex: Int
   isDelegated: Boolean
   type: VoteType!
   txnHash: String
@@ -254,6 +260,7 @@ type VotingDelegation @entity {
   lockPeriod: Int!
   track: Int
   createdAt: DateTime!
+  extrinsicIndex: Int
   createdAtBlock: Int! @index
   endedAt: DateTime
   endedAtBlock: Int
@@ -264,6 +271,7 @@ type CurveData @entity {
   block: Int! @index
   proposal: Proposal!
   index: Int! @index
+  extrinsicIndex: Int
   timestamp: DateTime! @index
   approvalPercent: Float @index
   supportPercent: Float @index

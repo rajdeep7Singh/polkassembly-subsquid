@@ -1,16 +1,13 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
+import { ProcessorContext, Event } from '../../../processor';
 import { updateProposalStatus } from '../../utils/proposals'
 import { getTimedOutData } from './getters'
-import {createTally} from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleTimedOut(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.TimedOut', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getTimedOutData(ctx, item.event)
+export async function handleTimedOut(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getTimedOutData(item)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         isEnded: true,

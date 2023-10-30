@@ -46,6 +46,9 @@ export class Preimage {
     createdAt!: Date
 
     @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
+    @Column_("int4", {nullable: true})
     updatedAtBlock!: number | undefined | null
 
     @Column_("timestamp with time zone", {nullable: true})

@@ -30,6 +30,9 @@ export class VotingDelegation {
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
 
+    @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
     @Index_()
     @Column_("int4", {nullable: false})
     createdAtBlock!: number

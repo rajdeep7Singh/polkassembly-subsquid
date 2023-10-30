@@ -1,38 +1,34 @@
-import { ReferendaSubmittedEvent, 
-    ReferendaCancelledEvent, 
-    ReferendaApprovedEvent,
-    ReferendaKilledEvent,
-    ReferendaConfirmAbortedEvent,
-    ReferendaConfirmedEvent,
-    ReferendaDecisionDepositPlacedEvent,
-    ReferendaDecisionStartedEvent,
-    ReferendaConfirmStartedEvent,
-    ReferendaRejectedEvent,
-    ReferendaTimedOutEvent } from '../../../types/events'
+import { submitted, 
+    cancelled, 
+    approved,
+    killed,
+    confirmAborted,
+    confirmed,
+    decisionDepositPlaced,
+    decisionStarted,
+    confirmStarted,
+    rejected,
+    timedOut } from '../../../types/referenda/events' 
 import { UnknownVersionError } from '../../../common/errors'
 import { TallyData } from '../../types/data'
-import { Event } from '../../../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
+import {Event} from '../../../processor'
 
 interface ReferendumEventData {
     index: number
     track: number
-    hash: Uint8Array
+    hash: string
 }
 
-
-export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
-    const event = new ReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const {index, track, proposalHash } = event.asV1900
+export function getEventData(itemEvent: Event): ReferendumEventData {
+    if (submitted.v1900.is(itemEvent)) {
+        const {index, track, proposalHash } = submitted.v1900.decode(itemEvent)
         return {
             index,
             track,
             hash: proposalHash
         }
-    } else if (event.isV2000) {
-        const {index, track, proposal } = event.asV2000
+    } else if (submitted.v2000.is(itemEvent)) {
+        const {index, track, proposal } = submitted.v2000.decode(itemEvent)
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -46,7 +42,7 @@ export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event
             hash
         }
     }else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -55,16 +51,15 @@ export interface ReferendaData {
     index: number,
 }
 
-export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
-    const event = new ReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+export function getCancelledData(itemEvent: Event): ReferendaData {
+    if(cancelled.v1900.is(itemEvent)){
+        const { index, tally } = cancelled.v1900.decode(itemEvent)
         return {
             index,
             tally
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -72,111 +67,103 @@ export interface ReferendaIndexData {
     index: number
 }
 
-export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
-    const event = new ReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+export function getApprovedData(itemEvent: Event): ReferendaIndexData {
+    if(approved.v1900.is(itemEvent)){
+        const { index } = approved.v1900.decode(itemEvent)
         return {
             index
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
-    const event = new ReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+export function getKilledData(itemEvent: Event): ReferendaData {
+    if(killed.v1900.is(itemEvent)){
+        const { index, tally } = killed.v1900.decode(itemEvent)
         return {
             index,
             tally
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
-    const event = new ReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+export function getTimedOutData(itemEvent: Event): ReferendaData {
+    if(timedOut.v1900.is(itemEvent)){
+        const { index, tally } = timedOut.v1900.decode(itemEvent)
         return {
             index,
             tally
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
-    const event = new ReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+export function getRejectedData(itemEvent: Event): ReferendaData {
+    if(rejected.v1900.is(itemEvent)){
+        const { index, tally } = rejected.v1900.decode(itemEvent)
         return {
             index,
             tally
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
-    const event = new ReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+export function getConfirmAbortedData(itemEvent: Event): ReferendaIndexData {
+    if(confirmAborted.v1900.is(itemEvent)){
+        const { index } = confirmAborted.v1900.decode(itemEvent)
         return {
-            index
+            index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
-    const event = new ReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, tally } = event.asV1900
+export function getConfirmedData(itemEvent: Event): ReferendaData {
+    if(confirmed.v1900.is(itemEvent)){
+        const { index, tally } = confirmed.v1900.decode(itemEvent)
         return {
             index,
             tally
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
-    const event = new ReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index } = event.asV1900
+export function getConfirmStartedData(itemEvent: Event): ReferendaIndexData {
+    if(confirmStarted.v1900.is(itemEvent)){
+        const { index } = confirmStarted.v1900.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export interface ReferendaDepositData {
     index: number,
-    who: Uint8Array,
+    who: string,
     amount: bigint,
 }
 
-export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
-    const event = new ReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, who, amount } = event.asV1900
+export function getDecisionDepositPlacedData( itemEvent: Event): ReferendaDepositData {
+    if(decisionDepositPlaced.v1900.is(itemEvent)){
+        const { index, who, amount } = decisionDepositPlaced.v1900.decode(itemEvent)
         return {
             index,
             who,
             amount
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -184,21 +171,20 @@ export interface ReferendaDecisionStartedData {
     index: number,
     tally: TallyData,
     track: number,
-    hash: Uint8Array,
+    hash: string,
 }
 
-export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
-    const event = new ReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV1900) {
-        const { index, track, proposalHash, tally} = event.asV1900
+export function getDecisionStartedData(itemEvent: Event): ReferendaDecisionStartedData {
+    if(decisionStarted.v1900.is(itemEvent)){
+        const { index, track, tally, proposalHash } = decisionStarted.v1900.decode(itemEvent)
         return {
             index,
             track,
             tally,
             hash: proposalHash
         }
-    } else if (event.isV2000) {
-        const { index, track, proposal, tally} = event.asV2000
+    }else if(decisionStarted.v2000.is(itemEvent)){
+        const { index, track, tally, proposal } = decisionStarted.v2000.decode(itemEvent)
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -213,6 +199,6 @@ export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEv
             hash
         }
     }  else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

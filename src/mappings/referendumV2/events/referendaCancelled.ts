@@ -1,16 +1,12 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getCancelledData } from './getters'
 import {createTally} from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { Block, ProcessorContext, Event } from '../../../processor'
 
-export async function handleCancelled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.Cancelled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, tally } = getCancelledData(ctx, item.event)
+export async function handleCancelled(ctx: ProcessorContext<Store>, item: Event, header: Block) {
+    const { index, tally } = getCancelledData(item)
 
     const tallyData = createTally(tally)
 

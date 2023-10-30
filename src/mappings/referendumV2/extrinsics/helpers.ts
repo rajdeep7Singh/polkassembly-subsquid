@@ -1,19 +1,20 @@
-import { SubstrateBlock } from '@subsquid/substrate-processor'
+// import { any } from '@subsquid/substrate-processor'
 import { IsNull } from 'typeorm'
-import { BatchContext } from '@subsquid/substrate-processor'
+// import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { ConvictionVote, Proposal, ProposalType, StandardVoteBalance, VoteType, VotingDelegation } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
+// import { CallHandlerContext } from '../../types/contexts'
 import { getConvictionVotesCount } from '../../utils/votes'
 import { randomUUID } from 'crypto'
+import { ProcessorContext } from '../../../processor'
 
 export function convictionToLockPeriod(convictionKind: string): number {
     return convictionKind === 'None' ? 0 : Number(convictionKind[convictionKind.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, toWallet: string, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
+export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>, toWallet: string, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
     //get top toWallet vote
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
     if (votes.length > 1) {
@@ -54,7 +55,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
 }
 
 
-export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>, voter: string | undefined, track: number): Promise<any> {
+export async function getAllNestedDelegations(ctx: ProcessorContext<Store>, voter: string | undefined, track: number): Promise<any> {
     let delegations = await ctx.store.find(VotingDelegation, { where: { to: voter, endedAtBlock: IsNull(), track} })
     if (delegations && delegations.length > 0) {
         let nestedDelegations = []
@@ -69,7 +70,7 @@ export async function getAllNestedDelegations(ctx: BatchContext<Store, unknown>,
     }
 }
 
-export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Store, unknown>, wallet: string | undefined, block: number, blockTime: number, track: number, txnHash?: string): Promise<void> {
+export async function removeDelegatedVotesOngoingReferenda(ctx: ProcessorContext<Store>, wallet: string | undefined, block: number, blockTime: number, track: number, txnHash?: string): Promise<void> {
     //get any ongoing referenda in this track
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     let nestedDelegations = await getAllNestedDelegations(ctx, wallet, track)
@@ -82,7 +83,7 @@ export async function removeDelegatedVotesOngoingReferenda(ctx: BatchContext<Sto
     }
 }
 
-export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, index: number, nestedDelegations: VotingDelegation[], txnHash?: string): Promise<void> {
+export async function removeDelegatedVotesReferendum(ctx: ProcessorContext<Store>, block: number, blockTime: number, index: number, nestedDelegations: VotingDelegation[], txnHash?: string): Promise<void> {
     for (let i = 0; i < nestedDelegations.length; i++) {
         const delegation = nestedDelegations[i]
         const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.from, delegatedTo: delegation.to, proposalIndex: index, removedAtBlock: IsNull(), isDelegated: true } })
@@ -101,7 +102,7 @@ export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, un
     }
 }
 
-export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, isDelegated: boolean = false, delegatedTo?: string, txnHash?: string): Promise<void> {
+export async function removeVote(ctx: ProcessorContext<Store>, wallet: string | undefined, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, isDelegated: boolean = false, delegatedTo?: string, txnHash?: string): Promise<void> {
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), isDelegated, delegatedTo, type: VoteType.ReferendumV2 } })
     if (votes.length > 1) {
         ctx.log.warn(TooManyOpenVotes(block, proposalIndex, wallet))
@@ -121,7 +122,7 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
     await ctx.store.save(vote)
 }
 
-export async function addOngoingReferendaDelegatedVotes(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, header: SubstrateBlock, track: number, txnHash?: string): Promise<void> {
+export async function addOngoingReferendaDelegatedVotes(ctx: ProcessorContext<Store>, toWallet: string | undefined, header: any, track: number, txnHash?: string): Promise<void> {
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAt: IsNull(), trackNumber: track, type: ProposalType.ReferendumV2 } })
     const nestedDelegations = await getAllNestedDelegations(ctx, toWallet, track)
     for (let i = 0; i < ongoingReferenda.length; i++) {
@@ -130,7 +131,7 @@ export async function addOngoingReferendaDelegatedVotes(ctx: BatchContext<Store,
     }
 }
 
-export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, toWallet: string | undefined, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
+export async function addDelegatedVotesReferendum(ctx: ProcessorContext<Store>, toWallet: string | undefined, block: number, blockTime: number, referendum: any, nestedDelegations: VotingDelegation[], track: number, txnHash?: string): Promise<void> {
     //get top toWallet vote
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull() } })
     if (votes.length > 1) {

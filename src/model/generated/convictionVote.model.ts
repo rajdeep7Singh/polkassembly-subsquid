@@ -56,6 +56,9 @@ export class ConvictionVote {
     @Column_("text", {nullable: true})
     delegatedTo!: string | undefined | null
 
+    @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
     @Column_("bool", {nullable: true})
     isDelegated!: boolean | undefined | null
 

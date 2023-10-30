@@ -1,57 +1,162 @@
-import type {Result, Option} from './support'
+import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type VoteThreshold = VoteThreshold_SuperMajorityApprove | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SimpleMajority
+export type ReferendumIndex = number
 
-export interface VoteThreshold_SuperMajorityApprove {
-    __kind: 'SuperMajorityApprove'
+export type ReferendumInfo = ReferendumInfo_Finished | ReferendumInfo_Ongoing
+
+export interface ReferendumInfo_Finished {
+    __kind: 'Finished'
+    value: ReferendumInfoFinished
+}
+
+export interface ReferendumInfo_Ongoing {
+    __kind: 'Ongoing'
+    value: ReferendumStatus
+}
+
+export interface ReferendumStatus {
+    end: BlockNumber
+    proposalHash: Hash
+    threshold: VoteThreshold
+    delay: BlockNumber
+    tally: Tally
+}
+
+export interface Tally {
+    ayes: Balance
+    nays: Balance
+    turnout: Balance
+}
+
+export type VoteThreshold = VoteThreshold_SimpleMajority | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SuperMajorityApprove
+
+export interface VoteThreshold_SimpleMajority {
+    __kind: 'SimpleMajority'
 }
 
 export interface VoteThreshold_SuperMajorityAgainst {
     __kind: 'SuperMajorityAgainst'
 }
 
-export interface VoteThreshold_SimpleMajority {
-    __kind: 'SimpleMajority'
+export interface VoteThreshold_SuperMajorityApprove {
+    __kind: 'SuperMajorityApprove'
 }
 
-export type ExitReason = ExitReason_Succeed | ExitReason_Error | ExitReason_Revert | ExitReason_Fatal
+export type BlockNumber = number
 
-export interface ExitReason_Succeed {
-    __kind: 'Succeed'
-    value: ExitSucceed
+export interface ReferendumInfoFinished {
+    approved: boolean
+    end: BlockNumber
 }
 
-export interface ExitReason_Error {
-    __kind: 'Error'
-    value: ExitError
+export const ReferendumInfo: sts.Type<ReferendumInfo> = sts.closedEnum(() => {
+    return  {
+        Finished: ReferendumInfoFinished,
+        Ongoing: ReferendumStatus,
+    }
+})
+
+export const ReferendumStatus: sts.Type<ReferendumStatus> = sts.struct(() => {
+    return  {
+        end: BlockNumber,
+        proposalHash: Hash,
+        threshold: VoteThreshold,
+        delay: BlockNumber,
+        tally: Tally,
+    }
+})
+
+export const Tally: sts.Type<Tally> = sts.struct(() => {
+    return  {
+        ayes: Balance,
+        nays: Balance,
+        turnout: Balance,
+    }
+})
+
+export const ReferendumInfoFinished: sts.Type<ReferendumInfoFinished> = sts.struct(() => {
+    return  {
+        approved: sts.boolean(),
+        end: BlockNumber,
+    }
+})
+
+export type PreimageStatus = PreimageStatus_Available | PreimageStatus_Missing
+
+export interface PreimageStatus_Available {
+    __kind: 'Available'
+    value: PreimageStatusAvailable
 }
 
-export interface ExitReason_Revert {
-    __kind: 'Revert'
-    value: ExitRevert
+export interface PreimageStatus_Missing {
+    __kind: 'Missing'
+    value: BlockNumber
 }
 
-export interface ExitReason_Fatal {
-    __kind: 'Fatal'
-    value: ExitFatal
+export interface PreimageStatusAvailable {
+    data: Bytes
+    provider: AccountId
+    deposit: Balance
+    since: BlockNumber
+    expiry?: (BlockNumber | undefined)
 }
 
-export type DispatchResult = DispatchResult_Ok | DispatchResult_Err
+export const PreimageStatus: sts.Type<PreimageStatus> = sts.closedEnum(() => {
+    return  {
+        Available: PreimageStatusAvailable,
+        Missing: BlockNumber,
+    }
+})
 
-export interface DispatchResult_Ok {
-    __kind: 'Ok'
+export const PreimageStatusAvailable: sts.Type<PreimageStatusAvailable> = sts.struct(() => {
+    return  {
+        data: sts.bytes(),
+        provider: AccountId,
+        deposit: Balance,
+        since: BlockNumber,
+        expiry: sts.option(() => BlockNumber),
+    }
+})
+
+export type Hash = Bytes
+
+export type PropIndex = number
+
+export type AccountId = Bytes
+
+export interface AccountData {
+    free: Balance
+    reserved: Balance
+    miscFrozen: Balance
+    feeFrozen: Balance
 }
 
-export interface DispatchResult_Err {
-    __kind: 'Err'
-    value: DispatchError
-}
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return  {
+        free: Balance,
+        reserved: Balance,
+        miscFrozen: Balance,
+        feeFrozen: Balance,
+    }
+})
 
-export type Conviction = Conviction_None | Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x
+export type Balance = bigint
 
-export interface Conviction_None {
-    __kind: 'None'
-}
+export const BalanceOf = sts.bigint()
+
+export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
+    return  {
+        Locked1x: sts.unit(),
+        Locked2x: sts.unit(),
+        Locked3x: sts.unit(),
+        Locked4x: sts.unit(),
+        Locked5x: sts.unit(),
+        Locked6x: sts.unit(),
+        None: sts.unit(),
+    }
+})
+
+export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
 
 export interface Conviction_Locked1x {
     __kind: 'Locked1x'
@@ -77,17 +182,108 @@ export interface Conviction_Locked6x {
     __kind: 'Locked6x'
 }
 
-export type AccountVote = AccountVote_Standard | AccountVote_Split
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
+    return  {
+        Split: AccountVoteSplit,
+        Standard: AccountVoteStandard,
+    }
+})
+
+export const AccountVoteStandard: sts.Type<AccountVoteStandard> = sts.struct(() => {
+    return  {
+        vote: Vote,
+        balance: Balance,
+    }
+})
+
+export const Vote = sts.number()
+
+export interface AccountVoteStandard {
+    vote: Vote
+    balance: Balance
+}
+
+export type Vote = number
+
+export const AccountVoteSplit: sts.Type<AccountVoteSplit> = sts.struct(() => {
+    return  {
+        aye: Balance,
+        nay: Balance,
+    }
+})
+
+export interface AccountVoteSplit {
+    aye: Balance
+    nay: Balance
+}
+
+export type AccountVote = AccountVote_Split | AccountVote_Standard
+
+export interface AccountVote_Split {
+    __kind: 'Split'
+    value: AccountVoteSplit
+}
 
 export interface AccountVote_Standard {
     __kind: 'Standard'
     value: AccountVoteStandard
 }
 
-export interface AccountVote_Split {
-    __kind: 'Split'
-    value: AccountVoteSplit
+export const EthTransaction: sts.Type<EthTransaction> = sts.struct(() => {
+    return  {
+        nonce: sts.bigint(),
+        gasPrice: sts.bigint(),
+        gasLimit: sts.bigint(),
+        action: EthTransactionAction,
+        value: sts.bigint(),
+        input: sts.bytes(),
+        signature: EthTransactionSignature,
+    }
+})
+
+export const EthTransactionSignature: sts.Type<EthTransactionSignature> = sts.struct(() => {
+    return  {
+        v: sts.bigint(),
+        r: H256,
+        s: H256,
+    }
+})
+
+export const H256 = sts.bytes()
+
+export interface EthTransactionSignature {
+    v: bigint
+    r: H256
+    s: H256
 }
+
+export type H256 = Bytes
+
+export const EthTransactionAction: sts.Type<EthTransactionAction> = sts.closedEnum(() => {
+    return  {
+        Call: H160,
+        Create: sts.unit(),
+    }
+})
+
+export const H160 = sts.bytes()
+
+export type EthTransactionAction = EthTransactionAction_Call | EthTransactionAction_Create
+
+export interface EthTransactionAction_Call {
+    __kind: 'Call'
+    value: H160
+}
+
+export interface EthTransactionAction_Create {
+    __kind: 'Create'
+}
+
+export type H160 = Bytes
 
 export interface EthTransaction {
     nonce: bigint
@@ -95,270 +291,57 @@ export interface EthTransaction {
     gasLimit: bigint
     action: EthTransactionAction
     value: bigint
-    input: Uint8Array
+    input: Bytes
     signature: EthTransactionSignature
 }
 
-export interface AccountData {
-    free: bigint
-    reserved: bigint
-    miscFrozen: bigint
-    feeFrozen: bigint
-}
+export const Hash = sts.bytes()
 
-export type PreimageStatus = PreimageStatus_Missing | PreimageStatus_Available
+export const VoteThreshold: sts.Type<VoteThreshold> = sts.closedEnum(() => {
+    return  {
+        SimpleMajority: sts.unit(),
+        SuperMajorityAgainst: sts.unit(),
+        SuperMajorityApprove: sts.unit(),
+    }
+})
 
-export interface PreimageStatus_Missing {
-    __kind: 'Missing'
-    value: number
-}
+export const ReferendumIndex = sts.number()
 
-export interface PreimageStatus_Available {
-    __kind: 'Available'
-    value: PreimageStatusAvailable
-}
+export const AccountId = sts.bytes()
 
-export type ReferendumInfo = ReferendumInfo_Ongoing | ReferendumInfo_Finished
+export const Balance = sts.bigint()
 
-export interface ReferendumInfo_Ongoing {
-    __kind: 'Ongoing'
-    value: ReferendumStatus
-}
+export const PropIndex = sts.number()
 
-export interface ReferendumInfo_Finished {
-    __kind: 'Finished'
-    value: ReferendumInfoFinished
-}
+export const DispatchResult = sts.result(() => sts.unit(), () => DispatchError)
 
-export interface EthTransactionStatus {
-    transactionHash: Uint8Array
-    transactionIndex: number
-    from: Uint8Array
-    to: (Uint8Array | undefined)
-    contractAddress: (Uint8Array | undefined)
-    logs: EthLog[]
-    logsBloom: Uint8Array
-}
+export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
+    return  {
+        Arithmetic: ArithmeticError,
+        BadOrigin: sts.unit(),
+        CannotLookup: sts.unit(),
+        ConsumerRemaining: sts.unit(),
+        Module: DispatchErrorModule,
+        NoProviders: sts.unit(),
+        Other: sts.unit(),
+        Token: TokenError,
+    }
+})
 
-export interface AccountInfo {
-    nonce: number
-    consumers: number
-    providers: number
-    sufficients: number
-    data: AccountData
-}
+export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
+    return  {
+        BelowMinimum: sts.unit(),
+        CannotCreate: sts.unit(),
+        Frozen: sts.unit(),
+        NoFunds: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+        UnknownAsset: sts.unit(),
+        WouldDie: sts.unit(),
+    }
+})
 
-export type ExitSucceed = ExitSucceed_Stopped | ExitSucceed_Returned | ExitSucceed_Suicided
-
-export interface ExitSucceed_Stopped {
-    __kind: 'Stopped'
-}
-
-export interface ExitSucceed_Returned {
-    __kind: 'Returned'
-}
-
-export interface ExitSucceed_Suicided {
-    __kind: 'Suicided'
-}
-
-export type ExitError = ExitError_StackUnderflow | ExitError_StackOverflow | ExitError_InvalidJump | ExitError_InvalidRange | ExitError_DesignatedInvalid | ExitError_CallTooDeep | ExitError_CreateCollision | ExitError_CreateContractLimit | ExitError_OutOfOffset | ExitError_OutOfGas | ExitError_OutOfFund | ExitError_PCUnderflow | ExitError_CreateEmpty | ExitError_Other
-
-export interface ExitError_StackUnderflow {
-    __kind: 'StackUnderflow'
-}
-
-export interface ExitError_StackOverflow {
-    __kind: 'StackOverflow'
-}
-
-export interface ExitError_InvalidJump {
-    __kind: 'InvalidJump'
-}
-
-export interface ExitError_InvalidRange {
-    __kind: 'InvalidRange'
-}
-
-export interface ExitError_DesignatedInvalid {
-    __kind: 'DesignatedInvalid'
-}
-
-export interface ExitError_CallTooDeep {
-    __kind: 'CallTooDeep'
-}
-
-export interface ExitError_CreateCollision {
-    __kind: 'CreateCollision'
-}
-
-export interface ExitError_CreateContractLimit {
-    __kind: 'CreateContractLimit'
-}
-
-export interface ExitError_OutOfOffset {
-    __kind: 'OutOfOffset'
-}
-
-export interface ExitError_OutOfGas {
-    __kind: 'OutOfGas'
-}
-
-export interface ExitError_OutOfFund {
-    __kind: 'OutOfFund'
-}
-
-export interface ExitError_PCUnderflow {
-    __kind: 'PCUnderflow'
-}
-
-export interface ExitError_CreateEmpty {
-    __kind: 'CreateEmpty'
-}
-
-export interface ExitError_Other {
-    __kind: 'Other'
-    value: string
-}
-
-export type ExitRevert = ExitRevert_Reverted
-
-export interface ExitRevert_Reverted {
-    __kind: 'Reverted'
-}
-
-export type ExitFatal = ExitFatal_NotSupported | ExitFatal_UnhandledInterrupt | ExitFatal_CallErrorAsFatal | ExitFatal_Other
-
-export interface ExitFatal_NotSupported {
-    __kind: 'NotSupported'
-}
-
-export interface ExitFatal_UnhandledInterrupt {
-    __kind: 'UnhandledInterrupt'
-}
-
-export interface ExitFatal_CallErrorAsFatal {
-    __kind: 'CallErrorAsFatal'
-    value: ExitError
-}
-
-export interface ExitFatal_Other {
-    __kind: 'Other'
-    value: string
-}
-
-export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_Token | DispatchError_Arithmetic
-
-export interface DispatchError_Other {
-    __kind: 'Other'
-}
-
-export interface DispatchError_CannotLookup {
-    __kind: 'CannotLookup'
-}
-
-export interface DispatchError_BadOrigin {
-    __kind: 'BadOrigin'
-}
-
-export interface DispatchError_Module {
-    __kind: 'Module'
-    value: DispatchErrorModule
-}
-
-export interface DispatchError_ConsumerRemaining {
-    __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_NoProviders {
-    __kind: 'NoProviders'
-}
-
-export interface DispatchError_Token {
-    __kind: 'Token'
-    value: TokenError
-}
-
-export interface DispatchError_Arithmetic {
-    __kind: 'Arithmetic'
-    value: ArithmeticError
-}
-
-export interface AccountVoteStandard {
-    vote: number
-    balance: bigint
-}
-
-export interface AccountVoteSplit {
-    aye: bigint
-    nay: bigint
-}
-
-export type EthTransactionAction = EthTransactionAction_Call | EthTransactionAction_Create
-
-export interface EthTransactionAction_Call {
-    __kind: 'Call'
-    value: Uint8Array
-}
-
-export interface EthTransactionAction_Create {
-    __kind: 'Create'
-}
-
-export interface EthTransactionSignature {
-    v: bigint
-    r: Uint8Array
-    s: Uint8Array
-}
-
-export interface PreimageStatusAvailable {
-    data: Uint8Array
-    provider: Uint8Array
-    deposit: bigint
-    since: number
-    expiry: (number | undefined)
-}
-
-export interface ReferendumStatus {
-    end: number
-    proposalHash: Uint8Array
-    threshold: VoteThreshold
-    delay: number
-    tally: Tally
-}
-
-export interface ReferendumInfoFinished {
-    approved: boolean
-    end: number
-}
-
-export interface EthLog {
-    address: Uint8Array
-    topics: Uint8Array[]
-    data: Uint8Array
-    blockHash: (Uint8Array | undefined)
-    blockNumber: (bigint | undefined)
-    transactionHash: (Uint8Array | undefined)
-    transactionIndex: (bigint | undefined)
-    logIndex: (bigint | undefined)
-    transactionLogIndex: (bigint | undefined)
-    removed: boolean
-}
-
-export interface DispatchErrorModule {
-    index: number
-    error: number
-}
-
-export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Underflow | TokenError_Overflow
-
-export interface TokenError_NoFunds {
-    __kind: 'NoFunds'
-}
-
-export interface TokenError_WouldDie {
-    __kind: 'WouldDie'
-}
+export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_Frozen | TokenError_NoFunds | TokenError_Overflow | TokenError_Underflow | TokenError_UnknownAsset | TokenError_WouldDie
 
 export interface TokenError_BelowMinimum {
     __kind: 'BelowMinimum'
@@ -368,38 +351,101 @@ export interface TokenError_CannotCreate {
     __kind: 'CannotCreate'
 }
 
-export interface TokenError_UnknownAsset {
-    __kind: 'UnknownAsset'
-}
-
 export interface TokenError_Frozen {
     __kind: 'Frozen'
 }
 
-export interface TokenError_Underflow {
-    __kind: 'Underflow'
+export interface TokenError_NoFunds {
+    __kind: 'NoFunds'
 }
 
 export interface TokenError_Overflow {
     __kind: 'Overflow'
 }
 
-export type ArithmeticError = ArithmeticError_Underflow | ArithmeticError_Overflow | ArithmeticError_DivisionByZero
-
-export interface ArithmeticError_Underflow {
+export interface TokenError_Underflow {
     __kind: 'Underflow'
+}
+
+export interface TokenError_UnknownAsset {
+    __kind: 'UnknownAsset'
+}
+
+export interface TokenError_WouldDie {
+    __kind: 'WouldDie'
+}
+
+export const DispatchErrorModule: sts.Type<DispatchErrorModule> = sts.struct(() => {
+    return  {
+        index: sts.number(),
+        error: sts.number(),
+    }
+})
+
+export interface DispatchErrorModule {
+    index: number
+    error: number
+}
+
+export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
+    return  {
+        DivisionByZero: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+    }
+})
+
+export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
+
+export interface ArithmeticError_DivisionByZero {
+    __kind: 'DivisionByZero'
 }
 
 export interface ArithmeticError_Overflow {
     __kind: 'Overflow'
 }
 
-export interface ArithmeticError_DivisionByZero {
-    __kind: 'DivisionByZero'
+export interface ArithmeticError_Underflow {
+    __kind: 'Underflow'
 }
 
-export interface Tally {
-    ayes: bigint
-    nays: bigint
-    turnout: bigint
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token
+
+export interface DispatchError_Arithmetic {
+    __kind: 'Arithmetic'
+    value: ArithmeticError
 }
+
+export interface DispatchError_BadOrigin {
+    __kind: 'BadOrigin'
+}
+
+export interface DispatchError_CannotLookup {
+    __kind: 'CannotLookup'
+}
+
+export interface DispatchError_ConsumerRemaining {
+    __kind: 'ConsumerRemaining'
+}
+
+export interface DispatchError_Module {
+    __kind: 'Module'
+    value: DispatchErrorModule
+}
+
+export interface DispatchError_NoProviders {
+    __kind: 'NoProviders'
+}
+
+export interface DispatchError_Other {
+    __kind: 'Other'
+}
+
+export interface DispatchError_Token {
+    __kind: 'Token'
+    value: TokenError
+}
+
+export const TaskAddress = sts.tuple(() => [BlockNumber, sts.number()])
+
+export const BlockNumber = sts.number()

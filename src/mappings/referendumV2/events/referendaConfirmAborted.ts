@@ -1,15 +1,13 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
+import { ProcessorContext, Block, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getConfirmAbortedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleConfirmAborted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.ConfirmAborted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getConfirmAbortedData(ctx, item.event)
+export async function handleConfirmAborted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { index } = getConfirmAbortedData(item)
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         status: ProposalStatus.ConfirmAborted,

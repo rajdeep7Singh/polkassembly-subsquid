@@ -1,6 +1,6 @@
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
-import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
+import { toHex } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import { REDIS_CF_URL } from '../../consts/consts'
@@ -44,6 +44,7 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import config from '../../config'
+import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -53,8 +54,8 @@ type ProposalUpdateData = Partial<
 >
 
 export async function updatePreimageStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     options: {
         status: ProposalStatus
@@ -78,8 +79,8 @@ export async function updatePreimageStatus(
 }
 
 export async function updatePreimageStatusV2(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     options: {
         status: ProposalStatus
@@ -103,8 +104,8 @@ export async function updatePreimageStatusV2(
 }
 
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     index: number,
     type: IndexProposal,
     options: {
@@ -114,8 +115,8 @@ export async function updateProposalStatus(
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     type: HashProposal,
     options: {
@@ -125,8 +126,8 @@ export async function updateProposalStatus(
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hashOrIndex: string | number,
     type: ProposalType,
     options: {
@@ -178,7 +179,7 @@ export async function updateProposalStatus(
     await ctx.store.insert(
         new StatusHistory({
             id: randomUUID(),
-            block: proposal.updatedAtBlock,
+            block: proposal.updatedAtBlock || undefined,
             timestamp: proposal.updatedAt,
             status: proposal.status,
             proposal,
@@ -188,7 +189,7 @@ export async function updateProposalStatus(
 }
 
 async function getOrCreateProposalGroup(
-    ctx: BatchContext<Store, unknown>,
+    ctx: ProcessorContext<Store>,
     index: number,
     type: ProposalType,
     parentId: number,
@@ -336,8 +337,8 @@ async function getPreimageId(store: Store) {
 // }
 
 export async function createDemocracyProposal(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     data: DemocracyProposalData
 ): Promise<Proposal> {
     const { index, hash, proposer, deposit, status } = data
@@ -385,7 +386,7 @@ export async function createDemocracyProposal(
     return proposal
 }
 
-export async function createReferendum( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ReferendumData): Promise<Proposal> {
+export async function createReferendum( ctx: ProcessorContext<Store>, header: any, data: ReferendumData): Promise<Proposal> {
     const { index, threshold, hash, status, end, delay } = data
 
     const type = ProposalType.Referendum
@@ -489,8 +490,8 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
 }
 
 export async function createCoucilMotion(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     data: CouncilMotionData,
     type: ProposalType.CouncilMotion | ProposalType.TechCommitteeProposal = ProposalType.CouncilMotion
 ): Promise<Proposal> {
@@ -625,14 +626,14 @@ export async function createCoucilMotion(
 }
 
 export async function createTechCommitteeMotion(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     data: TechCommitteeMotionData
 ): Promise<Proposal> {
     return await createCoucilMotion(ctx, header, data, ProposalType.TechCommitteeProposal)
 }
 
-export async function createTip( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TipData): Promise<Proposal> {
+export async function createTip( ctx: ProcessorContext<Store>, header: any, data: TipData): Promise<Proposal> {
     const { status, hash, proposer, payee, deposit, reason } = data
 
     const type = ProposalType.Tip
@@ -668,7 +669,7 @@ export async function createTip( ctx: BatchContext<Store, unknown>, header: Subs
     return proposal
 }
 
-export async function createBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: BountyData): Promise<Proposal> {
+export async function createBounty( ctx: ProcessorContext<Store>, header: any, data: BountyData): Promise<Proposal> {
     const { status, index, proposer, deposit, reward, curatorDeposit, description, fee } = data
 
     const type = ProposalType.Bounty
@@ -708,7 +709,7 @@ export async function createBounty( ctx: BatchContext<Store, unknown>, header: S
     return proposal
 }
 
-export async function createChildBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ChildBountyData): Promise<Proposal> {
+export async function createChildBounty( ctx: ProcessorContext<Store>, header: any, data: ChildBountyData): Promise<Proposal> {
     const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description } = data
 
     const type = ProposalType.ChildBounty
@@ -747,7 +748,7 @@ export async function createChildBounty( ctx: BatchContext<Store, unknown>, head
     return proposal
 }
 
-export async function createTreasury( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TreasuryData): Promise<Proposal> {
+export async function createTreasury( ctx: ProcessorContext<Store>, header: any, data: TreasuryData): Promise<Proposal> {
     const { status, index, proposer, deposit, reward, payee } = data
 
     const type = ProposalType.TreasuryProposal
@@ -812,7 +813,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
     return proposal
 }
 
-export async function createPreimage( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+export async function createPreimage( ctx: ProcessorContext<Store>, header: any, data: PreimageData): Promise<Preimage> {
     const { status, hash, proposer, call, section, method } = data
 
     // const type = ProposalType.Preimage
@@ -846,14 +847,10 @@ export async function createPreimage( ctx: BatchContext<Store, unknown>, header:
     return preimage
 }
 
-export async function createPreimageV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
-    const { status, hash, proposer, call, section, method, deposit, length } = data
-
-    // const type = ProposalType.Preimage
+export async function createPreimageV2( ctx: ProcessorContext<Store>, header: any, data: PreimageData): Promise<Preimage> {
+    const { status, hash, proposer, call, section, method, deposit, length, extrinsicIndex } = data
 
     const id = await getPreimageId(ctx.store)
-
-    // const group = await getOrCreateProposalGroup(ctx, hash, ProposalType.Preimage)
 
     const preimage = new Preimage({
         id,
@@ -865,17 +862,17 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
         length,
         section: section,
         method: method,
+        extrinsicIndex,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
     })
 
     await ctx.store.insert(preimage)
-
     return preimage
 }
 
-export async function createReferendumV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ReferendumDataV2, type: ProposalType): Promise<Proposal> {
+export async function createReferendumV2( ctx: ProcessorContext<Store>, header: any, data: ReferendumDataV2, type: ProposalType): Promise<Proposal> {
 
     const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
 
@@ -955,38 +952,39 @@ export function createSubmissionDeposit(data: SubmissionDepositData): Submission
     return new SubmissionDeposit(toJSON(data))
 }
 
-export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
+export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+    return;
 
-    try{
-        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
-            const redisData = {
-                network: config.chain.name,
-                govType: 'OpenGov',
-                postId: index,
-                track: trackNumber,
-                proposalType: type,
-            }
-            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+    // try{
+    //     if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+    //         const redisData = {
+    //             network: config.chain.name,
+    //             govType: 'OpenGov',
+    //             postId: index,
+    //             track: trackNumber,
+    //             proposalType: type,
+    //         }
+    //         ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
 
-            const response = await fetch(REDIS_CF_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(redisData),
-            })
+    //         const response = await fetch(REDIS_CF_URL, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(redisData),
+    //         })
 
-            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+    //         ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-            if (response.status !== 200) {
-                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
-                return
-            }
-        }
-    }
-    catch(e){
-        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
-        return
-    }
+    //         if (response.status !== 200) {
+    //             ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+    //             return
+    //         }
+    //     }
+    // }
+    // catch(e){
+    //     ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
+    //     return
+    // }
 }

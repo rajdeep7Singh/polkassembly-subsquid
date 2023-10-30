@@ -1,14 +1,14 @@
 import {lookupArchive} from "@subsquid/archive-registry"
-import { ProcessorConfig } from './common/processorConfig'
-import { Store } from '@subsquid/typeorm-store'
+// import { ProcessorConfig } from './common/processorConfig'
+// import { Store } from '@subsquid/typeorm-store'
 
-const config: ProcessorConfig<Store> = {
+const config: any = {
     chain: {
         name: 'moonbase',
         prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive("moonbase", {release: "FireSquid"}),
+        archive: lookupArchive('moonbase', {type: 'Substrate', release: 'ArrowSquid' }),
         chain: 'wss://wss.api.moonbase.moonbeam.network',
     },
     typesBundle: 'moonbase',

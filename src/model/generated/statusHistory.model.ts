@@ -21,6 +21,9 @@ export class StatusHistory {
     @Column_("int4", {nullable: false})
     block!: number
 
+    @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
     @Column_("timestamp with time zone", {nullable: false})
     timestamp!: Date
 }

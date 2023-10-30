@@ -144,6 +144,9 @@ export class Proposal {
     createdAt!: Date
 
     @Column_("int4", {nullable: true})
+    extrinsicIndex!: number | undefined | null
+
+    @Column_("int4", {nullable: true})
     endedAtBlock!: number | undefined | null
 
     @Column_("timestamp with time zone", {nullable: true})

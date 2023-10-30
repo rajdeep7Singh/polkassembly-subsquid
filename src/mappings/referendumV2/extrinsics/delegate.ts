@@ -1,21 +1,22 @@
 import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { getDelegateData } from './getters'
-import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
+import { toHex } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+// import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addOngoingReferendaDelegatedVotes, removeDelegatedVotesOngoingReferenda, removeVote } from './helpers'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType } from '../../../model'
 import { randomUUID } from 'crypto'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const { to, lockPeriod, balance, track } = getDelegateData(ctx, item.call)
+export async function handleDelegate(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const { to, lockPeriod, balance, track } = getDelegateData(ctx, item)
     const toWallet = toHex(to)
-    const from = getOriginAccountId(item.call.origin)
+    const from = getOriginAccountId(item.origin)
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track } })
 
     if (delegations.length > 1) {
@@ -94,8 +95,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     await addOngoingReferendaDelegatedVotes(ctx, from, header, track)
 }
 
-export async function handlePrecompileDelegate(ctx: BatchContext<Store, unknown>, itemCall: any, header: SubstrateBlock, data: any, originAccountId: any, txnHash: string): Promise<void> {
-    
+export async function handlePrecompileDelegate(ctx: ProcessorContext<Store>, item: Call, header: any, data: any, originAccountId: any, txnHash: string): Promise<void> {
     const [track, toWallet, lockPeriod, balance] = data
 
     const from = originAccountId
