@@ -13,15 +13,14 @@ interface ReferendumInfo {
     enactmentAt?: number
     enactmentAfter?: number
     submittedAt: number
-    submissionDeposit: {who: Uint8Array, amount: bigint}
-    decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
+    submissionDeposit: {who: string, amount: bigint}
+    decisionDeposit: {who: string, amount: bigint} | undefined
     deciding: {since: number, confirming: number | undefined} | undefined
     tally: {ayes: bigint, nays: bigint, support: bigint}
 }
 
 
 export async function getStorageData(index: number, block: any): Promise<ReferendumInfo | undefined> {
-    // block._runtime.getStorage(block.hash, this.name, ...key)
     const storageData = await block._runtime.getStorage(block.hash, 'Referenda.ReferendumInfoFor', index)
 
     if (!storageData) return undefined
@@ -62,12 +61,13 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
     }
 
     // const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await createReferendumV2(ctx, header, {
         index,
         status: ProposalStatus.Submitted,
         hash: hash,
-        proposer: toHex(storageData.submissionDeposit.who),
+        proposer: storageData.submissionDeposit.who,
         submissionDeposit: storageData.submissionDeposit,
         decisionDeposit: storageData.decisionDeposit,
         deciding: storageData.deciding,
@@ -76,6 +76,7 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
         origin: storageData.origin,
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
-        enactmentAfter: storageData.enactmentAfter 
+        enactmentAfter: storageData.enactmentAfter,
+        extrinsicIndex
     }, ProposalType.ReferendumV2)
 }

@@ -10,19 +10,79 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://wss.api.moonbase.moonbeam.network',
         archive: lookupArchive('moonbase',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
-    .setBlockRange({ from: 3353432 })
+    .setBlockRange({ from: 0 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
-        name: [ 'Ethereum.transact', 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote' ]
+        name: [ 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
+        'Democracy.remove_vote', 'Democracy.remove_other_vote', 'Democracy.delegate', 'Democracy.undelegate',
+    ]
     })
     .addEvent({
-        name: [ 'Referenda.Submitted', 'Referenda.Rejected', 'Preimage.Noted', 'Preimage.Cleared', 'Referenda.DecisionDepositPlaced', 'Referenda.Approved','Referenda.Confirmed', 'Referenda.ConfirmStarted', 'Referenda.ConfirmAborted'],
+        name: [ 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
+        'Referenda.ConfirmAborted', 'Referenda.Killed', 'Referenda.Confirmed', 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Referenda.ConfirmStarted', 
+        'Referenda.ConfirmAborted', 'Democracy.Proposed', 'Democracy.Tabled', 'Democracy.Started', 'Democracy.Passed', 'Democracy.NotPassed', 'Democracy.Cancelled', 'Democracy.Executed', 
+        'Democracy.PreimageNoted', 'Democracy.PreimageUsed', 'Democracy.PreimageInvalid', 'Democracy.PreimageMissing', 'Democracy.PreimageReaped', 'DemocracySeconded', 'Treasury.Proposed', 
+        'Treasury.Awarded', 'Treasury.Rejected', 'Treasury.SpendApproved', 'Scheduler.Dispatched'
+    ],
         call: true,
         extrinsic: true
     })
+    .addEthereumTransaction({to: ['0x0000000000000000000000000000000000000803', '0x0000000000000000000000000000000000000812']})
+
     processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let block of ctx.blocks) {
             for (let event of block.events) {
+                if (event.name == 'Democracy.Proposed'){
+                    await modules.democracy.events.handleProposed(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Tabled'){
+                    await modules.democracy.events.handleTabled(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Started'){
+                    await modules.democracy.events.handleStarted(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Passed'){
+                    await modules.democracy.events.handlePassed(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.NotPassed'){
+                    await modules.democracy.events.handleNotPassed(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Cancelled'){
+                    await modules.democracy.events.handleCancelled(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Executed'){
+                    await modules.democracy.events.handleExecuted(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.Seconded'){
+                    await modules.democracy.events.handleDemocracySeconds(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.PreimageNoted'){
+                    await modules.democracy.events.handlePreimageNoted(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.PreimageUsed'){
+                    await modules.democracy.events.handlePreimageUsed(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.PreimageInvalid'){
+                    await modules.democracy.events.handlePreimageInvalid(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.PreimageMissing'){
+                    await modules.democracy.events.handlePreimageMissing(ctx, event, block.header)
+                }
+                if (event.name == 'Democracy.PreimageReaped'){
+                    await modules.democracy.events.handlePreimageReaped(ctx, event, block.header)
+                }
+                if (event.name == 'Treasury.Proposed'){
+                    await modules.treasury.events.handleProposed(ctx, event, block.header)
+                }
+                if (event.name == 'Treasury.Awarded'){
+                    await modules.treasury.events.handleAwarded(ctx, event, block.header)
+                }
+                if (event.name == 'Treasury.Rejected'){
+                    await modules.treasury.events.handleRejected(ctx, event, block.header)
+                }
+                if (event.name == 'Treasury.SpendApproved'){
+                    await modules.treasury.events.handleSpendApproved(ctx, event, block.header)
+                }
                 if (event.name == events.referenda.submitted.name){
                     await modules.referendumV2.events.handleSubmitted(ctx, event, block.header)
                 }
@@ -84,6 +144,21 @@ const processor = new SubstrateBatchProcessor()
                 }
                 if (call.name == calls.convictionVoting.removeVote.name){
                     await modules.referendumV2.extrinsics.handleRemoveVote(ctx, call, block.header)
+                }
+                if (call.name == calls.democracy.vote.name){
+                    await modules.democracy.extrinsics.handleDemocracyVote(ctx, call, block.header)
+                }
+                if (call.name == calls.democracy.removeVote.name){
+                    await modules.democracy.extrinsics.handleRemoveVote(ctx, call, block.header)
+                }
+                if (call.name == calls.democracy.removeOtherVote.name){
+                    await modules.democracy.extrinsics.handleRemoveOtherVote(ctx, call, block.header)
+                }
+                if (call.name == calls.democracy.delegate.name){
+                    await modules.democracy.extrinsics.handleDelegate(ctx, call, block.header)
+                }
+                if (call.name == calls.democracy.undelegate.name){
+                    await modules.democracy.extrinsics.handleUndelegate(ctx, call, block.header)
                 }
                 if (call.name == calls.ethereum.transact.name){
                     await modules.ethereum.extrinsics.handlePrecompileTransaction(ctx, call, block.header)

@@ -8,8 +8,10 @@ export async function handleConfirmAborted(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { index } = getConfirmAbortedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         status: ProposalStatus.ConfirmAborted,
+        extrinsicIndex,
     })
 }

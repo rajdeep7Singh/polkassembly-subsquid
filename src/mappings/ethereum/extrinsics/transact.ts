@@ -1,48 +1,18 @@
-// import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-// import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getTransaction } from '@subsquid/frontier'
-// import { EthereumCurrentTransactionStatusesStorage } from '../../../types/storage'
 import { functions } from '../../../abi/convictionVoteAbi'
+import { functions as oldFunctions } from '../../../gov1AbiOld/moonbeamAbi'
+import { functions as newFunctions } from '../../../gov1AbiNew/moonbeamAbi'
 import { handleConvictionVotesFromPrecompile } from '../../referendumV2/extrinsics/convictionVoting'
 import { handlePrecompileDelegate } from '../../referendumV2/extrinsics/delegate'
 import { handlePrecompileUndelegate } from '../../referendumV2/extrinsics/undelegate'
 import { handlePrecompiledRemoveVote } from '../../referendumV2/extrinsics/removeVote'
 import { handlePrecompileRemoveOtherVote } from '../../referendumV2/extrinsics/removeOtherVote'
 import { Call, ProcessorContext } from '../../../processor'
-
-// export async function handlePrecompileTransactionStorage(ctx: BatchContext<Store, unknown>, header: SubstrateBlock, txnHash: string) {
-//     const storageData = new EthereumCurrentTransactionStatusesStorage(ctx, header)
-//     console.log(`Storage data: ${JSON.stringify(storageData)}`)
-//     if (!storageData) return
-
-//     if (storageData.isV40){
-//         const transactions = await storageData.asV40.get()
-//         if (!transactions) return
-//         console.log(`Transactions 1st version: ${JSON.stringify(transactions)}`)
-//         for (const transaction of transactions){
-//             const { transactionHash, logs, logsBloom } = transaction
-//             if(toHex(transactionHash) === txnHash){
-//                 return
-//             }
-
-//         }
-//     }
-//     else if (storageData.isV900){
-//         const transactions = await storageData.asV900.get()
-//         console.log(`Transactions 2nd version: ${JSON.stringify(transactions)}`)
-//         if (!transactions) return
-//         for (const transaction of transactions){
-//             const { transactionHash, logs, logsBloom } = transaction
-//             if(toHex(transactionHash) === txnHash){
-//                 return
-//             }
-
-//         }
-
-//     }
-// }
-
+import { handleDemocracyVotesFromPrecompile } from '../../democracy/extrinsics/democracyVote'
+import { handleDemocracyPrecompileDelegate } from '../../democracy/extrinsics/delegate'
+import { handleDemocracyPrecompileUndelegate } from '../../democracy/extrinsics/undelegate'
+import { handleDemocracyPrecompiledRemoveVote } from '../../democracy/extrinsics/removeVote'
 
 export async function handlePrecompileTransaction(ctx: ProcessorContext<Store>,
     item: Call,
@@ -60,14 +30,102 @@ export async function handlePrecompileTransaction(ctx: ProcessorContext<Store>,
     const txnHash = tx.hash
     let flag = false;
     try {
-        const decoded = functions.voteYes.decode(tx.input)
+        const decoded = newFunctions.standardVote.decode(tx.input)
         if(decoded){
-            await handleConvictionVotesFromPrecompile(ctx, item, header, decoded, true, originAccountId, txnHash)
+            await handleDemocracyVotesFromPrecompile(ctx, item, header, decoded, originAccountId, txnHash)
             flag = true
         }
     }
     catch (e){
-        // ctx.log.info(`Ethereum transaction looking for suitable decoder`)
+    }
+    if(!flag){
+        try {
+            const decoded = oldFunctions.standard_vote.decode(tx.input)
+            if(decoded){
+                await handleDemocracyVotesFromPrecompile(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = newFunctions.delegate.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompileDelegate(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = oldFunctions.delegate.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompileDelegate(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = newFunctions.unDelegate.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompileUndelegate(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = oldFunctions.un_delegate.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompileUndelegate(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = newFunctions.removeVote.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompiledRemoveVote(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = oldFunctions.remove_vote.decode(tx.input)
+            if(decoded){
+                await handleDemocracyPrecompiledRemoveVote(ctx, item, header, decoded, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+        }
+    }
+    if(!flag){
+        try {
+            const decoded = functions.voteYes.decode(tx.input)
+            if(decoded){
+                await handleConvictionVotesFromPrecompile(ctx, item, header, decoded, true, originAccountId, txnHash)
+                flag = true
+            }
+        }
+        catch (e){
+            // ctx.log.info(`Ethereum transaction looking for suitable decoder`)
+        }
     }
     if (!flag){
         try{

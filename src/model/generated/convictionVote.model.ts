@@ -1,8 +1,9 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {Proposal} from "./proposal.model"
 import {VoteDecision} from "./_voteDecision"
 import {VoteBalance, fromJsonVoteBalance} from "./_voteBalance"
+import {ConvictionDelegatedVotes} from "./convictionDelegatedVotes.model"
 import {VoteType} from "./_voteType"
 
 @Entity_()
@@ -44,6 +45,19 @@ export class ConvictionVote {
     @Column_("timestamp with time zone", {nullable: true})
     removedAt!: Date | undefined | null
 
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    selfVotingPower!: bigint | undefined | null
+
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    delegatedVotingPower!: bigint | undefined | null
+
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    totalVotingPower!: bigint | undefined | null
+
+    @Index_()
     @Column_("varchar", {length: 12, nullable: false})
     decision!: VoteDecision
 
@@ -54,17 +68,14 @@ export class ConvictionVote {
     lockPeriod!: number | undefined | null
 
     @Column_("text", {nullable: true})
-    delegatedTo!: string | undefined | null
+    txnHash!: string | undefined | null
 
-    @Column_("int4", {nullable: true})
-    extrinsicIndex!: number | undefined | null
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
 
-    @Column_("bool", {nullable: true})
-    isDelegated!: boolean | undefined | null
+    @OneToMany_(() => ConvictionDelegatedVotes, e => e.delegatedTo)
+    delegatedVotes!: ConvictionDelegatedVotes[]
 
     @Column_("varchar", {length: 17, nullable: false})
     type!: VoteType
-
-    @Column_("text", {nullable: true})
-    txnHash!: string | undefined | null
 }

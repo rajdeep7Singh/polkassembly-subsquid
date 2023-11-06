@@ -20,6 +20,8 @@ export async function handleConfirmStarted(ctx: ProcessorContext<Store>,
     })
 
     let deciding = undefined
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
 
     if (proposal && proposal.deciding && proposal.deciding.since) {
         deciding = createDeciding({confirming: header.height, since: proposal.deciding.since})
@@ -30,6 +32,7 @@ export async function handleConfirmStarted(ctx: ProcessorContext<Store>,
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         status: ProposalStatus.ConfirmStarted,
+        extrinsicIndex,
         data: {
             deciding: deciding
         }

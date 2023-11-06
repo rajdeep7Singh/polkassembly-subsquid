@@ -43,7 +43,6 @@ import {
     TallyData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
-import config from '../../config'
 import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
@@ -60,6 +59,7 @@ export async function updatePreimageStatus(
     options: {
         status: ProposalStatus
         isEnded?: boolean
+        extrinsicIndex?: string
         data?: ProposalUpdateData
     }
 ) {
@@ -75,6 +75,17 @@ export async function updatePreimageStatus(
     proposal.updatedAtBlock = header.height
     proposal.status = options.status
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.updatedAtBlock || undefined,
+            timestamp: proposal.updatedAt,
+            status: proposal.status,
+            extrinsicIndex: options?.extrinsicIndex,
+            preimage: proposal,
+        })
+    )
+
     await ctx.store.save(proposal)
 }
 
@@ -84,6 +95,7 @@ export async function updatePreimageStatusV2(
     hash: string,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -100,6 +112,17 @@ export async function updatePreimageStatusV2(
     proposal.updatedAtBlock = header.height
     proposal.status = options.status
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.updatedAtBlock || undefined,
+            timestamp: proposal.updatedAt,
+            status: proposal.status,
+            extrinsicIndex: options?.extrinsicIndex,
+            preimage: proposal,
+        })
+    )
+
     await ctx.store.save(proposal)
 }
 
@@ -110,6 +133,7 @@ export async function updateProposalStatus(
     type: IndexProposal,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -121,6 +145,7 @@ export async function updateProposalStatus(
     type: HashProposal,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -132,6 +157,7 @@ export async function updateProposalStatus(
     type: ProposalType,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -153,7 +179,7 @@ export async function updateProposalStatus(
     })
 
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(type, hashOrIndex))
+        ctx.log.warn(MissingProposalRecordWarn(type, hashOrIndex, options.extrinsicIndex))
         return
     }
 
@@ -182,6 +208,7 @@ export async function updateProposalStatus(
             block: proposal.updatedAtBlock || undefined,
             timestamp: proposal.updatedAt,
             status: proposal.status,
+            extrinsicIndex: options?.extrinsicIndex,
             proposal,
         })
     )
@@ -379,6 +406,7 @@ export async function createDemocracyProposal(
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -482,6 +510,7 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -618,6 +647,7 @@ export async function createCoucilMotion(
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -662,6 +692,7 @@ export async function createTip( ctx: ProcessorContext<Store>, header: any, data
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -702,6 +733,7 @@ export async function createBounty( ctx: ProcessorContext<Store>, header: any, d
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -741,6 +773,7 @@ export async function createChildBounty( ctx: ProcessorContext<Store>, header: a
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -806,6 +839,7 @@ export async function createTreasury( ctx: ProcessorContext<Store>, header: any,
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )
@@ -844,6 +878,17 @@ export async function createPreimage( ctx: ProcessorContext<Store>, header: any,
         await ctx.store.save(proposal)
     }
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: header.height,
+            timestamp: new Date(header.timestamp),
+            status: status,
+            extrinsicIndex: data.extrinsicIndex,
+            preimage: preimage,
+        })
+    )
+
     return preimage
 }
 
@@ -869,6 +914,17 @@ export async function createPreimageV2( ctx: ProcessorContext<Store>, header: an
     })
 
     await ctx.store.insert(preimage)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: header.height,
+            timestamp: new Date(header.timestamp),
+            status: status,
+            extrinsicIndex: data.extrinsicIndex,
+            preimage,
+        })
+    )
     return preimage
 }
 
@@ -885,12 +941,12 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
         order: { createdAtBlock: 'DESC' },
     })
 
-    const subDeposit = {who: toHex(submissionDeposit.who), amount: submissionDeposit.amount}
+    const subDeposit = {who: submissionDeposit.who, amount: submissionDeposit.amount}
 
     let decDeposit = undefined
 
     if (decisionDeposit) {
-        decDeposit = {who: toHex(decisionDeposit.who), amount: decisionDeposit.amount}
+        decDeposit = {who: decisionDeposit.who, amount: decisionDeposit.amount}
     }
 
     const proposal = new Proposal({
@@ -923,6 +979,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex: data.extrinsicIndex,
             proposal,
         })
     )

@@ -11,9 +11,11 @@ export async function handleDecisionDepositPlaced(ctx: ProcessorContext<Store>,
     const { index, who, amount } = getDecisionDepositPlacedData(item)
 
     const decisionDeposit = createDecisionDeposit({who: who, amount})
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         status: ProposalStatus.DecisionDepositPlaced,
+        extrinsicIndex,
         data: {
             decisionDeposit: decisionDeposit
         }

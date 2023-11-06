@@ -1,55 +1,53 @@
-// import { UnknownVersionError } from '../../common/errors'
-// import { BlockContext } from '../../types/support'
-// import { DemocracyPublicPropsStorage } from '../../types/storage'
-// import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-// import { Store } from '@subsquid/typeorm-store'
+import { UnknownVersionError } from '../../common/errors'
+import { Store } from '@subsquid/typeorm-store'
+import { publicProps } from '../../types/democracy/storage'
+import { ProcessorContext, Block } from '../../processor'
 
-// interface DemocracyProposalStorageData {
-//     index: number
-//     hash: Uint8Array
-//     proposer: Uint8Array
-// }
+interface DemocracyProposalStorageData {
+    index: number
+    hash: string
+    proposer: string
+}
 
-// async function getStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<DemocracyProposalStorageData[] | undefined> {
-//     const storage = new DemocracyPublicPropsStorage(ctx, block)
-//     if (storage.isV40) {
-//         const storageData = await storage.asV40.get()
-//         if (!storageData) return undefined
+async function getStorageData(ctx: ProcessorContext<Store>, block: Block): Promise<DemocracyProposalStorageData[] | undefined> {
+    if (publicProps.v40.is(block)) {
+        const storageData = await publicProps.v40.get(block)
+        if (!storageData) return undefined
 
-//         return storageData.map((proposal: any): DemocracyProposalStorageData => {
-//             const [index, , proposer] = proposal
-//             return {
-//                 index,
-//                 hash: new Uint8Array(32).fill(0),
-//                 proposer,
-//             }
-//         })
-//     } else if(storage.isV2000){
-//         const storageData = await storage.asV2000.get()
-//         if (!storageData) return undefined
+        return storageData.map((proposal: any): DemocracyProposalStorageData => {
+            const [index, hash, proposer] = proposal
+            return {
+                index,
+                hash,
+                proposer,
+            }
+        })
+    } else if(publicProps.v2000.is(block)){
+        const storageData = await publicProps.v2000.get(block)
+        if (!storageData) return undefined
 
-//         return storageData.map((proposal): DemocracyProposalStorageData => {
-//             const [index, hash, proposer] = proposal
-//             if(hash.__kind === 'Inline'){
-//                 return {
-//                     index,
-//                     hash: hash.value,
-//                     proposer,
-//                 }
-//             }else{
-//                 return {
-//                     index,
-//                     hash: hash.hash,
-//                     proposer,
-//                 }
-//             }
-//         })
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, hash, proposer] = proposal
+            if(hash.__kind === 'Inline'){
+                return {
+                    index,
+                    hash: hash.value,
+                    proposer,
+                }
+            }else{
+                return {
+                    index,
+                    hash: hash.hash,
+                    proposer,
+                }
+            }
+        })
 
-//     }else {
-//         throw new UnknownVersionError(storage.constructor.name)
-//     }
-// }
+    }else {
+        throw new UnknownVersionError('Democracy.PublicProps')
+    }
+}
 
-// export async function getProposals(ctx: BatchContext<Store, unknown>, block: SubstrateBlock) {
-//     return await getStorageData(ctx, block)
-// }
+export async function getProposals(ctx: ProcessorContext<Store>, block: Block) {
+    return await getStorageData(ctx, block)
+}

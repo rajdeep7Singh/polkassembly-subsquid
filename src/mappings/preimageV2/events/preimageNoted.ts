@@ -91,25 +91,36 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     if(!item.call) return;
     const { hash } = getPreimageNotedData(ctx, item)
 
+    if(!item.call.args?.bytes) return;
+
     const hexHash = hash
-    const extrinsicIndex = item.extrinsicIndex;
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const storageData = await getStorageData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('PreimageV2', hexHash))
         return
     }
-    const args = item.block._runtime.decodeCall(item?.call.args.bytes);
+    let args;
+    try {
+        args = item.block._runtime.decodeCall(item?.call.args.bytes);
+    }
+    catch (e) {
+        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.extrinsicIndex} ${e}`)
+        process.exit(1)
+    }
 
     const section = args.__kind as string
     const method = args.value.__kind as string
     const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
 
+    const { __kind, ...argsValue } = args.value;
+
     const decodedCall = {
         section,
         method,
         description: desc,
-        args: args.value,
+        args: argsValue,
     }
 
     const value = storageData.value as [string, bigint]
@@ -126,5 +137,6 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
         method: decodedCall?.method,
         status: ProposalStatus.Noted,
         length: storageData.len,
+        extrinsicIndex,
     })
 }

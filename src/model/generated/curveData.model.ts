@@ -23,8 +23,8 @@ export class CurveData {
     @Column_("int4", {nullable: false})
     index!: number
 
-    @Column_("int4", {nullable: true})
-    extrinsicIndex!: number | undefined | null
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
 
     @Index_()
     @Column_("timestamp with time zone", {nullable: false})

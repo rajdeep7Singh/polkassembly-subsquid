@@ -1,28 +1,21 @@
-// import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-// import { Store } from '@subsquid/typeorm-store'
-// import { UnknownVersionError } from '../../common/errors'
-// import { bigint } from '../../model/generated/marshal'
-// import { BalancesInactiveIssuanceStorage, BalancesTotalIssuanceStorage } from '../../types/storage'
+import { Store } from '@subsquid/typeorm-store'
+import { UnknownVersionError } from '../../common/errors'
+import { inactiveIssuance, totalIssuance } from '../../types/balances/storage'
+import { Block, ProcessorContext} from '../../processor'
 
 
-// export async function getTotalIssuanceStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<bigint> {
-//     const storage = new BalancesTotalIssuanceStorage(ctx, block)
-//     if (!storage.isExists) return BigInt(0)
+export async function getTotalIssuanceStorageData(ctx: ProcessorContext<Store>, block: Block): Promise<bigint> {
+    if (inactiveIssuance.v2201.is(block)) {
+        return await inactiveIssuance.v2201.get(block) || BigInt(0)
+    } else {
+        throw new UnknownVersionError('Balances.InactiveIssuance')
+    }
+}
 
-//     if (storage.isV40) {
-//         return await storage.asV40.get()
-//     } else {
-//         throw new UnknownVersionError(storage.constructor.name)
-//     }
-// }
-
-// export async function getTotalInactiveIssuanceStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<bigint> {
-//     const storage = new BalancesInactiveIssuanceStorage(ctx, block)
-//     if (!storage.isExists) return BigInt(0)
-
-//     if (storage.isV2201) {
-//         return BigInt(await storage.asV2201.get())
-//     } else {
-//         throw new UnknownVersionError(storage.constructor.name)
-//     }
-// }
+export async function getTotalInactiveIssuanceStorageData(ctx: ProcessorContext<Store>, block: Block): Promise<bigint> {
+    if (totalIssuance.v40.is(block)) {
+        return await totalIssuance.v40.get(block) || BigInt(0)
+    } else {
+        throw new UnknownVersionError('Balances.TotalIssuance')
+    }
+}

@@ -1,0 +1,219 @@
+import { UnknownVersionError } from '../../../common/errors'
+import {
+    cancelled,
+    executed,
+    notPassed,
+    passed,
+    preimageInvalid,
+    preimageMissing,
+    preimageNoted,
+    preimageReaped,
+    preimageUsed,
+    seconded,
+} from '../../../types/democracy/events'
+import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
+
+export function getCancelledData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
+    if (cancelled.v40.is(itemEvent)) {
+        return cancelled.v40.decode(itemEvent)
+    } else if (cancelled.v1200.is(itemEvent)) {
+        return cancelled.v1200.decode(itemEvent).refIndex
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
+    if (executed.v40.is(itemEvent)) {
+        return executed.v40.decode(itemEvent)[0]
+    } else if (executed.v701.is(itemEvent)) {
+        return executed.v701.decode(itemEvent)[0]
+    } else if (executed.v900.is(itemEvent)) {
+        return executed.v900.decode(itemEvent)[0]
+    } else if (executed.v1200.is(itemEvent)) {
+        return executed.v1200.decode(itemEvent).refIndex
+    } else if (executed.v1300.is(itemEvent)) {
+        return executed.v1300.decode(itemEvent).refIndex
+    } else if (executed.v1400.is(itemEvent)) {
+        return executed.v1400.decode(itemEvent).refIndex
+    } else if (executed.v1603.is(itemEvent)) {
+        return executed.v1603.decode(itemEvent).refIndex
+    } else{
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export function getNotPassedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
+    if (notPassed.v40.is(itemEvent)) {
+        return notPassed.v40.decode(itemEvent)
+    } else if (notPassed.v1200.is(itemEvent)) {
+        return notPassed.v1200.decode(itemEvent).refIndex
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export function getPassedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
+    if (passed.v40.is(itemEvent)) {
+        return passed.v40.decode(itemEvent)
+    } else if (passed.v1200.is(itemEvent)) {
+        return passed.v1200.decode(itemEvent).refIndex
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export interface PreimageInvalidData {
+    hash: string
+    index: number
+}
+
+export function getPreimageInvalidData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageInvalidData {
+    if (preimageInvalid.v40.is(itemEvent)) {
+        const [hash, index] = preimageInvalid.v40.decode(itemEvent)
+        return {
+            hash,
+            index,
+        }
+    } else if (preimageInvalid.v1200.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageInvalid.v1200.decode(itemEvent)
+        return {
+            hash,
+            index,
+        }
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export interface PreimageMissingData {
+    hash: string
+    index: number
+}
+
+export function getPreimageMissingData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageMissingData {
+    if (preimageMissing.v40.is(itemEvent)) {
+        const [hash, index] = preimageMissing.v40.decode(itemEvent)
+        return {
+            hash,
+            index,
+        }
+    } else if (preimageMissing.v1200.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageMissing.v1200.decode(itemEvent)
+        return {
+            hash,
+            index,
+        }
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+interface PreimageNotedData {
+    hash: string
+    provider: string
+    deposit: bigint
+}
+
+export function getPreimageNotedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageNotedData {
+    if (preimageNoted.v40.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageNoted.v40.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (preimageNoted.v1200.is(itemEvent)) {
+        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v1200.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export interface PreimageReapedData {
+    hash: string
+    provider: string
+    deposit: bigint
+}
+
+export function getPreimageReapedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageReapedData {
+    if (preimageReaped.v40.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageReaped.v40.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (preimageReaped.v1200.is(itemEvent)) {
+        const { proposalHash: hash, provider, deposit } = preimageReaped.v1200.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+export interface PreimageUsedData {
+    hash: string
+    provider: string
+    deposit: bigint
+}
+
+export function getPreimageUsedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageUsedData {
+    if (preimageUsed.v40.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageUsed.v40.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else if (preimageUsed.v1200.is(itemEvent)) {
+        const { proposalHash: hash, provider, deposit } = preimageUsed.v1200.decode(itemEvent)
+        return {
+            hash,
+            provider,
+            deposit,
+        }
+    } else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}
+
+interface DemocracySecondedData {
+    accountId: string
+    refIndex: number
+}
+
+export function getDemocracySecondedData(ctx: ProcessorContext<Store>, itemEvent: Event): DemocracySecondedData {
+    if (seconded.v1001.is(itemEvent)) {
+        const [seconder, propIndex] = seconded.v1001.decode(itemEvent)
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    } else if (seconded.v1200.is(itemEvent)) {
+        const { who: seconder, proposalIndex: propIndex } = seconded.v1200.decode(itemEvent)
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    } else if (seconded.v1300.is(itemEvent)) {
+        const { seconder, propIndex } = seconded.v1300.decode(itemEvent)
+        return {
+            accountId: seconder,
+            refIndex: propIndex
+        }
+    }
+    else {
+        throw new UnknownVersionError(itemEvent.name)
+    }
+}

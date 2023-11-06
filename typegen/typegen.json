@@ -65,8 +65,8 @@
     "Ethereum": {
       "events": [],
       "calls": ["transact"],
-      "storage": ["Preimages", "PublicProps", "ReferendumInfoOf"],
-      "constants": ["transact"]
+      "storage": [],
+      "constants": []
     }
   }
 }

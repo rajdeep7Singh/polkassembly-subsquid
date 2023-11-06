@@ -14,10 +14,12 @@ export async function handlePreimageV2Cleared(ctx: ProcessorContext<Store>,
     const { hash } = getPreimageClearedData(ctx, item)
 
     // const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
     const hexHash = hash
-    const extrinsicIndex = item.extrinsicIndex
 
     await updatePreimageStatusV2(ctx, header, hexHash, {
-        status: ProposalStatus.Cleared
+        status: ProposalStatus.Cleared,
+        extrinsicIndex,
     })
 }

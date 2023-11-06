@@ -41,8 +41,8 @@ export class Vote {
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null
 
-    @Column_("int4", {nullable: true})
-    extrinsicIndex!: number | undefined | null
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
 
     @Column_("varchar", {length: 17, nullable: true})
     type!: VoteType | undefined | null

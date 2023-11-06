@@ -1,7 +1,8 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, OneToMany as OneToMany_} from "typeorm"
 import * as marshal from "./marshal"
 import {ProposedCall} from "./_proposedCall"
 import {ProposalStatus} from "./_proposalStatus"
+import {StatusHistory} from "./statusHistory.model"
 
 @Entity_()
 export class Preimage {
@@ -19,14 +20,14 @@ export class Preimage {
     @Column_("text", {nullable: false})
     hash!: string
 
-    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
-    proposedCall!: ProposedCall | undefined | null
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
+    deposit!: bigint | undefined | null
 
     @Column_("int4", {nullable: true})
     length!: number | undefined | null
 
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
-    deposit!: bigint | undefined | null
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new ProposedCall(undefined, obj)}, nullable: true})
+    proposedCall!: ProposedCall | undefined | null
 
     @Column_("text", {nullable: true})
     section!: string | undefined | null
@@ -37,6 +38,9 @@ export class Preimage {
     @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
+    @OneToMany_(() => StatusHistory, e => e.preimage)
+    statusHistory!: StatusHistory[]
+
     @Index_()
     @Column_("int4", {nullable: false})
     createdAtBlock!: number
@@ -45,8 +49,8 @@ export class Preimage {
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
 
-    @Column_("int4", {nullable: true})
-    extrinsicIndex!: number | undefined | null
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
 
     @Column_("int4", {nullable: true})
     updatedAtBlock!: number | undefined | null

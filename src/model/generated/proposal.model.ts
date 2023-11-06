@@ -102,19 +102,14 @@ export class Proposal {
     @Column_("text", {nullable: true})
     origin!: string | undefined | null
 
+    @Column_("text", {nullable: true})
+    metadata!: string | undefined | null
+
     @Column_("int4", {nullable: true})
     enactmentAtBlock!: number | undefined | null
 
     @Column_("int4", {nullable: true})
     enactmentAfterBlock!: number | undefined | null
-
-    @Index_()
-    @Column_("int4", {nullable: true})
-    executeAtBlockNumber!: number | undefined | null
-
-    @Index_()
-    @Column_("timestamp with time zone", {nullable: true})
-    executedAt!: Date | undefined | null
 
     @Column_("int4", {nullable: true})
     submittedAtBlock!: number | undefined | null
@@ -131,6 +126,12 @@ export class Proposal {
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tally(undefined, obj)}, nullable: true})
     tally!: Tally | undefined | null
 
+    @Column_("int4", {nullable: true})
+    executeAtBlockNumber!: number | undefined | null
+
+    @Column_("timestamp with time zone", {nullable: true})
+    executedAt!: Date | undefined | null
+
     @Index_()
     @ManyToOne_(() => ProposalGroup, {nullable: true})
     group!: ProposalGroup | undefined | null
@@ -142,9 +143,6 @@ export class Proposal {
     @Index_()
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
-
-    @Column_("int4", {nullable: true})
-    extrinsicIndex!: number | undefined | null
 
     @Column_("int4", {nullable: true})
     endedAtBlock!: number | undefined | null

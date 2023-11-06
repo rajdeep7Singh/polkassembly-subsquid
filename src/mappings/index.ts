@@ -1,6 +1,6 @@
-// import democracy from './democracy'
+import democracy from './democracy'
 // import council from './council'
-// import treasury from './treasury'
+import treasury from './treasury'
 // import tips from './tips'
 // import bounties from './bounties'
 // import techComittee from './techCommittee'
@@ -10,4 +10,4 @@ import referendumV2 from './referendumV2'
 import ethereum from './ethereum'
 // import fellowshipReferendum from './fellowshipReferendum'
 
-export { preimageV2, referendumV2, ethereum }
+export { preimageV2, referendumV2, ethereum, democracy, treasury }

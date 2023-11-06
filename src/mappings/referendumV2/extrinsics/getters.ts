@@ -9,7 +9,7 @@ import { vote,
     delegate,
     undelegate,
  } from '../../../types/conviction-voting/calls' 
-import { convictionToLockPeriod } from './helpers'
+import { convictionToLockPeriod } from './utils'
 import { ProcessorContext } from '../../../processor'
 
 type DemocracyVote =
