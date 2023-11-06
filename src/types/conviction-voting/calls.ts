@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v1900 from '../v1900'
+import * as v2100 from '../v2100'
 import * as v2201 from '../v2201'
 
 export const vote =  {
@@ -15,11 +15,11 @@ export const vote =  {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    v1900: new CallType(
+    v2100: new CallType(
         'ConvictionVoting.vote',
         sts.struct({
             pollIndex: sts.number(),
-            vote: v1900.Type_329,
+            vote: v2100.Type_202,
         })
     ),
     /**
@@ -37,7 +37,7 @@ export const vote =  {
         'ConvictionVoting.vote',
         sts.struct({
             pollIndex: sts.number(),
-            vote: v2201.Type_320,
+            vote: v2201.Type_203,
         })
     ),
 }
@@ -69,12 +69,12 @@ export const delegate =  {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    v1900: new CallType(
+    v2100: new CallType(
         'ConvictionVoting.delegate',
         sts.struct({
             class: sts.number(),
-            to: v1900.AccountId20,
-            conviction: v1900.Type_331,
+            to: v2100.AccountId20,
+            conviction: v2100.Type_204,
             balance: sts.bigint(),
         })
     ),
@@ -98,7 +98,7 @@ export const undelegate =  {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    v1900: new CallType(
+    v2100: new CallType(
         'ConvictionVoting.undelegate',
         sts.struct({
             class: sts.number(),
@@ -139,7 +139,7 @@ export const removeVote =  {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    v1900: new CallType(
+    v2100: new CallType(
         'ConvictionVoting.remove_vote',
         sts.struct({
             class: sts.option(() => sts.number()),
@@ -168,10 +168,10 @@ export const removeOtherVote =  {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    v1900: new CallType(
+    v2100: new CallType(
         'ConvictionVoting.remove_other_vote',
         sts.struct({
-            target: v1900.AccountId20,
+            target: v2100.AccountId20,
             class: sts.number(),
             index: sts.number(),
         })

@@ -3,7 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { toHex } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
-import { REDIS_CF_URL } from '../../consts/consts'
+import { NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
@@ -44,6 +44,7 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import { ProcessorContext } from '../../processor'
+import config from '../../config'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -212,6 +213,7 @@ export async function updateProposalStatus(
             proposal,
         })
     )
+    await sendNotification(ctx, proposal, 'proposalStatusChanged')
     await updateRedis(ctx, proposal)
 }
 
@@ -411,6 +413,8 @@ export async function createDemocracyProposal(
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -514,6 +518,8 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -652,6 +658,8 @@ export async function createCoucilMotion(
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -697,6 +705,8 @@ export async function createTip( ctx: ProcessorContext<Store>, header: any, data
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -738,6 +748,8 @@ export async function createBounty( ctx: ProcessorContext<Store>, header: any, d
         })
     )
 
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
     return proposal
 }
 
@@ -777,6 +789,8 @@ export async function createChildBounty( ctx: ProcessorContext<Store>, header: a
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
 
     return proposal
 }
@@ -843,6 +857,9 @@ export async function createTreasury( ctx: ProcessorContext<Store>, header: any,
             proposal,
         })
     )
+
+    await sendNotification(ctx, proposal, 'newProposalCreated')
+
 
     return proposal
 }
@@ -985,6 +1002,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
     )
 
     await updateRedis(ctx, proposal)
+    await sendNotification(ctx, proposal, 'newProposalCreated')
     
     return proposal
 }
@@ -1009,9 +1027,91 @@ export function createSubmissionDeposit(data: SubmissionDepositData): Submission
     return new SubmissionDeposit(toJSON(data))
 }
 
+export async function sendNotification(ctx: ProcessorContext<Store>, proposal: Proposal, trigger: String) {
+    const { hash, type, index, proposer, curator, status, trackNumber } = proposal
+    let statusName = null
+    return
+    // if difference between proposal update time and current time > 10 mins return
+    // if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+    //     ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+    //     return
+    // }
+
+    // if([ProposalStatus.Started, 
+    //     ProposalStatus.Submitted, 
+    //     ProposalStatus.Added, 
+    //     ProposalStatus.Proposed, 
+    //     ProposalStatus.Opened,
+    // ].includes(status)){
+    //     statusName = 'submitted'
+    // }
+    // else if([ProposalStatus.Executed,
+    //     ProposalStatus.Cancelled,
+    //     ProposalStatus.Killed,
+    //     ProposalStatus.Rejected,
+    //     ProposalStatus.Executed,
+    //     ProposalStatus.Closed,
+    //     ProposalStatus.Approved,
+    //     ProposalStatus.Disapproved,
+    //     ProposalStatus.Awarded,
+    //     ProposalStatus.Claimed,
+    //     ProposalStatus.NotPassed,
+    //     ProposalStatus.Passed,
+    //     ProposalStatus.Tabled,
+    //     ProposalStatus.Retracted,
+    //     ProposalStatus.Slashed,
+    //     ProposalStatus.TimedOut,
+    // ].includes(status)){
+    //     statusName = 'closed'
+    // }
+    // else if([ProposalStatus.Deciding,
+    //     ProposalStatus.ConfirmStarted,
+    //     ProposalStatus.ConfirmAborted,
+    // ].includes(status)){
+    //     statusName = 'voting'
+    // }
+
+    // const notification = {
+    //     trigger: trigger,
+    //     args : {
+    //         network: config.chain.name,
+    //         postType: type,
+    //         postId: type != ProposalType.Tip ? String(index) : hash,
+    //         proposerAddress: proposer || curator,
+    //         statusType: statusName,
+    //         track: String(trackNumber),
+    //         statusName: status,
+    //       }
+    // }
+
+    // if(!process.env.NOTIFICATION_API_KEY){
+    //     ctx.log.error(`Notification Api Key not found`)
+    //     return
+    // }
+
+    // ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+
+    // const response = await fetch(NOTIFICATION_URL, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+    //         'x-source': 'polkassembly'
+    //     },
+    //     body: JSON.stringify(notification),
+    // })
+
+    // ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+
+    // if (response.status !== 200) {
+    //     ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+    //     return
+    // }
+}
+
 export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
-    return;
+    return
 
     // try{
     //     if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {

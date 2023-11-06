@@ -1,6 +1,6 @@
 import { UnknownVersionError } from '../../common/errors'
 import { referendumInfoOf } from '../../types/democracy/storage'
-import * as v40 from '../../types/v40'
+import * as v40 from '../../types/v49'
 import * as v900 from '../../types/v900'
 import * as v2000 from '../../types/v2000'
 import { Store } from '@subsquid/typeorm-store'
@@ -26,8 +26,8 @@ type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getStorageData(ctx: ProcessorContext<Store>, index: number, block: Block): Promise<ReferendumStorageData | undefined> {
-    if (referendumInfoOf.v40.is(block)) {
-        const storageData = await referendumInfoOf.v40.get(block, index)
+    if (referendumInfoOf.v49.is(block)) {
+        const storageData = await referendumInfoOf.v49.get(block, index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData

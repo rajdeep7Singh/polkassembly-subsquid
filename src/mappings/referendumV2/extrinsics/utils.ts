@@ -29,7 +29,7 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
         }      
         delegatedVotes.push(
             new ConvictionDelegatedVotes({
-                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}`,
+                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
                 voter: delegation.from,
                 createdAtBlock: block,
                 proposalIndex: convictionVote.proposalIndex,
@@ -47,7 +47,7 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
 
         flattenedVotes.push(
             new FlattenedConvictionVotes({
-                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}`,
+                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
                 voter: delegation.from,
                 parentVote: convictionVote,
                 isDelegated: true,
@@ -238,7 +238,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
     const count = await getConvictionVotesCount(ctx, index)
 
     const convictionVote = new ConvictionVote({
-        id: `${index}-${count.toString().padStart(8, '0')}`,
+        id: `${index}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
         voter: from,
         createdAtBlock: header.height,
         proposalIndex: index,
@@ -266,7 +266,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
     await ctx.store.insert(delegatedVotes)
 
     flattenedVotes.push(new FlattenedConvictionVotes({
-        id: `${index}-${flattenedCount.toString().padStart(8, '0')}`,
+        id: `${index}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
         voter: from,
         parentVote: convictionVote,
         isDelegated: false,
@@ -357,7 +357,7 @@ export async function handleSubtrateAndPrecompileDelegationVote(ctx: ProcessorCo
             const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
+                    id: `${referendum.index}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
                     voter,
                     createdAtBlock: header.height,
                     decision: vote.decision,

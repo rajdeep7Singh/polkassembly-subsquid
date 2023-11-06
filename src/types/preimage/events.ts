@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v1900 from '../v1900'
+import * as v2000 from '../v2000'
 
 export const noted =  {
     name: 'Preimage.Noted',
     /**
      * A preimage has been noted.
      */
-    v1900: new EventType(
+    v2000: new EventType(
         'Preimage.Noted',
         sts.struct({
-            hash: v1900.H256,
+            hash: v2000.H256,
         })
     ),
 }
@@ -19,10 +19,10 @@ export const requested =  {
     /**
      * A preimage has been requested.
      */
-    v1900: new EventType(
+    v2000: new EventType(
         'Preimage.Requested',
         sts.struct({
-            hash: v1900.H256,
+            hash: v2000.H256,
         })
     ),
 }
@@ -32,10 +32,10 @@ export const cleared =  {
     /**
      * A preimage has ben cleared.
      */
-    v1900: new EventType(
+    v2000: new EventType(
         'Preimage.Cleared',
         sts.struct({
-            hash: v1900.H256,
+            hash: v2000.H256,
         })
     ),
 }

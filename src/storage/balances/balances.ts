@@ -13,8 +13,8 @@ export async function getTotalIssuanceStorageData(ctx: ProcessorContext<Store>, 
 }
 
 export async function getTotalInactiveIssuanceStorageData(ctx: ProcessorContext<Store>, block: Block): Promise<bigint> {
-    if (totalIssuance.v40.is(block)) {
-        return await totalIssuance.v40.get(block) || BigInt(0)
+    if (totalIssuance.v49.is(block)) {
+        return await totalIssuance.v49.get(block) || BigInt(0)
     } else {
         throw new UnknownVersionError('Balances.TotalIssuance')
     }

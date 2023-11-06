@@ -1,38 +1,38 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type Type_571 = Type_571_Approved | Type_571_Cancelled | Type_571_Killed | Type_571_Ongoing | Type_571_Rejected | Type_571_TimedOut
+export type Type_511 = Type_511_Approved | Type_511_Cancelled | Type_511_Killed | Type_511_Ongoing | Type_511_Rejected | Type_511_TimedOut
 
-export interface Type_571_Approved {
+export interface Type_511_Approved {
     __kind: 'Approved'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_571_Cancelled {
+export interface Type_511_Cancelled {
     __kind: 'Cancelled'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_571_Killed {
+export interface Type_511_Killed {
     __kind: 'Killed'
     value: number
 }
 
-export interface Type_571_Ongoing {
+export interface Type_511_Ongoing {
     __kind: 'Ongoing'
-    value: Type_572
+    value: Type_512
 }
 
-export interface Type_571_Rejected {
+export interface Type_511_Rejected {
     __kind: 'Rejected'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_571_TimedOut {
+export interface Type_511_TimedOut {
     __kind: 'TimedOut'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_572 {
+export interface Type_512 {
     track: number
     origin: OriginCaller
     proposal: Bounded
@@ -93,47 +93,47 @@ export type OriginCaller = OriginCaller_CouncilCollective | OriginCaller_Cumulus
 
 export interface OriginCaller_CouncilCollective {
     __kind: 'CouncilCollective'
-    value: Type_167
+    value: Type_122
 }
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Origin
+    value: Type_126
 }
 
 export interface OriginCaller_Ethereum {
     __kind: 'Ethereum'
-    value: Type_166
+    value: Type_120
 }
 
 export interface OriginCaller_EthereumXcm {
     __kind: 'EthereumXcm'
-    value: Type_171
+    value: Type_136
 }
 
 export interface OriginCaller_OpenTechCommitteeCollective {
     __kind: 'OpenTechCommitteeCollective'
-    value: Type_174
+    value: Type_125
 }
 
 export interface OriginCaller_Origins {
     __kind: 'Origins'
-    value: Type_173
+    value: Origin
 }
 
 export interface OriginCaller_PolkadotXcm {
     __kind: 'PolkadotXcm'
-    value: Type_170
+    value: Type_127
 }
 
 export interface OriginCaller_TechCommitteeCollective {
     __kind: 'TechCommitteeCollective'
-    value: Type_168
+    value: Type_123
 }
 
 export interface OriginCaller_TreasuryCouncilCollective {
     __kind: 'TreasuryCouncilCollective'
-    value: Type_172
+    value: Type_124
 }
 
 export interface OriginCaller_Void {
@@ -165,46 +165,46 @@ export type AccountId20 = Bytes
 
 export type Void = never
 
-export type Type_172 = Type_172_Member | Type_172_Members | Type_172__Phantom
+export type Type_124 = Type_124_Member | Type_124_Members | Type_124__Phantom
 
-export interface Type_172_Member {
+export interface Type_124_Member {
     __kind: 'Member'
     value: AccountId20
 }
 
-export interface Type_172_Members {
+export interface Type_124_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_172__Phantom {
+export interface Type_124__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_168 = Type_168_Member | Type_168_Members | Type_168__Phantom
+export type Type_123 = Type_123_Member | Type_123_Members | Type_123__Phantom
 
-export interface Type_168_Member {
+export interface Type_123_Member {
     __kind: 'Member'
     value: AccountId20
 }
 
-export interface Type_168_Members {
+export interface Type_123_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_168__Phantom {
+export interface Type_123__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_170 = Type_170_Response | Type_170_Xcm
+export type Type_127 = Type_127_Response | Type_127_Xcm
 
-export interface Type_170_Response {
+export interface Type_127_Response {
     __kind: 'Response'
     value: V3MultiLocation
 }
 
-export interface Type_170_Xcm {
+export interface Type_127_Xcm {
     __kind: 'Xcm'
     value: V3MultiLocation
 }
@@ -435,82 +435,82 @@ export interface V3NetworkId_Wococo {
     __kind: 'Wococo'
 }
 
-export type Type_173 = Type_173_GeneralAdmin | Type_173_ReferendumCanceller | Type_173_ReferendumKiller | Type_173_WhitelistedCaller
+export type Origin = Origin_GeneralAdmin | Origin_ReferendumCanceller | Origin_ReferendumKiller | Origin_WhitelistedCaller
 
-export interface Type_173_GeneralAdmin {
+export interface Origin_GeneralAdmin {
     __kind: 'GeneralAdmin'
 }
 
-export interface Type_173_ReferendumCanceller {
+export interface Origin_ReferendumCanceller {
     __kind: 'ReferendumCanceller'
 }
 
-export interface Type_173_ReferendumKiller {
+export interface Origin_ReferendumKiller {
     __kind: 'ReferendumKiller'
 }
 
-export interface Type_173_WhitelistedCaller {
+export interface Origin_WhitelistedCaller {
     __kind: 'WhitelistedCaller'
 }
 
-export type Type_174 = Type_174_Member | Type_174_Members | Type_174__Phantom
+export type Type_125 = Type_125_Member | Type_125_Members | Type_125__Phantom
 
-export interface Type_174_Member {
+export interface Type_125_Member {
     __kind: 'Member'
     value: AccountId20
 }
 
-export interface Type_174_Members {
+export interface Type_125_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_174__Phantom {
+export interface Type_125__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_171 = Type_171_XcmEthereumTransaction
+export type Type_136 = Type_136_XcmEthereumTransaction
 
-export interface Type_171_XcmEthereumTransaction {
+export interface Type_136_XcmEthereumTransaction {
     __kind: 'XcmEthereumTransaction'
     value: H160
 }
 
 export type H160 = Bytes
 
-export type Type_166 = Type_166_EthereumTransaction
+export type Type_120 = Type_120_EthereumTransaction
 
-export interface Type_166_EthereumTransaction {
+export interface Type_120_EthereumTransaction {
     __kind: 'EthereumTransaction'
     value: H160
 }
 
-export type Origin = Origin_Relay | Origin_SiblingParachain
+export type Type_126 = Type_126_Relay | Type_126_SiblingParachain
 
-export interface Origin_Relay {
+export interface Type_126_Relay {
     __kind: 'Relay'
 }
 
-export interface Origin_SiblingParachain {
+export interface Type_126_SiblingParachain {
     __kind: 'SiblingParachain'
     value: Id
 }
 
 export type Id = number
 
-export type Type_167 = Type_167_Member | Type_167_Members | Type_167__Phantom
+export type Type_122 = Type_122_Member | Type_122_Members | Type_122__Phantom
 
-export interface Type_167_Member {
+export interface Type_122_Member {
     __kind: 'Member'
     value: AccountId20
 }
 
-export interface Type_167_Members {
+export interface Type_122_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_167__Phantom {
+export interface Type_122__Phantom {
     __kind: '_Phantom'
 }
 
@@ -519,18 +519,18 @@ export interface Deposit {
     amount: bigint
 }
 
-export const Type_571: sts.Type<Type_571> = sts.closedEnum(() => {
+export const Type_511: sts.Type<Type_511> = sts.closedEnum(() => {
     return  {
         Approved: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         Cancelled: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         Killed: sts.number(),
-        Ongoing: Type_572,
+        Ongoing: Type_512,
         Rejected: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         TimedOut: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
     }
 })
 
-export const Type_572: sts.Type<Type_572> = sts.struct(() => {
+export const Type_512: sts.Type<Type_512> = sts.struct(() => {
     return  {
         track: sts.number(),
         origin: OriginCaller,
@@ -585,15 +585,15 @@ export const H256 = sts.bytes()
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        CouncilCollective: Type_167,
-        CumulusXcm: Origin,
-        Ethereum: Type_166,
-        EthereumXcm: Type_171,
-        OpenTechCommitteeCollective: Type_174,
-        Origins: Type_173,
-        PolkadotXcm: Type_170,
-        TechCommitteeCollective: Type_168,
-        TreasuryCouncilCollective: Type_172,
+        CouncilCollective: Type_122,
+        CumulusXcm: Type_126,
+        Ethereum: Type_120,
+        EthereumXcm: Type_136,
+        OpenTechCommitteeCollective: Type_125,
+        Origins: Origin,
+        PolkadotXcm: Type_127,
+        TechCommitteeCollective: Type_123,
+        TreasuryCouncilCollective: Type_124,
         Void: Void,
         system: RawOrigin,
     }
@@ -614,7 +614,7 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
-export const Type_172: sts.Type<Type_172> = sts.closedEnum(() => {
+export const Type_124: sts.Type<Type_124> = sts.closedEnum(() => {
     return  {
         Member: AccountId20,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -622,7 +622,7 @@ export const Type_172: sts.Type<Type_172> = sts.closedEnum(() => {
     }
 })
 
-export const Type_168: sts.Type<Type_168> = sts.closedEnum(() => {
+export const Type_123: sts.Type<Type_123> = sts.closedEnum(() => {
     return  {
         Member: AccountId20,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -630,7 +630,7 @@ export const Type_168: sts.Type<Type_168> = sts.closedEnum(() => {
     }
 })
 
-export const Type_170: sts.Type<Type_170> = sts.closedEnum(() => {
+export const Type_127: sts.Type<Type_127> = sts.closedEnum(() => {
     return  {
         Response: V3MultiLocation,
         Xcm: V3MultiLocation,
@@ -744,7 +744,7 @@ export const V3NetworkId: sts.Type<V3NetworkId> = sts.closedEnum(() => {
     }
 })
 
-export const Type_173: sts.Type<Type_173> = sts.closedEnum(() => {
+export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
     return  {
         GeneralAdmin: sts.unit(),
         ReferendumCanceller: sts.unit(),
@@ -753,7 +753,7 @@ export const Type_173: sts.Type<Type_173> = sts.closedEnum(() => {
     }
 })
 
-export const Type_174: sts.Type<Type_174> = sts.closedEnum(() => {
+export const Type_125: sts.Type<Type_125> = sts.closedEnum(() => {
     return  {
         Member: AccountId20,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -761,7 +761,7 @@ export const Type_174: sts.Type<Type_174> = sts.closedEnum(() => {
     }
 })
 
-export const Type_171: sts.Type<Type_171> = sts.closedEnum(() => {
+export const Type_136: sts.Type<Type_136> = sts.closedEnum(() => {
     return  {
         XcmEthereumTransaction: H160,
     }
@@ -769,13 +769,13 @@ export const Type_171: sts.Type<Type_171> = sts.closedEnum(() => {
 
 export const H160 = sts.bytes()
 
-export const Type_166: sts.Type<Type_166> = sts.closedEnum(() => {
+export const Type_120: sts.Type<Type_120> = sts.closedEnum(() => {
     return  {
         EthereumTransaction: H160,
     }
 })
 
-export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
+export const Type_126: sts.Type<Type_126> = sts.closedEnum(() => {
     return  {
         Relay: sts.unit(),
         SiblingParachain: Id,
@@ -784,7 +784,7 @@ export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
 
 export const Id = sts.number()
 
-export const Type_167: sts.Type<Type_167> = sts.closedEnum(() => {
+export const Type_122: sts.Type<Type_122> = sts.closedEnum(() => {
     return  {
         Member: AccountId20,
         Members: sts.tuple(() => [sts.number(), sts.number()]),

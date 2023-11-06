@@ -1,21 +1,21 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v40 from '../v40'
+import * as v49 from '../v49'
 import * as v2500 from '../v2500'
 
 export const totalIssuance =  {
     /**
      *  The total units issued in the system.
      */
-    v40: new StorageType('Balances.TotalIssuance', 'Default', [], v40.Balance) as TotalIssuanceV40,
+    v49: new StorageType('Balances.TotalIssuance', 'Default', [], v49.Balance) as TotalIssuanceV49,
 }
 
 /**
  *  The total units issued in the system.
  */
-export interface TotalIssuanceV40  {
+export interface TotalIssuanceV49  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v40.Balance
-    get(block: Block): Promise<(v40.Balance | undefined)>
+    getDefault(block: Block): v49.Balance
+    get(block: Block): Promise<(v49.Balance | undefined)>
 }
 
 export const account =  {
@@ -24,7 +24,7 @@ export const account =  {
      * 
      *  NOTE: This is only used in the case that this pallet is used to store balances.
      */
-    v40: new StorageType('Balances.Account', 'Default', [v40.AccountId], v40.AccountData) as AccountV40,
+    v49: new StorageType('Balances.Account', 'Default', [v49.AccountId], v49.AccountData) as AccountV49,
     /**
      *  The Balances pallet example of storing the balance of an account.
      * 
@@ -59,19 +59,19 @@ export const account =  {
  * 
  *  NOTE: This is only used in the case that this pallet is used to store balances.
  */
-export interface AccountV40  {
+export interface AccountV49  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v40.AccountData
-    get(block: Block, key: v40.AccountId): Promise<(v40.AccountData | undefined)>
-    getMany(block: Block, keys: v40.AccountId[]): Promise<(v40.AccountData | undefined)[]>
-    getKeys(block: Block): Promise<v40.AccountId[]>
-    getKeys(block: Block, key: v40.AccountId): Promise<v40.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v40.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block, key: v40.AccountId): AsyncIterable<v40.AccountId[]>
-    getPairs(block: Block): Promise<[k: v40.AccountId, v: (v40.AccountData | undefined)][]>
-    getPairs(block: Block, key: v40.AccountId): Promise<[k: v40.AccountId, v: (v40.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v40.AccountId, v: (v40.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v40.AccountId): AsyncIterable<[k: v40.AccountId, v: (v40.AccountData | undefined)][]>
+    getDefault(block: Block): v49.AccountData
+    get(block: Block, key: v49.AccountId): Promise<(v49.AccountData | undefined)>
+    getMany(block: Block, keys: v49.AccountId[]): Promise<(v49.AccountData | undefined)[]>
+    getKeys(block: Block): Promise<v49.AccountId[]>
+    getKeys(block: Block, key: v49.AccountId): Promise<v49.AccountId[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v49.AccountId[]>
+    getKeysPaged(pageSize: number, block: Block, key: v49.AccountId): AsyncIterable<v49.AccountId[]>
+    getPairs(block: Block): Promise<[k: v49.AccountId, v: (v49.AccountData | undefined)][]>
+    getPairs(block: Block, key: v49.AccountId): Promise<[k: v49.AccountId, v: (v49.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v49.AccountId, v: (v49.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v49.AccountId): AsyncIterable<[k: v49.AccountId, v: (v49.AccountData | undefined)][]>
 }
 
 /**

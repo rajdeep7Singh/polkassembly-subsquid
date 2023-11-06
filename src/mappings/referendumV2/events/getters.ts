@@ -20,15 +20,8 @@ interface ReferendumEventData {
 }
 
 export function getEventData(itemEvent: Event): ReferendumEventData {
-    if (submitted.v1900.is(itemEvent)) {
-        const {index, track, proposalHash } = submitted.v1900.decode(itemEvent)
-        return {
-            index,
-            track,
-            hash: proposalHash
-        }
-    } else if (submitted.v2000.is(itemEvent)) {
-        const {index, track, proposal } = submitted.v2000.decode(itemEvent)
+    if (submitted.v2100.is(itemEvent)) {
+        const {index, track, proposal } = submitted.v2100.decode(itemEvent)
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -52,8 +45,8 @@ export interface ReferendaData {
 }
 
 export function getCancelledData(itemEvent: Event): ReferendaData {
-    if(cancelled.v1900.is(itemEvent)){
-        const { index, tally } = cancelled.v1900.decode(itemEvent)
+    if(cancelled.v2100.is(itemEvent)){
+        const { index, tally } = cancelled.v2100.decode(itemEvent)
         return {
             index,
             tally
@@ -68,8 +61,8 @@ export interface ReferendaIndexData {
 }
 
 export function getApprovedData(itemEvent: Event): ReferendaIndexData {
-    if(approved.v1900.is(itemEvent)){
-        const { index } = approved.v1900.decode(itemEvent)
+    if(approved.v2100.is(itemEvent)){
+        const { index } = approved.v2100.decode(itemEvent)
         return {
             index
         }
@@ -79,8 +72,8 @@ export function getApprovedData(itemEvent: Event): ReferendaIndexData {
 }
 
 export function getKilledData(itemEvent: Event): ReferendaData {
-    if(killed.v1900.is(itemEvent)){
-        const { index, tally } = killed.v1900.decode(itemEvent)
+    if(killed.v2100.is(itemEvent)){
+        const { index, tally } = killed.v2100.decode(itemEvent)
         return {
             index,
             tally
@@ -91,8 +84,8 @@ export function getKilledData(itemEvent: Event): ReferendaData {
 }
 
 export function getTimedOutData(itemEvent: Event): ReferendaData {
-    if(timedOut.v1900.is(itemEvent)){
-        const { index, tally } = timedOut.v1900.decode(itemEvent)
+    if(timedOut.v2100.is(itemEvent)){
+        const { index, tally } = timedOut.v2100.decode(itemEvent)
         return {
             index,
             tally
@@ -103,8 +96,8 @@ export function getTimedOutData(itemEvent: Event): ReferendaData {
 }
 
 export function getRejectedData(itemEvent: Event): ReferendaData {
-    if(rejected.v1900.is(itemEvent)){
-        const { index, tally } = rejected.v1900.decode(itemEvent)
+    if(rejected.v2100.is(itemEvent)){
+        const { index, tally } = rejected.v2100.decode(itemEvent)
         return {
             index,
             tally
@@ -115,8 +108,8 @@ export function getRejectedData(itemEvent: Event): ReferendaData {
 }
 
 export function getConfirmAbortedData(itemEvent: Event): ReferendaIndexData {
-    if(confirmAborted.v1900.is(itemEvent)){
-        const { index } = confirmAborted.v1900.decode(itemEvent)
+    if(confirmAborted.v2100.is(itemEvent)){
+        const { index } = confirmAborted.v2100.decode(itemEvent)
         return {
             index,
         }
@@ -126,8 +119,8 @@ export function getConfirmAbortedData(itemEvent: Event): ReferendaIndexData {
 }
 
 export function getConfirmedData(itemEvent: Event): ReferendaData {
-    if(confirmed.v1900.is(itemEvent)){
-        const { index, tally } = confirmed.v1900.decode(itemEvent)
+    if(confirmed.v2100.is(itemEvent)){
+        const { index, tally } = confirmed.v2100.decode(itemEvent)
         return {
             index,
             tally
@@ -138,8 +131,8 @@ export function getConfirmedData(itemEvent: Event): ReferendaData {
 }
 
 export function getConfirmStartedData(itemEvent: Event): ReferendaIndexData {
-    if(confirmStarted.v1900.is(itemEvent)){
-        const { index } = confirmStarted.v1900.decode(itemEvent)
+    if(confirmStarted.v2100.is(itemEvent)){
+        const { index } = confirmStarted.v2100.decode(itemEvent)
         return {
             index,
         }
@@ -155,8 +148,8 @@ export interface ReferendaDepositData {
 }
 
 export function getDecisionDepositPlacedData( itemEvent: Event): ReferendaDepositData {
-    if(decisionDepositPlaced.v1900.is(itemEvent)){
-        const { index, who, amount } = decisionDepositPlaced.v1900.decode(itemEvent)
+    if(decisionDepositPlaced.v2100.is(itemEvent)){
+        const { index, who, amount } = decisionDepositPlaced.v2100.decode(itemEvent)
         return {
             index,
             who,
@@ -175,16 +168,8 @@ export interface ReferendaDecisionStartedData {
 }
 
 export function getDecisionStartedData(itemEvent: Event): ReferendaDecisionStartedData {
-    if(decisionStarted.v1900.is(itemEvent)){
-        const { index, track, tally, proposalHash } = decisionStarted.v1900.decode(itemEvent)
-        return {
-            index,
-            track,
-            tally,
-            hash: proposalHash
-        }
-    }else if(decisionStarted.v2000.is(itemEvent)){
-        const { index, track, tally, proposal } = decisionStarted.v2000.decode(itemEvent)
+    if(decisionStarted.v2100.is(itemEvent)){
+        const { index, track, tally, proposal } = decisionStarted.v2100.decode(itemEvent)
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value

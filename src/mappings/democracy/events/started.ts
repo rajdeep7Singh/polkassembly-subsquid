@@ -12,14 +12,14 @@ interface ReferendumEventData {
 }
 
 function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendumEventData {
-    if (started.v40.is(itemEvent)) {
-        const [index, threshold] = started.v40.decode(itemEvent)
+    if (started.v49.is(itemEvent)) {
+        const [index, threshold] = started.v49.decode(itemEvent)
         return {
             index,
             threshold: threshold.__kind,
         }
-    } else if (started.v1200.is(itemEvent)) {
-        const { refIndex: index, threshold } = started.v1200.decode(itemEvent)
+    } else if (started.v1201.is(itemEvent)) {
+        const { refIndex: index, threshold } = started.v1201.decode(itemEvent)
         return {
             index,
             threshold: threshold.__kind,

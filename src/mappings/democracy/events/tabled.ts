@@ -11,15 +11,15 @@ interface TabledEventData {
 }
 
 function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): TabledEventData {
-    if (tabled.v40.is(itemEvent)) {
-        const [index, deposit, depositors] = tabled.v40.decode(itemEvent)
+    if (tabled.v49.is(itemEvent)) {
+        const [index, deposit, depositors] = tabled.v49.decode(itemEvent)
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (tabled.v1200.is(itemEvent)) {
-        const { proposalIndex: index, deposit, depositors } = tabled.v1200.decode(itemEvent)
+    } else if (tabled.v1201.is(itemEvent)) {
+        const { proposalIndex: index, deposit, depositors } = tabled.v1201.decode(itemEvent)
         return {
             index,
             deposit,

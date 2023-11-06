@@ -38,8 +38,8 @@ interface DemocracyVoteCallData {
 
 export function getVoteData(ctx: ProcessorContext<Store>, itemCall: any): DemocracyVoteCallData {
     // const event = new ConvictionVotingVoteCall(ctx, itemCall)
-    if (vote.v1900.is(itemCall)) {
-        const { pollIndex, vote: voteData } = vote.v1900.decode(itemCall)
+    if (vote.v2100.is(itemCall)) {
+        const { pollIndex, vote: voteData } = vote.v2100.decode(itemCall)
         if(voteData.__kind === 'Standard') {
             return {
                 index: pollIndex,
@@ -108,9 +108,9 @@ export interface ConvictionVoteDelegateCallData {
 export function getDelegateData(ctx: ProcessorContext<Store>, itemCall: any): ConvictionVoteDelegateCallData {
     // const event = new ConvictionVotingDelegateCall(ctx, itemCall)
    
-    if (delegate.v1900.is(itemCall)) {
+    if (delegate.v2100.is(itemCall)) {
         //{ class, to, conviction, balance}
-        const eventData = delegate.v1900.decode(itemCall)
+        const eventData = delegate.v2100.decode(itemCall)
         return {
             track: eventData.class,
             to: eventData.to,
@@ -128,8 +128,8 @@ export interface ConvictionVoteUndelegateCallData {
 export function getUndelegateData(ctx: ProcessorContext<Store>, itemCall: any): ConvictionVoteUndelegateCallData {
     // const event = new ConvictionVotingUndelegateCall(ctx, itemCall)
    
-    if (undelegate.v1900.is(itemCall)) {
-        const eventData = undelegate.v1900.decode(itemCall)
+    if (undelegate.v2100.is(itemCall)) {
+        const eventData = undelegate.v2100.decode(itemCall)
         return {
             track: eventData.class
         }
@@ -145,8 +145,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 
 export function getRemoveVoteData(ctx: ProcessorContext<Store>, itemCall: any): ConvictionVotingRemoveVoteCallData {
     // const event = new ConvictionVotingRemoveVoteCall(ctx, itemCall)
-    if (removeVote.v1900.is(itemCall)) {
-        const eventData = removeVote.v1900.decode(itemCall)
+    if (removeVote.v2100.is(itemCall)) {
+        const eventData = removeVote.v2100.decode(itemCall)
         return {
             index: eventData.index,
             track: eventData.class
@@ -164,8 +164,8 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 
 export function getRemoveOtherVoteData(ctx: ProcessorContext<Store>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
     // const event = new ConvictionVotingRemoveOtherVoteCall(ctx, itemCall)
-    if (removeOtherVote.v1900.is(itemCall)) {
-        const eventData = removeOtherVote.v1900.decode(itemCall)
+    if (removeOtherVote.v2100.is(itemCall)) {
+        const eventData = removeOtherVote.v2100.decode(itemCall)
         return {
             index: eventData.index,
             track: eventData.class,

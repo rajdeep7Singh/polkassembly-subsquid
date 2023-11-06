@@ -7,8 +7,8 @@ interface ProposedData {
 }
 
 export function getProposedData(ctx: ProcessorContext<Store>, itemEvent: Event): ProposedData {
-    if (proposed.v47.is(itemEvent)) {
-        const index = proposed.v47.decode(itemEvent)
+    if (proposed.v49.is(itemEvent)) {
+        const index = proposed.v49.decode(itemEvent)
         return {
             index,
         }
@@ -27,8 +27,8 @@ interface RejectedData {
 }
 
 export function getRejectedData(ctx: ProcessorContext<Store>, itemEvent: Event): RejectedData {
-    if (rejected.v47.is(itemEvent)) {
-        const [index] = rejected.v47.decode(itemEvent)
+    if (rejected.v49.is(itemEvent)) {
+        const [index] = rejected.v49.decode(itemEvent)
         return {
             index,
         }
@@ -47,8 +47,8 @@ interface AwarderData {
 }
 
 export function getAwarderData(ctx: ProcessorContext<Store>, itemEvent: Event): AwarderData {
-    if (awarded.v47.is(itemEvent)) {
-        const [index] = awarded.v47.decode(itemEvent)
+    if (awarded.v49.is(itemEvent)) {
+        const [index] = awarded.v49.decode(itemEvent)
         return {
             index,
         }
@@ -70,8 +70,8 @@ interface SpendApprovedData {
 }
 
 export function getSpendApprovedData(ctx: ProcessorContext<Store>, itemEvent: Event): SpendApprovedData {
-    if (spendApproved.v1800.is(itemEvent)) {
-        const { proposalIndex, amount, beneficiary}= spendApproved.v1800.decode(itemEvent)
+    if (spendApproved.v1801.is(itemEvent)) {
+        const { proposalIndex, amount, beneficiary}= spendApproved.v1801.decode(itemEvent)
         return {
             proposalIndex,
             amount,

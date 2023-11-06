@@ -7,8 +7,8 @@ import { events, calls } from './types'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://wss.api.moonbase.moonbeam.network',
-        archive: lookupArchive('moonbase',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://wss.moonriver.moonbeam.network',
+        archive: lookupArchive('moonriver',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

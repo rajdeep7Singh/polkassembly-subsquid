@@ -4,14 +4,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'moonbase',
+        name: 'moonriver',
         prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive('moonbase', {type: 'Substrate', release: 'ArrowSquid' }),
-        chain: 'wss://wss.api.moonbase.moonbeam.network',
+        archive: lookupArchive('moonriver', {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://wss.moonriver.moonbeam.network',
     },
-    typesBundle: 'moonbase',
+    typesBundle: 'moonriver',
     batchSize: 500,
     blockRange: {
         from: 0,

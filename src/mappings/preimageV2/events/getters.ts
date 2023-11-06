@@ -17,8 +17,8 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageNotedData {
     // const event = new PreimageNotedEvent(ctx, itemEvent)
-    if (noted.v1900.is(itemEvent)) {
-        const { hash } = noted.v1900.decode(itemEvent)
+    if (noted.v2000.is(itemEvent)) {
+        const { hash } = noted.v2000.decode(itemEvent)
         return {
             hash
         }
@@ -33,8 +33,8 @@ export interface PreimageRequestedData {
 
 export function getPreimageRequestedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageRequestedData {
     // const event = new PreimageRequestedEvent(ctx, itemEvent)
-    if (requested.v1900.is(itemEvent)) {
-        const {hash} = requested.v1900.decode(itemEvent)
+    if (requested.v2000.is(itemEvent)) {
+        const {hash} = requested.v2000.decode(itemEvent)
         return {
             hash
         }
@@ -49,8 +49,8 @@ export interface PreimageClearedData {
 
 export function getPreimageClearedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageClearedData {
     // const event = new PreimageClearedEvent(ctx, itemEvent)
-    if (cleared.v1900.is(itemEvent)) {
-        const {hash} = cleared.v1900.decode(itemEvent)
+    if (cleared.v2000.is(itemEvent)) {
+        const {hash} = cleared.v2000.decode(itemEvent)
         return {
             hash
         }

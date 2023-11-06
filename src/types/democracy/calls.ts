@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v40 from '../v40'
+import * as v49 from '../v49'
 import * as v900 from '../v900'
 
 export const vote =  {
@@ -15,11 +15,11 @@ export const vote =  {
      * 
      *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v40.AccountVote,
+            vote: v49.AccountVote,
         })
     ),
     /**
@@ -66,12 +66,12 @@ export const delegate =  {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Democracy.delegate',
         sts.struct({
-            to: v40.AccountId,
-            conviction: v40.Conviction,
-            balance: v40.BalanceOf,
+            to: v49.AccountId,
+            conviction: v49.Conviction,
+            balance: v49.BalanceOf,
         })
     ),
 }
@@ -92,7 +92,7 @@ export const undelegate =  {
      *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Democracy.undelegate',
         sts.unit()
     ),
@@ -129,10 +129,10 @@ export const removeVote =  {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Democracy.remove_vote',
         sts.struct({
-            index: v40.ReferendumIndex,
+            index: v49.ReferendumIndex,
         })
     ),
 }
@@ -156,11 +156,11 @@ export const removeOtherVote =  {
      *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Democracy.remove_other_vote',
         sts.struct({
-            target: v40.AccountId,
-            index: v40.ReferendumIndex,
+            target: v49.AccountId,
+            index: v49.ReferendumIndex,
         })
     ),
 }

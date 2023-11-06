@@ -1,5 +1,23 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type ProposalIndex = number
+
+export interface TreasuryProposal {
+    proposer: AccountId
+    value: Balance
+    beneficiary: AccountId
+    bond: Balance
+}
+
+export const TreasuryProposal: sts.Type<TreasuryProposal> = sts.struct(() => {
+    return  {
+        proposer: AccountId,
+        value: Balance,
+        beneficiary: AccountId,
+        bond: Balance,
+    }
+})
+
 export type ReferendumIndex = number
 
 export type ReferendumInfo = ReferendumInfo_Finished | ReferendumInfo_Ongoing
@@ -294,6 +312,8 @@ export interface EthTransaction {
     input: Bytes
     signature: EthTransactionSignature
 }
+
+export const ProposalIndex = sts.number()
 
 export const Hash = sts.bytes()
 

@@ -35,8 +35,8 @@ interface ScheduledData {
 // }
 
 export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event, header: any): ScheduledData | undefined {
-    if (dispatched.v40.is(item)) {
-        const [[block, number], hash, result] = dispatched.v40.decode(item)
+    if (dispatched.v49.is(item)) {
+        const [[block, number], hash, result] = dispatched.v49.decode(item)
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: block,
@@ -62,8 +62,8 @@ export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event
             }
         }
         return undefined
-    } else if (dispatched.v1400.is(item)) {
-        const { task, id, result } = dispatched.v1400.decode(item)
+    } else if (dispatched.v1401.is(item)) {
+        const { task, id, result } = dispatched.v1401.decode(item)
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[1],
@@ -71,8 +71,8 @@ export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event
             }
         }
         return undefined
-    } else if (dispatched.v1603.is(item)) {
-        const { task, id, result } = dispatched.v1603.decode(item)
+    } else if (dispatched.v1605.is(item)) {
+        const { task, id, result } = dispatched.v1605.decode(item)
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[1],

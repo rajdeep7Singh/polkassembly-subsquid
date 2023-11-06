@@ -1,25 +1,25 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v40 from '../v40'
-import * as v1200 from '../v1200'
+import * as v49 from '../v49'
+import * as v1201 from '../v1201'
 
 export const transact =  {
     name: 'Ethereum.transact',
     /**
      *  Transact an Ethereum transaction.
      */
-    v40: new CallType(
+    v49: new CallType(
         'Ethereum.transact',
         sts.struct({
-            transaction: v40.EthTransaction,
+            transaction: v49.EthTransaction,
         })
     ),
     /**
      * Transact an Ethereum transaction.
      */
-    v1200: new CallType(
+    v1201: new CallType(
         'Ethereum.transact',
         sts.struct({
-            transaction: v1200.TransactionV2,
+            transaction: v1201.TransactionV2,
         })
     ),
 }

@@ -28,16 +28,7 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if (preimageFor.v1900.is(block)) {
-        const storageData = await preimageFor.v1900.get(block, hash)
-        if (!storageData) return undefined
-
-        return {
-            data: storageData,
-            ...preimageStatus
-        }
-    }
-    else if(preimageFor.v2000.is(block)) {
+    if(preimageFor.v2000.is(block)) {
         if(preimageStatus && preimageStatus.len){
             const storageData = await preimageFor.v2000.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
@@ -62,16 +53,7 @@ interface PreimageStatusStorageData{
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if (statusFor.v1900.is(block)) {
-        const storageData = await statusFor.v1900.get(block, hash)
-        if (!storageData) return undefined
-        return {
-            status: storageData.__kind,
-            value: storageData.value,
-            len: undefined
-        }
-    }
-    else if(statusFor.v2000.is(block)) {
+    if(statusFor.v2000.is(block)) {
         const storageData = await statusFor.v2000.get(block, hash)
         if (!storageData) return undefined
         return {

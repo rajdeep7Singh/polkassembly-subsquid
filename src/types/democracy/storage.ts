@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v40 from '../v40'
+import * as v49 from '../v49'
 import * as v900 from '../v900'
 import * as v2000 from '../v2000'
 
@@ -7,7 +7,7 @@ export const publicProps =  {
     /**
      *  The public proposals. Unsorted. The second item is the proposal's hash.
      */
-    v40: new StorageType('Democracy.PublicProps', 'Default', [], sts.array(() => sts.tuple(() => [v40.PropIndex, v40.Hash, v40.AccountId]))) as PublicPropsV40,
+    v49: new StorageType('Democracy.PublicProps', 'Default', [], sts.array(() => sts.tuple(() => [v49.PropIndex, v49.Hash, v49.AccountId]))) as PublicPropsV49,
     /**
      *  The public proposals. Unsorted. The second item is the proposal.
      */
@@ -17,10 +17,10 @@ export const publicProps =  {
 /**
  *  The public proposals. Unsorted. The second item is the proposal's hash.
  */
-export interface PublicPropsV40  {
+export interface PublicPropsV49  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): [v40.PropIndex, v40.Hash, v40.AccountId][]
-    get(block: Block): Promise<([v40.PropIndex, v40.Hash, v40.AccountId][] | undefined)>
+    getDefault(block: Block): [v49.PropIndex, v49.Hash, v49.AccountId][]
+    get(block: Block): Promise<([v49.PropIndex, v49.Hash, v49.AccountId][] | undefined)>
 }
 
 /**
@@ -37,7 +37,7 @@ export const preimages =  {
      *  Map of hashes to the proposal preimage, along with who registered it and their deposit.
      *  The block number is the block at which it was deposited.
      */
-    v40: new StorageType('Democracy.Preimages', 'Optional', [v40.Hash], v40.PreimageStatus) as PreimagesV40,
+    v49: new StorageType('Democracy.Preimages', 'Optional', [v49.Hash], v49.PreimageStatus) as PreimagesV49,
     /**
      *  Map of hashes to the proposal preimage, along with who registered it and their deposit.
      *  The block number is the block at which it was deposited.
@@ -49,18 +49,18 @@ export const preimages =  {
  *  Map of hashes to the proposal preimage, along with who registered it and their deposit.
  *  The block number is the block at which it was deposited.
  */
-export interface PreimagesV40  {
+export interface PreimagesV49  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v40.Hash): Promise<(v40.PreimageStatus | undefined)>
-    getMany(block: Block, keys: v40.Hash[]): Promise<(v40.PreimageStatus | undefined)[]>
-    getKeys(block: Block): Promise<v40.Hash[]>
-    getKeys(block: Block, key: v40.Hash): Promise<v40.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v40.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v40.Hash): AsyncIterable<v40.Hash[]>
-    getPairs(block: Block): Promise<[k: v40.Hash, v: (v40.PreimageStatus | undefined)][]>
-    getPairs(block: Block, key: v40.Hash): Promise<[k: v40.Hash, v: (v40.PreimageStatus | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v40.Hash, v: (v40.PreimageStatus | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v40.Hash): AsyncIterable<[k: v40.Hash, v: (v40.PreimageStatus | undefined)][]>
+    get(block: Block, key: v49.Hash): Promise<(v49.PreimageStatus | undefined)>
+    getMany(block: Block, keys: v49.Hash[]): Promise<(v49.PreimageStatus | undefined)[]>
+    getKeys(block: Block): Promise<v49.Hash[]>
+    getKeys(block: Block, key: v49.Hash): Promise<v49.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v49.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v49.Hash): AsyncIterable<v49.Hash[]>
+    getPairs(block: Block): Promise<[k: v49.Hash, v: (v49.PreimageStatus | undefined)][]>
+    getPairs(block: Block, key: v49.Hash): Promise<[k: v49.Hash, v: (v49.PreimageStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v49.Hash, v: (v49.PreimageStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v49.Hash): AsyncIterable<[k: v49.Hash, v: (v49.PreimageStatus | undefined)][]>
 }
 
 /**
@@ -87,7 +87,7 @@ export const referendumInfoOf =  {
      * 
      *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
      */
-    v40: new StorageType('Democracy.ReferendumInfoOf', 'Optional', [v40.ReferendumIndex], v40.ReferendumInfo) as ReferendumInfoOfV40,
+    v49: new StorageType('Democracy.ReferendumInfoOf', 'Optional', [v49.ReferendumIndex], v49.ReferendumInfo) as ReferendumInfoOfV49,
     /**
      *  Information concerning any given referendum.
      * 
@@ -107,18 +107,18 @@ export const referendumInfoOf =  {
  * 
  *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
  */
-export interface ReferendumInfoOfV40  {
+export interface ReferendumInfoOfV49  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v40.ReferendumIndex): Promise<(v40.ReferendumInfo | undefined)>
-    getMany(block: Block, keys: v40.ReferendumIndex[]): Promise<(v40.ReferendumInfo | undefined)[]>
-    getKeys(block: Block): Promise<v40.ReferendumIndex[]>
-    getKeys(block: Block, key: v40.ReferendumIndex): Promise<v40.ReferendumIndex[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v40.ReferendumIndex[]>
-    getKeysPaged(pageSize: number, block: Block, key: v40.ReferendumIndex): AsyncIterable<v40.ReferendumIndex[]>
-    getPairs(block: Block): Promise<[k: v40.ReferendumIndex, v: (v40.ReferendumInfo | undefined)][]>
-    getPairs(block: Block, key: v40.ReferendumIndex): Promise<[k: v40.ReferendumIndex, v: (v40.ReferendumInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v40.ReferendumIndex, v: (v40.ReferendumInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v40.ReferendumIndex): AsyncIterable<[k: v40.ReferendumIndex, v: (v40.ReferendumInfo | undefined)][]>
+    get(block: Block, key: v49.ReferendumIndex): Promise<(v49.ReferendumInfo | undefined)>
+    getMany(block: Block, keys: v49.ReferendumIndex[]): Promise<(v49.ReferendumInfo | undefined)[]>
+    getKeys(block: Block): Promise<v49.ReferendumIndex[]>
+    getKeys(block: Block, key: v49.ReferendumIndex): Promise<v49.ReferendumIndex[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v49.ReferendumIndex[]>
+    getKeysPaged(pageSize: number, block: Block, key: v49.ReferendumIndex): AsyncIterable<v49.ReferendumIndex[]>
+    getPairs(block: Block): Promise<[k: v49.ReferendumIndex, v: (v49.ReferendumInfo | undefined)][]>
+    getPairs(block: Block, key: v49.ReferendumIndex): Promise<[k: v49.ReferendumIndex, v: (v49.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v49.ReferendumIndex, v: (v49.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v49.ReferendumIndex): AsyncIterable<[k: v49.ReferendumIndex, v: (v49.ReferendumInfo | undefined)][]>
 }
 
 /**

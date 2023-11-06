@@ -15,50 +15,50 @@ import { Store } from '@subsquid/typeorm-store'
 import { ProcessorContext, Event } from '../../../processor'
 
 export function getCancelledData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
-    if (cancelled.v40.is(itemEvent)) {
-        return cancelled.v40.decode(itemEvent)
-    } else if (cancelled.v1200.is(itemEvent)) {
-        return cancelled.v1200.decode(itemEvent).refIndex
+    if (cancelled.v49.is(itemEvent)) {
+        return cancelled.v49.decode(itemEvent)
+    } else if (cancelled.v1201.is(itemEvent)) {
+        return cancelled.v1201.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
-    if (executed.v40.is(itemEvent)) {
-        return executed.v40.decode(itemEvent)[0]
+    if (executed.v49.is(itemEvent)) {
+        return executed.v49.decode(itemEvent)[0]
     } else if (executed.v701.is(itemEvent)) {
         return executed.v701.decode(itemEvent)[0]
     } else if (executed.v900.is(itemEvent)) {
         return executed.v900.decode(itemEvent)[0]
-    } else if (executed.v1200.is(itemEvent)) {
-        return executed.v1200.decode(itemEvent).refIndex
+    } else if (executed.v1201.is(itemEvent)) {
+        return executed.v1201.decode(itemEvent).refIndex
     } else if (executed.v1300.is(itemEvent)) {
         return executed.v1300.decode(itemEvent).refIndex
-    } else if (executed.v1400.is(itemEvent)) {
-        return executed.v1400.decode(itemEvent).refIndex
-    } else if (executed.v1603.is(itemEvent)) {
-        return executed.v1603.decode(itemEvent).refIndex
+    } else if (executed.v1401.is(itemEvent)) {
+        return executed.v1401.decode(itemEvent).refIndex
+    } else if (executed.v1605.is(itemEvent)) {
+        return executed.v1605.decode(itemEvent).refIndex
     } else{
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getNotPassedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
-    if (notPassed.v40.is(itemEvent)) {
-        return notPassed.v40.decode(itemEvent)
-    } else if (notPassed.v1200.is(itemEvent)) {
-        return notPassed.v1200.decode(itemEvent).refIndex
+    if (notPassed.v49.is(itemEvent)) {
+        return notPassed.v49.decode(itemEvent)
+    } else if (notPassed.v1201.is(itemEvent)) {
+        return notPassed.v1201.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getPassedData(ctx: ProcessorContext<Store>, itemEvent: Event): number {
-    if (passed.v40.is(itemEvent)) {
-        return passed.v40.decode(itemEvent)
-    } else if (passed.v1200.is(itemEvent)) {
-        return passed.v1200.decode(itemEvent).refIndex
+    if (passed.v49.is(itemEvent)) {
+        return passed.v49.decode(itemEvent)
+    } else if (passed.v1201.is(itemEvent)) {
+        return passed.v1201.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -70,14 +70,14 @@ export interface PreimageInvalidData {
 }
 
 export function getPreimageInvalidData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageInvalidData {
-    if (preimageInvalid.v40.is(itemEvent)) {
-        const [hash, index] = preimageInvalid.v40.decode(itemEvent)
+    if (preimageInvalid.v49.is(itemEvent)) {
+        const [hash, index] = preimageInvalid.v49.decode(itemEvent)
         return {
             hash,
             index,
         }
-    } else if (preimageInvalid.v1200.is(itemEvent)) {
-        const { proposalHash: hash, refIndex: index } = preimageInvalid.v1200.decode(itemEvent)
+    } else if (preimageInvalid.v1201.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageInvalid.v1201.decode(itemEvent)
         return {
             hash,
             index,
@@ -93,14 +93,14 @@ export interface PreimageMissingData {
 }
 
 export function getPreimageMissingData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageMissingData {
-    if (preimageMissing.v40.is(itemEvent)) {
-        const [hash, index] = preimageMissing.v40.decode(itemEvent)
+    if (preimageMissing.v49.is(itemEvent)) {
+        const [hash, index] = preimageMissing.v49.decode(itemEvent)
         return {
             hash,
             index,
         }
-    } else if (preimageMissing.v1200.is(itemEvent)) {
-        const { proposalHash: hash, refIndex: index } = preimageMissing.v1200.decode(itemEvent)
+    } else if (preimageMissing.v1201.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageMissing.v1201.decode(itemEvent)
         return {
             hash,
             index,
@@ -117,15 +117,15 @@ interface PreimageNotedData {
 }
 
 export function getPreimageNotedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageNotedData {
-    if (preimageNoted.v40.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageNoted.v40.decode(itemEvent)
+    if (preimageNoted.v49.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageNoted.v49.decode(itemEvent)
         return {
             hash,
             provider,
             deposit,
         }
-    } else if (preimageNoted.v1200.is(itemEvent)) {
-        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v1200.decode(itemEvent)
+    } else if (preimageNoted.v1201.is(itemEvent)) {
+        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v1201.decode(itemEvent)
         return {
             hash,
             provider,
@@ -143,15 +143,15 @@ export interface PreimageReapedData {
 }
 
 export function getPreimageReapedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageReapedData {
-    if (preimageReaped.v40.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageReaped.v40.decode(itemEvent)
+    if (preimageReaped.v49.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageReaped.v49.decode(itemEvent)
         return {
             hash,
             provider,
             deposit,
         }
-    } else if (preimageReaped.v1200.is(itemEvent)) {
-        const { proposalHash: hash, provider, deposit } = preimageReaped.v1200.decode(itemEvent)
+    } else if (preimageReaped.v1201.is(itemEvent)) {
+        const { proposalHash: hash, provider, deposit } = preimageReaped.v1201.decode(itemEvent)
         return {
             hash,
             provider,
@@ -169,15 +169,15 @@ export interface PreimageUsedData {
 }
 
 export function getPreimageUsedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageUsedData {
-    if (preimageUsed.v40.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageUsed.v40.decode(itemEvent)
+    if (preimageUsed.v49.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageUsed.v49.decode(itemEvent)
         return {
             hash,
             provider,
             deposit,
         }
-    } else if (preimageUsed.v1200.is(itemEvent)) {
-        const { proposalHash: hash, provider, deposit } = preimageUsed.v1200.decode(itemEvent)
+    } else if (preimageUsed.v1201.is(itemEvent)) {
+        const { proposalHash: hash, provider, deposit } = preimageUsed.v1201.decode(itemEvent)
         return {
             hash,
             provider,
@@ -200,8 +200,8 @@ export function getDemocracySecondedData(ctx: ProcessorContext<Store>, itemEvent
             accountId: seconder,
             refIndex: propIndex
         }
-    } else if (seconded.v1200.is(itemEvent)) {
-        const { who: seconder, proposalIndex: propIndex } = seconded.v1200.decode(itemEvent)
+    } else if (seconded.v1201.is(itemEvent)) {
+        const { who: seconder, proposalIndex: propIndex } = seconded.v1201.decode(itemEvent)
         return {
             accountId: seconder,
             refIndex: propIndex
