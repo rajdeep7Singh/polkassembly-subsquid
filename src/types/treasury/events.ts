@@ -1,16 +1,16 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v49 from '../v49'
+import * as v900 from '../v900'
 import * as v1300 from '../v1300'
-import * as v1801 from '../v1801'
+import * as v1802 from '../v1802'
 
 export const proposed =  {
     name: 'Treasury.Proposed',
     /**
-     *  New proposal. \[proposal_index\]
+     * New proposal. \[proposal_index\]
      */
-    v49: new EventType(
+    v900: new EventType(
         'Treasury.Proposed',
-        v49.ProposalIndex
+        sts.number()
     ),
     /**
      * New proposal.
@@ -26,11 +26,11 @@ export const proposed =  {
 export const awarded =  {
     name: 'Treasury.Awarded',
     /**
-     *  Some funds have been allocated. \[proposal_index, award, beneficiary\]
+     * Some funds have been allocated. \[proposal_index, award, beneficiary\]
      */
-    v49: new EventType(
+    v900: new EventType(
         'Treasury.Awarded',
-        sts.tuple([v49.ProposalIndex, v49.Balance, v49.AccountId])
+        sts.tuple([sts.number(), sts.bigint(), v900.H160])
     ),
     /**
      * Some funds have been allocated.
@@ -48,11 +48,11 @@ export const awarded =  {
 export const rejected =  {
     name: 'Treasury.Rejected',
     /**
-     *  A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
+     * A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
      */
-    v49: new EventType(
+    v900: new EventType(
         'Treasury.Rejected',
-        sts.tuple([v49.ProposalIndex, v49.Balance])
+        sts.tuple([sts.number(), sts.bigint()])
     ),
     /**
      * A proposal was rejected; funds were slashed.
@@ -71,12 +71,12 @@ export const spendApproved =  {
     /**
      * A new spend proposal has been approved.
      */
-    v1801: new EventType(
+    v1802: new EventType(
         'Treasury.SpendApproved',
         sts.struct({
             proposalIndex: sts.number(),
             amount: sts.bigint(),
-            beneficiary: v1801.AccountId20,
+            beneficiary: v1802.AccountId20,
         })
     ),
 }

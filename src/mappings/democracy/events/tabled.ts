@@ -11,8 +11,8 @@ interface TabledEventData {
 }
 
 function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): TabledEventData {
-    if (tabled.v49.is(itemEvent)) {
-        const [index, deposit, depositors] = tabled.v49.decode(itemEvent)
+    if (tabled.v900.is(itemEvent)) {
+        const [index, deposit, depositors] = tabled.v900.decode(itemEvent)
         return {
             index,
             deposit,

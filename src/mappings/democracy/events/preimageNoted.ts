@@ -43,18 +43,6 @@ async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block:
             deposit,
             block: since,
         }
-    } else if (preimages.v49.is(block)) {
-        const storageData = await preimages.v49.get(block, hash)
-        if (!storageData || storageData.__kind === 'Missing') return undefined
-
-        const { provider, deposit, since, data } = storageData.value
-
-        return {
-            data,
-            provider,
-            deposit,
-            block: since,
-        }
     } else {
         throw new UnknownVersionError('Democracy.Preimages')
     }

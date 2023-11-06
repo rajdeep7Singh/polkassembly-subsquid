@@ -12,8 +12,8 @@ interface ReferendumEventData {
 }
 
 function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendumEventData {
-    if (started.v49.is(itemEvent)) {
-        const [index, threshold] = started.v49.decode(itemEvent)
+    if (started.v900.is(itemEvent)) {
+        const [index, threshold] = started.v900.decode(itemEvent)
         return {
             index,
             threshold: threshold.__kind,

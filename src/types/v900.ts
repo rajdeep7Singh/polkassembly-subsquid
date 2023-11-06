@@ -1,5 +1,21 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export interface Proposal {
+    proposer: H160
+    value: bigint
+    beneficiary: H160
+    bond: bigint
+}
+
+export const Proposal: sts.Type<Proposal> = sts.struct(() => {
+    return  {
+        proposer: H160,
+        value: sts.bigint(),
+        beneficiary: H160,
+        bond: sts.bigint(),
+    }
+})
+
 export type ReferendumInfo = ReferendumInfo_Finished | ReferendumInfo_Ongoing
 
 export interface ReferendumInfo_Finished {
@@ -69,16 +85,6 @@ export const Tally: sts.Type<Tally> = sts.struct(() => {
     }
 })
 
-export const VoteThreshold: sts.Type<VoteThreshold> = sts.closedEnum(() => {
-    return  {
-        SimpleMajority: sts.unit(),
-        SuperMajorityAgainst: sts.unit(),
-        SuperMajorityApprove: sts.unit(),
-    }
-})
-
-export type H256 = Bytes
-
 export type PreimageStatus = PreimageStatus_Available | PreimageStatus_Missing
 
 export interface PreimageStatus_Available {
@@ -95,8 +101,6 @@ export interface PreimageStatus_Missing {
     value: number
 }
 
-export type H160 = Bytes
-
 export const PreimageStatus: sts.Type<PreimageStatus> = sts.closedEnum(() => {
     return  {
         Available: sts.enumStruct({
@@ -110,9 +114,67 @@ export const PreimageStatus: sts.Type<PreimageStatus> = sts.closedEnum(() => {
     }
 })
 
-export const H160 = sts.bytes()
+export type H256 = Bytes
 
-export const H256 = sts.bytes()
+export type H160 = Bytes
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    miscFrozen: bigint
+    feeFrozen: bigint
+}
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return  {
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        miscFrozen: sts.bigint(),
+        feeFrozen: sts.bigint(),
+    }
+})
+
+export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
+    return  {
+        Locked1x: sts.unit(),
+        Locked2x: sts.unit(),
+        Locked3x: sts.unit(),
+        Locked4x: sts.unit(),
+        Locked5x: sts.unit(),
+        Locked6x: sts.unit(),
+        None: sts.unit(),
+    }
+})
+
+export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export interface Conviction_None {
+    __kind: 'None'
+}
 
 export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
     return  {
@@ -144,6 +206,76 @@ export interface AccountVote_Standard {
 }
 
 export type Vote = number
+
+export const LegacyTransaction: sts.Type<LegacyTransaction> = sts.struct(() => {
+    return  {
+        nonce: sts.bigint(),
+        gasPrice: sts.bigint(),
+        gasLimit: sts.bigint(),
+        action: TransactionAction,
+        value: sts.bigint(),
+        input: sts.bytes(),
+        signature: TransactionSignature,
+    }
+})
+
+export const TransactionSignature: sts.Type<TransactionSignature> = sts.struct(() => {
+    return  {
+        v: TransactionRecoveryId,
+        r: H256,
+        s: H256,
+    }
+})
+
+export const TransactionRecoveryId = sts.bigint()
+
+export interface TransactionSignature {
+    v: TransactionRecoveryId
+    r: H256
+    s: H256
+}
+
+export type TransactionRecoveryId = bigint
+
+export const TransactionAction: sts.Type<TransactionAction> = sts.closedEnum(() => {
+    return  {
+        Call: H160,
+        Create: sts.unit(),
+    }
+})
+
+export type TransactionAction = TransactionAction_Call | TransactionAction_Create
+
+export interface TransactionAction_Call {
+    __kind: 'Call'
+    value: H160
+}
+
+export interface TransactionAction_Create {
+    __kind: 'Create'
+}
+
+export interface LegacyTransaction {
+    nonce: bigint
+    gasPrice: bigint
+    gasLimit: bigint
+    action: TransactionAction
+    value: bigint
+    input: Bytes
+    signature: TransactionSignature
+}
+
+export const H256 = sts.bytes()
+
+export const VoteThreshold: sts.Type<VoteThreshold> = sts.closedEnum(() => {
+    return  {
+        SimpleMajority: sts.unit(),
+        SuperMajorityAgainst: sts.unit(),
+        SuperMajorityApprove: sts.unit(),
+    }
+})
+
+export const H160 = sts.bytes()
 
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {

@@ -161,8 +161,6 @@ export interface RawOrigin_Signed {
     value: AccountId20
 }
 
-export type AccountId20 = Bytes
-
 export type Void = never
 
 export type Type_124 = Type_124_Member | Type_124_Members | Type_124__Phantom
@@ -546,14 +544,6 @@ export const Type_512: sts.Type<Type_512> = sts.struct(() => {
     }
 })
 
-export const Tally: sts.Type<Tally> = sts.struct(() => {
-    return  {
-        ayes: sts.bigint(),
-        nays: sts.bigint(),
-        support: sts.bigint(),
-    }
-})
-
 export const DecidingStatus: sts.Type<DecidingStatus> = sts.struct(() => {
     return  {
         since: sts.number(),
@@ -567,21 +557,6 @@ export const DispatchTime: sts.Type<DispatchTime> = sts.closedEnum(() => {
         At: sts.number(),
     }
 })
-
-export const Bounded: sts.Type<Bounded> = sts.closedEnum(() => {
-    return  {
-        Inline: sts.bytes(),
-        Legacy: sts.enumStruct({
-            hash: H256,
-        }),
-        Lookup: sts.enumStruct({
-            hash: H256,
-            len: sts.number(),
-        }),
-    }
-})
-
-export const H256 = sts.bytes()
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
@@ -606,8 +581,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
         Signed: AccountId20,
     }
 })
-
-export const AccountId20 = sts.bytes()
 
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
@@ -798,3 +771,174 @@ export const Deposit: sts.Type<Deposit> = sts.struct(() => {
         amount: sts.bigint(),
     }
 })
+
+export type AccountId20 = Bytes
+
+export type Type_499 = Type_499_Casting | Type_499_Delegating
+
+export interface Type_499_Casting {
+    __kind: 'Casting'
+    value: Casting
+}
+
+export interface Type_499_Delegating {
+    __kind: 'Delegating'
+    value: Delegating
+}
+
+export interface Delegating {
+    balance: bigint
+    target: AccountId20
+    conviction: Type_212
+    delegations: Type_504
+    prior: [number, bigint]
+}
+
+export interface Type_504 {
+    votes: bigint
+    capital: bigint
+}
+
+export type Type_212 = Type_212_Locked1x | Type_212_Locked2x | Type_212_Locked3x | Type_212_Locked4x | Type_212_Locked5x | Type_212_Locked6x | Type_212_None
+
+export interface Type_212_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Type_212_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Type_212_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Type_212_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Type_212_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Type_212_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export interface Type_212_None {
+    __kind: 'None'
+}
+
+export interface Casting {
+    votes: [number, Type_210][]
+    delegations: Type_504
+    prior: [number, bigint]
+}
+
+export type Type_210 = Type_210_Split | Type_210_SplitAbstain | Type_210_Standard
+
+export interface Type_210_Split {
+    __kind: 'Split'
+    aye: bigint
+    nay: bigint
+}
+
+export interface Type_210_SplitAbstain {
+    __kind: 'SplitAbstain'
+    aye: bigint
+    nay: bigint
+    abstain: bigint
+}
+
+export interface Type_210_Standard {
+    __kind: 'Standard'
+    vote: number
+    balance: bigint
+}
+
+export const Type_499: sts.Type<Type_499> = sts.closedEnum(() => {
+    return  {
+        Casting: Casting,
+        Delegating: Delegating,
+    }
+})
+
+export const Delegating: sts.Type<Delegating> = sts.struct(() => {
+    return  {
+        balance: sts.bigint(),
+        target: AccountId20,
+        conviction: Type_212,
+        delegations: Type_504,
+        prior: sts.tuple(() => [sts.number(), sts.bigint()]),
+    }
+})
+
+export const Type_504: sts.Type<Type_504> = sts.struct(() => {
+    return  {
+        votes: sts.bigint(),
+        capital: sts.bigint(),
+    }
+})
+
+export const Casting: sts.Type<Casting> = sts.struct(() => {
+    return  {
+        votes: sts.array(() => sts.tuple(() => [sts.number(), Type_210])),
+        delegations: Type_504,
+        prior: sts.tuple(() => [sts.number(), sts.bigint()]),
+    }
+})
+
+export const Type_212: sts.Type<Type_212> = sts.closedEnum(() => {
+    return  {
+        Locked1x: sts.unit(),
+        Locked2x: sts.unit(),
+        Locked3x: sts.unit(),
+        Locked4x: sts.unit(),
+        Locked5x: sts.unit(),
+        Locked6x: sts.unit(),
+        None: sts.unit(),
+    }
+})
+
+export const Type_210: sts.Type<Type_210> = sts.closedEnum(() => {
+    return  {
+        Split: sts.enumStruct({
+            aye: sts.bigint(),
+            nay: sts.bigint(),
+        }),
+        SplitAbstain: sts.enumStruct({
+            aye: sts.bigint(),
+            nay: sts.bigint(),
+            abstain: sts.bigint(),
+        }),
+        Standard: sts.enumStruct({
+            vote: sts.number(),
+            balance: sts.bigint(),
+        }),
+    }
+})
+
+export const Tally: sts.Type<Tally> = sts.struct(() => {
+    return  {
+        ayes: sts.bigint(),
+        nays: sts.bigint(),
+        support: sts.bigint(),
+    }
+})
+
+export const AccountId20 = sts.bytes()
+
+export const Bounded: sts.Type<Bounded> = sts.closedEnum(() => {
+    return  {
+        Inline: sts.bytes(),
+        Legacy: sts.enumStruct({
+            hash: H256,
+        }),
+        Lookup: sts.enumStruct({
+            hash: H256,
+            len: sts.number(),
+        }),
+    }
+})
+
+export const H256 = sts.bytes()

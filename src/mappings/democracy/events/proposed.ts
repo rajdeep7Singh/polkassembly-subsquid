@@ -15,8 +15,8 @@ interface DemocracyProposalEventData {
 }
 
 function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): DemocracyProposalEventData {
-    if (proposed.v49.is(itemEvent)) {
-        const [index, deposit] = proposed.v49.decode(itemEvent)
+    if (proposed.v900.is(itemEvent)) {
+        const [index, deposit] = proposed.v900.decode(itemEvent)
         return {
             index,
             deposit,

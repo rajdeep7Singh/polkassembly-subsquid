@@ -1,12 +1,12 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v2100 from '../v2100'
+import * as v2403 from '../v2403'
 
 export const submitted =  {
     name: 'Referenda.Submitted',
     /**
-     * A referendum has being submitted.
+     * A referendum has been submitted.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Submitted',
         sts.struct({
             /**
@@ -20,7 +20,7 @@ export const submitted =  {
             /**
              * The proposal for the referendum.
              */
-            proposal: v2100.Bounded,
+            proposal: v2403.Bounded,
         })
     ),
 }
@@ -30,7 +30,7 @@ export const decisionDepositPlaced =  {
     /**
      * The decision deposit has been placed.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.DecisionDepositPlaced',
         sts.struct({
             /**
@@ -40,7 +40,7 @@ export const decisionDepositPlaced =  {
             /**
              * The account who placed the deposit.
              */
-            who: v2100.AccountId20,
+            who: v2403.AccountId20,
             /**
              * The amount placed by the account.
              */
@@ -54,7 +54,7 @@ export const decisionStarted =  {
     /**
      * A referendum has moved into the deciding phase.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.DecisionStarted',
         sts.struct({
             /**
@@ -68,18 +68,18 @@ export const decisionStarted =  {
             /**
              * The proposal for the referendum.
              */
-            proposal: v2100.Bounded,
+            proposal: v2403.Bounded,
             /**
              * The current tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }
 
 export const confirmStarted =  {
     name: 'Referenda.ConfirmStarted',
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.ConfirmStarted',
         sts.struct({
             /**
@@ -92,7 +92,7 @@ export const confirmStarted =  {
 
 export const confirmAborted =  {
     name: 'Referenda.ConfirmAborted',
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.ConfirmAborted',
         sts.struct({
             /**
@@ -108,7 +108,7 @@ export const confirmed =  {
     /**
      * A referendum has ended its confirmation phase and is ready for approval.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Confirmed',
         sts.struct({
             /**
@@ -118,7 +118,7 @@ export const confirmed =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }
@@ -128,7 +128,7 @@ export const approved =  {
     /**
      * A referendum has been approved and its proposal has been scheduled.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Approved',
         sts.struct({
             /**
@@ -144,7 +144,7 @@ export const rejected =  {
     /**
      * A proposal has been rejected by referendum.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Rejected',
         sts.struct({
             /**
@@ -154,7 +154,7 @@ export const rejected =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }
@@ -164,7 +164,7 @@ export const timedOut =  {
     /**
      * A referendum has been timed out without being decided.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.TimedOut',
         sts.struct({
             /**
@@ -174,7 +174,7 @@ export const timedOut =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }
@@ -184,7 +184,7 @@ export const cancelled =  {
     /**
      * A referendum has been cancelled.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Cancelled',
         sts.struct({
             /**
@@ -194,7 +194,7 @@ export const cancelled =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }
@@ -204,7 +204,7 @@ export const killed =  {
     /**
      * A referendum has been killed.
      */
-    v2100: new EventType(
+    v2403: new EventType(
         'Referenda.Killed',
         sts.struct({
             /**
@@ -214,7 +214,7 @@ export const killed =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: v2100.Tally,
+            tally: v2403.Tally,
         })
     ),
 }

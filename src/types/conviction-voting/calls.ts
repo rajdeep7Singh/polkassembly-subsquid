@@ -1,6 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v2100 from '../v2100'
-import * as v2201 from '../v2201'
+import * as v2403 from '../v2403'
 
 export const vote =  {
     name: 'ConvictionVoting.vote',
@@ -15,29 +14,11 @@ export const vote =  {
      * 
      * Weight: `O(R)` where R is the number of polls the voter has voted on.
      */
-    v2100: new CallType(
+    v2403: new CallType(
         'ConvictionVoting.vote',
         sts.struct({
             pollIndex: sts.number(),
-            vote: v2100.Type_202,
-        })
-    ),
-    /**
-     * Vote in a poll. If `vote.is_aye()`, the vote is to enact the proposal;
-     * otherwise it is a vote to keep the status quo.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `poll_index`: The index of the poll to vote for.
-     * - `vote`: The vote configuration.
-     * 
-     * Weight: `O(R)` where R is the number of polls the voter has voted on.
-     */
-    v2201: new CallType(
-        'ConvictionVoting.vote',
-        sts.struct({
-            pollIndex: sts.number(),
-            vote: v2201.Type_203,
+            vote: v2403.Type_210,
         })
     ),
 }
@@ -69,12 +50,12 @@ export const delegate =  {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    v2100: new CallType(
+    v2403: new CallType(
         'ConvictionVoting.delegate',
         sts.struct({
             class: sts.number(),
-            to: v2100.AccountId20,
-            conviction: v2100.Type_204,
+            to: v2403.AccountId20,
+            conviction: v2403.Type_212,
             balance: sts.bigint(),
         })
     ),
@@ -86,7 +67,7 @@ export const undelegate =  {
      * Undelegate the voting power of the sending account for a particular class of polls.
      * 
      * Tokens may be unlocked following once an amount of time consistent with the lock period
-     * of the conviction with which the delegation was issued.
+     * of the conviction with which the delegation was issued has passed.
      * 
      * The dispatch origin of this call must be _Signed_ and the signing account must be
      * currently delegating.
@@ -98,7 +79,7 @@ export const undelegate =  {
      * Weight: `O(R)` where R is the number of polls the voter delegating to has
      *   voted on. Weight is initially charged as if maximum votes, but is refunded later.
      */
-    v2100: new CallType(
+    v2403: new CallType(
         'ConvictionVoting.undelegate',
         sts.struct({
             class: sts.number(),
@@ -139,7 +120,7 @@ export const removeVote =  {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    v2100: new CallType(
+    v2403: new CallType(
         'ConvictionVoting.remove_vote',
         sts.struct({
             class: sts.option(() => sts.number()),
@@ -168,10 +149,10 @@ export const removeOtherVote =  {
      * Weight: `O(R + log R)` where R is the number of polls that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    v2100: new CallType(
+    v2403: new CallType(
         'ConvictionVoting.remove_other_vote',
         sts.struct({
-            target: v2100.AccountId20,
+            target: v2403.AccountId20,
             class: sts.number(),
             index: sts.number(),
         })

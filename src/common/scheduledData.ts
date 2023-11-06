@@ -35,16 +35,7 @@ interface ScheduledData {
 // }
 
 export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event, header: any): ScheduledData | undefined {
-    if (dispatched.v49.is(item)) {
-        const [[block, number], hash, result] = dispatched.v49.decode(item)
-        if(result.__kind == 'Ok'){
-            return {
-                blockNumber: block,
-                result: result.__kind
-            }
-        }
-        return undefined
-    } else if (dispatched.v900.is(item)) {
+    if (dispatched.v900.is(item)) {
         const [[block, number], hash, result] = dispatched.v900.decode(item)
         if(result.__kind == 'Ok'){
             return {
@@ -71,8 +62,8 @@ export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event
             }
         }
         return undefined
-    } else if (dispatched.v1605.is(item)) {
-        const { task, id, result } = dispatched.v1605.decode(item)
+    } else if (dispatched.v1606.is(item)) {
+        const { task, id, result } = dispatched.v1606.decode(item)
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[1],
@@ -89,8 +80,8 @@ export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event
             }
         }
         return undefined
-    } else if (dispatched.v2500.is(item)) {
-        const { task, id, result } = dispatched.v2500.decode(item)
+    } else if (dispatched.v2501.is(item)) {
+        const { task, id, result } = dispatched.v2501.decode(item)
         if(result.__kind == 'Ok'){
             return {
                 blockNumber: task[1],

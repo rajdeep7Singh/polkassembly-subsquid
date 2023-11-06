@@ -1,21 +1,13 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v49 from '../v49'
 import * as v900 from '../v900'
 import * as v1300 from '../v1300'
 import * as v1401 from '../v1401'
-import * as v1605 from '../v1605'
+import * as v1606 from '../v1606'
 import * as v2000 from '../v2000'
-import * as v2500 from '../v2500'
+import * as v2501 from '../v2501'
 
 export const dispatched =  {
     name: 'Scheduler.Dispatched',
-    /**
-     *  Dispatched some task. \[task, id, result\]
-     */
-    v49: new EventType(
-        'Scheduler.Dispatched',
-        sts.tuple([v49.TaskAddress, sts.option(() => sts.bytes()), v49.DispatchResult])
-    ),
     /**
      * Dispatched some task. \[task, id, result\]
      */
@@ -48,12 +40,12 @@ export const dispatched =  {
     /**
      * Dispatched some task.
      */
-    v1605: new EventType(
+    v1606: new EventType(
         'Scheduler.Dispatched',
         sts.struct({
             task: sts.tuple(() => [sts.number(), sts.number()]),
             id: sts.option(() => sts.bytes()),
-            result: sts.result(() => sts.unit(), () => v1605.DispatchError),
+            result: sts.result(() => sts.unit(), () => v1606.DispatchError),
         })
     ),
     /**
@@ -70,12 +62,12 @@ export const dispatched =  {
     /**
      * Dispatched some task.
      */
-    v2500: new EventType(
+    v2501: new EventType(
         'Scheduler.Dispatched',
         sts.struct({
             task: sts.tuple(() => [sts.number(), sts.number()]),
             id: sts.option(() => sts.bytes()),
-            result: sts.result(() => sts.unit(), () => v2500.DispatchError),
+            result: sts.result(() => sts.unit(), () => v2501.DispatchError),
         })
     ),
 }
