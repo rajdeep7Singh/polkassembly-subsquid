@@ -29,5 +29,5 @@ export async function handlePrecompiledRemoveVote(ctx: ProcessorContext<Store>, 
     }
     const extrinsicIndex = `${header.height}-${itemCall.extrinsicIndex}`
 
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, originAccountId, extrinsicIndex, txnHash)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, Number(index), originAccountId, extrinsicIndex, txnHash)
 }

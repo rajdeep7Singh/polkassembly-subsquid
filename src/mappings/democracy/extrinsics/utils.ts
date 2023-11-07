@@ -5,6 +5,7 @@ import { MissingProposalRecordWarn, NoDelegationFound, NoOpenVoteFound, TooManyO
 import { ConvictionDelegatedVotes, ConvictionVote, DelegationType, FlattenedConvictionVotes, Proposal, ProposalType, SplitVoteBalance, StandardVoteBalance, VoteBalance, VoteDecision, VoteType, VotingDelegation } from '../../../model'
 import { getConvictionDelegatedVotesCount, getConvictionVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
 import { ProcessorContext } from '../../../processor'
+import { randomUUID } from 'crypto'
 
 export function convictionToLockPeriod(convictionKind: string): number {
     return convictionKind === 'None' ? 0 : Number(convictionKind[convictionKind.search(/\d/)])
@@ -157,7 +158,7 @@ export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet:
     }
 }
 
-export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: any, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
+export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Referendum } })
     if (!proposal) {
@@ -234,10 +235,10 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
         })
     }
 
-    const count = await getConvictionVotesCount(ctx, index)
+    // const count = await getConvictionVotesCount(ctx, index)
 
     const convictionVote = new ConvictionVote({
-        id: `${index}-${count.toString().padStart(8, '0')}`,
+        id: randomUUID(),
         voter: from,
         createdAtBlock: header.height,
         proposalIndex: index,
@@ -285,7 +286,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
     await ctx.store.insert(flattenedVotes)
 }
 
-export async function handleSubtrateAndPrecompileDelegationVote(ctx: ProcessorContext<Store>, header: any, toWallet: string, lockPeriod: any, balance: bigint, from: string, extrinsicIndex?: string): Promise<void> {
+export async function handleSubtrateAndPrecompileDelegationVote(ctx: ProcessorContext<Store>, header: any, toWallet: string, lockPeriod: number, balance: bigint, from: string, extrinsicIndex?: string): Promise<void> {
 
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
 

@@ -23,5 +23,5 @@ export async function handleDemocracyPrecompiledRemoveVote(ctx: ProcessorContext
     if(!originAccountId){
         return
     }
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, originAccountId, extrinsicIndex, txnHash)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, Number(index), originAccountId, extrinsicIndex, txnHash)
 }

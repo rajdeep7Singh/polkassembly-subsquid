@@ -27,5 +27,5 @@ export async function handlePrecompileDelegate(ctx: ProcessorContext<Store>, ite
     if(!from){
         return
     }
-    await handleSubtrateAndPrecompileDelegationVote(ctx, header, track, toWallet, lockPeriod, balance || BigInt(0), from, extrinsicIndex)
+    await handleSubtrateAndPrecompileDelegationVote(ctx, header, Number(track), toWallet, Number(lockPeriod), balance || BigInt(0), from, extrinsicIndex)
 }

@@ -107,7 +107,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     }
     catch (e) {
         console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.extrinsicIndex} ${e}`)
-        process.exit(1)
+        return
     }
 
     const section = args.__kind as string

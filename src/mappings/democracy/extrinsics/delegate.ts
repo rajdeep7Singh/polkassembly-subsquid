@@ -27,5 +27,5 @@ export async function handleDemocracyPrecompileDelegate(ctx: ProcessorContext<St
     if(!from){
         return
     }
-    await handleSubtrateAndPrecompileDelegationVote(ctx, header, toWallet, lockPeriod, balance || BigInt(0), from, extrinsicIndex)
+    await handleSubtrateAndPrecompileDelegationVote(ctx, header, toWallet, Number(lockPeriod), balance || BigInt(0), from, extrinsicIndex)
 }

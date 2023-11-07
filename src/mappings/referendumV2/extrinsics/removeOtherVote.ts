@@ -24,5 +24,5 @@ export async function handlePrecompileRemoveOtherVote(ctx: ProcessorContext<Stor
     if(!wallet){
         return
     }
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, wallet, extrinsicIndex, txnHash)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, Number(index), wallet, extrinsicIndex, txnHash)
 }
