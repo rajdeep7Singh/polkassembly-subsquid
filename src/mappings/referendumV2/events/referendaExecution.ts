@@ -20,6 +20,8 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
 
         let preimageHash = null
 
+        const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
         if(callData.__kind == 'Inline'){
             preimageHash = callData.value
         }
@@ -46,6 +48,7 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
         await updateProposalStatus(ctx, header, proposal.index, ProposalType.ReferendumV2, {
             isEnded: true,
             status: eventData.result == 'Ok' ? ProposalStatus.Executed : ProposalStatus.ExecutionFailed,
+            extrinsicIndex,
             data: {
                 executedAt: new Date(header.timestamp),
                 executeAtBlockNumber: eventData.blockNumber
