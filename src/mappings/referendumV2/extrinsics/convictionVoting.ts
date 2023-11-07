@@ -24,7 +24,7 @@ export async function handleConvictionVote(ctx: ProcessorContext<Store>,
 
 }
 
-export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<Store>, itemCall: any, header: any, data: any, aye: boolean = true, originAccountId: string, txnHash: string) {
+export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<Store>, itemCall: any, header: any, data: any, aye: boolean, originAccountId: string, txnHash: string) {
     const [ index, amount, conviction ] = data
 
     const extrinsicIndex = `${header.height}-${itemCall.extrinsicIndex}`
@@ -32,10 +32,8 @@ export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<
     const vote = {
         type: 'Standard',
         value: BigInt(amount),
-        lockPeriod: conviction,
+        lockPeriod: Number(conviction),
         decision: aye ? VoteDecision.yes : VoteDecision.no,
     }
-
-    await handleSubstrateAndPrecompileVotes(ctx, header, index, vote, originAccountId, false, extrinsicIndex, txnHash)
-
+    await handleSubstrateAndPrecompileVotes(ctx, header, Number(index), vote, originAccountId, false, extrinsicIndex, txnHash)
 }

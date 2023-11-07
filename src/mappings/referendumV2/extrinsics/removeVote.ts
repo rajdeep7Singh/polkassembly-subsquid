@@ -19,7 +19,7 @@ export async function handleRemoveVote(ctx: ProcessorContext<Store>,
     }
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, wallet)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, wallet, extrinsicIndex)
 }
 
 export async function handlePrecompiledRemoveVote(ctx: ProcessorContext<Store>, itemCall: any, header: any, data: any, originAccountId: any, txnHash?: string) : Promise<void> {
@@ -29,5 +29,5 @@ export async function handlePrecompiledRemoveVote(ctx: ProcessorContext<Store>, 
     }
     const extrinsicIndex = `${header.height}-${itemCall.extrinsicIndex}`
 
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, originAccountId, extrinsicIndex, txnHash)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, Number(index), originAccountId, extrinsicIndex, txnHash)
 }

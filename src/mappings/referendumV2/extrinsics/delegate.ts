@@ -23,9 +23,12 @@ export async function handlePrecompileDelegate(ctx: ProcessorContext<Store>, ite
     const [track, toWallet, lockPeriod, balance] = data
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
+
     const from = originAccountId
     if(!from){
+        console.log(`no from in delegate ${extrinsicIndex}`)
         return
     }
+    
     await handleSubtrateAndPrecompileDelegationVote(ctx, header, track, toWallet, lockPeriod, balance || BigInt(0), from, extrinsicIndex)
 }

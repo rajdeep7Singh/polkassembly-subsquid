@@ -6,6 +6,7 @@ import { ConvictionDelegatedVotes, ConvictionVote, DelegationType, FlattenedConv
 import { getConvictionDelegatedVotesCount, getConvictionVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
 import { ProcessorContext } from '../../../processor'
 import { updateCurveData } from '../../../common/curveData'
+import { randomUUID } from 'crypto'
 
 export function convictionToLockPeriod(convictionKind: string): number {
     return convictionKind === 'None' ? 0 : Number(convictionKind[convictionKind.search(/\d/)])
@@ -29,7 +30,7 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
         }      
         delegatedVotes.push(
             new ConvictionDelegatedVotes({
-                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 createdAtBlock: block,
                 proposalIndex: convictionVote.proposalIndex,
@@ -47,7 +48,7 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
 
         flattenedVotes.push(
             new FlattenedConvictionVotes({
-                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 parentVote: convictionVote,
                 isDelegated: true,
@@ -158,15 +159,19 @@ export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet:
     }
 }
 
-export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: any, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
-
-    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
+export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
+    const proposal = await ctx.store.get(Proposal, { where: { index: Number(index), type: ProposalType.ReferendumV2 } })
     if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index, extrinsicIndex))
         return
     }
+    
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },
+        relations: {
+            delegatedVotes: true
+        } 
+    })
 
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
     if (votes) {
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
@@ -235,10 +240,10 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
         })
     }
 
-    const count = await getConvictionVotesCount(ctx, index)
+    // const count = await getConvictionVotesCount(ctx, strindex)
 
     const convictionVote = new ConvictionVote({
-        id: `${index}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+        id: randomUUID(),
         voter: from,
         createdAtBlock: header.height,
         proposalIndex: index,
@@ -266,7 +271,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
     await ctx.store.insert(delegatedVotes)
 
     flattenedVotes.push(new FlattenedConvictionVotes({
-        id: `${index}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+        id: randomUUID(),
         voter: from,
         parentVote: convictionVote,
         isDelegated: false,
@@ -313,7 +318,7 @@ export async function handleSubtrateAndPrecompileDelegationVote(ctx: ProcessorCo
 
     await ctx.store.insert(
         new VotingDelegation({
-            id: `${await ctx.store.count(VotingDelegation)}`,
+            id: randomUUID(),
             createdAtBlock: header.height,
             from: from,
             to: toWallet,
@@ -357,7 +362,7 @@ export async function handleSubtrateAndPrecompileDelegationVote(ctx: ProcessorCo
             const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+                    id: randomUUID(),
                     voter,
                     createdAtBlock: header.height,
                     decision: vote.decision,
