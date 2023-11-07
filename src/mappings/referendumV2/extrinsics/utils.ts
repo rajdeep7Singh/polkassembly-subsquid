@@ -151,7 +151,7 @@ export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet:
     }
 }
 
-export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
+export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: string, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
