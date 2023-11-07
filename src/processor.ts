@@ -4,6 +4,7 @@ import { BlockHeader, DataHandlerContext, SubstrateBatchProcessor, SubstrateBatc
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
 import { events, calls } from './types'
+import { PRECOMPILES } from './consts/consts'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
@@ -27,7 +28,7 @@ const processor = new SubstrateBatchProcessor()
         call: true,
         extrinsic: true
     })
-    .addEthereumTransaction({to: ['0x0000000000000000000000000000000000000803', '0x0000000000000000000000000000000000000812']})
+    .addEthereumTransaction({to: PRECOMPILES})
 
     processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let block of ctx.blocks) {
@@ -127,6 +128,9 @@ const processor = new SubstrateBatchProcessor()
                 }
                 if (event.name == events.preimage.requested.name){
                     await modules.preimageV2.events.handlePreimageV2Requested(ctx, event, block.header)
+                }
+                if(event.name == 'Scheduler.Dispatched'){
+                    await modules.referendumV2.events.handleReferendumV2Execution(ctx, event, block.header)
                 }
             }
             for (let call of block.calls){

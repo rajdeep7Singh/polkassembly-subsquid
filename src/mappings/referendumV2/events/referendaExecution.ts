@@ -2,7 +2,6 @@ import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDispatchedEventData } from '../../../common/scheduledData'
 import { Store } from '@subsquid/typeorm-store'
-import { toHex } from '@subsquid/substrate-processor'
 import { ProcessorContext, Event } from '../../../processor'
 
 export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
@@ -14,7 +13,7 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
     }
 
     try{
-        const storageData = await header._runtime.getStorage(header.parentHash, 'Scheduler', 'Agenda', eventData.blockNumber)
+        const storageData = await header._runtime.getStorage(header.parentHash, 'Scheduler.Agenda', eventData.blockNumber)
         if (!storageData || !storageData[0]) return null
 
         const callData = storageData[0]?.call
@@ -27,14 +26,13 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
         else {
             preimageHash = callData.hash
         }
-
         if(!preimageHash) return null
 
         const proposal = await ctx.store.get(Proposal, {
             where: {
                         type: ProposalType.ReferendumV2,
                         status: ProposalStatus.Confirmed,
-                        hash: toHex(preimageHash)
+                        hash: preimageHash
                     },
             order: {
                 id: 'DESC',
