@@ -151,8 +151,9 @@ export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet:
     }
 }
 
-export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: any, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
-    const proposal = await ctx.store.get(Proposal, { where: { index: Number(index), type: ProposalType.ReferendumV2 } })
+export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<Store>, header: any, index: number, vote: any, from: string, isSubstrate: boolean, extrinsicIndex?: string, txHash?: string): Promise<void>{
+
+    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal || proposal.trackNumber === undefined || proposal.trackNumber === null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index, extrinsicIndex))
         return
@@ -232,7 +233,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
         })
     }
 
-    // const count = await getConvictionVotesCount(ctx, strindex)
+    // const count = await getConvictionVotesCount(ctx, index)
 
     const convictionVote = new ConvictionVote({
         id: randomUUID(),

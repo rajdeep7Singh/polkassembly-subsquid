@@ -20,6 +20,10 @@ export async function handleConvictionVote(ctx: ProcessorContext<Store>,
 
     const from = getOriginAccountId(item.origin)
 
+    if(!from){
+        return
+    }
+
     await handleSubstrateAndPrecompileVotes(ctx, header, index, vote, from, true, extrinsicIndex)
 
 }
@@ -35,5 +39,7 @@ export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<
         lockPeriod: Number(conviction),
         decision: aye ? VoteDecision.yes : VoteDecision.no,
     }
+
     await handleSubstrateAndPrecompileVotes(ctx, header, Number(index), vote, originAccountId, false, extrinsicIndex, txnHash)
+
 }
