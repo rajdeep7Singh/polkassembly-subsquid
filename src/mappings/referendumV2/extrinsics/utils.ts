@@ -44,11 +44,11 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
             })
         )
         delegatedVotePower += votingPower
-        const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
+        // const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
 
         flattenedVotes.push(
             new FlattenedConvictionVotes({
-                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 parentVote: convictionVote,
                 isDelegated: true,
@@ -78,15 +78,7 @@ export async function getDelegations(ctx: ProcessorContext<Store>, voter: string
     try{
         let delegations = await ctx.store.find(VotingDelegation, { where: { to: voter, endedAtBlock: IsNull(), track, type: DelegationType.OpenGov} })
         if (delegations != null && delegations != undefined && delegations.length > 0) {
-            let nestedDelegations = []
-            for (let i = 0; i < delegations.length; i++) {
-                const delegation = delegations[i]
-                if(delegation.from == voter || delegation.to == voter){
-                    continue
-                }
-                nestedDelegations.push(...(await getDelegations(ctx, delegation.from, track)))
-            }
-            return [...delegations, ...nestedDelegations]
+            return delegations
         }
         else {
             return []
@@ -255,7 +247,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
         type: VoteType.ReferendumV2,
     })
 
-    const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
+    // const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
 
     const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
 
@@ -267,7 +259,7 @@ export async function handleSubstrateAndPrecompileVotes(ctx: ProcessorContext<St
     await ctx.store.insert(delegatedVotes)
 
     flattenedVotes.push(new FlattenedConvictionVotes({
-        id: `${index}-${flattenedCount.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+        id: randomUUID(),
         voter: from,
         parentVote: convictionVote,
         isDelegated: false,

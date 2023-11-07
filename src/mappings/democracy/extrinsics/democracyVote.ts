@@ -26,7 +26,7 @@ export async function handleDemocracyVotesFromPrecompile(ctx: ProcessorContext<S
 
     const vote = {
         type: 'Standard',
-        value: BigInt(amount),
+        balance: BigInt(amount),
         lockPeriod: Number(conviction),
         decision: aye ? VoteDecision.yes : VoteDecision.no,
     }

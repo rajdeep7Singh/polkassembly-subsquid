@@ -31,7 +31,7 @@ export async function handleConvictionVotesFromPrecompile(ctx: ProcessorContext<
 
     const vote = {
         type: 'Standard',
-        value: BigInt(amount),
+        balance: BigInt(amount),
         lockPeriod: Number(conviction),
         decision: aye ? VoteDecision.yes : VoteDecision.no,
     }
