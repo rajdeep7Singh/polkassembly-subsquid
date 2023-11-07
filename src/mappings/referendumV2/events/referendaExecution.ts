@@ -13,7 +13,7 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
     }
 
     try{
-        const storageData = await header._runtime.getStorage(header.parentHash, 'Scheduler', 'Agenda', eventData.blockNumber)
+        const storageData = await header._runtime.getStorage(header.parentHash, 'Scheduler.Agenda', eventData.blockNumber)
         if (!storageData || !storageData[0]) return null
 
         const callData = storageData[0]?.call
