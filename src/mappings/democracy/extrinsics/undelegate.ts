@@ -23,5 +23,5 @@ export async function handleDemocracyPrecompileUndelegate(ctx: ProcessorContext<
     if(!from){
         return
     }
-    await handleSubstrateAndPrecompileUndelegate(ctx, header, from, extrinsicIndex)
+    await handleSubstrateAndPrecompileUndelegate(ctx, header, from.toLowerCase(), extrinsicIndex)
 }

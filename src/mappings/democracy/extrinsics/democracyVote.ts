@@ -26,11 +26,11 @@ export async function handleDemocracyVotesFromPrecompile(ctx: ProcessorContext<S
 
     const vote = {
         type: 'Standard',
-        value: BigInt(amount),
-        lockPeriod: conviction,
+        balance: BigInt(amount),
+        lockPeriod: Number(conviction),
         decision: aye ? VoteDecision.yes : VoteDecision.no,
     }
 
-    await handleSubstrateAndPrecompileVotes(ctx, header, index, vote, originAccountId, false, extrinsicIndex, txnHash)
+    await handleSubstrateAndPrecompileVotes(ctx, header, Number(index), vote, originAccountId, false, extrinsicIndex, txnHash)
 
 }

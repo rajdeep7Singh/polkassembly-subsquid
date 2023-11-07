@@ -26,5 +26,5 @@ export async function handlePrecompileUndelegate(ctx: ProcessorContext<Store>, i
     }
     const extrinsicIndex = `${header.height}-${itemCall.extrinsicIndex}`
 
-    await handleSubstrateAndPrecompileUndelegate(ctx, header, from, track, extrinsicIndex)
+    await handleSubstrateAndPrecompileUndelegate(ctx, header, from, Number(track), extrinsicIndex)
 }

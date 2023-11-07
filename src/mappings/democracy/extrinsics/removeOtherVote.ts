@@ -24,5 +24,5 @@ export async function handleDemocracyPrecompileRemoveOtherVote(ctx: ProcessorCon
     if(!wallet){
         return
     }
-    await handleSubstratAndPrecompileRemoveVote(ctx, header, index, wallet, extrinsicIndex, txnHash)
+    await handleSubstratAndPrecompileRemoveVote(ctx, header, Number(index), wallet.toLowerCase(), extrinsicIndex, txnHash)
 }
