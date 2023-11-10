@@ -44,6 +44,7 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import { ProcessorContext } from '../../processor'
+import config from '../../config'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -1011,37 +1012,36 @@ export function createSubmissionDeposit(data: SubmissionDepositData): Submission
 
 export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
-    return;
 
-    // try{
-    //     if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
-    //         const redisData = {
-    //             network: config.chain.name,
-    //             govType: 'OpenGov',
-    //             postId: index,
-    //             track: trackNumber,
-    //             proposalType: type,
-    //         }
-    //         ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+    try{
+        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+            const redisData = {
+                network: config.chain.name,
+                govType: 'OpenGov',
+                postId: index,
+                track: trackNumber,
+                proposalType: type,
+            }
+            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
 
-    //         const response = await fetch(REDIS_CF_URL, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(redisData),
-    //         })
+            const response = await fetch(REDIS_CF_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(redisData),
+            })
 
-    //         ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-    //         if (response.status !== 200) {
-    //             ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
-    //             return
-    //         }
-    //     }
-    // }
-    // catch(e){
-    //     ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
-    //     return
-    // }
+            if (response.status !== 200) {
+                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+                return
+            }
+        }
+    }
+    catch(e){
+        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
+        return
+    }
 }
