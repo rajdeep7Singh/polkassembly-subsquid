@@ -6,6 +6,7 @@ import * as v1200 from './v1200'
 import * as v10005 from './v10005'
 import * as v10009 from './v10009'
 import * as v10038 from './v10038'
+import * as v10040 from './v10040'
 
 export class CouncilApprovedEvent {
     private readonly _chain: Chain
@@ -164,6 +165,21 @@ export class CouncilExecutedEvent {
      */
     get asV10009(): {proposalHash: Uint8Array, result: v10009.Type_30} {
         assert(this.isV10009)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV10040(): boolean {
+        return this._chain.getEventHash('Council.Executed') === '6820679ab2706380fa3eaa694e707b2dd6bcd901fb46cdcafbea7b2f05d8feba'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV10040(): {proposalHash: Uint8Array, result: v10040.Type_31} {
+        assert(this.isV10040)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -1205,6 +1221,21 @@ export class SchedulerDispatchedEvent {
         assert(this.isV10009)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * Dispatched some task.
+     */
+    get isV10040(): boolean {
+        return this._chain.getEventHash('Scheduler.Dispatched') === '6eb5580f3023aa9d8b919b2e4d4c348b6d18e7b61b4d3362b70f19480d1767fc'
+    }
+
+    /**
+     * Dispatched some task.
+     */
+    get asV10040(): {task: [number, number], id: (Uint8Array | undefined), result: v10040.Type_31} {
+        assert(this.isV10040)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class SchedulerScheduledEvent {
@@ -1378,6 +1409,21 @@ export class TechnicalCommitteeExecutedEvent {
      */
     get asV10009(): {proposalHash: Uint8Array, result: v10009.Type_30} {
         assert(this.isV10009)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV10040(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === '6820679ab2706380fa3eaa694e707b2dd6bcd901fb46cdcafbea7b2f05d8feba'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV10040(): {proposalHash: Uint8Array, result: v10040.Type_31} {
+        assert(this.isV10040)
         return this._chain.decodeEvent(this.event)
     }
 }
