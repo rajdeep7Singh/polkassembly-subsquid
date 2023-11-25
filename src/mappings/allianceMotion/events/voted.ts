@@ -26,7 +26,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
         }
     })
 
-    if(!proposal) {
+    if(!proposal || proposal.index == undefined || proposal.index == null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.AllianceMotion, hexHash))
         return
     }
@@ -43,6 +43,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
             voter: ss58codec.encode(account),
             blockNumber: header.height,
             decision: decision,
+            proposalIndex: proposal.index,
             proposal,
             timestamp: new Date(header.timestamp),
             type: VoteType.AllianceMotion,
