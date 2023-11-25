@@ -70,8 +70,8 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 err: false
             }
         }
-    }else if (event.isV9360) {
-        const {proposalHash, result} = event.asV9360
+    }else if (event.isV9320) {
+        const {proposalHash, result} = event.asV9320
         if (result.__kind == 'Err') {
             return {
                 proposalHash,
@@ -83,7 +83,33 @@ export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
                 err: false
             }
         }
-    } else {
+    } else if (event.isV9420) {
+        const {proposalHash, result} = event.asV9420
+        if (result.__kind == 'Err') {
+            return {
+                proposalHash,
+                err: true
+            }
+        }else {
+            return {
+                proposalHash,
+                err: false
+            }
+        }
+    }else if (event.isV9430) {
+        const {proposalHash, result} = event.asV9430
+        if (result.__kind == 'Err') {
+            return {
+                proposalHash,
+                err: true
+            }
+        }else {
+            return {
+                proposalHash,
+                err: false
+            }
+        }
+    }else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }

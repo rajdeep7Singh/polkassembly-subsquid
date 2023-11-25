@@ -6,8 +6,8 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://sys.dotters.network/collectives-polkadot',
-        archive: 'https://collectives.archive.subsquid.io/graphql',
+        chain: 'wss://westend-collectives-rpc.polkadot.io',
+        archive: 'https://westend-collectives.archive.subsquid.io/graphql',
     })
     .setBlockRange({from: 0})
     .addEvent('AllianceMotion.Disapproved', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)

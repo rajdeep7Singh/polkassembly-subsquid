@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://collectives.archive.subsquid.io/graphql",
+  "specVersions": "https://westend-collectives.archive.subsquid.io/graphql",
   "storage": [
     "AllianceMotion.ProposalOf",
     "AllianceMotion.Proposals",

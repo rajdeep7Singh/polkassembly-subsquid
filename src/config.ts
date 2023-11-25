@@ -8,8 +8,8 @@ const config: ProcessorConfig<Store> = {
         prefix: 0,
     },
     dataSource: {
-        archive: 'https://collectives.archive.subsquid.io/graphql',
-        chain: 'wss://collectives-rpc.polkadot.io',
+        chain: 'wss://westend-collectives-rpc.polkadot.io',
+        archive: 'https://westend-collectives.archive.subsquid.io/graphql',
     },
     typesBundle: 'collectives',
     batchSize: 500,
