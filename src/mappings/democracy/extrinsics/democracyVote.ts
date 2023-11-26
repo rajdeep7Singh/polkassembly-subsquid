@@ -19,6 +19,7 @@ import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getDelegations, removeDelegatedVotesReferendum, addDelegatedVotesReferendum } from './utils'
 import { IsNull } from 'typeorm'
+import { randomUUID } from 'crypto'
 
 export async function handleVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'Democracy.vote', { call: { args: true; origin: true } }>,
@@ -98,10 +99,8 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
 
     }
 
-    const count = await getConvictionVotesCount(ctx, index)
-
     const convictionVote = new ConvictionVote({
-        id: `${index}-${count.toString().padStart(8, '0')}`,
+        id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
         createdAtBlock: header.height,
         proposalIndex: index,
@@ -122,12 +121,8 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
     convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
     convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
 
-    await ctx.store.insert(convictionVote)
-
-    await ctx.store.insert(delegatedVotes)
-
     flattenedVotes.push(new FlattenedConvictionVotes({
-        id: `${index}-${flattenedCount.toString().padStart(8, '0')}`,
+        id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
         parentVote: convictionVote,
         isDelegated: false,
@@ -144,5 +139,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         type: VoteType.Referendum,
     }))
 
+    await ctx.store.insert(convictionVote)
+    await ctx.store.insert(delegatedVotes)
     await ctx.store.insert(flattenedVotes)
 }

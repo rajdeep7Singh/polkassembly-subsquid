@@ -4,7 +4,7 @@ import { Store } from '@subsquid/typeorm-store'
 
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { ConvictionDelegatedVotes, ConvictionVote, StandardVoteBalance, VoteType, VotingDelegation, FlattenedConvictionVotes, DelegationType } from '../../../model'
-import { getConvictionDelegatedVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
+import { randomUUID } from 'crypto'
 
 export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
@@ -17,7 +17,6 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
     const flattenedVotes = []
     for (let i = 0; i < nestedDelegations.length; i++) {
         const delegation = nestedDelegations[i]
-        const count = await getConvictionDelegatedVotesCount(ctx)
         const voteBalance = new StandardVoteBalance({
             value: delegation.balance,
         })
@@ -28,7 +27,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
         }      
         delegatedVotes.push(
             new ConvictionDelegatedVotes({
-                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 createdAtBlock: block,
                 proposalIndex: convictionVote.proposalIndex,
@@ -42,11 +41,10 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
             })
         )
         delegatedVotePower += votingPower
-        const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
 
         flattenedVotes.push(
             new FlattenedConvictionVotes({
-                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 parentVote: convictionVote,
                 isDelegated: true,

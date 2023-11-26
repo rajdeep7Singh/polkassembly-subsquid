@@ -7,8 +7,9 @@ import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelec
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addDelegatedVotesReferendum, getDelegations, removeVote } from './utils'
-import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType } from '../../../model'
+import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes } from '../../../model'
 import { getConvictionDelegatedVotesCount } from '../../utils/votes'
+import { randomUUID } from 'crypto'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     item: CallItem<'Democracy.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
@@ -70,7 +71,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 return
             }
             else if (votes.length === 0) {
-                ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
+                // ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
                 return
             }
             const vote = votes[0]
@@ -78,7 +79,6 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 value: balance,
             })
             const voter = from
-            const count = await getConvictionDelegatedVotesCount(ctx)
             if (lockPeriod === 0 && balance) {
                 votingPower = balance/BigInt(10)
             }else{
@@ -88,7 +88,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, nestedDelegations, vote)
             delegatedVotes.push(
                 new ConvictionDelegatedVotes ({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
+                    id: randomUUID(),
                     voter,
                     createdAtBlock: header.height,
                     decision: vote.decision,
@@ -99,6 +99,25 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     type: VoteType.Referendum,
                     createdAt: new Date(header.timestamp),
                     delegatedTo: vote
+                })
+            )
+            flattenedVotes.push(
+                new FlattenedConvictionVotes({
+                    id: randomUUID(),
+                    voter: voter,
+                    parentVote: vote,
+                    isDelegated: true,
+                    delegatedTo: toWallet,
+                    proposalIndex: referendum.index,
+                    proposal: referendum,
+                    createdAtBlock: header.height,
+                    removedAtBlock: null,
+                    createdAt: new Date(header.timestamp),
+                    removedAt: null,
+                    decision: vote.decision,
+                    balance: voteBalance,
+                    lockPeriod: lockPeriod,
+                    type: VoteType.Referendum,
                 })
             )
             
