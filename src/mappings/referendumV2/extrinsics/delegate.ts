@@ -4,11 +4,11 @@ import { getDelegateData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
+import { TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './utils'
-import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType } from '../../../model'
-import { getConvictionDelegatedVotesCount } from '../../utils/votes'
+import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes, VoteDecision } from '../../../model'
+import { randomUUID } from 'crypto'
 
 export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
@@ -46,7 +46,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
 
     await ctx.store.insert(
         new VotingDelegation({
-            id: `${await ctx.store.count(VotingDelegation)}`,
+            id: randomUUID(),
             createdAtBlock: header.height,
             from: from,
             to: toWallet,
@@ -71,44 +71,67 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 return
             }
             else if (votes.length === 0) {
-                ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
+                // ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
                 return
             }
             const vote = votes[0]
-            const voteBalance = new StandardVoteBalance({
-                value: balance,
-            })
-            const voter = from
-            const count = await getConvictionDelegatedVotesCount(ctx)
-            if (lockPeriod === 0 && balance) {
-                votingPower = balance/BigInt(10)
-            }else{
-                votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
+            if(vote.decision != VoteDecision.abstain){
+                try{
+                    const voteBalance = new StandardVoteBalance({
+                        value: balance,
+                    })
+                    const voter = from
+                    if (lockPeriod === 0 && balance) {
+                        votingPower = balance/BigInt(10)
+                    }else{
+                        votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
+                    }
+                    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
+                    delegatedVotes.push(
+                        new ConvictionDelegatedVotes ({
+                            id: randomUUID(),
+                            voter,
+                            createdAtBlock: header.height,
+                            decision: vote.decision,
+                            lockPeriod,
+                            proposalIndex: referendum.index,
+                            balance: voteBalance,
+                            votingPower,
+                            type: VoteType.ReferendumV2,
+                            createdAt: new Date(header.timestamp),
+                            delegatedTo: vote
+                        })
+                    )
+
+                    flattenedVotes.push(
+                        new FlattenedConvictionVotes({
+                            id: randomUUID(),
+                            voter: voter,
+                            parentVote: vote,
+                            isDelegated: true,
+                            delegatedTo: toWallet,
+                            proposalIndex: referendum.index,
+                            proposal: referendum,
+                            createdAtBlock: header.height,
+                            removedAtBlock: null,
+                            createdAt: new Date(header.timestamp),
+                            removedAt: null,
+                            decision: vote.decision,
+                            balance: voteBalance,
+                            lockPeriod: lockPeriod,
+                            type: VoteType.ReferendumV2,
+                        })
+                    )
+                    vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
+                    vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
+                    await ctx.store.save(vote)
+                    await ctx.store.insert(delegatedVotes)
+                    await ctx.store.insert(flattenedVotes)
+                }
+                catch(e){
+                    ctx.log.error(`Something went wrong at block ${header.height} in convictionVoting.delegate with error: ${e}`)
+                }
             }
-
-            const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
-            delegatedVotes.push(
-                new ConvictionDelegatedVotes ({
-                    id: `${referendum.index}-${count.toString().padStart(8, '0')}`,
-                    voter,
-                    createdAtBlock: header.height,
-                    decision: vote.decision,
-                    lockPeriod,
-                    proposalIndex: referendum.index,
-                    balance: voteBalance,
-                    votingPower,
-                    type: VoteType.ReferendumV2,
-                    createdAt: new Date(header.timestamp),
-                    delegatedTo: vote
-                })
-            )
-            
-            vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
-            vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
-
-            await ctx.store.save(vote)
-            await ctx.store.insert(delegatedVotes)
-            await ctx.store.insert(flattenedVotes)
         }
     }
 }

@@ -13,7 +13,6 @@ import {
 } from '../../../model'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { getOriginAccountId } from '../../../common/tools'
-import { getConvictionVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
@@ -21,6 +20,7 @@ import { getDelegations, removeDelegatedVotesReferendum } from './utils'
 import { addDelegatedVotesReferendumV2 }  from './utils'
 import { IsNull } from 'typeorm'
 import { updateCurveData } from '../../../common/curveData'
+import { randomUUID } from 'crypto'
 
 export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
     item: CallItem<'ConvictionVoting.vote', { call: { args: true; origin: true } }>,
@@ -42,7 +42,11 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },            
+        relations: {
+            delegatedVotes: true
+        } 
+    })
     if(votes){
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
@@ -111,10 +115,8 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         })
     }
 
-    const count = await getConvictionVotesCount(ctx, index)
-
     const convictionVote = new ConvictionVote({
-        id: `${index}-${count.toString().padStart(8, '0')}`,
+        id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
         createdAtBlock: header.height,
         proposalIndex: index,
@@ -125,22 +127,12 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         balance,
         createdAt: new Date(header.timestamp),
         selfVotingPower: votingPower,
+        totalVotingPower: votingPower,
+        delegatedVotingPower: BigInt(0),
         type: VoteType.ReferendumV2,
     })
-
-    const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
-
-    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
-    
-    convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
-    convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
-
-    await ctx.store.insert(convictionVote)
-
-    await ctx.store.insert(delegatedVotes)
-
-    flattenedVotes.push(new FlattenedConvictionVotes({
-        id: `${index}-${flattenedCount.toString().padStart(8, '0')}`,
+    const flattened = new FlattenedConvictionVotes({
+        id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
         parentVote: convictionVote,
         isDelegated: false,
@@ -155,10 +147,19 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         balance: balance,
         lockPeriod: lockPeriod,
         type: VoteType.ReferendumV2,
-    }))
-
-    await ctx.store.insert(flattenedVotes)
-
+    })
+    if([VoteDecision.yes, VoteDecision.no].includes(decision)) {
+        const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
+        convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
+        convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
+        flattenedVotes.push(flattened)
+        await ctx.store.insert(convictionVote)
+        await ctx.store.insert(flattenedVotes)
+        await ctx.store.insert(delegatedVotes)
+    } else {
+        await ctx.store.insert(convictionVote)
+        await ctx.store.insert(flattened)
+    }
     await updateCurveData(ctx, header, proposal)
 
 }

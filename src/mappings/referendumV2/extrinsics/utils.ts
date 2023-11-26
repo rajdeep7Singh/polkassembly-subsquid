@@ -2,9 +2,9 @@ import { In, IsNull } from 'typeorm'
 import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
-import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
+import { TooManyOpenVotes } from '../../../common/errors'
 import { ConvictionDelegatedVotes, ConvictionVote, StandardVoteBalance, VoteType, VotingDelegation, FlattenedConvictionVotes, DelegationType } from '../../../model'
-import { getConvictionDelegatedVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
+import { randomUUID } from 'crypto'
 
 export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
@@ -17,7 +17,6 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
     const flattenedVotes = []
     for (let i = 0; i < nestedDelegations.length; i++) {
         const delegation = nestedDelegations[i]
-        const count = await getConvictionDelegatedVotesCount(ctx)
         const voteBalance = new StandardVoteBalance({
             value: delegation.balance,
         })
@@ -28,7 +27,7 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         }      
         delegatedVotes.push(
             new ConvictionDelegatedVotes({
-                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 createdAtBlock: block,
                 proposalIndex: convictionVote.proposalIndex,
@@ -42,11 +41,10 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
             })
         )
         delegatedVotePower += votingPower
-        const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
 
         flattenedVotes.push(
             new FlattenedConvictionVotes({
-                id: `${convictionVote.proposalIndex}-${flattenedCount.toString().padStart(8, '0')}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 parentVote: convictionVote,
                 isDelegated: true,
@@ -123,7 +121,7 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
             return
         }
         else if (votes.length === 0 && shouldHaveVote) {
-            ctx.log.warn(NoOpenVoteFound(block, proposalIndex, wallet))
+            // ctx.log.warn(NoOpenVoteFound(block, proposalIndex, wallet))
             return
         }
         else if (votes.length === 0 && !shouldHaveVote) {
