@@ -59,6 +59,9 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     )
     let votingPower = BigInt(0)
     const nestedDelegations = await getDelegations(ctx, from, track)
+    let delegatedVotes = [];
+    let flattenedVotes = [];
+    let convictionVotes = [];
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
@@ -86,7 +89,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     }else{
                         votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
                     }
-                    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
+                    const { delegatedVotesNested, delegatedVotePower, flattenedVotesNested } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
                     delegatedVotes.push(
                         new ConvictionDelegatedVotes ({
                             id: randomUUID(),
@@ -100,7 +103,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                             type: VoteType.ReferendumV2,
                             createdAt: new Date(header.timestamp),
                             delegatedTo: vote
-                        })
+                        }), ...delegatedVotesNested
                     )
 
                     flattenedVotes.push(
@@ -120,13 +123,11 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                             balance: voteBalance,
                             lockPeriod: lockPeriod,
                             type: VoteType.ReferendumV2,
-                        })
+                        }), ...flattenedVotesNested
                     )
                     vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
                     vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
-                    await ctx.store.save(vote)
-                    await ctx.store.insert(delegatedVotes)
-                    await ctx.store.insert(flattenedVotes)
+                    convictionVotes.push(vote)
                 }
                 catch(e){
                     ctx.log.error(`Something went wrong at block ${header.height} in convictionVoting.delegate with error: ${e}`)
@@ -134,4 +135,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }
         }
     }
+    await ctx.store.save(convictionVotes)
+    await ctx.store.insert(delegatedVotes)
+    await ctx.store.insert(flattenedVotes)
 }

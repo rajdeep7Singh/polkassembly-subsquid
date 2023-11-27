@@ -115,6 +115,9 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         })
     }
 
+    let flattenedVotes = [];
+    let convictionDelegatedVotes = [];
+
     const convictionVote = new ConvictionVote({
         id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
@@ -149,17 +152,16 @@ export async function handleConvictionVote(ctx: BatchContext<Store, unknown>,
         type: VoteType.ReferendumV2,
     })
     if([VoteDecision.yes, VoteDecision.no].includes(decision)) {
-        const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
+        const { delegatedVotesNested, delegatedVotePower, flattenedVotesNested } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
         convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
         convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
-        flattenedVotes.push(flattened)
-        await ctx.store.insert(convictionVote)
-        await ctx.store.insert(flattenedVotes)
-        await ctx.store.insert(delegatedVotes)
-    } else {
-        await ctx.store.insert(convictionVote)
-        await ctx.store.insert(flattened)
-    }
+
+        convictionDelegatedVotes.push(...delegatedVotesNested)
+        flattenedVotes.push(...flattenedVotesNested)
+
+    }await ctx.store.insert(convictionVote)
+    await ctx.store.insert([flattened, ...flattenedVotes])
+    await ctx.store.insert(convictionDelegatedVotes)
     await updateCurveData(ctx, header, proposal)
 
 }
