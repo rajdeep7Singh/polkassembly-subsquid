@@ -57,14 +57,29 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             createdAt: new Date(header.timestamp),
         })
     )
+    if(header.height == 18337452){
+        ctx.log.warn(`Culprit block ${header.height} added delegation from address ${from}, to address ${toWallet}`)
+        for (let i = 0; i < ongoingReferenda.length; i++) {
+            const referendum = ongoingReferenda[i]
+            ctx.log.warn(`Culprit block ${header.height} active referendum ${referendum.index}`)
+        }
+    }
     let votingPower = BigInt(0)
     const nestedDelegations = await getDelegations(ctx, from, track)
+    
+    let delegatedVotes = [];
+    let flattenedVotes = [];
+    let convictionVotes = []
+
     for (let i = 0; i < ongoingReferenda.length; i++) {
         const referendum = ongoingReferenda[i]
         if(!referendum || referendum.index === undefined || referendum.index === null){
             continue
         }
         const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 } })
+        if(header.height == 18337452){
+            ctx.log.warn(`Culprit block ${header.height} at refIndex: ${referendum.index} looked for active vote and found ${votes} from wallet ${toWallet} because of delegation from ${from}`)
+        }
         if(votes){
             if (votes.length > 1) {
                 ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, toWallet))
@@ -75,6 +90,9 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                 return
             }
             const vote = votes[0]
+            if(header.height == 18337452){
+                ctx.log.warn(`Culprit block ${header.height} refIndex: ${referendum.index} found active vote ${vote.id} with decision ${vote.decision} from wallet ${toWallet} because of delegation from ${from}`)
+            }
             if(vote.decision != VoteDecision.abstain){
                 try{
                     const voteBalance = new StandardVoteBalance({
@@ -86,7 +104,13 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                     }else{
                         votingPower = balance ? BigInt(lockPeriod) * balance : BigInt(0)
                     }
-                    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
+                    if(header.height == 18337452){
+                        ctx.log.warn(`Culprit block ${header.height} refIndex: ${referendum.index} calculated initial voting power from wallet ${toWallet} because of delegation from ${from}`)
+                    }
+                    const { delegatedVotesNested, delegatedVotePower, flattenedVotesNested } = await addDelegatedVotesReferendumV2(ctx, header.height, header.timestamp, nestedDelegations, vote)
+                    if(header.height == 18337452){
+                        ctx.log.warn(`Culprit block ${header.height} refIndex: ${referendum.index} after function values delegatedVotes ${delegatedVotes}, delegatedVotePower ${delegatedVotePower}, flattenedVotes ${flattenedVotes} from wallet ${toWallet} because of delegation from ${from}`)
+                    }
                     delegatedVotes.push(
                         new ConvictionDelegatedVotes ({
                             id: randomUUID(),
@@ -100,8 +124,11 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                             type: VoteType.ReferendumV2,
                             createdAt: new Date(header.timestamp),
                             delegatedTo: vote
-                        })
+                        }), ...delegatedVotesNested
                     )
+                    if(header.height == 18337452){
+                        ctx.log.warn(`Culprit block ${header.height} refIndex: ${referendum.index} added parent delegated votes ${delegatedVotes} from wallet ${toWallet} because of delegation from ${from}`)
+                    }
 
                     flattenedVotes.push(
                         new FlattenedConvictionVotes({
@@ -120,13 +147,15 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                             balance: voteBalance,
                             lockPeriod: lockPeriod,
                             type: VoteType.ReferendumV2,
-                        })
+                        }), ...flattenedVotesNested
                     )
+                    if(header.height == 18337452){
+                        ctx.log.warn(`Culprit block ${header.height} refIndex: ${referendum.index} added flattened votes ${flattenedVotes} from wallet ${toWallet} because of delegation from ${from}`)
+                    }
                     vote.delegatedVotingPower = vote.delegatedVotingPower ? delegatedVotePower + votingPower + vote.delegatedVotingPower : delegatedVotePower + votingPower
                     vote.totalVotingPower = vote.selfVotingPower ? vote.delegatedVotingPower + vote.selfVotingPower : delegatedVotePower
-                    await ctx.store.save(vote)
-                    await ctx.store.insert(delegatedVotes)
-                    await ctx.store.insert(flattenedVotes)
+
+                    convictionVotes.push(vote)
                 }
                 catch(e){
                     ctx.log.error(`Something went wrong at block ${header.height} in convictionVoting.delegate with error: ${e}`)
@@ -134,4 +163,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             }
         }
     }
+    await ctx.store.save(convictionVotes)
+    await ctx.store.insert(delegatedVotes)
+    await ctx.store.insert(flattenedVotes)
 }

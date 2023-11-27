@@ -10,7 +10,7 @@ export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, nestedDelegations: VotingDelegation[], convictionVote: ConvictionVote): Promise<{delegatedVotes: ConvictionDelegatedVotes[], delegatedVotePower: bigint, flattenedVotes: FlattenedConvictionVotes[]}> {
+export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, nestedDelegations: VotingDelegation[], convictionVote: ConvictionVote): Promise<{delegatedVotesNested: ConvictionDelegatedVotes[], delegatedVotePower: bigint, flattenedVotesNested: FlattenedConvictionVotes[]}> {
     let votingPower = BigInt(0)
     const delegatedVotes = [];
     let delegatedVotePower = BigInt(0)
@@ -63,9 +63,9 @@ export async function addDelegatedVotesReferendumV2(ctx: BatchContext<Store, unk
         )
     }
     return {
-        delegatedVotes,
+        delegatedVotesNested: delegatedVotes,
         delegatedVotePower,
-        flattenedVotes
+        flattenedVotesNested: flattenedVotes
     }
 }
 
