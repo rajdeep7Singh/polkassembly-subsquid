@@ -68,11 +68,11 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         if(votes){
             if (votes.length > 1) {
                 ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, toWallet))
-                return
+                continue
             }
             else if (votes.length === 0) {
                 // ctx.log.warn(NoOpenVoteFound(header.height, referendum.index, toWallet))
-                return
+                continue
             }
             const vote = votes[0]
             const voteBalance = new StandardVoteBalance({
