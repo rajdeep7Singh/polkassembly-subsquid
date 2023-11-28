@@ -1,32 +1,21 @@
-import { CouncilProposalOfStorage, Instance1CollectiveProposalOfStorage } from '../../types/storage'
+import { GeneralCouncilProposalOfStorage } from '../../types/storage'
 import { BlockContext } from '../../types/support'
-import { Call } from '../../types/v9170'
+import { Call } from '../../types/v201'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
 
 type CouncilProposalStorageData = Call
 
-async function getInstance1CollectiveStorageData(
-    ctx: BatchContext<Store, unknown>,
-    hash: Uint8Array,
-    block: SubstrateBlock
-): Promise<CouncilProposalStorageData | undefined> {
-    const storage = new Instance1CollectiveProposalOfStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    return ctx._chain.getStorage(block.hash, 'Instance1Collective', 'ProposalOf', hash)
-}
-
 async function getCoucilStorageData(
     ctx: BatchContext<Store, unknown>,
     hash: Uint8Array,
     block: SubstrateBlock
 ): Promise<CouncilProposalStorageData | undefined> {
-    const storage = new CouncilProposalOfStorage(ctx, block)
+    const storage = new GeneralCouncilProposalOfStorage(ctx, block)
     if (!storage.isExists) return undefined
 
-    return ctx._chain.getStorage(block.hash, 'Council', 'ProposalOf', hash)
+    return ctx._chain.getStorage(block.hash, 'GeneralCouncil', 'ProposalOf', hash)
 
     // if (storage.isV9111) {
     //     return (await storage.asV9111.get(hash)) as Call
@@ -68,5 +57,5 @@ async function getCoucilStorageData(
 export async function getProposalOf
     (ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
 ): Promise<CouncilProposalStorageData | undefined> {
-    return (await getCoucilStorageData(ctx, hash, block)) || (await getInstance1CollectiveStorageData(ctx, hash, block))
+    return (await getCoucilStorageData(ctx, hash, block))
 }

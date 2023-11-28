@@ -1,12 +1,12 @@
 import assert from 'assert'
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    CouncilApprovedEvent,
-    CouncilClosedEvent,
-    CouncilDisapprovedEvent,
-    CouncilExecutedEvent,
-    CouncilProposedEvent,
-    CouncilVotedEvent,
+    GeneralCouncilApprovedEvent,
+    GeneralCouncilClosedEvent,
+    GeneralCouncilDisapprovedEvent,
+    GeneralCouncilExecutedEvent,
+    GeneralCouncilProposedEvent,
+    GeneralCouncilVotedEvent,
 } from '../../../types/events'
 import { EventContext } from '../../types/contexts'
 import { Event } from '../../../types/support'
@@ -14,46 +14,52 @@ import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilApprovedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    const event = new GeneralCouncilApprovedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        return event.asV172
+    } else if (event.isV176) {
+        return event.asV176.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilClosedEvent(ctx, itemEvent)
-    if (event.isV1050) {
-        return event.asV1050[0]
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    const event = new GeneralCouncilClosedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        return event.asV172[0]
+    } else if (event.isV176) {
+        return event.asV176.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilDisapprovedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020
-    } else if (event.isV9130) {
-        return event.asV9130.proposalHash
+    const event = new GeneralCouncilDisapprovedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        return event.asV172
+    } else if (event.isV176) {
+        return event.asV176.proposalHash
     } else {
         throw new UnknownVersionError(event.constructor.name)
     }
 }
 
 export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilExecutedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        return event.asV1020[0]
-    } else if (event.isV2005) {
-        return event.asV2005[0]
-    } else if (event.isV9111) {
-        return event.asV9111[0]
+    const event = new GeneralCouncilExecutedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        return event.asV172[0]
+    } else if (event.isV176) {
+        return event.asV176.proposalHash
+    } else if (event.isV177) {
+        return event.asV177.proposalHash
+    } else if (event.isV181) {
+        return event.asV181.proposalHash
+    } else if (event.isV184) {
+        return event.asV184.proposalHash
+    }  else if (event.isV194) {
+        return event.asV194.proposalHash
     } else {
         const data = ctx._chain.decodeEvent(itemEvent)
         assert(Buffer.isBuffer(data.proposalHash))
@@ -69,17 +75,17 @@ export interface ProposedData {
 }
 
 export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
-    const event = new CouncilProposedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [proposer, index, hash, threshold] = event.asV1020
+    const event = new GeneralCouncilProposedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        const [proposer, index, hash, threshold] = event.asV172
         return {
             proposer,
             index,
             hash,
             threshold,
         }
-    } else if (event.isV9130) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV9130
+    } else if (event.isV176) {
+        const { account, proposalIndex, proposalHash, threshold } = event.asV176
         return {
             proposer: account,
             index: proposalIndex,
@@ -98,16 +104,16 @@ export interface VotedData {
 }
 
 export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
-    const event = new CouncilVotedEvent(ctx, itemEvent)
-    if (event.isV1020) {
-        const [voter, hash, decision] = event.asV1020
+    const event = new GeneralCouncilVotedEvent(ctx, itemEvent)
+    if (event.isV172) {
+        const [voter, hash, decision] = event.asV172
         return {
             voter,
             hash,
             decision,
         }
-    } else if (event.isV9130) {
-        const { account, proposalHash, voted } = event.asV9130
+    } else if (event.isV176) {
+        const { account, proposalHash, voted } = event.asV176
         return {
             voter: account,
             hash: proposalHash,
