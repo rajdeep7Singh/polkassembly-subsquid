@@ -13,7 +13,6 @@ import {
 } from '../../../model'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { getOriginAccountId } from '../../../common/tools'
-import { getConvictionVotesCount, getFlattenedConvictionVotesCount } from '../../utils/votes'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
@@ -37,11 +36,15 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
     const from = getOriginAccountId(item.call.origin)
 
     if(!from){
-        ctx.log.warn('No from address found for Conviction.vote call')
+        ctx.log.warn('No from address found for democracy.vote call')
         return
     }
 
-    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
+    const votes = await ctx.store.find(ConvictionVote, { where: { voter: from, proposalIndex: index, removedAtBlock: IsNull(), type: VoteType.Referendum },
+        relations: {
+            delegatedVotes: true
+        } 
+    })
     if(votes){
         if (votes.length > 1) {
             ctx.log.warn(TooManyOpenVotes(header.height, index, from))
@@ -98,6 +101,8 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         }
 
     }
+    let flattenedVotes = [];
+    let convictionDelegatedVotes = [];
 
     const convictionVote = new ConvictionVote({
         id: randomUUID(),
@@ -114,14 +119,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         type: VoteType.Referendum,
     })
 
-    const flattenedCount = await getFlattenedConvictionVotesCount(ctx)
-
-    const { delegatedVotes, delegatedVotePower, flattenedVotes } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
-    
-    convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
-    convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
-
-    flattenedVotes.push(new FlattenedConvictionVotes({
+    const flattened = new FlattenedConvictionVotes({
         id: randomUUID(),
         voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
         parentVote: convictionVote,
@@ -137,9 +135,17 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         balance: balance,
         lockPeriod: lockPeriod,
         type: VoteType.Referendum,
-    }))
+    })
+
+    if([VoteDecision.yes, VoteDecision.no].includes(decision)) {
+        const { delegatedVotesNested, delegatedVotePower, flattenedVotesNested } = await addDelegatedVotesReferendum(ctx, header.height, header.timestamp, nestedDelegations, convictionVote)
+        convictionVote.delegatedVotingPower = convictionVote.delegatedVotingPower ? convictionVote.delegatedVotingPower + delegatedVotePower : delegatedVotePower
+        convictionVote.totalVotingPower = votingPower + convictionVote.delegatedVotingPower
+        convictionDelegatedVotes.push(...delegatedVotesNested)
+        flattenedVotes.push(...flattenedVotesNested)
+    }    
 
     await ctx.store.insert(convictionVote)
-    await ctx.store.insert(delegatedVotes)
-    await ctx.store.insert(flattenedVotes)
+    await ctx.store.insert(convictionDelegatedVotes)
+    await ctx.store.insert([flattened, ...flattenedVotes])
 }
