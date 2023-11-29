@@ -10,7 +10,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://kusama-rpc.polkadot.io',
         archive: lookupArchive('kusama', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 0 })
+    .setBlockRange({from: 17349142 })
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
