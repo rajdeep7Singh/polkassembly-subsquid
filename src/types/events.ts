@@ -1,6 +1,7 @@
 import assert from 'assert'
 import {Chain, ChainContext, EventContext, Event, Result, Option} from './support'
 import * as v12 from './v12'
+import * as v33 from './v33'
 
 export class CouncilApprovedEvent {
     private readonly _chain: Chain
@@ -114,6 +115,21 @@ export class CouncilExecutedEvent {
      */
     get asV12(): {proposalHash: Uint8Array, result: v12.Type_35} {
         assert(this.isV12)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV33(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'c0a7075d1db65c853af68dee8fccfd68bc709058c1c831fa5759250c8549e688'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV33(): {proposalHash: Uint8Array, result: v33.Type_37} {
+        assert(this.isV33)
         return this._chain.decodeEvent(this.event)
     }
 }
@@ -555,6 +571,21 @@ export class DemocracyTabledEvent {
         assert(this.isV12)
         return this._chain.decodeEvent(this.event)
     }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get isV33(): boolean {
+        return this._chain.getEventHash('Democracy.Tabled') === '02ae149915d453560f4d12074a380744b3bbb2fe4c235e963f440e2d79243477'
+    }
+
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    get asV33(): {proposalIndex: number, deposit: bigint} {
+        assert(this.isV33)
+        return this._chain.decodeEvent(this.event)
+    }
 }
 
 export class DemocracyVotedEvent {
@@ -785,6 +816,21 @@ export class TechnicalCommitteeExecutedEvent {
      */
     get asV12(): {proposalHash: Uint8Array, result: v12.Type_35} {
         assert(this.isV12)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV33(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'c0a7075d1db65c853af68dee8fccfd68bc709058c1c831fa5759250c8549e688'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV33(): {proposalHash: Uint8Array, result: v33.Type_37} {
+        assert(this.isV33)
         return this._chain.decodeEvent(this.event)
     }
 }

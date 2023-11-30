@@ -63,6 +63,15 @@ export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, h
             len: undefined
         }
     }
+    else if (preimageStorage.isV33) {
+        const storageData = await preimageStorage.asV33.get(hash)
+        if (!storageData) return undefined
+        return {
+            status: storageData.__kind,
+            value: storageData.deposit,
+            len: storageData.len
+        }
+    }
     else {
         throw new UnknownVersionError(preimageStorage.constructor.name)
     }
