@@ -155,12 +155,18 @@ async function createExecutedReferendumsActivity(ctx: ProcessorContext<Store>, h
                 switch (activities[i].type) {
                     case ActivityType.InductionRequest:
                         activityType = ActivityType.Inducted
+                        break;
                     case ActivityType.DemotionRequest:
                         activityType = ActivityType.Demoted
+                        break;
                     case ActivityType.PromotionRequest:
                         activityType = ActivityType.Promoted
+                        break;
                     case ActivityType.RetentionRequest:
                         activityType = ActivityType.Retained
+                        break;
+                    default:
+                        break;
                 }
                 if (activityType) {
                     activityTypeArray.push({
@@ -386,15 +392,16 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
             const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
             result.push({
                 activityType,
-                who: batchCalls[i]?.value?.who?.value ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
+                who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
             })
         }
     } else {
         const callName = `${section}.${method}`
         const activityType = activityTypesBasedOnCalls(callName, args)
+        let who = (args?.who as any)?.value || args?.who
         result.push({
             activityType,
-            who: args?.who ? ss58codec.encode(args?.who  as string) : ""
+            who: who ? ss58codec.encode(who as string) : ""
         })
     }
     return result
