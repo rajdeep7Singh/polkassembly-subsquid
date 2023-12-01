@@ -386,7 +386,7 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
             const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
             result.push({
                 activityType,
-                who: batchCalls[i]?.value?.who as string || ""
+                who: batchCalls[i]?.value?.who?.value ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
             })
         }
     } else {
