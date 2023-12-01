@@ -13,8 +13,8 @@ import { ProcessorContext, Event } from '../../../processor'
 
 
 export function getApprovedData(ctx: ProcessorContext<Store>, itemEvent: Event): string {
-    if (approved.collectivesV9290.is(itemEvent)) {
-        return approved.collectivesV9290.decode(itemEvent).proposalHash
+    if (approved.v9290.is(itemEvent)) {
+        return approved.v9290.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -27,8 +27,8 @@ interface ClosedData{
 }
 
 export function getClosedData(ctx: ProcessorContext<Store>, itemEvent: Event): ClosedData {
-    if (closed.collectivesV9290.is(itemEvent)) {
-        const data = closed.collectivesV9290.decode(itemEvent)
+    if (closed.v9290.is(itemEvent)) {
+        const data = closed.v9290.decode(itemEvent)
         return {
             proposalHash: data.proposalHash,
             yesVotes: data.yes,
@@ -40,8 +40,8 @@ export function getClosedData(ctx: ProcessorContext<Store>, itemEvent: Event): C
 }
 
 export function getDisapprovedData(ctx: ProcessorContext<Store>, itemEvent: Event): string {
-    if (disapproved.collectivesV9290.is(itemEvent)) {
-        return disapproved.collectivesV9290.decode(itemEvent).proposalHash
+    if (disapproved.v9290.is(itemEvent)) {
+        return disapproved.v9290.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -53,8 +53,8 @@ interface ExecutedData {
 }
 
 export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event): ExecutedData {
-    if (executed.collectivesV9290.is(itemEvent)) {
-        const {proposalHash, result} = executed.collectivesV9290.decode(itemEvent)
+    if (executed.v9290.is(itemEvent)) {
+        const {proposalHash, result} = executed.v9290.decode(itemEvent)
         if (result.__kind == 'Err') {
             return {
                 proposalHash,
@@ -66,8 +66,8 @@ export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event):
                 err: false
             }
         }
-    }else if (executed.collectivesV9320.is(itemEvent)) {
-        const {proposalHash, result} = executed.collectivesV9320.decode(itemEvent)
+    }else if (executed.v9360.is(itemEvent)) {
+        const {proposalHash, result} = executed.v9360.decode(itemEvent)
         if (result.__kind == 'Err') {
             return {
                 proposalHash,
@@ -79,8 +79,8 @@ export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event):
                 err: false
             }
         }
-    }else if (executed.collectivesV9420.is(itemEvent)) {
-        const {proposalHash, result} = executed.collectivesV9420.decode(itemEvent)
+    }else if (executed.v9420.is(itemEvent)) {
+        const {proposalHash, result} = executed.v9420.decode(itemEvent)
         if (result.__kind == 'Err') {
             return {
                 proposalHash,
@@ -92,8 +92,8 @@ export function getExecutedData(ctx: ProcessorContext<Store>, itemEvent: Event):
                 err: false
             }
         }
-    }else if (executed.collectivesV9430.is(itemEvent)) {
-        const {proposalHash, result} = executed.collectivesV9430.decode(itemEvent)
+    }else if (executed.v9430.is(itemEvent)) {
+        const {proposalHash, result} = executed.v9430.decode(itemEvent)
         if (result.__kind == 'Err') {
             return {
                 proposalHash,
@@ -118,8 +118,8 @@ interface ProposedData {
 }
 
 export function getProposedData(ctx: ProcessorContext<Store>, itemEvent: Event): ProposedData {
-    if (proposed.collectivesV9290.is(itemEvent)) {
-        const {account, proposalIndex, proposalHash, threshold} = proposed.collectivesV9290.decode(itemEvent)
+    if (proposed.v9290.is(itemEvent)) {
+        const {account, proposalIndex, proposalHash, threshold} = proposed.v9290.decode(itemEvent)
         return {
             account,
             proposalIndex,
@@ -140,8 +140,8 @@ interface VotedData {
 }
 
 export function getVotedData(ctx: ProcessorContext<Store>, itemEvent: Event): VotedData {
-    if (voted.collectivesV9290.is(itemEvent)) {
-        const {account, proposalHash, voted: vote, yes, no} = voted.collectivesV9290.decode(itemEvent)
+    if (voted.v9290.is(itemEvent)) {
+        const {account, proposalHash, voted: vote, yes, no} = voted.v9290.decode(itemEvent)
         return {
             account,
             proposalHash,

@@ -6,9 +6,9 @@ import {
     unscrupulousItemAdded, 
     unscrupulousItemRemoved,
 } from '../../../types/alliance/events'
-import * as v9290 from '../../../types/collectivesV9290'
+import * as v9290 from '../../../types/v9290'
 import { Store } from '@subsquid/typeorm-store'
-import { Multihash } from '../../../types/collectivesV1000000'
+import { Multihash } from '../../../types/v1000000'
 import { ProcessorContext, Event } from '../../../processor'
 
 interface announcedData {
@@ -18,8 +18,8 @@ interface announcedData {
 }
 
 export function getAnnouncedData(ctx: ProcessorContext<Store>, itemEvent: Event): announcedData  {
-    if (announced.collectivesV9290.is(itemEvent)) {
-        const { announcement } = announced.collectivesV9290.decode(itemEvent)
+    if (announced.v9290.is(itemEvent)) {
+        const { announcement } = announced.v9290.decode(itemEvent)
         return {
             announcementHash: announcement.hash,
             codec: announcement.codec,
@@ -31,8 +31,8 @@ export function getAnnouncedData(ctx: ProcessorContext<Store>, itemEvent: Event)
 }
 
 export function getAnnouncementRemovedData(ctx: ProcessorContext<Store>, itemEvent: Event): announcedData {
-    if (announcementRemoved.collectivesV9290.is(itemEvent)) {
-        const { announcement } = announcementRemoved.collectivesV9290.decode(itemEvent)
+    if (announcementRemoved.v9290.is(itemEvent)) {
+        const { announcement } = announcementRemoved.v9290.decode(itemEvent)
         return {
             announcementHash: announcement.hash,
             codec: announcement.codec,
@@ -57,8 +57,8 @@ export interface UnscrupulousItem_Website {
 
 
 export function getUnscrupulousItemAddedData(ctx: ProcessorContext<Store>, itemEvent: Event): v9290.UnscrupulousItem[] {
-    if (unscrupulousItemAdded.collectivesV9290.is(itemEvent)) {
-        return unscrupulousItemAdded.collectivesV9290.decode(itemEvent).items
+    if (unscrupulousItemAdded.v9290.is(itemEvent)) {
+        return unscrupulousItemAdded.v9290.decode(itemEvent).items
 
     } else {
         throw new UnknownVersionError(itemEvent.name)
@@ -66,8 +66,8 @@ export function getUnscrupulousItemAddedData(ctx: ProcessorContext<Store>, itemE
 }
 
 export function getUnscrupulousItemRemovedData(ctx: ProcessorContext<Store>, itemEvent: Event): v9290.UnscrupulousItem[] {
-    if (unscrupulousItemRemoved.collectivesV9290.is(itemEvent)) {
-        return unscrupulousItemRemoved.collectivesV9290.decode(itemEvent).items
+    if (unscrupulousItemRemoved.v9290.is(itemEvent)) {
+        return unscrupulousItemRemoved.v9290.decode(itemEvent).items
 
     } else {
         throw new UnknownVersionError(itemEvent.name)

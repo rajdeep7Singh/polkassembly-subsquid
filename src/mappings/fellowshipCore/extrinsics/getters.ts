@@ -6,7 +6,7 @@ import {
 
 import { Store } from '@subsquid/typeorm-store'
 import { ProcessorContext, Call } from '../../../processor'
-import { Wish } from '../../../types/collectivesV1000000'
+import { Wish } from '../../../types/v1000000'
 
 interface evidenceSubmissionData {
     wish: string
@@ -15,8 +15,8 @@ interface evidenceSubmissionData {
 
 
 export function getEvidenceData(ctx: ProcessorContext<Store>, itemEvent: Call): evidenceSubmissionData {
-    if (submitEvidence.collectivesV1000000.is(itemEvent)) {
-        const {wish, evidence} = submitEvidence.collectivesV1000000.decode(itemEvent)
+    if (submitEvidence.v1000000.is(itemEvent)) {
+        const {wish, evidence} = submitEvidence.v1000000.decode(itemEvent)
         return {
             wish: wish.__kind,
             evidence

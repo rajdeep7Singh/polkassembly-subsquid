@@ -155,12 +155,18 @@ async function createExecutedReferendumsActivity(ctx: ProcessorContext<Store>, h
                 switch (activities[i].type) {
                     case ActivityType.InductionRequest:
                         activityType = ActivityType.Inducted
+                        break;
                     case ActivityType.DemotionRequest:
                         activityType = ActivityType.Demoted
+                        break;
                     case ActivityType.PromotionRequest:
                         activityType = ActivityType.Promoted
+                        break;
                     case ActivityType.RetentionRequest:
                         activityType = ActivityType.Retained
+                        break;
+                    default:
+                        break;
                 }
                 if (activityType) {
                     activityTypeArray.push({
@@ -386,7 +392,7 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
             const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
             result.push({
                 activityType,
-                who: batchCalls[i]?.value?.who as string || ""
+                who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
             })
         }
     } else {
@@ -394,7 +400,7 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
         const activityType = activityTypesBasedOnCalls(callName, args)
         result.push({
             activityType,
-            who: args?.who ? ss58codec.encode(args?.who  as string) : ""
+            who: args?.who && (args.who as any).value ? ss58codec.encode((args?.who as any).value  as string) : ""
         })
     }
     return result
@@ -412,11 +418,11 @@ export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, 
         },
         order: { createdAtBlock: 'DESC' },
     })
-
     let activityType = [{
         activityType: ActivityType.GeneralProposal,
-        who: ""
+        who: proposer
     }]
+
 
     if(preimage) {
         activityType = getAcitivtTypeFromPreimage(preimage.proposedCall)

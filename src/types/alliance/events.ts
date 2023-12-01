@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as collectivesV9290 from '../collectivesV9290'
+import * as v9290 from '../v9290'
 
 export const announced =  {
     name: 'Alliance.Announced',
     /**
      * A new announcement has been proposed.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'Alliance.Announced',
         sts.struct({
-            announcement: collectivesV9290.Cid,
+            announcement: v9290.Cid,
         })
     ),
 }
@@ -19,10 +19,10 @@ export const announcementRemoved =  {
     /**
      * An on-chain announcement has been removed.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'Alliance.AnnouncementRemoved',
         sts.struct({
-            announcement: collectivesV9290.Cid,
+            announcement: v9290.Cid,
         })
     ),
 }
@@ -32,10 +32,10 @@ export const unscrupulousItemAdded =  {
     /**
      * Accounts or websites have been added into the list of unscrupulous items.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'Alliance.UnscrupulousItemAdded',
         sts.struct({
-            items: sts.array(() => collectivesV9290.UnscrupulousItem),
+            items: sts.array(() => v9290.UnscrupulousItem),
         })
     ),
 }
@@ -45,10 +45,10 @@ export const unscrupulousItemRemoved =  {
     /**
      * Accounts or websites have been removed from the list of unscrupulous items.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'Alliance.UnscrupulousItemRemoved',
         sts.struct({
-            items: sts.array(() => collectivesV9290.UnscrupulousItem),
+            items: sts.array(() => v9290.UnscrupulousItem),
         })
     ),
 }

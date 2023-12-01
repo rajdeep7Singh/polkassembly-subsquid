@@ -1,26 +1,26 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as collectivesV9420 from '../collectivesV9420'
+import * as v9420 from '../v9420'
 
 export const members =  {
     /**
      *  The current members of the collective.
      */
-    collectivesV9420: new StorageType('FellowshipCollective.Members', 'Optional', [collectivesV9420.AccountId32], collectivesV9420.MemberRecord) as MembersCollectivesV9420,
+    v9420: new StorageType('FellowshipCollective.Members', 'Optional', [v9420.AccountId32], v9420.MemberRecord) as MembersV9420,
 }
 
 /**
  *  The current members of the collective.
  */
-export interface MembersCollectivesV9420  {
+export interface MembersV9420  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: collectivesV9420.AccountId32): Promise<(collectivesV9420.MemberRecord | undefined)>
-    getMany(block: Block, keys: collectivesV9420.AccountId32[]): Promise<(collectivesV9420.MemberRecord | undefined)[]>
-    getKeys(block: Block): Promise<collectivesV9420.AccountId32[]>
-    getKeys(block: Block, key: collectivesV9420.AccountId32): Promise<collectivesV9420.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<collectivesV9420.AccountId32[]>
-    getKeysPaged(pageSize: number, block: Block, key: collectivesV9420.AccountId32): AsyncIterable<collectivesV9420.AccountId32[]>
-    getPairs(block: Block): Promise<[k: collectivesV9420.AccountId32, v: (collectivesV9420.MemberRecord | undefined)][]>
-    getPairs(block: Block, key: collectivesV9420.AccountId32): Promise<[k: collectivesV9420.AccountId32, v: (collectivesV9420.MemberRecord | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: collectivesV9420.AccountId32, v: (collectivesV9420.MemberRecord | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: collectivesV9420.AccountId32): AsyncIterable<[k: collectivesV9420.AccountId32, v: (collectivesV9420.MemberRecord | undefined)][]>
+    get(block: Block, key: v9420.AccountId32): Promise<(v9420.MemberRecord | undefined)>
+    getMany(block: Block, keys: v9420.AccountId32[]): Promise<(v9420.MemberRecord | undefined)[]>
+    getKeys(block: Block): Promise<v9420.AccountId32[]>
+    getKeys(block: Block, key: v9420.AccountId32): Promise<v9420.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9420.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v9420.AccountId32): AsyncIterable<v9420.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v9420.AccountId32, v: (v9420.MemberRecord | undefined)][]>
+    getPairs(block: Block, key: v9420.AccountId32): Promise<[k: v9420.AccountId32, v: (v9420.MemberRecord | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9420.AccountId32, v: (v9420.MemberRecord | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v9420.AccountId32): AsyncIterable<[k: v9420.AccountId32, v: (v9420.MemberRecord | undefined)][]>
 }

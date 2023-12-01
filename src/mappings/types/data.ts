@@ -1,5 +1,5 @@
 import { ActivityType, ProposalStatus, ProposalType, ReferendumThresholdType, SalaryCycle } from '../../model'
-import { Multihash } from '../../types/collectivesV1000000'
+import { Multihash } from '../../types/v1000000'
 
 export type IndexProposal =
     | ProposalType.AllianceMotion

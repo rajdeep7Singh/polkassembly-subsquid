@@ -1,12 +1,12 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as collectivesV9420 from '../collectivesV9420'
+import * as v9420 from '../v9420'
 
 export const submitted =  {
     name: 'FellowshipReferenda.Submitted',
     /**
      * A referendum has been submitted.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Submitted',
         sts.struct({
             /**
@@ -20,7 +20,7 @@ export const submitted =  {
             /**
              * The proposal for the referendum.
              */
-            proposal: collectivesV9420.Bounded,
+            proposal: v9420.Bounded,
         })
     ),
 }
@@ -30,7 +30,7 @@ export const decisionDepositPlaced =  {
     /**
      * The decision deposit has been placed.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.DecisionDepositPlaced',
         sts.struct({
             /**
@@ -40,7 +40,7 @@ export const decisionDepositPlaced =  {
             /**
              * The account who placed the deposit.
              */
-            who: collectivesV9420.AccountId32,
+            who: v9420.AccountId32,
             /**
              * The amount placed by the account.
              */
@@ -54,7 +54,7 @@ export const decisionStarted =  {
     /**
      * A referendum has moved into the deciding phase.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.DecisionStarted',
         sts.struct({
             /**
@@ -68,18 +68,18 @@ export const decisionStarted =  {
             /**
              * The proposal for the referendum.
              */
-            proposal: collectivesV9420.Bounded,
+            proposal: v9420.Bounded,
             /**
              * The current tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
 
 export const confirmStarted =  {
     name: 'FellowshipReferenda.ConfirmStarted',
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.ConfirmStarted',
         sts.struct({
             /**
@@ -92,7 +92,7 @@ export const confirmStarted =  {
 
 export const confirmAborted =  {
     name: 'FellowshipReferenda.ConfirmAborted',
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.ConfirmAborted',
         sts.struct({
             /**
@@ -108,7 +108,7 @@ export const confirmed =  {
     /**
      * A referendum has ended its confirmation phase and is ready for approval.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Confirmed',
         sts.struct({
             /**
@@ -118,7 +118,7 @@ export const confirmed =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
@@ -128,7 +128,7 @@ export const approved =  {
     /**
      * A referendum has been approved and its proposal has been scheduled.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Approved',
         sts.struct({
             /**
@@ -144,7 +144,7 @@ export const rejected =  {
     /**
      * A proposal has been rejected by referendum.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Rejected',
         sts.struct({
             /**
@@ -154,7 +154,7 @@ export const rejected =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
@@ -164,7 +164,7 @@ export const timedOut =  {
     /**
      * A referendum has been timed out without being decided.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.TimedOut',
         sts.struct({
             /**
@@ -174,7 +174,7 @@ export const timedOut =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
@@ -184,7 +184,7 @@ export const cancelled =  {
     /**
      * A referendum has been cancelled.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Cancelled',
         sts.struct({
             /**
@@ -194,7 +194,7 @@ export const cancelled =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
@@ -204,7 +204,7 @@ export const killed =  {
     /**
      * A referendum has been killed.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.Killed',
         sts.struct({
             /**
@@ -214,7 +214,7 @@ export const killed =  {
             /**
              * The final tally of votes in this referendum.
              */
-            tally: collectivesV9420.Tally,
+            tally: v9420.Tally,
         })
     ),
 }
@@ -224,7 +224,7 @@ export const metadataSet =  {
     /**
      * Metadata for a referendum has been set.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.MetadataSet',
         sts.struct({
             /**
@@ -234,7 +234,7 @@ export const metadataSet =  {
             /**
              * Preimage hash.
              */
-            hash: collectivesV9420.H256,
+            hash: v9420.H256,
         })
     ),
 }
@@ -244,7 +244,7 @@ export const metadataCleared =  {
     /**
      * Metadata for a referendum has been cleared.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'FellowshipReferenda.MetadataCleared',
         sts.struct({
             /**
@@ -254,7 +254,7 @@ export const metadataCleared =  {
             /**
              * Preimage hash.
              */
-            hash: collectivesV9420.H256,
+            hash: v9420.H256,
         })
     ),
 }

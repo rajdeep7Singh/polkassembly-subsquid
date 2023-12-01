@@ -16,8 +16,8 @@ interface activeChangedData {
 }
 
 export function getActiveChangedData(itemEvent: Event): activeChangedData  {
-    if (activeChanged.collectivesV1000000.is(itemEvent)) {
-        const { who, isActive } = activeChanged.collectivesV1000000.decode(itemEvent)
+    if (activeChanged.v1000000.is(itemEvent)) {
+        const { who, isActive } = activeChanged.v1000000.decode(itemEvent)
         return {
             who,
             isActive
@@ -34,8 +34,8 @@ interface demotedData {
 }
 
 export function getDemotedData(itemEvent: Event): demotedData  {
-    if (demoted.collectivesV1000000.is(itemEvent)) {
-        const { who, toRank } = demoted.collectivesV1000000.decode(itemEvent)
+    if (demoted.v1000000.is(itemEvent)) {
+        const { who, toRank } = demoted.v1000000.decode(itemEvent)
         return {
             who,
             toRank
@@ -51,8 +51,8 @@ interface offboardedData {
 }
 
 export function getOffboardedData(itemEvent: Event): offboardedData  {
-    if (offboarded.collectivesV1000000.is(itemEvent)) {
-        const { who } = offboarded.collectivesV1000000.decode(itemEvent)
+    if (offboarded.v1000000.is(itemEvent)) {
+        const { who } = offboarded.v1000000.decode(itemEvent)
         return {
             who
         }
@@ -67,8 +67,8 @@ interface offboardedData {
 }
 
 export function getInductedData(itemEvent: Event): offboardedData  {
-    if (inducted.collectivesV1000000.is(itemEvent)) {
-        const { who } = inducted.collectivesV1000000.decode(itemEvent)
+    if (inducted.v1000000.is(itemEvent)) {
+        const { who } = inducted.v1000000.decode(itemEvent)
         return {
             who
         }
@@ -84,8 +84,8 @@ interface importedData {
 }
 
 export function getImportedData(itemEvent: Event): importedData  {
-    if (imported.collectivesV1000000.is(itemEvent)) {
-        const { who, rank } = imported.collectivesV1000000.decode(itemEvent)
+    if (imported.v1000000.is(itemEvent)) {
+        const { who, rank } = imported.v1000000.decode(itemEvent)
         return {
             who,
             rank
@@ -105,8 +105,8 @@ interface evidenceJudgedData {
 }
 
 export function getEvidenceJudgedData(itemEvent: Event): evidenceJudgedData  {
-    if (evidenceJudged.collectivesV1000000.is(itemEvent)) {
-        const { who, wish, evidence, oldRank, newRank } = evidenceJudged.collectivesV1000000.decode(itemEvent)
+    if (evidenceJudged.v1000000.is(itemEvent)) {
+        const { who, wish, evidence, oldRank, newRank } = evidenceJudged.v1000000.decode(itemEvent)
         return {
             who,
             wish: wish.__kind,

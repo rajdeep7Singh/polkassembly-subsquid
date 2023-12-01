@@ -3,12 +3,12 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: any = {
     chain: {
-        name: 'westend-collecitves',
+        name: 'collecitves',
         prefix: 0,
     },
     dataSource: {
-        chain: 'wss://westend-collectives-rpc.polkadot.io',
-        archive: lookupArchive('collectives-westend',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://polkadot-collectives-rpc.dwellir.com/',
+        archive: lookupArchive('collectives-polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'collectives',
     batchSize: 500,

@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as collectivesV9420 from '../collectivesV9420'
+import * as v9420 from '../v9420'
 
 export const addMember =  {
     name: 'FellowshipCollective.add_member',
@@ -12,10 +12,10 @@ export const addMember =  {
      * 
      * Weight: `O(1)`
      */
-    collectivesV9420: new CallType(
+    v9420: new CallType(
         'FellowshipCollective.add_member',
         sts.struct({
-            who: collectivesV9420.MultiAddress,
+            who: v9420.MultiAddress,
         })
     ),
 }
@@ -30,10 +30,10 @@ export const promoteMember =  {
      * 
      * Weight: `O(1)`
      */
-    collectivesV9420: new CallType(
+    v9420: new CallType(
         'FellowshipCollective.promote_member',
         sts.struct({
-            who: collectivesV9420.MultiAddress,
+            who: v9420.MultiAddress,
         })
     ),
 }
@@ -49,10 +49,10 @@ export const demoteMember =  {
      * 
      * Weight: `O(1)`, less if the member's index is highest in its rank.
      */
-    collectivesV9420: new CallType(
+    v9420: new CallType(
         'FellowshipCollective.demote_member',
         sts.struct({
-            who: collectivesV9420.MultiAddress,
+            who: v9420.MultiAddress,
         })
     ),
 }
@@ -68,10 +68,10 @@ export const removeMember =  {
      * 
      * Weight: `O(min_rank)`.
      */
-    collectivesV9420: new CallType(
+    v9420: new CallType(
         'FellowshipCollective.remove_member',
         sts.struct({
-            who: collectivesV9420.MultiAddress,
+            who: v9420.MultiAddress,
             minRank: sts.number(),
         })
     ),
@@ -92,7 +92,7 @@ export const vote =  {
      * 
      * Weight: `O(1)`, less if there was no previous vote on the poll by the member.
      */
-    collectivesV9420: new CallType(
+    v9420: new CallType(
         'FellowshipCollective.vote',
         sts.struct({
             poll: sts.number(),

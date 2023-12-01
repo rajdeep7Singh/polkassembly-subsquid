@@ -1,6 +1,6 @@
 import { Store } from '@subsquid/typeorm-store'
 import { Block, ProcessorContext} from '../../processor'
-import { StatusType } from '../../types/collectivesV1000000'
+import { StatusType } from '../../types/v1000000'
 
 export async function getSalaryCycleData(
     ctx: ProcessorContext<Store>, block: Block

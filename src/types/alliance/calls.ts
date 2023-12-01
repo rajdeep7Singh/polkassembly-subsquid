@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as collectivesV9290 from '../collectivesV9290'
+import * as v9290 from '../v9290'
 
 export const vote =  {
     name: 'Alliance.vote',
@@ -8,10 +8,10 @@ export const vote =  {
      * 
      * Requires the sender to be a founder or fellow.
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'Alliance.vote',
         sts.struct({
-            proposal: collectivesV9290.H256,
+            proposal: v9290.H256,
             index: sts.number(),
             approve: sts.boolean(),
         })
@@ -23,10 +23,10 @@ export const announce =  {
     /**
      * Make an announcement of a new IPFS CID about alliance issues.
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'Alliance.announce',
         sts.struct({
-            announcement: collectivesV9290.Cid,
+            announcement: v9290.Cid,
         })
     ),
 }

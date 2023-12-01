@@ -13,9 +13,9 @@ interface cycleStartedData {
 }
 
 export function getCycleStartedData(itemEvent: Event): cycleStartedData  {
-    if (cycleStarted.collectivesV1000000.is(itemEvent)) {
+    if (cycleStarted.v1000000.is(itemEvent)) {
         return {
-            cycleIndex: cycleStarted.collectivesV1000000.decode(itemEvent).index
+            cycleIndex: cycleStarted.v1000000.decode(itemEvent).index
         }
 
     } else {
@@ -28,9 +28,9 @@ interface inductedData {
 }
 
 export function getMemberInductedIntoPaymasterData(itemEvent: Event): inductedData  {
-    if (inducted.collectivesV1000000.is(itemEvent)) {
+    if (inducted.v1000000.is(itemEvent)) {
         return {
-            who: inducted.collectivesV1000000.decode(itemEvent).who
+            who: inducted.v1000000.decode(itemEvent).who
         }
 
     } else {
@@ -44,8 +44,8 @@ interface memberRegisteredData {
 }
 
 export function getMemberRegisteredIntoSalaryCycleData(itemEvent: Event): memberRegisteredData  {
-    if (registered.collectivesV1000000.is(itemEvent)) {
-        const {who, amount} =  registered.collectivesV1000000.decode(itemEvent)
+    if (registered.v1000000.is(itemEvent)) {
+        const {who, amount} =  registered.v1000000.decode(itemEvent)
         return {
             who,
             amount
@@ -64,8 +64,8 @@ interface memberPaidData {
 }
 
 export function getMemberPayoutData(itemEvent: Event): memberPaidData  {
-    if (paid.collectivesV1000000.is(itemEvent)) {
-        const {who, amount, beneficiary, id} =  paid.collectivesV1000000.decode(itemEvent)
+    if (paid.v1000000.is(itemEvent)) {
+        const {who, amount, beneficiary, id} =  paid.v1000000.decode(itemEvent)
         return {
             who,
             amount,

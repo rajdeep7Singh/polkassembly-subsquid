@@ -1,8 +1,8 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as collectivesV9290 from '../collectivesV9290'
-import * as collectivesV9320 from '../collectivesV9320'
-import * as collectivesV9420 from '../collectivesV9420'
-import * as collectivesV9430 from '../collectivesV9430'
+import * as v9290 from '../v9290'
+import * as v9360 from '../v9360'
+import * as v9420 from '../v9420'
+import * as v9430 from '../v9430'
 
 export const proposed =  {
     name: 'AllianceMotion.Proposed',
@@ -10,12 +10,12 @@ export const proposed =  {
      * A motion (given hash) has been proposed (by given account) with a threshold (given
      * `MemberCount`).
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Proposed',
         sts.struct({
-            account: collectivesV9290.AccountId32,
+            account: v9290.AccountId32,
             proposalIndex: sts.number(),
-            proposalHash: collectivesV9290.H256,
+            proposalHash: v9290.H256,
             threshold: sts.number(),
         })
     ),
@@ -27,11 +27,11 @@ export const voted =  {
      * A motion (given hash) has been voted on by given account, leaving
      * a tally (yes votes and no votes given respectively as `MemberCount`).
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Voted',
         sts.struct({
-            account: collectivesV9290.AccountId32,
-            proposalHash: collectivesV9290.H256,
+            account: v9290.AccountId32,
+            proposalHash: v9290.H256,
             voted: sts.boolean(),
             yes: sts.number(),
             no: sts.number(),
@@ -44,10 +44,10 @@ export const approved =  {
     /**
      * A motion was approved by the required threshold.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Approved',
         sts.struct({
-            proposalHash: collectivesV9290.H256,
+            proposalHash: v9290.H256,
         })
     ),
 }
@@ -57,10 +57,10 @@ export const disapproved =  {
     /**
      * A motion was not approved by the required threshold.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Disapproved',
         sts.struct({
-            proposalHash: collectivesV9290.H256,
+            proposalHash: v9290.H256,
         })
     ),
 }
@@ -70,41 +70,41 @@ export const executed =  {
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Executed',
         sts.struct({
-            proposalHash: collectivesV9290.H256,
-            result: sts.result(() => sts.unit(), () => collectivesV9290.DispatchError),
+            proposalHash: v9290.H256,
+            result: sts.result(() => sts.unit(), () => v9290.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    collectivesV9320: new EventType(
+    v9360: new EventType(
         'AllianceMotion.Executed',
         sts.struct({
-            proposalHash: collectivesV9320.H256,
-            result: sts.result(() => sts.unit(), () => collectivesV9320.DispatchError),
+            proposalHash: v9360.H256,
+            result: sts.result(() => sts.unit(), () => v9360.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'AllianceMotion.Executed',
         sts.struct({
-            proposalHash: collectivesV9420.H256,
-            result: sts.result(() => sts.unit(), () => collectivesV9420.DispatchError),
+            proposalHash: v9420.H256,
+            result: sts.result(() => sts.unit(), () => v9420.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    collectivesV9430: new EventType(
+    v9430: new EventType(
         'AllianceMotion.Executed',
         sts.struct({
-            proposalHash: collectivesV9430.H256,
-            result: sts.result(() => sts.unit(), () => collectivesV9430.DispatchError),
+            proposalHash: v9430.H256,
+            result: sts.result(() => sts.unit(), () => v9430.DispatchError),
         })
     ),
 }
@@ -114,10 +114,10 @@ export const closed =  {
     /**
      * A proposal was closed because its threshold was reached or after its duration was up.
      */
-    collectivesV9290: new EventType(
+    v9290: new EventType(
         'AllianceMotion.Closed',
         sts.struct({
-            proposalHash: collectivesV9290.H256,
+            proposalHash: v9290.H256,
             yes: sts.number(),
             no: sts.number(),
         })

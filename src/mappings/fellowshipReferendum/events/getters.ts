@@ -29,8 +29,8 @@ interface ReferendumEventData {
 }
 
 export function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendumEventData {
-    if (submitted.collectivesV9420.is(itemEvent)) {
-        const {index, track, proposal } = submitted.collectivesV9420.decode(itemEvent)
+    if (submitted.v9420.is(itemEvent)) {
+        const {index, track, proposal } = submitted.v9420.decode(itemEvent)
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -54,8 +54,8 @@ export interface ReferendaData {
 }
 
 export function getCancelledData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaData {
-    if (cancelled.collectivesV9420.is(itemEvent)) {
-        const { index, tally } = cancelled.collectivesV9420.decode(itemEvent)
+    if (cancelled.v9420.is(itemEvent)) {
+        const { index, tally } = cancelled.v9420.decode(itemEvent)
         return {
             index,
             tally
@@ -70,8 +70,8 @@ export interface ReferendaIndexData {
 }
 
 export function getApprovedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaIndexData {
-    if (approved.collectivesV9420.is(itemEvent)) {
-        const { index } = approved.collectivesV9420.decode(itemEvent)
+    if (approved.v9420.is(itemEvent)) {
+        const { index } = approved.v9420.decode(itemEvent)
         return {
             index,
         }
@@ -81,8 +81,8 @@ export function getApprovedData(ctx: ProcessorContext<Store>, itemEvent: Event):
 }
 
 export function getKilledData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaData {
-    if (killed.collectivesV9420.is(itemEvent)) {
-        const { index, tally } = killed.collectivesV9420.decode(itemEvent)
+    if (killed.v9420.is(itemEvent)) {
+        const { index, tally } = killed.v9420.decode(itemEvent)
         return {
             index,
             tally
@@ -93,8 +93,8 @@ export function getKilledData(ctx: ProcessorContext<Store>, itemEvent: Event): R
 }
 
 export function getTimedOutData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaIndexData {
-    if (timedOut.collectivesV9420.is(itemEvent)) {
-        const { index } = timedOut.collectivesV9420.decode(itemEvent)
+    if (timedOut.v9420.is(itemEvent)) {
+        const { index } = timedOut.v9420.decode(itemEvent)
         return {
             index,
         }
@@ -104,8 +104,8 @@ export function getTimedOutData(ctx: ProcessorContext<Store>, itemEvent: Event):
 }
 
 export function getRejectedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaData {
-    if (rejected.collectivesV9420.is(itemEvent)) {
-        const { index, tally } = rejected.collectivesV9420.decode(itemEvent)
+    if (rejected.v9420.is(itemEvent)) {
+        const { index, tally } = rejected.v9420.decode(itemEvent)
         return {
             index,
             tally
@@ -116,8 +116,8 @@ export function getRejectedData(ctx: ProcessorContext<Store>, itemEvent: Event):
 }
 
 export function getConfirmAbortedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaIndexData {
-    if (confirmAborted.collectivesV9420.is(itemEvent)) {
-        const { index } = confirmAborted.collectivesV9420.decode(itemEvent)
+    if (confirmAborted.v9420.is(itemEvent)) {
+        const { index } = confirmAborted.v9420.decode(itemEvent)
         return {
             index,
         }
@@ -127,8 +127,8 @@ export function getConfirmAbortedData(ctx: ProcessorContext<Store>, itemEvent: E
 }
 
 export function getConfirmedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaData {
-    if (confirmed.collectivesV9420.is(itemEvent)) {
-        const { index, tally } = confirmed.collectivesV9420.decode(itemEvent)
+    if (confirmed.v9420.is(itemEvent)) {
+        const { index, tally } = confirmed.v9420.decode(itemEvent)
         return {
             index,
             tally
@@ -139,8 +139,8 @@ export function getConfirmedData(ctx: ProcessorContext<Store>, itemEvent: Event)
 }
 
 export function getConfirmStartedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaIndexData {
-    if (confirmStarted.collectivesV9420.is(itemEvent)) {
-        const { index } = confirmStarted.collectivesV9420.decode(itemEvent)
+    if (confirmStarted.v9420.is(itemEvent)) {
+        const { index } = confirmStarted.v9420.decode(itemEvent)
         return {
             index
         }
@@ -156,8 +156,8 @@ export interface ReferendaDepositData {
 }
 
 export function getDecisionDepositPlacedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaDepositData {
-    if (decisionDepositPlaced.collectivesV9420.is(itemEvent)) {
-        const { index, who, amount } = decisionDepositPlaced.collectivesV9420.decode(itemEvent)
+    if (decisionDepositPlaced.v9420.is(itemEvent)) {
+        const { index, who, amount } = decisionDepositPlaced.v9420.decode(itemEvent)
         return {
             index,
             who,
@@ -176,9 +176,9 @@ export interface ReferendaDecisionStartedData {
 }
 
 export function getDecisionStartedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaDecisionStartedData {
-    if (decisionStarted.collectivesV9420.is(itemEvent)) {
+    if (decisionStarted.v9420.is(itemEvent)) {
         let hash = undefined;
-        const { index, track, proposal, tally} = decisionStarted.collectivesV9420.decode(itemEvent)
+        const { index, track, proposal, tally} = decisionStarted.v9420.decode(itemEvent)
         if(proposal.__kind == "Inline") {
             hash = proposal.value
         }
@@ -206,8 +206,8 @@ interface FellowshipCollectiveVoteData {
 }
 
 export function getFellowshipVoteData(ctx: ProcessorContext<Store>, itemEvent: Event): FellowshipCollectiveVoteData {
-    if (voted.collectivesV9420.is(itemEvent)) {
-        const { who, poll, vote, tally  } = voted.collectivesV9420.decode(itemEvent)
+    if (voted.v9420.is(itemEvent)) {
+        const { who, poll, vote, tally  } = voted.v9420.decode(itemEvent)
         const decision = vote.__kind == "Aye" ? VoteDecision.yes : VoteDecision.no
         const amount = vote.value
         return {
@@ -227,8 +227,8 @@ export interface ReferendaMetadataSetData {
 }
 
 export function getMetadataSetData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaMetadataSetData {
-    if (metadataSet.collectivesV9420.is(itemEvent)) {
-        const { index, hash } = metadataSet.collectivesV9420.decode(itemEvent)
+    if (metadataSet.v9420.is(itemEvent)) {
+        const { index, hash } = metadataSet.v9420.decode(itemEvent)
         return {
             index,
             hash
@@ -244,8 +244,8 @@ export interface ReferendaMetadataCleared {
 }
 
 export function getMetadataClearedData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendaMetadataCleared {
-    if (metadataSet.collectivesV9420.is(itemEvent)) {
-        const { index, hash } = metadataSet.collectivesV9420.decode(itemEvent)
+    if (metadataSet.v9420.is(itemEvent)) {
+        const { index, hash } = metadataSet.v9420.decode(itemEvent)
         return {
             index,
             hash

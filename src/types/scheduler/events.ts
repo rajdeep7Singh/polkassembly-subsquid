@@ -1,13 +1,13 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as collectivesV9420 from '../collectivesV9420'
-import * as collectivesV9430 from '../collectivesV9430'
+import * as v9420 from '../v9420'
+import * as v9430 from '../v9430'
 
 export const scheduled =  {
     name: 'Scheduler.Scheduled',
     /**
      * Scheduled some task.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'Scheduler.Scheduled',
         sts.struct({
             when: sts.number(),
@@ -21,23 +21,23 @@ export const dispatched =  {
     /**
      * Dispatched some task.
      */
-    collectivesV9420: new EventType(
+    v9420: new EventType(
         'Scheduler.Dispatched',
         sts.struct({
             task: sts.tuple(() => [sts.number(), sts.number()]),
             id: sts.option(() => sts.bytes()),
-            result: sts.result(() => sts.unit(), () => collectivesV9420.DispatchError),
+            result: sts.result(() => sts.unit(), () => v9420.DispatchError),
         })
     ),
     /**
      * Dispatched some task.
      */
-    collectivesV9430: new EventType(
+    v9430: new EventType(
         'Scheduler.Dispatched',
         sts.struct({
             task: sts.tuple(() => [sts.number(), sts.number()]),
             id: sts.option(() => sts.bytes()),
-            result: sts.result(() => sts.unit(), () => collectivesV9430.DispatchError),
+            result: sts.result(() => sts.unit(), () => v9430.DispatchError),
         })
     ),
 }

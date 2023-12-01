@@ -12,8 +12,8 @@ interface PreimageNotedData {
 }
 
 export function getPreimageNotedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageNotedData {
-    if (noted.collectivesV9420.is(itemEvent)) {
-        const { hash } = noted.collectivesV9420.decode(itemEvent)
+    if (noted.v9420.is(itemEvent)) {
+        const { hash } = noted.v9420.decode(itemEvent)
         return {
             hash
         }
@@ -27,8 +27,8 @@ export interface PreimageRequestedData {
 }
 
 export function getPreimageRequestedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageRequestedData {
-    if (requested.collectivesV9420.is(itemEvent)) {
-        const {hash} = requested.collectivesV9420.decode(itemEvent)
+    if (requested.v9420.is(itemEvent)) {
+        const {hash} = requested.v9420.decode(itemEvent)
         return {
             hash
         }
@@ -42,8 +42,8 @@ export interface PreimageClearedData {
 }
 
 export function getPreimageClearedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageClearedData {
-    if (cleared.collectivesV9420.is(itemEvent)) {
-        const {hash} = cleared.collectivesV9420.decode(itemEvent)
+    if (cleared.v9420.is(itemEvent)) {
+        const {hash} = cleared.v9420.decode(itemEvent)
         return {
             hash
         }

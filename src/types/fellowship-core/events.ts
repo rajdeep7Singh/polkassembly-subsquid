@@ -1,15 +1,15 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as collectivesV1000000 from '../collectivesV1000000'
+import * as v1000000 from '../v1000000'
 
 export const activeChanged =  {
     name: 'FellowshipCore.ActiveChanged',
     /**
      * Member activity flag has been set.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.ActiveChanged',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             isActive: sts.boolean(),
         })
     ),
@@ -20,10 +20,10 @@ export const inducted =  {
     /**
      * Member has begun being tracked in this pallet.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Inducted',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
         })
     ),
 }
@@ -34,10 +34,10 @@ export const offboarded =  {
      * Member has been removed from being tracked in this pallet (i.e. because rank is now
      * zero).
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Offboarded',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
         })
     ),
 }
@@ -47,10 +47,10 @@ export const promoted =  {
     /**
      * Member has been promoted to the given rank.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Promoted',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             toRank: sts.number(),
         })
     ),
@@ -61,10 +61,10 @@ export const demoted =  {
     /**
      * Member has been demoted to the given (non-zero) rank.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Demoted',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             toRank: sts.number(),
         })
     ),
@@ -75,10 +75,10 @@ export const proven =  {
     /**
      * Member has been proven at their current rank, postponing auto-demotion.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Proven',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             atRank: sts.number(),
         })
     ),
@@ -90,17 +90,17 @@ export const evidenceJudged =  {
      * Some submitted evidence was judged and removed. There may or may not have been a change
      * to the rank, but in any case, `last_proof` is reset.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.EvidenceJudged',
         sts.struct({
             /**
              * The member/candidate.
              */
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             /**
              * The desired outcome for which the evidence was presented.
              */
-            wish: collectivesV1000000.Wish,
+            wish: v1000000.Wish,
             /**
              * The evidence of efforts.
              */
@@ -122,10 +122,10 @@ export const imported =  {
     /**
      * Pre-ranked account has been inducted at their current rank.
      */
-    collectivesV1000000: new EventType(
+    v1000000: new EventType(
         'FellowshipCore.Imported',
         sts.struct({
-            who: collectivesV1000000.AccountId32,
+            who: v1000000.AccountId32,
             rank: sts.number(),
         })
     ),

@@ -1,5 +1,4 @@
-import { proposalOf } from '../../types/alliance-motion/storage'
-import { Call } from '../../types/collectivesV1000000'
+import { Call } from '../../types/v1000000'
 import { Store } from '@subsquid/typeorm-store'
 import { Block, ProcessorContext} from '../../processor'
 

@@ -7,8 +7,8 @@ import { events, calls } from './types'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://westend-collectives-rpc.dwellir.com',
-        archive: lookupArchive('collectives-westend',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://polkadot-collectives-rpc.dwellir.com/',
+        archive: lookupArchive('collectives-polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

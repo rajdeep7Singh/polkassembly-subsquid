@@ -1,13 +1,9 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as collectivesV9290 from '../collectivesV9290'
-import * as collectivesV9320 from '../collectivesV9320'
-import * as collectivesV9360 from '../collectivesV9360'
-import * as collectivesV9370 from '../collectivesV9370'
-import * as collectivesV9380 from '../collectivesV9380'
-import * as collectivesV9400 from '../collectivesV9400'
-import * as collectivesV9420 from '../collectivesV9420'
-import * as collectivesV1000000 from '../collectivesV1000000'
-import * as v1004000 from '../v1004000'
+import * as v9290 from '../v9290'
+import * as v9360 from '../v9360'
+import * as v9370 from '../v9370'
+import * as v9420 from '../v9420'
+import * as v1000000 from '../v1000000'
 
 export const execute =  {
     name: 'AllianceMotion.execute',
@@ -24,10 +20,10 @@ export const execute =  {
      * - 1 event
      * # </weight>
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'AllianceMotion.execute',
         sts.struct({
-            proposal: collectivesV9290.Call,
+            proposal: v9290.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -44,10 +40,10 @@ export const execute =  {
      * - 1 event
      * # </weight>
      */
-    collectivesV9320: new CallType(
+    v9360: new CallType(
         'AllianceMotion.execute',
         sts.struct({
-            proposal: collectivesV9320.Call,
+            proposal: v9360.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -64,50 +60,10 @@ export const execute =  {
      * - 1 event
      * # </weight>
      */
-    collectivesV9360: new CallType(
+    v9370: new CallType(
         'AllianceMotion.execute',
         sts.struct({
-            proposal: collectivesV9360.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Dispatch a proposal from a member using the `Member` origin.
-     * 
-     * Origin must be a member of the collective.
-     * 
-     * # <weight>
-     * ## Weight
-     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
-     *   `proposal`
-     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
-     * - 1 event
-     * # </weight>
-     */
-    collectivesV9370: new CallType(
-        'AllianceMotion.execute',
-        sts.struct({
-            proposal: collectivesV9370.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Dispatch a proposal from a member using the `Member` origin.
-     * 
-     * Origin must be a member of the collective.
-     * 
-     * # <weight>
-     * ## Weight
-     * - `O(M + P)` where `M` members-count (code-bounded) and `P` complexity of dispatching
-     *   `proposal`
-     * - DB: 1 read (codec `O(M)`) + DB access of `proposal`
-     * - 1 event
-     * # </weight>
-     */
-    collectivesV9380: new CallType(
-        'AllianceMotion.execute',
-        sts.struct({
-            proposal: collectivesV9380.Call,
+            proposal: v9370.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -122,48 +78,20 @@ export const execute =  {
      * - `M` members-count (code-bounded)
      * - `P` complexity of dispatching `proposal`
      */
-    collectivesV9400: new CallType(
+    v9420: new CallType(
         'AllianceMotion.execute',
         sts.struct({
-            proposal: collectivesV9400.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Dispatch a proposal from a member using the `Member` origin.
-     * 
-     * Origin must be a member of the collective.
-     * 
-     * ## Complexity:
-     * - `O(B + M + P)` where:
-     * - `B` is `proposal` size in bytes (length-fee-bounded)
-     * - `M` members-count (code-bounded)
-     * - `P` complexity of dispatching `proposal`
-     */
-    collectivesV9420: new CallType(
-        'AllianceMotion.execute',
-        sts.struct({
-            proposal: collectivesV9420.Call,
+            proposal: v9420.Call,
             lengthBound: sts.number(),
         })
     ),
     /**
      * See [`Pallet::execute`].
      */
-    collectivesV1000000: new CallType(
+    v1000000: new CallType(
         'AllianceMotion.execute',
         sts.struct({
-            proposal: collectivesV1000000.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * See [`Pallet::execute`].
-     */
-    v1004000: new CallType(
-        'AllianceMotion.execute',
-        sts.struct({
-            proposal: v1004000.Call,
+            proposal: v1000000.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -200,11 +128,11 @@ export const propose =  {
      *   - 1 event
      * # </weight>
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'AllianceMotion.propose',
         sts.struct({
             threshold: sts.number(),
-            proposal: collectivesV9290.Call,
+            proposal: v9290.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -237,11 +165,11 @@ export const propose =  {
      *   - 1 event
      * # </weight>
      */
-    collectivesV9320: new CallType(
+    v9360: new CallType(
         'AllianceMotion.propose',
         sts.struct({
             threshold: sts.number(),
-            proposal: collectivesV9320.Call,
+            proposal: v9360.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -274,85 +202,11 @@ export const propose =  {
      *   - 1 event
      * # </weight>
      */
-    collectivesV9360: new CallType(
+    v9370: new CallType(
         'AllianceMotion.propose',
         sts.struct({
             threshold: sts.number(),
-            proposal: collectivesV9360.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Add a new proposal to either be voted on or executed directly.
-     * 
-     * Requires the sender to be member.
-     * 
-     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
-     * or put up for voting.
-     * 
-     * # <weight>
-     * ## Weight
-     * - `O(B + M + P1)` or `O(B + M + P2)` where:
-     *   - `B` is `proposal` size in bytes (length-fee-bounded)
-     *   - `M` is members-count (code- and governance-bounded)
-     *   - branching is influenced by `threshold` where:
-     *     - `P1` is proposal execution complexity (`threshold < 2`)
-     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
-     * - DB:
-     *   - 1 storage read `is_member` (codec `O(M)`)
-     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
-     *   - DB accesses influenced by `threshold`:
-     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
-     *     - OR proposal insertion (`threshold <= 2`)
-     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
-     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
-     *       - 1 storage write `ProposalOf` (codec `O(B)`)
-     *       - 1 storage write `Voting` (codec `O(M)`)
-     *   - 1 event
-     * # </weight>
-     */
-    collectivesV9370: new CallType(
-        'AllianceMotion.propose',
-        sts.struct({
-            threshold: sts.number(),
-            proposal: collectivesV9370.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Add a new proposal to either be voted on or executed directly.
-     * 
-     * Requires the sender to be member.
-     * 
-     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
-     * or put up for voting.
-     * 
-     * # <weight>
-     * ## Weight
-     * - `O(B + M + P1)` or `O(B + M + P2)` where:
-     *   - `B` is `proposal` size in bytes (length-fee-bounded)
-     *   - `M` is members-count (code- and governance-bounded)
-     *   - branching is influenced by `threshold` where:
-     *     - `P1` is proposal execution complexity (`threshold < 2`)
-     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
-     * - DB:
-     *   - 1 storage read `is_member` (codec `O(M)`)
-     *   - 1 storage read `ProposalOf::contains_key` (codec `O(1)`)
-     *   - DB accesses influenced by `threshold`:
-     *     - EITHER storage accesses done by `proposal` (`threshold < 2`)
-     *     - OR proposal insertion (`threshold <= 2`)
-     *       - 1 storage mutation `Proposals` (codec `O(P2)`)
-     *       - 1 storage mutation `ProposalCount` (codec `O(1)`)
-     *       - 1 storage write `ProposalOf` (codec `O(B)`)
-     *       - 1 storage write `Voting` (codec `O(M)`)
-     *   - 1 event
-     * # </weight>
-     */
-    collectivesV9380: new CallType(
-        'AllianceMotion.propose',
-        sts.struct({
-            threshold: sts.number(),
-            proposal: collectivesV9380.Call,
+            proposal: v9370.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -372,57 +226,22 @@ export const propose =  {
      *     - `P1` is proposal execution complexity (`threshold < 2`)
      *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
      */
-    collectivesV9400: new CallType(
+    v9420: new CallType(
         'AllianceMotion.propose',
         sts.struct({
             threshold: sts.number(),
-            proposal: collectivesV9400.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * Add a new proposal to either be voted on or executed directly.
-     * 
-     * Requires the sender to be member.
-     * 
-     * `threshold` determines whether `proposal` is executed directly (`threshold < 2`)
-     * or put up for voting.
-     * 
-     * ## Complexity
-     * - `O(B + M + P1)` or `O(B + M + P2)` where:
-     *   - `B` is `proposal` size in bytes (length-fee-bounded)
-     *   - `M` is members-count (code- and governance-bounded)
-     *   - branching is influenced by `threshold` where:
-     *     - `P1` is proposal execution complexity (`threshold < 2`)
-     *     - `P2` is proposals-count (code-bounded) (`threshold >= 2`)
-     */
-    collectivesV9420: new CallType(
-        'AllianceMotion.propose',
-        sts.struct({
-            threshold: sts.number(),
-            proposal: collectivesV9420.Call,
+            proposal: v9420.Call,
             lengthBound: sts.number(),
         })
     ),
     /**
      * See [`Pallet::propose`].
      */
-    collectivesV1000000: new CallType(
+    v1000000: new CallType(
         'AllianceMotion.propose',
         sts.struct({
             threshold: sts.number(),
-            proposal: collectivesV1000000.Call,
-            lengthBound: sts.number(),
-        })
-    ),
-    /**
-     * See [`Pallet::propose`].
-     */
-    v1004000: new CallType(
-        'AllianceMotion.propose',
-        sts.struct({
-            threshold: sts.number(),
-            proposal: v1004000.Call,
+            proposal: v1000000.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -447,10 +266,10 @@ export const vote =  {
      * - 1 event
      * # </weight>
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'AllianceMotion.vote',
         sts.struct({
-            proposal: collectivesV9290.H256,
+            proposal: v9290.H256,
             index: sts.number(),
             approve: sts.boolean(),
         })
@@ -493,10 +312,10 @@ export const close =  {
      * - up to 3 events
      * # </weight>
      */
-    collectivesV9290: new CallType(
+    v9290: new CallType(
         'AllianceMotion.close',
         sts.struct({
-            proposalHash: collectivesV9290.H256,
+            proposalHash: v9290.H256,
             index: sts.number(),
             proposalWeightBound: sts.bigint(),
             lengthBound: sts.number(),
@@ -536,12 +355,12 @@ export const close =  {
      * - up to 3 events
      * # </weight>
      */
-    collectivesV9320: new CallType(
+    v9360: new CallType(
         'AllianceMotion.close',
         sts.struct({
-            proposalHash: collectivesV9320.H256,
+            proposalHash: v9360.H256,
             index: sts.number(),
-            proposalWeightBound: collectivesV9320.Weight,
+            proposalWeightBound: v9360.Weight,
             lengthBound: sts.number(),
         })
     ),

@@ -11,14 +11,14 @@ interface ScheduledData {
 }
 
 export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event): ScheduledData | undefined {
-    if (dispatched.collectivesV9420.is(item)) {
-        const { task, id, result } = dispatched.collectivesV9420.decode(item)
+    if (dispatched.v9420.is(item)) {
+        const { task, id, result } = dispatched.v9420.decode(item)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    } else if (dispatched.collectivesV9430.is(item)) {
-        const { task, id, result } = dispatched.collectivesV9430.decode(item)
+    } else if (dispatched.v9430.is(item)) {
+        const { task, id, result } = dispatched.v9430.decode(item)
         return {
             blockNumber: task[0],
             result: result.__kind

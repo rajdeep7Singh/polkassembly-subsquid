@@ -5,7 +5,7 @@ export const init =  {
     /**
      * See [`Pallet::init`].
      */
-    collectivesV1000000: new CallType(
+    v1000000: new CallType(
         'FellowshipSalary.init',
         sts.unit()
     ),
@@ -16,7 +16,7 @@ export const bump =  {
     /**
      * See [`Pallet::bump`].
      */
-    collectivesV1000000: new CallType(
+    v1000000: new CallType(
         'FellowshipSalary.bump',
         sts.unit()
     ),

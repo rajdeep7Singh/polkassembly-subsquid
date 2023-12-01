@@ -3,12 +3,11 @@ import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/error
 import {
     statusFor,
     preimageFor,
-    requestStatusFor
 } from '../../../types/preimage/storage'
 import { ProposalStatus } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/collectivesV1000000'
+import { Call } from '../../../types/v1000000'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { ProcessorContext, Event, Block } from '../../../processor'
@@ -30,9 +29,9 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.collectivesV9420.is(block)) {
+    if(preimageFor.v9420.is(block)) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await preimageFor.collectivesV9420.get(block, [hash, preimageStatus.len])
+            const storageData = await preimageFor.v9420.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -55,21 +54,21 @@ interface PreimageStatusStorageData{
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(requestStatusFor.v1004000.is(block)) {
-        const storageData = await requestStatusFor.v1004000.get(block, hash)
+    if(statusFor.v9420.is(block)) {
+        const storageData = await statusFor.v9420.get(block, hash)
         if (!storageData) return undefined
         if(storageData.__kind == 'Unrequested'){
             return {
                 status: storageData.__kind,
-                value: storageData.ticket,
+                value: storageData.deposit,
                 len: storageData.len
             }
         }
         else{
             return {
                 status: storageData.__kind,
-                value: storageData.maybeTicket,
-                len: storageData.maybeLen
+                value: storageData.deposit,
+                len: storageData.len
             }
         }
     }
