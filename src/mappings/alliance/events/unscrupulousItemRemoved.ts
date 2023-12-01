@@ -1,18 +1,15 @@
 import { toHex } from '@subsquid/substrate-processor'
 import { getUnscrupulousItemRemovedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 import { Announcements, AnnouncementType } from '../../../model'
 
-export async function handleUnscrupulousItemRemoved(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Alliance.UnscrupulousItemRemoved', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const data = getUnscrupulousItemRemovedData(ctx, item.event)
+export async function handleUnscrupulousItemRemoved(ctx: ProcessorContext<Store>, itemEvent: Event, header: any) {
+    const data = getUnscrupulousItemRemovedData(ctx, itemEvent)
     let type = null;
     let announcementData = null;
     for(const item of data){
-        const hexHash = toHex(item.value)
+        const hexHash = item.value
         if(item.__kind == 'AccountId'){
             type = AnnouncementType.Account
         }

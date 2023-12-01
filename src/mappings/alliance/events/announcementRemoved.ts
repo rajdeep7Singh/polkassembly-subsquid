@@ -1,17 +1,16 @@
 import { toHex } from '@subsquid/substrate-processor'
 import { Announcements, ProposalStatus, StatusHistory } from '../../../model'
 import { getAnnouncementRemovedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto'
 
-export async function handleAnnouncementRemoved(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Alliance.AnnouncementRemoved', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { announcementHash } = getAnnouncementRemovedData(ctx, item.event)
+export async function handleAnnouncementRemoved(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { announcementHash } = getAnnouncementRemovedData(ctx, item)
 
-    const hexHash = toHex(announcementHash.digest)
+    const hexHash = announcementHash.digest
     
     const announcementData = await ctx.store.get(Announcements, { where: { hash: hexHash } })
 
@@ -19,6 +18,8 @@ export async function handleAnnouncementRemoved(ctx: BatchContext<Store, unknown
         ctx.log.warn(`Announcement with hash ${hexHash} not found`)
         return
     }
+
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     announcementData.isRemoved = true
     announcementData.updatedAt = new Date(header.timestamp)
@@ -28,9 +29,10 @@ export async function handleAnnouncementRemoved(ctx: BatchContext<Store, unknown
     await ctx.store.insert(
         new StatusHistory({
             id: randomUUID(),
-            block: announcementData.updatedAtBlock,
+            block: announcementData.updatedAtBlock ? header.timestamp : null,
             timestamp: announcementData.updatedAt,
             status: announcementData.status,
+            extrinsicIndex,
             announcement: announcementData,
         })
     )

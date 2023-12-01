@@ -1,6 +1,7 @@
 import { Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { ProcessorContext } from '../../processor'
+import { calls } from '../../types'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { NOTIFICATION_URL } from '../../consts/consts'
 import fetch from 'node-fetch'
@@ -19,6 +20,12 @@ import {
     Deciding,
     DecisionDeposit,
     SubmissionDeposit,
+    Activity,
+    ActivityType,
+    SalaryCycle,
+    Payout,
+    MetaActions,
+    Vote,
 } from '../../model'
 import {
     AnnouncementsData,
@@ -32,9 +39,14 @@ import {
     DecisionDepositData,
     PreimageData,
     SubmissionDepositData,
+    SalaryCycleData,
+    MetaActionsData,
+    SalaryPayoutData
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import { ss58codec } from '../../common/tools'
+import { getActivityCount, getMetaActionsCount, getSalaryPayoutCount } from './votes'
+import { decodeHex } from '@subsquid/substrate-processor'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -44,34 +56,37 @@ type ProposalUpdateData = Partial<
 >
 
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     index: number,
     type: IndexProposal,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     type: HashProposal,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hashOrIndex: string | number,
     type: ProposalType,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -112,14 +127,58 @@ export async function updateProposalStatus(
     await ctx.store.insert(
         new StatusHistory({
             id: randomUUID(),
-            block: proposal.updatedAtBlock,
+            block: proposal.updatedAtBlock ? proposal.updatedAtBlock : undefined,
             timestamp: proposal.updatedAt,
             status: proposal.status,
+            extrinsicIndex: options?.extrinsicIndex,
             proposal,
         })
     )
+    await createExecutedReferendumsActivity(ctx, header, proposal, type)
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
 }
+
+async function createExecutedReferendumsActivity(ctx: ProcessorContext<Store>, header: any, proposal: Proposal, type: ProposalType) {
+    if(proposal.status == ProposalStatus.Executed && proposal && proposal.index != null && proposal.index != undefined && type == ProposalType.FellowshipReferendum){
+        const activities = await ctx.store.find(Activity, {
+            where: {
+                proposal: {
+                    index: proposal.index,
+                    type
+                }
+            }
+        })
+        if (activities && activities.length > 0) {
+            const activityTypeArray = []
+            for (let i = 0; i < activities.length; i++) {
+                let activityType
+                switch (activities[i].type) {
+                    case ActivityType.InductionRequest:
+                        activityType = ActivityType.Inducted
+                    case ActivityType.DemotionRequest:
+                        activityType = ActivityType.Demoted
+                    case ActivityType.PromotionRequest:
+                        activityType = ActivityType.Promoted
+                    case ActivityType.RetentionRequest:
+                        activityType = ActivityType.Retained
+                }
+                if (activityType) {
+                    activityTypeArray.push({
+                        activityType,
+                        who: activities[i]?.who || ""
+                    })
+                }
+            }
+            if (activityTypeArray) {
+                await createActivity(ctx, header, {
+                    activityTypeArray,
+                    proposal
+                })
+            }
+        }
+    }
+}
+
 async function getProposalId(store: Store, type: ProposalType) {
     const count = await store.count(Proposal, { where: { type } })
     
@@ -129,8 +188,8 @@ async function getProposalId(store: Store, type: ProposalType) {
 }
 
 export async function createAllianceMotion(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     data: AllianceMotionData
 ): Promise<Proposal> {
     const { index, hash, proposer, threshold, status, callData } = data
@@ -183,8 +242,8 @@ export function createTally(data: TallyData): Tally {
 }
 
 export async function createAnnouncements(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     data: AnnouncementsData,
     type?: AnnouncementType | null
 ): Promise<Announcements> {
@@ -244,7 +303,7 @@ async function getPreimageId(store: Store) {
     return count.toString().padStart(8, '0')
 }
 
-export async function createPreimageV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+export async function createPreimageV2( ctx: ProcessorContext<Store>, header: any, data: PreimageData): Promise<Preimage> {
     const { status, hash, proposer, call, section, method, deposit, length } = data
 
     // const type = ProposalType.Preimage
@@ -277,10 +336,71 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
         await ctx.store.save(associatedProposal)
     }
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: header.height,
+            timestamp: new Date(header.timestamp),
+            status: status,
+            extrinsicIndex: data.extrinsicIndex,
+            preimage,
+        })
+    )
+
     return preimage
 }
 
-export async function createFellowshipReferendum( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: FellowshipReferendumData, type: ProposalType): Promise<Proposal> {
+export function activityTypesBasedOnCalls(callName: string, args: any): ActivityType {
+    switch (callName) {
+        case calls.fellowshipCore.promote.name:
+        case calls.fellowshipCollective.promoteMember.name:
+            return ActivityType.PromotionRequest
+        case calls.fellowshipCore.approve.name:
+            return ActivityType.RetentionRequest
+        case calls.fellowshipCollective.demoteMember.name:
+        case calls.fellowshipCore.bump.name:
+            return ActivityType.DemotionRequest
+        case calls.fellowshipCollective.addMember.name:
+        case calls.fellowshipCore.induct.name:
+            return ActivityType.InductionRequest
+        case calls.system.remark.name:
+        case calls.system.remarkWithEvent.name:
+            const remarkDecoded = decodeHex(args?.remark as string)?.toString()
+            if(remarkDecoded?.includes('RFC_APPROVE') || remarkDecoded?.includes('RFC_REJECT')){
+                return ActivityType.RFC
+            }
+        default:
+            return ActivityType.GeneralProposal
+    }
+}
+
+export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityType: ActivityType, who: string}[] {
+    const { section, method, args } = call
+    const batchCalls = args?.calls
+    const result = []
+    if (batchCalls && Array.isArray(batchCalls)) {
+        for (let i = 0; i < batchCalls.length; i++){
+            const section = batchCalls[i].__kind
+            const method = batchCalls[i].value.__kind
+            const callName = `${section}.${method}`
+            const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
+            result.push({
+                activityType,
+                who: batchCalls[i]?.value?.who as string || ""
+            })
+        }
+    } else {
+        const callName = `${section}.${method}`
+        const activityType = activityTypesBasedOnCalls(callName, args)
+        result.push({
+            activityType,
+            who: args?.who ? ss58codec.encode(args?.who  as string) : ""
+        })
+    }
+    return result
+}
+
+export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, header: any, data: FellowshipReferendumData, type: ProposalType): Promise<Proposal> {
 
     const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
 
@@ -293,7 +413,14 @@ export async function createFellowshipReferendum( ctx: BatchContext<Store, unkno
         order: { createdAtBlock: 'DESC' },
     })
 
-    let group = null;
+    let activityType = [{
+        activityType: ActivityType.GeneralProposal,
+        who: ""
+    }]
+
+    if(preimage) {
+        activityType = getAcitivtTypeFromPreimage(preimage.proposedCall)
+    }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
@@ -336,16 +463,23 @@ export async function createFellowshipReferendum( ctx: BatchContext<Store, unkno
             proposal,
         })
     )
+
+    await createActivity(ctx, header, {
+        activityTypeArray: activityType,
+        proposal: proposal
+    })
+
     await sendNotification(ctx, proposal, 'newProposalCreated')
     return proposal
 }
 
 export async function updatePreimageStatusV2(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     options: {
         status: ProposalStatus
+        extrinsicIndex?: string
         isEnded?: boolean
         data?: ProposalUpdateData
     }
@@ -362,7 +496,162 @@ export async function updatePreimageStatusV2(
     proposal.updatedAtBlock = header.height
     proposal.status = options.status
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.updatedAtBlock || undefined,
+            timestamp: proposal.updatedAt,
+            status: proposal.status,
+            extrinsicIndex: options?.extrinsicIndex,
+            preimage: proposal,
+        })
+    )
+
     await ctx.store.save(proposal)
+}
+
+export async function createSalaryCycleData(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: SalaryCycleData) {
+    const { cycleIndex, cycleStart, totalRegistrations, totalUnregisteredPaid, budget } = data
+
+    const salaryCycleObject = new SalaryCycle({
+        id: String(cycleIndex),
+        cycleIndex,
+        cycleStart,
+        totalRegistrations,
+        totalUnregisteredPaid,
+        budget,
+        extrinsicIndex,
+        cycleStartDatetime: new Date(header.timestamp)
+    })
+
+    await ctx.store.insert(salaryCycleObject)
+
+    await createActivity(ctx, header, {
+        activityType: ActivityType.CycleStarted,
+        salaryCycle: salaryCycleObject
+    })
+}
+
+export async function createMetaActions(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: MetaActionsData, salaryCycle?: SalaryCycle) {
+    const { who, isActive, evidence, wish, activityType, amount, toRank, rank, evidenceJudged, showClaimButton } = data
+    const id = await getMetaActionsCount(ctx)
+    if(activityType == ActivityType.EvidenceJudged){
+        const evidenceJudgedObject = await ctx.store.get(MetaActions, {where: {who, evidenceJudged: false, wish: wish, evidence: evidence}})
+        if(evidenceJudgedObject){
+            evidenceJudgedObject.evidenceJudged = true
+            await ctx.store.save(evidenceJudgedObject)
+        }
+    }
+    else{
+        const metaActionsObject = new MetaActions({
+            id: String(id),
+            who,
+            isActive,
+            amount,
+            extrinsicIndex,
+            evidence,
+            toRank,
+            evidenceJudged: evidenceJudged || false,
+            rank,
+            showClaimButton,
+            wish,
+            createdAtBlock: header.height,
+            createdAt: new Date(header.height)
+        })
+
+        await ctx.store.insert(metaActionsObject)
+
+        await createActivity(ctx, header, {
+            who,
+            activityType: activityType,
+            otherActions: metaActionsObject,
+            salaryCycle
+        })
+    }
+}
+
+export async function createSalaryPayouts(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: SalaryPayoutData) {
+    const { who, beneficiary, amount, id, salaryCycle, rank } = data
+    const payoutId = await getSalaryPayoutCount(ctx)
+
+    const payoutObject = new Payout({
+        id: String(payoutId),
+        cycleIndex: salaryCycle,
+        who,
+        rank,
+        beneficiary,
+        extrinsicIndex,
+        amount,
+        createdAtBlock: header.height,
+        createdAt: new Date(header.height)
+    })
+
+    await ctx.store.insert(payoutObject)
+
+    await createActivity(ctx, header, {
+        who,
+        activityType: ActivityType.Payout,
+        payout: payoutObject
+    })
+}
+
+export async function createActivity (
+    ctx: ProcessorContext<Store>,
+    header: any,
+    data: {
+        activityType: ActivityType
+        proposal?: Proposal
+        announcement?: Announcements
+        who?: string
+        salaryCycle?: SalaryCycle
+        payout?: Payout
+        otherActions?: MetaActions
+        vote?: Vote
+    }| {
+        activityTypeArray: { activityType: ActivityType, who: string }[]
+        proposal?: Proposal
+        who?: string
+        announcement?: Announcements
+        salaryCycle?: SalaryCycle
+        payout?: Payout
+        otherActions?: MetaActions
+        vote?: Vote
+    }
+) {
+    const res: Activity[] = []
+    if ('activityTypeArray' in data) {
+        for (let i = 0; i < data.activityTypeArray.length; i++){
+            const id = await getActivityCount(ctx)
+            const act = data.activityTypeArray[i]
+            res.push(new Activity({
+                id: String(id),
+                type: act.activityType,
+                proposal: data.proposal,
+                who: act.who,
+                createdAt: new Date(header.timestamp),
+                createdAtBlock: header.height
+
+            }))
+        }
+    } else {
+        const id = await getActivityCount(ctx)
+        res.push(
+            new Activity({
+                id: String(id),
+                type: data.activityType,
+                who: data.who,
+                proposal: data.proposal,
+                announcement: data.announcement,
+                salaryCycle: data.salaryCycle,
+                payout: data.payout,
+                otherActions: data.otherActions,
+                vote: data.vote,
+                createdAt: new Date(header.timestamp),
+                createdAtBlock: header.height
+            })
+        )
+    }
+    await ctx.store.insert(res)
 }
 
 function createProposedCall(data: ProposedCallData): ProposedCall {
@@ -380,7 +669,7 @@ export function createDecisionDeposit(data: DecisionDepositData): DecisionDeposi
 export function createSubmissionDeposit(data: SubmissionDepositData): SubmissionDeposit {
     return new SubmissionDeposit(toJSON(data))
 }
-export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
+export async function sendNotification(ctx: ProcessorContext<Store>, proposal: Proposal, trigger: String) {
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
 

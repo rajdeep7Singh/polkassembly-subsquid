@@ -1,9 +1,8 @@
 import { UnknownVersionError } from '../common/errors'
+import { ProcessorContext, Event } from '../processor'
 import {
-    SchedulerDispatchedEvent
-} from '../types/events'
-import { Event } from '../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
+    dispatched,
+} from '../types/scheduler/events'
 import { Store } from '@subsquid/typeorm-store'
 
 interface ScheduledData {
@@ -11,23 +10,20 @@ interface ScheduledData {
     result?: string
 }
 
-export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData | undefined {
-    const event = new SchedulerDispatchedEvent(ctx, itemEvent)
-    if (event.isV9420) {
-        const { task, id, result } = event.asV9420
+export function getDispatchedEventData(ctx: ProcessorContext<Store>, item: Event): ScheduledData | undefined {
+    if (dispatched.collectivesV9420.is(item)) {
+        const { task, id, result } = dispatched.collectivesV9420.decode(item)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-        return undefined
-    } else if (event.isV9430) {
-        const { task, id, result } = event.asV9430
+    } else if (dispatched.collectivesV9430.is(item)) {
+        const { task, id, result } = dispatched.collectivesV9430.decode(item)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-        return undefined
     }  else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(item.name)
     }
 }

@@ -14,5 +14,7 @@ import alliance from './alliance'
 import allianceMotion from './allianceMotion'
 import fellowshipReferendum from './fellowshipReferendum'
 import preimageV2 from './preimageV2'
+import fellowshipCore from './fellowshipCore'
+import salary from './salary'
 
-export { alliance, allianceMotion, fellowshipReferendum, preimageV2 }
+export { alliance, allianceMotion, fellowshipReferendum, preimageV2, salary, fellowshipCore }

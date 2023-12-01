@@ -42,6 +42,9 @@ export class Vote {
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : fromJsonVoteBalance(obj)}, nullable: true})
     balance!: VoteBalance | undefined | null
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Column_("int4", {nullable: true})
     lockPeriod!: number | undefined | null
 

@@ -1,55 +1,77 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://westend-collectives.archive.subsquid.io/graphql",
-  "storage": [
-    "AllianceMotion.ProposalOf",
-    "AllianceMotion.Proposals",
-    "Alliance.Announcements",
-    "Alliance.UnscrupulousAccounts",
-    "Alliance.UnscrupulousWebsites",
-    "FellowshipReferenda.ReferendumInfoFor",
-    "Preimage.StatusFor",
-    "Preimage.PreimageFor",
-    "Scheduler.Agenda"
-  ],
-  "events": [
-    "AllianceMotion.Disapproved",
-    "AllianceMotion.Executed",
-    "AllianceMotion.Proposed",
-    "AllianceMotion.Approved",
-    "AllianceMotion.Voted",
-    "AllianceMotion.Closed",
-    "Alliance.Announced",
-    "Alliance.AnnouncementRemoved",
-    "Alliance.UnscrupulousItemAdded",
-    "Alliance.UnscrupulousItemRemoved",
-    "FellowshipReferenda.Submitted",
-    "FellowshipReferenda.DecisionDepositPlaced",
-    "FellowshipReferenda.DecisionStarted",
-    "FellowshipReferenda.ConfirmStarted",
-    "FellowshipReferenda.ConfirmAborted",
-    "FellowshipReferenda.Confirmed",
-    "FellowshipReferenda.Approved",
-    "FellowshipReferenda.Rejected",
-    "FellowshipReferenda.TimedOut",
-    "FellowshipReferenda.Cancelled",
-    "FellowshipReferenda.Killed",
-    "FellowshipCollective.Voted",
-    "FellowshipReferenda.MetadataSet",
-    "FellowshipReferenda.MetadataCleared",
-    "Preimage.Noted",
-    "Preimage.Requested",
-    "Preimage.Cleared",
-    "Scheduler.Dispatched",
-    "Scheduler.Scheduled"
-  ],
-  "calls": [
-    "AllianceMotion.propose",
-    "AllianceMotion.execute",
-    "AllianceMotion.close",
-    "AllianceMotion.vote",
-    "Alliance.announce",
-    "Alliance.vote",
-    "FellowshipCollective.vote"
-  ]
+  "specVersions": "https://v2.archive.subsquid.io/metadata/collectives-westend",
+  "pallets": {
+    "Alliance": {
+      "events": [
+        "Announced", "AnnouncementRemoved", "UnscrupulousItemAdded", "UnscrupulousItemRemoved"
+      ],
+      "calls": ["announce", "vote"],
+      "storage": ["Announcements", "UnscrupulousAccounts", "UnscrupulousWebsites"],
+      "constants": []
+    },
+    "FellowshipReferenda": {
+      "events": [
+        "Submitted", "DecisionDepositPlaced", "DecisionStarted", "ConfirmStarted", "ConfirmAborted", "Confirmed", "Approved", "Executed", "Rejected", "TimedOut", "Cancelled", "Killed",
+        "MetadataSet", "MetadataCleared"
+      ],
+      "calls": ["vote", "remove_vote", "remove_other_vote", "delegate", "undelegate"],
+      "storage": ["ReferendumInfoFor"],
+      "constants": []
+    },
+    "Preimage": {
+      "events": [
+        "Noted", "Requested", "Cleared"
+      ],
+      "calls": [],
+      "storage": ["StatusFor", "PreimageFor", "RequestStatusFor"],
+      "constants": []
+    },
+    "Scheduler": {
+      "events": [
+        "Dispatched", "Scheduled"
+      ],
+      "calls": [],
+      "storage": ["Agenda"],
+      "constants": []
+    },
+    "System": {
+      "events": [],
+      "calls": ["remark", "remark_with_event"],
+      "storage": [],
+      "constants": []
+    },
+    "AllianceMotion": {
+      "events": [
+        "Disapproved", "Executed", "Proposed", "Approved", "Voted", "Closed"
+      ],
+      "calls": ["propose", "execute", "close", "vote"],
+      "storage": ["ProposalOf", "Proposals"],
+      "constants": []
+    },
+    "Balances": {
+      "events": [],
+      "calls": [],
+      "storage": ["TotalIssuance", "InactiveIssuance", "Account"],
+      "constants": []
+    },
+    "FellowshipCollective": {
+      "events": ["Voted", "RankChanged", "MemberAdded", "MemberRemoved"],
+      "calls": ["vote", "add_member", "promote_member", "demote_member", "remove_member"],
+      "storage": ["Members"],
+      "constants": []
+    },
+    "FellowshipCore": {
+      "events": ["ActiveChanged", "Inducted", "Offboarded", "Promoted", "Demoted", "Proven", "Imported", "EvidenceJudged"],
+      "calls": ["submit_evidence", "promote", "demote", "approve", "bump", "induct"],
+      "storage": ["MemberEvidence"],
+      "constants": []
+    },
+    "FellowshipSalary": {
+      "events": ["CycleStarted", "Inducted", "Registered", "Paid"],
+      "calls": ["init", "bump"],
+      "storage": ["Claimant", "Status"],
+      "constants": []
+    }
+  }
 }

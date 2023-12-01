@@ -72,6 +72,7 @@ type Preimage @entity {
   section: String
   method: String
   status: ProposalStatus!
+  extrinsicIndex: String
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   updatedAtBlock: Int
@@ -116,6 +117,7 @@ type Proposal @entity {
   tally: Tally
   executeAtBlockNumber: Int
   executedAt: DateTime
+  extrinsicIndex: String
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   endedAtBlock: Int
@@ -160,11 +162,88 @@ type Announcements @entity {
   code: BigInt
   isRemoved: Boolean
   status: ProposalStatus!
+  extrinsicIndex: String
   statusHistory: [StatusHistory!] @derivedFrom(field: "announcement")
   createdAt: DateTime! @index
   createdAtBlock: Int! @index
   updatedAt: DateTime @index
   updatedAtBlock: Int @index
+}
+
+enum ActivityType {
+  RetentionRequest
+  PromotionRequest
+  DemotionRequest
+  InductionRequest
+  Promoted
+  Retained
+  Demoted
+  GeneralProposal
+  Inducted
+  SalaryInduction
+  Registration
+  Payout
+  Voted
+  CycleStarted
+  Imported
+  OffBoarded
+  ActivityChanged
+  RFC
+  EvidenceSubmitted
+  EvidenceJudged
+}
+
+type Activity @entity {
+  id: ID!
+  type: ActivityType! @index
+  who: String @index
+  proposal: Proposal
+  announcement: Announcements
+  salaryCycle: SalaryCycle
+  payout: Payout
+  otherActions: MetaActions
+  vote: Vote
+  createdAt: DateTime!
+  createdAtBlock: Int!
+}
+
+type MetaActions @entity {
+  id: ID!
+  who: String @index
+  amount: BigInt
+  isActive: Boolean
+  evidence: String
+  rank: Int
+  toRank: Int
+  showClaimButton: Boolean
+  evidenceJudged: Boolean
+  wish: String
+  createdAt: DateTime @index
+  createdAtBlock: Int
+  extrinsicIndex: String
+}
+
+type SalaryCycle @entity {
+  id: ID!
+  cycleIndex: Int! @index
+  cycleStart: Int! @index
+  cycleStartDatetime: DateTime
+  extrinsicIndex: String
+  totalRegistrations: BigInt
+  budget: BigInt
+  totalUnregisteredPaid: BigInt
+}
+
+type Payout @entity {
+  id: ID!
+  cycleIndex: SalaryCycle
+  who: String! @index
+  beneficiary: String! @index
+  amount: BigInt
+  rank: Int
+  createdAt: DateTime!
+  createdAtBlock: Int!
+  extrinsicIndex: String! 
 }
 
 type Tally {
@@ -180,6 +259,8 @@ type StatusHistory @entity {
   announcement: Announcements
   status: ProposalStatus!
   block: Int!
+  preimage: Preimage
+  extrinsicIndex: String
   timestamp: DateTime!
 }
 
@@ -226,6 +307,18 @@ type Vote @entity {
   timestamp: DateTime! @index
   decision: VoteDecision
   balance: VoteBalance
+  extrinsicIndex: String
   lockPeriod: Int
   type: VoteType
+}
+
+type CurveData @entity {
+  id: ID!
+  block: Int! @index
+  proposal: Proposal!
+  index: Int! @index
+  extrinsicIndex: String
+  timestamp: DateTime! @index
+  approvalPercent: Float @index
+  supportPercent: Float @index
 }

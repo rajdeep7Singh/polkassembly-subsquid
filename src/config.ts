@@ -1,15 +1,14 @@
 import {lookupArchive} from "@subsquid/archive-registry"
-import { ProcessorConfig } from './common/processorConfig'
 import { Store } from '@subsquid/typeorm-store'
 
-const config: ProcessorConfig<Store> = {
+const config: any = {
     chain: {
-        name: 'collecitves',
+        name: 'westend-collecitves',
         prefix: 0,
     },
     dataSource: {
         chain: 'wss://westend-collectives-rpc.polkadot.io',
-        archive: 'https://westend-collectives.archive.subsquid.io/graphql',
+        archive: lookupArchive('collectives-westend',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'collectives',
     batchSize: 500,

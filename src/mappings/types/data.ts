@@ -1,5 +1,5 @@
-import { ProposalStatus, ProposalType, ReferendumThresholdType } from '../../model'
-import { Multihash } from '../../types/v9370'
+import { ActivityType, ProposalStatus, ProposalType, ReferendumThresholdType, SalaryCycle } from '../../model'
+import { Multihash } from '../../types/collectivesV1000000'
 
 export type IndexProposal =
     | ProposalType.AllianceMotion
@@ -31,7 +31,38 @@ export interface AllianceMotionData extends BaseProposalData {
     hash: string
     proposer: string
     threshold: number
+    extrinsicIndex: string
     callData?: ProposedCallData
+}
+
+export interface SalaryCycleData {
+    cycleIndex: number
+    cycleStart: number
+    totalRegistrations?: bigint
+    budget?: bigint
+    totalUnregisteredPaid?: bigint
+}
+
+export interface MetaActionsData {
+    who?: string
+    amount?: bigint
+    toRank?: number
+    rank?: number
+    isActive?: boolean
+    evidence?: string
+    showClaimButton?: boolean
+    evidenceJudged?: boolean
+    wish?: string,
+    activityType: ActivityType
+}
+
+export interface SalaryPayoutData {
+    who: string,
+    amount: bigint,
+    rank?: number, 
+    beneficiary?: string,
+    salaryCycle?: SalaryCycle
+    id: bigint
 }
 
 export interface AnnouncementsData {
@@ -39,6 +70,7 @@ export interface AnnouncementsData {
     version?: string
     code?: bigint
     announcement?: Multihash
+    extrinsicIndex?: String
     codec?: bigint
     cid?: string
 }
@@ -103,6 +135,7 @@ export interface PreimageData extends BaseProposalData {
     proposer?: string
     deposit?: bigint
     call?: ProposedCallData
+    extrinsicIndex?: string
     section?: string
     method?: string
     length?: number
@@ -129,6 +162,7 @@ export interface FellowshipReferendumData extends BaseProposalData {
     submittedAt: number
     submissionDeposit: {who: Uint8Array, amount: bigint}
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
+    extrinsicIndex?: string,
     deciding: {since: number, confirming: number | undefined} | undefined
     tally: {ayes: bigint | number, nays: bigint | number, support?: bigint | number, bareAyegs?: bigint | number}
 }

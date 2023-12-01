@@ -1,23 +1,19 @@
-import { AllianceMotionProposalOfStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
-import { Call } from '../../types/v9370'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { proposalOf } from '../../types/alliance-motion/storage'
+import { Call } from '../../types/collectivesV1000000'
 import { Store } from '@subsquid/typeorm-store'
-import { UnknownVersionError } from '../../common/errors'
+import { Block, ProcessorContext} from '../../processor'
 
 type AllianceMotionStorageData = Call
 
 async function getAllanceMotionStorageData(
-    ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
-): Promise<AllianceMotionStorageData | undefined> {
-    const storage = new AllianceMotionProposalOfStorage(ctx, block)
-    if (!storage.isExists) return undefined
+    ctx: ProcessorContext<Store>, hash: string, block: Block
+    ): Promise<AllianceMotionStorageData | undefined> {
 
-    return ctx._chain.getStorage(block.hash, 'AllianceMotion', 'ProposalOf', hash)
+    return await block._runtime.getStorage(block.hash, 'AllianceMotion.ProposalOf', hash) || undefined
 }
 
 export async function getProposalOf(
-    ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock
-): Promise<AllianceMotionStorageData | undefined> {
+    ctx: ProcessorContext<Store>, hash: string, block: Block
+    ): Promise<AllianceMotionStorageData | undefined> {
     return (await getAllanceMotionStorageData(ctx, hash, block))
 }

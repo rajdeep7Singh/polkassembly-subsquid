@@ -1,12 +1,9 @@
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDispatchedEventData } from '../../../common/scheduledData'
-import { NoReferendaFoundForExecution } from '../../../common/errors'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 import { toHex } from '@subsquid/substrate-processor'
+import { ProcessorContext, Event } from '../../../processor'
 
 // export async function handleFellowshipExecutionSchedule(ctx: BatchContext<Store, unknown>,
 //     item: EventItem<'Scheduler.Scheduled', { event: { args: true; extrinsic: { hash: true } } }>,
@@ -39,16 +36,16 @@ import { toHex } from '@subsquid/substrate-processor'
 //     })
 // }
 
-export async function handleFellowshipExecution(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Scheduler.Dispatched', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const eventData = getDispatchedEventData(ctx, item.event)
+export async function handleFellowshipExecution(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const eventData = getDispatchedEventData(ctx, item)
     if(!eventData){
         return null
     }
 
     try{
-        const storageData = await ctx._chain.getStorage(header.parentHash, 'Scheduler', 'Agenda', eventData.blockNumber)
+        const storageData = await header._runtime.getStorage(header.parentHash, 'Scheduler.Agenda', eventData.blockNumber)
         if (!storageData || !storageData[0]) return null
 
         const callData = storageData[0]?.call
@@ -68,7 +65,7 @@ export async function handleFellowshipExecution(ctx: BatchContext<Store, unknown
             where: {
                         type: ProposalType.FellowshipReferendum,
                         status: ProposalStatus.Confirmed,
-                        hash: toHex(preimageHash)
+                        hash: preimageHash
                     },
             order: {
                 id: 'DESC',
@@ -78,15 +75,19 @@ export async function handleFellowshipExecution(ctx: BatchContext<Store, unknown
         if(!proposal || !proposal.index){
             return;
         }
+        const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
 
         await updateProposalStatus(ctx, header, proposal.index, ProposalType.FellowshipReferendum, {
             isEnded: true,
             status: eventData.result == 'Ok' ? ProposalStatus.Executed : ProposalStatus.ExecutionFailed,
+            extrinsicIndex,
             data: {
                 executedAt: new Date(header.timestamp),
                 executeAtBlockNumber: eventData.blockNumber
             }
         })
+
     }catch(e){
         console.error('error',e)
     }

@@ -2,22 +2,20 @@ import { toHex } from '@subsquid/substrate-processor'
 import { ProposalStatus } from '../../../model'
 import { createAllianceMotion } from '../../utils/proposals'
 import { getProposedData } from './getters'
-import { Call } from '../../../types/v9370'
+import { Call } from '../../../types/collectivesV1000000'
 import { storage } from '../../../storage'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { Block, ProcessorContext, Event} from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 import { parseProposalCall, ss58codec } from '../../../common/tools'
 
 type ProposalCall = Call
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'AllianceMotion.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { account, proposalIndex, proposalHash, threshold} = getProposedData(ctx, item.event)
-
-    const hexHash = toHex(proposalHash)
-
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { account, proposalIndex, proposalHash, threshold} = getProposedData(ctx, item)
+    if(!item.call) return;
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
     let decodedCall:
         | {
               section: string
@@ -26,14 +24,21 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
               args: Record<string, unknown>
           }
         | undefined
+    let args;
     try {
         const callData = await storage.allianceMotion.getProposalOf(ctx, proposalHash, header)
-        const { section, method, args, description } = parseProposalCall(ctx._chain, callData as ProposalCall)
-        decodedCall = {
-            section,
-            method,
-            description,
-            args: args as Record<string, unknown>,
+        if(callData){
+            const section = callData.__kind as string
+            const method = callData.value.__kind as string
+            const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
+
+        const { __kind, ...argsValue } = callData.value;
+            decodedCall = {
+                section,
+                method,
+                description: desc,
+                args: argsValue,
+            }
         }
     } catch (e) {
         ctx.log.warn(`Failed to decode ProposedCall of AllianceMotion ${proposalIndex} at block ${header.height}:\n ${e}`)
@@ -41,9 +46,10 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
     await createAllianceMotion(ctx, header, {
         index: proposalIndex,
         status: ProposalStatus.Proposed,
-        hash: hexHash,
+        hash: proposalHash,
         threshold: threshold,
         proposer: ss58codec.encode(account),
         callData: decodedCall,
+        extrinsicIndex
     })
 }

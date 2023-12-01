@@ -1,22 +1,22 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getConfirmedData } from './getters'
 import {createTally} from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleConfirmed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'FellowshipReferenda.Confirmed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, tally } = getConfirmedData(ctx, item.event)
+export async function handleConfirmed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { index, tally } = getConfirmedData(ctx, item)
 
     const tallyData = createTally(tally)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.FellowshipReferendum, {
         isEnded: true,
         status: ProposalStatus.Confirmed,
+        extrinsicIndex,
         data: {
             tally: tallyData
         }

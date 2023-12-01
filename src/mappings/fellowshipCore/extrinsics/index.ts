@@ -1,0 +1,1 @@
+export { handleEvidenceSubmission } from "./submitEvidence";

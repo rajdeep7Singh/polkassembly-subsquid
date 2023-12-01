@@ -58,6 +58,9 @@ export class Announcements {
     @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @OneToMany_(() => StatusHistory, e => e.announcement)
     statusHistory!: StatusHistory[]
 

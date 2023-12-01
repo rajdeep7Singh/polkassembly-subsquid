@@ -1,29 +1,28 @@
 
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { createDeciding, updateProposalStatus } from '../../utils/proposals'
 import { getDecisionStartedData } from './getters'
 import {createTally} from '../../utils/proposals'
-import { toHex } from '@subsquid/substrate-processor'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleDecisionStarted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'FellowshipReferenda.DecisionStarted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, tally, track, hash } = getDecisionStartedData(ctx, item.event)
+export async function handleDecisionStarted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { index, tally, track, hash } = getDecisionStartedData(ctx, item)
     const tallyData = createTally(tally)
 
     const deciding = createDeciding({confirming: undefined, since: header.height})
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.FellowshipReferendum, {
         isEnded: true,
         status: ProposalStatus.Deciding,
+        extrinsicIndex,
         data: {
             tally: tallyData,
             trackNumber: track,
-            hash: toHex(hash),
+            hash: hash,
             deciding: deciding
         }
     })

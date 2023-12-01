@@ -1,21 +1,20 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDisapprovedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleDisApproved(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'AllianceMotion.Disapproved', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const hash = getDisapprovedData(ctx, item.event)
+export async function handleDisApproved(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const hash = getDisapprovedData(ctx, item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.AllianceMotion, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.AllianceMotion, {
         isEnded: true,
         status: ProposalStatus.Disapproved,
+        extrinsicIndex
+        
     })
 }

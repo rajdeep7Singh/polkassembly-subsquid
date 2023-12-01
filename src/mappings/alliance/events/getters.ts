@@ -1,16 +1,15 @@
 
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    AllianceAnnouncedEvent, 
-    AllianceAnnouncementRemovedEvent, 
-    AllianceUnscrupulousItemAddedEvent, 
-    AllianceUnscrupulousItemRemovedEvent,
-} from '../../../types/events'
-import * as v9290 from '../../../types/v9370'
-import { Event } from '../../../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
+    announced, 
+    announcementRemoved, 
+    unscrupulousItemAdded, 
+    unscrupulousItemRemoved,
+} from '../../../types/alliance/events'
+import * as v9290 from '../../../types/collectivesV9290'
 import { Store } from '@subsquid/typeorm-store'
-import { Multihash } from '../../../types/v9290'
+import { Multihash } from '../../../types/collectivesV1000000'
+import { ProcessorContext, Event } from '../../../processor'
 
 interface announcedData {
     announcementHash: Multihash,
@@ -18,31 +17,29 @@ interface announcedData {
     version: string,
 }
 
-export function getAnnouncedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): announcedData  {
-    const event = new AllianceAnnouncedEvent(ctx, itemEvent)
-    if (event.isV9290) {
-        const { announcement } = event.asV9290
+export function getAnnouncedData(ctx: ProcessorContext<Store>, itemEvent: Event): announcedData  {
+    if (announced.collectivesV9290.is(itemEvent)) {
+        const { announcement } = announced.collectivesV9290.decode(itemEvent)
         return {
             announcementHash: announcement.hash,
             codec: announcement.codec,
             version: announcement.version.__kind,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getAnnouncementRemovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): announcedData {
-    const event = new AllianceAnnouncementRemovedEvent(ctx, itemEvent)
-    if (event.isV9290) {
-        const { announcement } = event.asV9290
+export function getAnnouncementRemovedData(ctx: ProcessorContext<Store>, itemEvent: Event): announcedData {
+    if (announcementRemoved.collectivesV9290.is(itemEvent)) {
+        const { announcement } = announcementRemoved.collectivesV9290.decode(itemEvent)
         return {
             announcementHash: announcement.hash,
             codec: announcement.codec,
             version: announcement.version.__kind,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -59,22 +56,20 @@ export interface UnscrupulousItem_Website {
 }
 
 
-export function getUnscrupulousItemAddedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): v9290.UnscrupulousItem[] {
-    const event = new AllianceUnscrupulousItemAddedEvent(ctx, itemEvent)
-    if (event.isV9290) {
-        return event.asV9290.items
+export function getUnscrupulousItemAddedData(ctx: ProcessorContext<Store>, itemEvent: Event): v9290.UnscrupulousItem[] {
+    if (unscrupulousItemAdded.collectivesV9290.is(itemEvent)) {
+        return unscrupulousItemAdded.collectivesV9290.decode(itemEvent).items
 
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getUnscrupulousItemRemovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): v9290.UnscrupulousItem[] {
-    const event = new AllianceUnscrupulousItemRemovedEvent(ctx, itemEvent)
-    if (event.isV9290) {
-        return event.asV9290.items
+export function getUnscrupulousItemRemovedData(ctx: ProcessorContext<Store>, itemEvent: Event): v9290.UnscrupulousItem[] {
+    if (unscrupulousItemRemoved.collectivesV9290.is(itemEvent)) {
+        return unscrupulousItemRemoved.collectivesV9290.decode(itemEvent).items
 
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

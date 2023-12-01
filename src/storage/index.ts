@@ -1,5 +1,4 @@
 import * as allianceMotion from './allianceMotion'
-// import * as democracy from './democracy'
 // import * as techCommittee from './techCommittee'
 // import * as treasury from './treasury'
 // import * as tips from './tips'

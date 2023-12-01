@@ -1,14 +1,9 @@
-import { EventHandlerContext } from '../../types/contexts'
-import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
-import { BlockContext, EventContext } from '../../../types/support'
+import { StorageNotExistsWarn } from '../../../common/errors'
+import { ProcessorContext, Event, Block } from '../../../processor'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { createFellowshipReferendum } from '../../utils/proposals'
 import { getEventData } from './getters'
-import { FellowshipReferendaReferendumInfoForStorage } from "../../../types/storage";
-import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 interface ReferendumInfo {
     index: number
@@ -24,10 +19,8 @@ interface ReferendumInfo {
 }
 
 
-export async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumInfo | undefined> {
-    const storage = new FellowshipReferendaReferendumInfoForStorage(ctx, block)
-    if (!storage.isExists) return undefined
-    const storageData = await ctx._chain.getStorage(block.hash, 'FellowshipReferenda', 'ReferendumInfoFor', index)
+export async function getStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<ReferendumInfo | undefined> {
+    const storageData = await block._runtime.getStorage(block.hash, 'FellowshipReferenda.ReferendumInfoFor', index)
     if (!storageData) return undefined
     if(storageData.__kind === 'Ongoing') {
         let enactmentAt = undefined
@@ -51,135 +44,25 @@ export async function getStorageData(ctx: BatchContext<Store, unknown>, index: n
             tally: storageData.value.tally
         }
     }
-
-    // if (storage.isV9320) {
-    //     const storageData = await storage.asV9320.get(index)
-    //     if (!storageData) return undefined
-    //     if(storageData.__kind === 'Ongoing') {
-    //         let enactmentAt = undefined
-    //         let enactmentAfter = undefined;
-    //         if(storageData.value.enactment.__kind === 'At') {
-    //             enactmentAt = storageData.value.enactment.value
-    //         }
-    //         else if(storageData.value.enactment.__kind === 'After') {
-    //             enactmentAfter = storageData.value.enactment.value
-    //         }
-    //         return {
-    //             index,
-    //             trackNumber: storageData.value.track,
-    //             origin: storageData.value.origin.value.__kind,
-    //             enactmentAt: enactmentAt,
-    //             enactmentAfter: enactmentAfter,
-    //             submittedAt: storageData.value.submitted,
-    //             submissionDeposit: storageData.value.submissionDeposit,
-    //             decisionDeposit: storageData.value.decisionDeposit,
-    //             deciding: storageData.value.deciding,
-    //             tally: storageData.value.tally
-    //         }
-    //     }
-    // }else if(storage.isV9350){
-    //     const storageData = await storage.asV9350.get(index)
-    //     if (!storageData) return undefined
-    //     if(storageData.__kind === 'Ongoing') {
-    //         let enactmentAt = undefined
-    //         let enactmentAfter = undefined;
-    //         if(storageData.value.enactment.__kind === 'At') {
-    //             enactmentAt = storageData.value.enactment.value
-    //         }
-    //         else if(storageData.value.enactment.__kind === 'After') {
-    //             enactmentAfter = storageData.value.enactment.value
-    //         }
-    //         return {
-    //             index,
-    //             trackNumber: storageData.value.track,
-    //             origin: storageData.value.origin.value.__kind,
-    //             enactmentAt: enactmentAt,
-    //             enactmentAfter: enactmentAfter,
-    //             submittedAt: storageData.value.submitted,
-    //             submissionDeposit: storageData.value.submissionDeposit,
-    //             decisionDeposit: storageData.value.decisionDeposit,
-    //             deciding: storageData.value.deciding,
-    //             tally: storageData.value.tally
-    //         }
-    //     }
-
-    // }else if(storage.isV9370){
-    //     const storageData = await storage.asV9370.get(index)
-    //     if (!storageData) return undefined
-    //     if(storageData.__kind === 'Ongoing') {
-    //         let enactmentAt = undefined
-    //         let enactmentAfter = undefined;
-    //         if(storageData.value.enactment.__kind === 'At') {
-    //             enactmentAt = storageData.value.enactment.value
-    //         }
-    //         else if(storageData.value.enactment.__kind === 'After') {
-    //             enactmentAfter = storageData.value.enactment.value
-    //         }
-    //         return {
-    //             index,
-    //             trackNumber: storageData.value.track,
-    //             origin: storageData.value.origin.value.__kind,
-    //             enactmentAt: enactmentAt,
-    //             enactmentAfter: enactmentAfter,
-    //             submittedAt: storageData.value.submitted,
-    //             submissionDeposit: storageData.value.submissionDeposit,
-    //             decisionDeposit: storageData.value.decisionDeposit,
-    //             deciding: storageData.value.deciding,
-    //             tally: storageData.value.tally
-    //         }
-    //     }
-
-    // }
-    // else if(storage.isV9381){
-    //     const storageData = await storage.asV9370.get(index)
-    //     if (!storageData) return undefined
-    //     if(storageData.__kind === 'Ongoing') {
-    //         let enactmentAt = undefined
-    //         let enactmentAfter = undefined;
-    //         if(storageData.value.enactment.__kind === 'At') {
-    //             enactmentAt = storageData.value.enactment.value
-    //         }
-    //         else if(storageData.value.enactment.__kind === 'After') {
-    //             enactmentAfter = storageData.value.enactment.value
-    //         }
-    //         return {
-    //             index,
-    //             trackNumber: storageData.value.track,
-    //             origin: storageData.value.origin.value.__kind,
-    //             enactmentAt: enactmentAt,
-    //             enactmentAfter: enactmentAfter,
-    //             submittedAt: storageData.value.submitted,
-    //             submissionDeposit: storageData.value.submissionDeposit,
-    //             decisionDeposit: storageData.value.decisionDeposit,
-    //             deciding: storageData.value.deciding,
-    //             tally: storageData.value.tally
-    //         }
-    //     }
-
-    // }
-    // else {
-    //     throw new UnknownVersionError(storage.constructor.name)
-    // }
 }
 
 
-export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'FellowshipReferenda.Submitted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, hash } = getEventData(ctx, item.event)
+export async function handleSubmitted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const { index, hash } = getEventData(ctx, item)
 
     const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.FellowshipReferendum, index))
         return
     }
-
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await createFellowshipReferendum(ctx, header, {
         index,
         status: ProposalStatus.Submitted,
-        hash: hexHash,
+        hash: hash,
         proposer: ss58codec.encode(storageData.submissionDeposit.who),
         submissionDeposit: storageData.submissionDeposit,
         decisionDeposit: storageData.decisionDeposit,
@@ -189,7 +72,8 @@ export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
         origin: storageData.origin,
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
-        enactmentAfter: storageData.enactmentAfter 
+        enactmentAfter: storageData.enactmentAfter,
+        extrinsicIndex
     }, ProposalType.FellowshipReferendum
     )
 }

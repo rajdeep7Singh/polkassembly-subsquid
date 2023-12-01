@@ -135,6 +135,9 @@ export class Proposal {
     @Column_("timestamp with time zone", {nullable: true})
     executedAt!: Date | undefined | null
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Index_()
     @Column_("int4", {nullable: false})
     createdAtBlock!: number
