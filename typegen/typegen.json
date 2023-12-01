@@ -23,7 +23,7 @@
       "events": [
         "Noted", "Requested", "Cleared"
       ],
-      "calls": [],
+      "calls": ["note_preimage"],
       "storage": ["StatusFor", "PreimageFor", "RequestStatusFor"],
       "constants": []
     },

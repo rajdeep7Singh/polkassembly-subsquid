@@ -356,7 +356,7 @@ export async function createPreimageV2( ctx: ProcessorContext<Store>, header: an
     return preimage
 }
 
-export function activityTypesBasedOnCalls(callName: string, args: any): ActivityType {
+export function activityTypesBasedOnCalls(callName: string, args: any): ActivityType | null {
     switch (callName) {
         case calls.fellowshipCore.promote.name:
         case calls.fellowshipCollective.promoteMember.name:
@@ -376,7 +376,7 @@ export function activityTypesBasedOnCalls(callName: string, args: any): Activity
                 return ActivityType.RFC
             }
         default:
-            return ActivityType.GeneralProposal
+            return null
     }
 }
 
@@ -390,18 +390,23 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
             const method = batchCalls[i].value.__kind
             const callName = `${section}.${method}`
             const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
-            result.push({
-                activityType,
-                who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
-            })
+            if(activityType){
+                result.push({
+                    activityType,
+                    who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
+                })
+            }
         }
     } else {
         const callName = `${section}.${method}`
         const activityType = activityTypesBasedOnCalls(callName, args)
-        result.push({
-            activityType,
-            who: args?.who && (args.who as any).value ? ss58codec.encode((args?.who as any).value  as string) : ""
-        })
+        let who = (args?.who as any)?.value || args?.who
+        if(activityType){
+            result.push({
+                activityType,
+                who: who ? ss58codec.encode(who as string) : ""
+            })
+        }
     }
     return result
 }
@@ -418,14 +423,18 @@ export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, 
         },
         order: { createdAtBlock: 'DESC' },
     })
-    let activityType = [{
-        activityType: ActivityType.GeneralProposal,
-        who: proposer
-    }]
 
+    let activityType;
 
     if(preimage) {
         activityType = getAcitivtTypeFromPreimage(preimage.proposedCall)
+    }
+
+    if(!activityType || activityType?.length == 0){
+        activityType = [{
+            activityType: ActivityType.GeneralProposal,
+            who: proposer
+        }]
     }
 
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}

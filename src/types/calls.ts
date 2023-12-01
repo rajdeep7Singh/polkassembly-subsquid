@@ -1,6 +1,7 @@
 export * as system from './system/calls'
 export * as alliance from './alliance/calls'
 export * as allianceMotion from './alliance-motion/calls'
+export * as preimage from './preimage/calls'
 export * as fellowshipCollective from './fellowship-collective/calls'
 export * as fellowshipCore from './fellowship-core/calls'
 export * as fellowshipSalary from './fellowship-salary/calls'
