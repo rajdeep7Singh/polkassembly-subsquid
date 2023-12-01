@@ -372,7 +372,7 @@ export function activityTypesBasedOnCalls(callName: string, args: any): Activity
         case calls.system.remark.name:
         case calls.system.remarkWithEvent.name:
             const remarkDecoded = decodeHex(args?.remark as string)?.toString()
-            if(remarkDecoded?.includes('RFC_APPROVE') || remarkDecoded?.includes('RFC_REJECT')){
+            if(remarkDecoded?.includes('RFC_APPROVE') || remarkDecoded?.includes('RFC_REJECT') || remarkDecoded?.includes('APPROVE_RFC') || remarkDecoded?.includes('REJECT_RFC')){
                 return ActivityType.RFC
             }
         default:
