@@ -372,7 +372,7 @@ export function activityTypesBasedOnCalls(callName: string, args: any): Activity
         case calls.system.remark.name:
         case calls.system.remarkWithEvent.name:
             const remarkDecoded = decodeHex(args?.remark as string)?.toString()
-            if(remarkDecoded?.includes('RFC_APPROVE') || remarkDecoded?.includes('RFC_REJECT')){
+            if(remarkDecoded?.includes('RFC_APPROVE') || remarkDecoded?.includes('RFC_REJECT') || remarkDecoded?.includes('APPROVE_RFC') || remarkDecoded?.includes('REJECT_RFC')){
                 return ActivityType.RFC
             }
         default:
@@ -420,15 +420,18 @@ export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, 
         order: { createdAtBlock: 'DESC' },
     })
 
-    let activityType = [{
-        activityType: ActivityType.GeneralProposal,
-        who: ""
-    }]
+    let activityType;
 
     if(preimage) {
         activityType = getAcitivtTypeFromPreimage(preimage.proposedCall)
     }
 
+    if(!activityType || activityType?.length == 0){
+        activityType = [{
+            activityType: ActivityType.GeneralProposal,
+            who: proposer
+        }]
+    }
     const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
 
     let decDeposit = undefined
