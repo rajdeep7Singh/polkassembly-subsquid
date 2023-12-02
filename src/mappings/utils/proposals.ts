@@ -1,6 +1,6 @@
 import { Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
-import { ProcessorContext } from '../../processor'
+import { ProcessorContext, Event } from '../../processor'
 import { calls } from '../../types'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { NOTIFICATION_URL } from '../../consts/consts'
@@ -380,7 +380,7 @@ export function activityTypesBasedOnCalls(callName: string, args: any): Activity
     }
 }
 
-export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityType: ActivityType, who: string}[] {
+export function getAcitivtTypeFromPreimage(call: ProposedCallData, proposer: string): {activityType: ActivityType, who: string}[] {
     const { section, method, args } = call
     const batchCalls = args?.calls
     const result = []
@@ -391,10 +391,17 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
             const callName = `${section}.${method}`
             const activityType = activityTypesBasedOnCalls(callName, batchCalls[i].value)
             if(activityType){
-                result.push({
-                    activityType,
-                    who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
-                })
+                if (activityType == ActivityType.RFC){
+                    result.push({
+                        activityType,
+                        who: proposer
+                    })
+                }else{
+                    result.push({
+                        activityType,
+                        who: batchCalls[i]?.value?.who?.__kind == 'Id' ? ss58codec.encode(batchCalls[i]?.value?.who?.value) as string : ""
+                    })
+                }
             }
         }
     } else {
@@ -402,10 +409,18 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
         const activityType = activityTypesBasedOnCalls(callName, args)
         let who = (args?.who as any)?.value || args?.who
         if(activityType){
-            result.push({
-                activityType,
-                who: who ? ss58codec.encode(who as string) : ""
-            })
+            if(activityType == ActivityType.RFC){
+                result.push({
+                    activityType,
+                    who: proposer
+                })
+            }
+            else {
+                result.push({
+                    activityType,
+                    who: who ? ss58codec.encode(who as string) : ""
+                })
+            }
         }
     }
     return result
@@ -413,11 +428,11 @@ export function getAcitivtTypeFromPreimage(call: ProposedCallData): {activityTyp
 
 export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, header: any, data: FellowshipReferendumData, type: ProposalType): Promise<Proposal> {
 
-    const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
+    const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit, hashType, proposalArguments } = data
 
     const id = await getProposalId(ctx.store, type)
 
-    const preimage: any = await ctx.store.get(Preimage, {
+    let preimage: any = await ctx.store.get(Preimage, {
         where: {
             hash: data.hash,
         },
@@ -427,7 +442,11 @@ export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, 
     let activityType;
 
     if(preimage) {
-        activityType = getAcitivtTypeFromPreimage(preimage.proposedCall)
+        activityType = getAcitivtTypeFromPreimage(preimage.proposedCall, proposer)
+    }
+
+    if(!activityType && hashType == 'Inline' && proposalArguments){
+        activityType = getAcitivtTypeFromPreimage(proposalArguments, proposer)
     }
 
     if(!activityType || activityType?.length == 0){
@@ -463,6 +482,7 @@ export async function createFellowshipReferendum( ctx: ProcessorContext<Store>, 
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
         createdAtBlock: header.height,
+        proposalArguments: proposalArguments ? createProposedCall(proposalArguments) : null,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
     })

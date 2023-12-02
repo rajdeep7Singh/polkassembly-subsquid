@@ -50,14 +50,38 @@ export async function getStorageData(ctx: ProcessorContext<Store>, index: number
 export async function handleSubmitted(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
-    const { index, hash } = getEventData(ctx, item)
-
+    const { index, hash, hashType } = getEventData(ctx, item)
     const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.FellowshipReferendum, index))
         return
     }
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    let proposedCall;
+
+    if(hashType == 'Inline'){
+        try {
+            proposedCall = item.block._runtime.decodeCall(hash)
+            if (proposedCall) {
+                const section = proposedCall.__kind as string
+                const method = proposedCall.value.__kind as string
+                const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
+            
+                const { __kind, ...argsValue } = proposedCall.value;
+            
+                const decodedCall = {
+                    section,
+                    method,
+                    description: desc,
+                    args: argsValue,
+                }
+                proposedCall = decodedCall
+            }
+        }
+        catch{
+            ctx.log.warn(`Unable to decode inline call ${hash} at block ${header.height}`)
+        }
+    }
 
     await createFellowshipReferendum(ctx, header, {
         index,
@@ -73,7 +97,9 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
         enactmentAfter: storageData.enactmentAfter,
-        extrinsicIndex
+        extrinsicIndex,
+        hashType: hashType,
+        proposalArguments: proposedCall
     }, ProposalType.FellowshipReferendum
     )
 }

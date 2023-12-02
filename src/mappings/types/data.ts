@@ -1,4 +1,4 @@
-import { ActivityType, ProposalStatus, ProposalType, ReferendumThresholdType, SalaryCycle } from '../../model'
+import { ActivityType, ProposalStatus, ProposalType, ProposedCall, ReferendumThresholdType, SalaryCycle } from '../../model'
 import { Multihash } from '../../types/v1000000'
 
 export type IndexProposal =
@@ -160,6 +160,8 @@ export interface FellowshipReferendumData extends BaseProposalData {
     enactmentAt?: number
     enactmentAfter?: number
     submittedAt: number
+    hashType?: string
+    proposalArguments?: any
     submissionDeposit: {who: Uint8Array, amount: bigint}
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
     extrinsicIndex?: string,
