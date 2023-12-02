@@ -26,6 +26,7 @@ interface ReferendumEventData {
     index: number
     track: number
     hash: string
+    hashType: string
 }
 
 export function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ReferendumEventData {
@@ -41,7 +42,8 @@ export function getEventData(ctx: ProcessorContext<Store>, itemEvent: Event): Re
         return {
             index,
             track,
-            hash
+            hash,
+            hashType: proposal.__kind
         }
     } else {
         throw new UnknownVersionError(itemEvent.name)

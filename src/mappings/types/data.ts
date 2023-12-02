@@ -160,6 +160,8 @@ export interface FellowshipReferendumData extends BaseProposalData {
     enactmentAt?: number
     enactmentAfter?: number
     submittedAt: number
+    hashType?: string
+    proposalArguments?: any
     submissionDeposit: {who: Uint8Array, amount: bigint}
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
     extrinsicIndex?: string,
