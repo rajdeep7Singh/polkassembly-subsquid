@@ -590,7 +590,7 @@ export async function createMetaActions(ctx: ProcessorContext<Store>, header: an
             showClaimButton,
             wish,
             createdAtBlock: header.height,
-            createdAt: new Date(header.height)
+            createdAt: new Date(header.timestamp)
         })
 
         await ctx.store.insert(metaActionsObject)
@@ -617,7 +617,7 @@ export async function createSalaryPayouts(ctx: ProcessorContext<Store>, header: 
         extrinsicIndex,
         amount,
         createdAtBlock: header.height,
-        createdAt: new Date(header.height)
+        createdAt: new Date(header.timestamp)
     })
 
     await ctx.store.insert(payoutObject)
