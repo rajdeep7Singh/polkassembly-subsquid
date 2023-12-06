@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: picasso-polkassembly
-version: 1
+version: 2
 description: |-
   Picasso's governance proposals
 
@@ -15,15 +15,3 @@ deploy:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server" ]
-
-scale:
-  dedicated: true
-  addons:
-     postgres:
-         storage: 10Gi
-         profile: small
-  processor:
-     profile: small
-  api:
-     profile: small
-     replicas: 1

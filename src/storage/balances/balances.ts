@@ -1,7 +1,6 @@
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
-import { bigint } from '../../model/generated/marshal'
 import { BalancesInactiveIssuanceStorage, BalancesTotalIssuanceStorage, OpenGovBalancesInactiveIssuanceStorage, OpenGovBalancesTotalIssuanceStorage } from '../../types/storage'
 
 
