@@ -1,11 +1,12 @@
 import { MissingProposalRecordWarn } from '../../../common/errors'
-import { Proposal, ProposalType } from '../../../model'
+import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { CallHandlerContext } from '../../types/contexts'
 import { getUnassingCuratorData, getUnassingCuratorDataOld } from './getters'
 
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { updateProposalStatus } from '../../utils/proposals'
 
 export async function handleUnassignCurator(ctx: BatchContext<Store, unknown>,
     item: CallItem<'Bounties.unassign_curator', { call: { args: true; origin: true } }>,
@@ -37,6 +38,8 @@ export async function handleUnassignCuratorOld(ctx: BatchContext<Store, unknown>
     }
 
     proposal.curator = null
-
     await ctx.store.save(proposal)
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+        status: ProposalStatus.CuratorUnassigned,
+    })
 }

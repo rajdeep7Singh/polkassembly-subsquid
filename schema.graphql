@@ -15,6 +15,9 @@ enum ProposalStatus {
   Noted
   Proposed
   Tabled
+  CuratorProposed
+  CuratorUnassigned
+  CuratorAssigned
   Started
   Passed
   NotPassed

@@ -10,7 +10,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://kusama-rpc.polkadot.io',
         archive: lookupArchive('kusama', { release: 'FireSquid' }),
     })
-    .setBlockRange({from: 17349142 })
+    .setBlockRange({from: 0 })
     .addEvent('Democracy.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Tabled', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
     .addEvent('Democracy.Started', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
@@ -124,6 +124,8 @@ const processor = new SubstrateBatchProcessor()
     .addCall('Treasury.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Bounties.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Bounties.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('Bounties.propose_curator', { data: { call: { origin: true, args: true, }, } } as const)
+    .addCall('ChildBounties.propose_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ChildBounties.accept_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('ChildBounties.unassign_curator', { data: { call: { origin: true, args: true, }, } } as const)
     .addCall('Tips.tip', { data: { call: { origin: true, args: true, }, } } as const)
@@ -200,6 +202,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 if (item.name == 'Bounties.unassign_curator'){
                     await modules.bounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
                 }
+                if (item.name == 'Bounties.propose_curator'){
+                    await modules.bounties.extrinsic.handleProposeCurator(ctx, item, block.header)
+                }
                 if (item.name == 'Treasury.accept_curator'){
                     await modules.bounties.extrinsic.handleAcceptCuratorOld(ctx, item, block.header)
                 }
@@ -211,6 +216,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                 }
                 if (item.name == 'ChildBounties.unassign_curator'){
                     await modules.childBounties.extrinsic.handleUnassignCurator(ctx, item, block.header)
+                }
+                if (item.name == 'ChildBounties.propose_curator'){
+                    await modules.childBounties.extrinsic.handleProposeCurator(ctx, item, block.header)
                 }
                 if (item.name == 'Tips.tip'){
                     await modules.tips.extrinsics.handleNewTipValue(ctx, item, block.header)

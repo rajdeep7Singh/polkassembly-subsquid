@@ -138,6 +138,8 @@
     "Bounties.accept_curator",
     "ChildBounties.accept_curator",
     "ChildBounties.unassign_curator",
+    "ChildBounties.propose_curator",
+    "Bounties.propose_curator",
     "Treasury.accept_curator",
     "Bounties.unassign_curator",
     "Treasury.unassign_curator",
