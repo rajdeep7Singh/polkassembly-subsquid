@@ -4,14 +4,14 @@ import { Store } from '@subsquid/typeorm-store'
 
 const config: ProcessorConfig<Store> = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'rococo',
+        prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama-rpc.polkadot.io',
+        chain: 'wss://rococo-rpc.polkadot.io',
+        archive: lookupArchive('rococo', { release: 'FireSquid' }),
     },
-    typesBundle: 'kusama',
+    typesBundle: 'rococo',
     batchSize: 500,
     blockRange: {
         from: 0,

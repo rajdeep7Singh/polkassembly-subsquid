@@ -4,10 +4,8 @@ import {
     PreimageRequestedEvent,
     PreimageClearedEvent
 } from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Event } from '../../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 interface PreimageNotedData {
@@ -16,8 +14,8 @@ interface PreimageNotedData {
 
 export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
     const event = new PreimageNotedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const { hash } = event.asV9160
+    if (event.isV9300) {
+        const { hash } = event.asV9300
         return {
             hash
         }
@@ -32,8 +30,8 @@ export interface PreimageRequestedData {
 
 export function getPreimageRequestedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageRequestedData {
     const event = new PreimageRequestedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV9300) {
+        const {hash} = event.asV9300
         return {
             hash
         }
@@ -48,8 +46,8 @@ export interface PreimageClearedData {
 
 export function getPreimageClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageClearedData {
     const event = new PreimageClearedEvent(ctx, itemEvent)
-    if (event.isV9160) {
-        const {hash} = event.asV9160
+    if (event.isV9300) {
+        const {hash} = event.asV9300
         return {
             hash
         }

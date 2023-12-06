@@ -7,7 +7,7 @@ import { PreimagePreimageForStorage, PreimageStatusForStorage } from '../../../t
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec, parseProposalCall } from '../../../common/tools'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v9111'
+import { Call } from '../../../types/v102000'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
@@ -31,9 +31,8 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
     const storage = new PreimagePreimageForStorage(ctx, block)
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-
-    if (storage.isV9160) {
-        const storageData = await storage.asV9160.get(hash)
+    if (storage.isV9300) {
+        const storageData = await storage.asV9300.get(hash)
         if (!storageData) return undefined
 
         return {
@@ -41,9 +40,9 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
             ...preimageStatus
         }
     }
-    else if(storage.isV9320) {
-        if(preimageStatus && preimageStatus.len){
-            const storageData = await storage.asV9320.get([hash, preimageStatus.len])
+    else if(storage.isV9310) {
+        if(preimageStatus && preimageStatus.len != undefined && preimageStatus.len != null){
+            const storageData = await storage.asV9310.get([hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -51,11 +50,11 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
             }
         }
         else {
-            throw new UnknownVersionError(storage.constructor.name)
+            console.log(`Something was wrong with preimage ${hash} status at block ${block}`);
         }
     }
     else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError(storage.constructor.name, block.height)
     }
 }
 
@@ -67,8 +66,8 @@ interface PreimageStatusStorageData{
 
 export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
     const preimageStorage = new PreimageStatusForStorage(ctx, block)
-    if (preimageStorage.isV9160) {
-        const storageData = await preimageStorage.asV9160.get(hash)
+    if (preimageStorage.isV9300) {
+        const storageData = await preimageStorage.asV9300.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -76,8 +75,8 @@ export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, h
             len: undefined
         }
     }
-    else if(preimageStorage.isV9320) {
-        const storageData = await preimageStorage.asV9320.get(hash)
+    else if(preimageStorage.isV9310) {
+        const storageData = await preimageStorage.asV9310.get(hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,

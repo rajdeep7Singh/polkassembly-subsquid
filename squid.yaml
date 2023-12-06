@@ -1,33 +1,17 @@
 manifestVersion: subsquid.io/v0.1
-name: kusama-polkassembly
-version: 3
+name: rococo-polkassembly
+version: 1
 description: |-
-  Kusama's governance proposals
+  Rococo's governance proposals
 
 build:
 
 deploy:
   addons:
     postgres:
-        config:
-          statement_timeout: 100000
-          max_pred_locks_per_transaction: 128
-          max_locks_per_transaction: 128
   secrets:
     - NOTIFICATION_API_KEY
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
-    cmd: [ "npx", "squid-graphql-server", "--subscriptions", "--sql-statement-timeout", "3000" ]
-
-scale:
-  dedicated: true
-  addons:
-     postgres:
-         storage: 20Gi
-         profile: medium
-  processor:
-     profile: small
-  api:
-     profile: medium
-     replicas: 1
+    cmd: [ "npx", "squid-graphql-server"]

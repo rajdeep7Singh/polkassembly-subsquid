@@ -12,7 +12,6 @@ import { FellowshipReferendaSubmittedEvent,
     FellowshipReferendaMetadataSetEvent, 
     FellowshipReferendaMetadataClearedEvent } from '../../../types/events'
 import { UnknownVersionError } from '../../../common/errors'
-import { EventContext } from '../../../types/support'
 import { TallyData } from '../../types/data'
 import { VoteDecision } from '../../../model'
 import { Event } from '../../../types/support'
@@ -28,8 +27,8 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new FellowshipReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const {index, track, proposal } = event.asV9320
+    if (event.isV103000) {
+        const {index, track, proposal } = event.asV103000
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -54,8 +53,8 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -71,8 +70,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index
         }
@@ -83,8 +82,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -96,8 +95,8 @@ export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index
         }
@@ -108,8 +107,8 @@ export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -121,8 +120,8 @@ export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index
         }
@@ -133,8 +132,8 @@ export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new FellowshipReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -146,8 +145,8 @@ export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new FellowshipReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index,
         }
@@ -164,8 +163,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
     const event = new FellowshipReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, who, amount } = event.asV9320
+    if (event.isV103000) {
+        const { index, who, amount } = event.asV103000
         return {
             index,
             who,
@@ -185,9 +184,9 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
     const event = new FellowshipReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
+    if (event.isV103000) {
         let hash = undefined;
-        const { index, track, proposal, tally} = event.asV9320
+        const { index, track, proposal, tally} = event.asV103000
         if(proposal.__kind == "Inline") {
             hash = proposal.value
         }
@@ -216,8 +215,8 @@ interface FellowshipCollectiveVoteData {
 
 export function getFellowshipVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event): FellowshipCollectiveVoteData {
     const event = new FellowshipCollectiveVotedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { who, poll, vote, tally  } = event.asV9320
+    if (event.isV103000) {
+        const { who, poll, vote, tally  } = event.asV103000
         const decision = vote.__kind == "Aye" ? VoteDecision.yes : VoteDecision.no
         const amount = vote.value
         return {
@@ -239,8 +238,8 @@ export interface ReferendaMetadataSetData {
 
 export function getMetadataSetData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataSetData {
     const event = new FellowshipReferendaMetadataSetEvent(ctx, itemEvent)
-    if (event.isV9420) {
-        const { index, hash } = event.asV9420
+    if (event.isV103000) {
+        const { index, hash } = event.asV103000
         return {
             index,
             hash
@@ -257,8 +256,8 @@ export interface ReferendaMetadataCleared {
 
 export function getMetadataClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataCleared {
     const event = new FellowshipReferendaMetadataClearedEvent(ctx, itemEvent)
-    if (event.isV9420) {
-        const { index, hash } = event.asV9420
+    if (event.isV103000) {
+        const { index, hash } = event.asV103000
         return {
             index,
             hash

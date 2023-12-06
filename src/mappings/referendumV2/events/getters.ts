@@ -26,8 +26,8 @@ interface ReferendumEventData {
 
 export function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendumEventData {
     const event = new ReferendaSubmittedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const {index, track, proposal } = event.asV9320
+    if (event.isV103000) {
+        const {index, track, proposal } = event.asV103000
         let hash = null;
         if(proposal.__kind == "Inline") {
             hash = proposal.value
@@ -52,8 +52,8 @@ export interface ReferendaData {
 
 export function getCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaCancelledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -69,8 +69,8 @@ export interface ReferendaIndexData {
 
 export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaApprovedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index
         }
@@ -81,8 +81,8 @@ export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaKilledEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -94,8 +94,8 @@ export function getKilledData(ctx: BatchContext<Store, unknown>, itemEvent: Even
 
 export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaTimedOutEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -107,8 +107,8 @@ export function getTimedOutData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaRejectedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -120,8 +120,8 @@ export function getRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
 
 export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmAbortedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index
         }
@@ -132,8 +132,8 @@ export function getConfirmAbortedData(ctx: BatchContext<Store, unknown>, itemEve
 
 export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaData {
     const event = new ReferendaConfirmedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, tally } = event.asV9320
+    if (event.isV103000) {
+        const { index, tally } = event.asV103000
         return {
             index,
             tally
@@ -145,8 +145,8 @@ export function getConfirmedData(ctx: BatchContext<Store, unknown>, itemEvent: E
 
 export function getConfirmStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaIndexData {
     const event = new ReferendaConfirmStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index } = event.asV9320
+    if (event.isV103000) {
+        const { index } = event.asV103000
         return {
             index,
         }
@@ -163,8 +163,8 @@ export interface ReferendaDepositData {
 
 export function getDecisionDepositPlacedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDepositData {
     const event = new ReferendaDecisionDepositPlacedEvent(ctx, itemEvent)
-    if (event.isV9320) {
-        const { index, who, amount } = event.asV9320
+    if (event.isV103000) {
+        const { index, who, amount } = event.asV103000
         return {
             index,
             who,
@@ -184,9 +184,9 @@ export interface ReferendaDecisionStartedData {
 
 export function getDecisionStartedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaDecisionStartedData {
     const event = new ReferendaDecisionStartedEvent(ctx, itemEvent)
-    if (event.isV9320) {
+    if (event.isV103000) {
         let hash = undefined;
-        const { index, track, proposal, tally} = event.asV9320
+        const { index, track, proposal, tally} = event.asV103000
         if(proposal.__kind == "Inline") {
             hash = proposal.value
         }
@@ -211,8 +211,8 @@ export interface ReferendaMetadataSetData {
 
 export function getMetadataSetData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataSetData {
     const event = new ReferendaMetadataSetEvent(ctx, itemEvent)
-    if (event.isV9420) {
-        const { index, hash } = event.asV9420
+    if (event.isV103000) {
+        const { index, hash } = event.asV103000
         return {
             index,
             hash
@@ -229,8 +229,8 @@ export interface ReferendaMetadataCleared {
 
 export function getMetadataClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ReferendaMetadataCleared {
     const event = new ReferendaMetadataClearedEvent(ctx, itemEvent)
-    if (event.isV9420) {
-        const { index, hash } = event.asV9420
+    if (event.isV103000) {
+        const { index, hash } = event.asV103000
         return {
             index,
             hash

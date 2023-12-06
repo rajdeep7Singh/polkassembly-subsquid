@@ -1,8 +1,8 @@
 import { ProposalType } from '../model'
 
 export class UnknownVersionError extends Error {
-    constructor(name: string) {
-        super(`There is no relevant version for ${name}`)
+    constructor(name: string, block?: number) {
+        super(`There is no relevant version for ${name} at block ${block}`)
     }
 }
 
