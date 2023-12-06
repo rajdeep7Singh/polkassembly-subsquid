@@ -21,8 +21,10 @@ export async function handleUnassignCurator(ctx: BatchContext<Store, unknown>,
     }
 
     proposal.curator = null
-
     await ctx.store.save(proposal)
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+        status: ProposalStatus.CuratorUnassigned,
+    })
 }
 
 export async function handleUnassignCuratorOld(ctx: BatchContext<Store, unknown>,
