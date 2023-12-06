@@ -1,6 +1,7 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
     ChildBountiesAcceptCuratorCall,
+    ChildBountiesProposeCuratorCall,
     ChildBountiesUnassignCuratorCall,
 } from '../../../types/calls'
 import { BatchContext } from '@subsquid/substrate-processor'
@@ -37,6 +38,28 @@ export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCa
         return {
             parentBountyId,
             childBountyId,
+        }
+    } else {
+        throw new UnknownVersionError(call.constructor.name)
+    }
+}
+
+interface ProposeCuratorData {
+    parentBountyId: number
+    childBountyId: number
+    fee: bigint
+    curator?: Uint8Array | number | undefined | null
+}
+
+export function getProposeCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): ProposeCuratorData {
+    const call = new ChildBountiesProposeCuratorCall(ctx, itemCall)
+    if (call.isV9190) {
+        const { parentBountyId, childBountyId, curator, fee } = call.asV9190
+        return {
+            parentBountyId: parentBountyId,
+            childBountyId,
+            fee,
+            curator: curator.value
         }
     } else {
         throw new UnknownVersionError(call.constructor.name)

@@ -2,6 +2,7 @@ import { UnknownVersionError } from '../../../common/errors'
 import {
     BountiesAcceptCuratorCall,
     BountiesUnassignCuratorCall,
+    BountiesProposeCuratorCall,
     TreasuryAcceptCuratorCall,
     TreasuryUnassignCuratorCall,
 } from '../../../types/calls'
@@ -57,6 +58,33 @@ export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCa
         const { bountyId } = call.asV28
         return {
             index: bountyId,
+        }
+    } else {
+        throw new UnknownVersionError(call.constructor.name)
+    }
+}
+
+interface ProposeCuratorData {
+    index: number
+    fee: bigint
+    curator?: Uint8Array | number | undefined | null
+}
+
+export function getProposeCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): ProposeCuratorData {
+    const call = new BountiesProposeCuratorCall(ctx, itemCall)
+    if (call.isV28) {
+        const { bountyId, curator, fee } = call.asV28
+        return {
+            index: bountyId,
+            fee,
+            curator: curator.value
+        }
+    }else if (call.isV9110) {
+        const { bountyId, curator, fee } = call.asV9110
+        return {
+            index: bountyId,
+            fee,
+            curator: curator.value
         }
     } else {
         throw new UnknownVersionError(call.constructor.name)

@@ -39,6 +39,7 @@ import * as v9340 from './v9340'
 import * as v9370 from './v9370'
 import * as v9420 from './v9420'
 import * as v9430 from './v9430'
+import * as v1000001 from './v1000001'
 
 export class BalancesAccountStorage extends StorageBase {
     protected getPrefix() {
@@ -3077,6 +3078,21 @@ export class ReferendaReferendumInfoForStorage extends StorageBase {
         assert(this.isV9420)
         return this as any
     }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get isV1000001(): boolean {
+        return this.getTypeHash() === 'cefb7fa0b1ab1a206e9ca42f0e307dfbd1b1e045e2bf1c0561fe86f8455e48a1'
+    }
+
+    /**
+     *  Information concerning any given referendum.
+     */
+    get asV1000001(): ReferendaReferendumInfoForStorageV1000001 {
+        assert(this.isV1000001)
+        return this as any
+    }
 }
 
 /**
@@ -3094,6 +3110,23 @@ export interface ReferendaReferendumInfoForStorageV9420 {
     getPairs(key: number): Promise<[k: number, v: v9420.Type_617][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v9420.Type_617][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v9420.Type_617][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendaReferendumInfoForStorageV1000001 {
+    get(key: number): Promise<(v1000001.ReferendumInfo | undefined)>
+    getAll(): Promise<v1000001.ReferendumInfo[]>
+    getMany(keys: number[]): Promise<(v1000001.ReferendumInfo | undefined)[]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: v1000001.ReferendumInfo][]>
+    getPairs(key: number): Promise<[k: number, v: v1000001.ReferendumInfo][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: v1000001.ReferendumInfo][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: v1000001.ReferendumInfo][]>
 }
 
 export class SchedulerAgendaStorage extends StorageBase {
@@ -3672,6 +3705,21 @@ export class SchedulerAgendaStorage extends StorageBase {
      */
     get asV9420(): SchedulerAgendaStorageV9420 {
         assert(this.isV9420)
+        return this as any
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get isV1000001(): boolean {
+        return this.getTypeHash() === 'eef70e71e3f3baa94c345ce51fe0f4bb96dcd40211156022f13767156c5f1d92'
+    }
+
+    /**
+     *  Items to be executed, indexed by the block number that they should be executed on.
+     */
+    get asV1000001(): SchedulerAgendaStorageV1000001 {
+        assert(this.isV1000001)
         return this as any
     }
 }
@@ -4320,6 +4368,23 @@ export interface SchedulerAgendaStorageV9420 {
     getPairs(key: number): Promise<[k: number, v: (v9420.Scheduled | undefined)[]][]>
     getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
     getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v9420.Scheduled | undefined)[]][]>
+}
+
+/**
+ *  Items to be executed, indexed by the block number that they should be executed on.
+ */
+export interface SchedulerAgendaStorageV1000001 {
+    get(key: number): Promise<(v1000001.Scheduled | undefined)[]>
+    getAll(): Promise<(v1000001.Scheduled | undefined)[][]>
+    getMany(keys: number[]): Promise<(v1000001.Scheduled | undefined)[][]>
+    getKeys(): Promise<number[]>
+    getKeys(key: number): Promise<number[]>
+    getKeysPaged(pageSize: number): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, key: number): AsyncIterable<number[]>
+    getPairs(): Promise<[k: number, v: (v1000001.Scheduled | undefined)[]][]>
+    getPairs(key: number): Promise<[k: number, v: (v1000001.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number): AsyncIterable<[k: number, v: (v1000001.Scheduled | undefined)[]][]>
+    getPairsPaged(pageSize: number, key: number): AsyncIterable<[k: number, v: (v1000001.Scheduled | undefined)[]][]>
 }
 
 export class SystemAccountStorage extends StorageBase {

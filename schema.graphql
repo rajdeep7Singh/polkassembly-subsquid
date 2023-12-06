@@ -19,6 +19,9 @@ enum ProposalStatus {
   Passed
   NotPassed
   Cancelled
+  CuratorProposed
+  CuratorAssigned
+  CuratorUnassigned
   Executed
   ExecutionFailed
   Used

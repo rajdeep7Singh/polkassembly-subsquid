@@ -1,7 +1,9 @@
 import assert from 'assert'
 import {Chain, ChainContext, CallContext, Call, Result, Option} from './support'
 import * as v0 from './v0'
+import * as v28 from './v28'
 import * as v9110 from './v9110'
+import * as v9190 from './v9190'
 import * as v9291 from './v9291'
 import * as v9420 from './v9420'
 
@@ -44,6 +46,74 @@ export class BountiesAcceptCuratorCall {
      */
     get asV28(): {bountyId: number} {
         assert(this.isV28)
+        return this._chain.decodeCall(this.call)
+    }
+}
+
+export class BountiesProposeCuratorCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'Bounties.propose_curator')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     *  Assign a curator to a funded bounty.
+     * 
+     *  May only be called from `T::ApproveOrigin`.
+     * 
+     *  # <weight>
+     *  - O(1).
+     *  # </weight>
+     */
+    get isV28(): boolean {
+        return this._chain.getCallHash('Bounties.propose_curator') === '2496ed9b22c4f45280f8b1f616ce6e1fff5629ded2a6ed9237e80ab77e4bff2f'
+    }
+
+    /**
+     *  Assign a curator to a funded bounty.
+     * 
+     *  May only be called from `T::ApproveOrigin`.
+     * 
+     *  # <weight>
+     *  - O(1).
+     *  # </weight>
+     */
+    get asV28(): {bountyId: number, curator: v28.LookupSource, fee: bigint} {
+        assert(this.isV28)
+        return this._chain.decodeCall(this.call)
+    }
+
+    /**
+     * Assign a curator to a funded bounty.
+     * 
+     * May only be called from `T::ApproveOrigin`.
+     * 
+     * # <weight>
+     * - O(1).
+     * # </weight>
+     */
+    get isV9110(): boolean {
+        return this._chain.getCallHash('Bounties.propose_curator') === 'db115713847ce9db3eac62037c4aefcca595bcd9aa876776d8fba64491d881d3'
+    }
+
+    /**
+     * Assign a curator to a funded bounty.
+     * 
+     * May only be called from `T::ApproveOrigin`.
+     * 
+     * # <weight>
+     * - O(1).
+     * # </weight>
+     */
+    get asV9110(): {bountyId: number, curator: v9110.MultiAddress, fee: bigint} {
+        assert(this.isV9110)
         return this._chain.decodeCall(this.call)
     }
 }
@@ -171,6 +241,63 @@ export class ChildBountiesAcceptCuratorCall {
      * - `child_bounty_id`: Index of child bounty.
      */
     get asV9190(): {parentBountyId: number, childBountyId: number} {
+        assert(this.isV9190)
+        return this._chain.decodeCall(this.call)
+    }
+}
+
+export class ChildBountiesProposeCuratorCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'ChildBounties.propose_curator')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     * Propose curator for funded child-bounty.
+     * 
+     * The dispatch origin for this call must be curator of parent bounty.
+     * 
+     * Parent bounty must be in active state, for this child-bounty call to
+     * work.
+     * 
+     * Child-bounty must be in "Added" state, for processing the call. And
+     * state of child-bounty is moved to "CuratorProposed" on successful
+     * call completion.
+     * 
+     * - `parent_bounty_id`: Index of parent bounty.
+     * - `child_bounty_id`: Index of child bounty.
+     * - `curator`: Address of child-bounty curator.
+     * - `fee`: payment fee to child-bounty curator for execution.
+     */
+    get isV9190(): boolean {
+        return this._chain.getCallHash('ChildBounties.propose_curator') === '09efda450821b39ea5773344d5f1bf8266853d4e7804037ae70b689acf2c9e80'
+    }
+
+    /**
+     * Propose curator for funded child-bounty.
+     * 
+     * The dispatch origin for this call must be curator of parent bounty.
+     * 
+     * Parent bounty must be in active state, for this child-bounty call to
+     * work.
+     * 
+     * Child-bounty must be in "Added" state, for processing the call. And
+     * state of child-bounty is moved to "CuratorProposed" on successful
+     * call completion.
+     * 
+     * - `parent_bounty_id`: Index of parent bounty.
+     * - `child_bounty_id`: Index of child bounty.
+     * - `curator`: Address of child-bounty curator.
+     * - `fee`: payment fee to child-bounty curator for execution.
+     */
+    get asV9190(): {parentBountyId: number, childBountyId: number, curator: v9190.MultiAddress, fee: bigint} {
         assert(this.isV9190)
         return this._chain.decodeCall(this.call)
     }
