@@ -14,7 +14,7 @@ export async function handleProposeCurator(ctx: BatchContext<Store, unknown>,
     header: SubstrateBlock) {
     if (!item.call.success) return
 
-    const { index, curator } = getProposeCuratorData(ctx, item.call)
+    const { index, curator, fee } = getProposeCuratorData(ctx, item.call)
     if(!curator || typeof curator == 'number'){
         return
     }
@@ -31,6 +31,7 @@ export async function handleProposeCurator(ctx: BatchContext<Store, unknown>,
         return
     }
     proposal.curator = ss58codec.encode(curator)
+    proposal.fee
     await ctx.store.save(proposal)
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
         status: ProposalStatus.CuratorProposed,

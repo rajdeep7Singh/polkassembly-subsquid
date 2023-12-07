@@ -248,6 +248,71 @@ export class ChildBountiesAcceptCuratorCall {
     }
 }
 
+export class ChildBountiesAddChildBountyCall {
+    private readonly _chain: Chain
+    private readonly call: Call
+
+    constructor(ctx: CallContext)
+    constructor(ctx: ChainContext, call: Call)
+    constructor(ctx: CallContext, call?: Call) {
+        call = call || ctx.call
+        assert(call.name === 'ChildBounties.add_child_bounty')
+        this._chain = ctx._chain
+        this.call = call
+    }
+
+    /**
+     * Add a new child-bounty.
+     * 
+     * The dispatch origin for this call must be the curator of parent
+     * bounty and the parent bounty must be in "active" state.
+     * 
+     * Child-bounty gets added successfully & fund gets transferred from
+     * parent bounty to child-bounty account, if parent bounty has enough
+     * funds, else the call fails.
+     * 
+     * Upper bound to maximum number of active  child-bounties that can be
+     * added are managed via runtime trait config
+     * [`Config::MaxActiveChildBountyCount`].
+     * 
+     * If the call is success, the status of child-bounty is updated to
+     * "Added".
+     * 
+     * - `parent_bounty_id`: Index of parent bounty for which child-bounty is being added.
+     * - `value`: Value for executing the proposal.
+     * - `description`: Text description for the child-bounty.
+     */
+    get isV9190(): boolean {
+        return this._chain.getCallHash('ChildBounties.add_child_bounty') === '9b64a969bb5d19a05e1a3105d04ed330d9a8ddbbbde926a9fd4d997acab9553a'
+    }
+
+    /**
+     * Add a new child-bounty.
+     * 
+     * The dispatch origin for this call must be the curator of parent
+     * bounty and the parent bounty must be in "active" state.
+     * 
+     * Child-bounty gets added successfully & fund gets transferred from
+     * parent bounty to child-bounty account, if parent bounty has enough
+     * funds, else the call fails.
+     * 
+     * Upper bound to maximum number of active  child-bounties that can be
+     * added are managed via runtime trait config
+     * [`Config::MaxActiveChildBountyCount`].
+     * 
+     * If the call is success, the status of child-bounty is updated to
+     * "Added".
+     * 
+     * - `parent_bounty_id`: Index of parent bounty for which child-bounty is being added.
+     * - `value`: Value for executing the proposal.
+     * - `description`: Text description for the child-bounty.
+     */
+    get asV9190(): {parentBountyId: number, value: bigint, description: Uint8Array} {
+        assert(this.isV9190)
+        return this._chain.decodeCall(this.call)
+    }
+}
+
 export class ChildBountiesProposeCuratorCall {
     private readonly _chain: Chain
     private readonly call: Call

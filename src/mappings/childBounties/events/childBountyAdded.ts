@@ -1,8 +1,7 @@
 
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
-import { ss58codec } from '../../../common/tools'
+import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createChildBounty } from '../../utils/proposals'
 import { getChildBountyAddedData } from './getters'
@@ -11,7 +10,7 @@ import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSele
 import { Store } from '@subsquid/typeorm-store'
 
 export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'ChildBounties.Added', { event: { args: true; extrinsic: { hash: true } } }>,
+    item: EventItem<'ChildBounties.Added', { event: { args: true; extrinsic: { hash: true, call: {origin: true} } } }>,
     header: SubstrateBlock) {
     const { parentIndex, childIndex } = getChildBountyAddedData(ctx, item.event)
 
@@ -20,6 +19,11 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.ChildBounty, childIndex))
         return
     }
+    const origin = item.event.extrinsic?.call?.origin
+    let proposer;
+    if(origin){
+        proposer = getOriginAccountId(origin)
+    }
 
     const { value, fee, description, curatorDeposit } = storageData
 
@@ -27,6 +31,7 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
         index: childIndex,
         parentBountyIndex: parentIndex,
         status: ProposalStatus.Added,
+        proposer,
         reward: value,
         fee: fee,
         curatorDeposit: curatorDeposit,

@@ -75,6 +75,7 @@ export interface ChildBountyData extends BaseProposalData {
     parentBountyIndex: number
     reward: bigint
     curatorDeposit: bigint
+    proposer?: string
     fee: bigint
     description?: string
     curator?: string 
