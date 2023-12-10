@@ -738,7 +738,7 @@ export async function createBounty( ctx: BatchContext<Store, unknown>, header: S
 }
 
 export async function createChildBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ChildBountyData): Promise<Proposal> {
-    const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description } = data
+    const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description, proposer } = data
 
     const type = ProposalType.ChildBounty
 
@@ -754,6 +754,7 @@ export async function createChildBounty( ctx: BatchContext<Store, unknown>, head
         status,
         description,
         fee,
+        proposer,
         parentBountyIndex,
         curatorDeposit,
         createdAtBlock: header.height,
