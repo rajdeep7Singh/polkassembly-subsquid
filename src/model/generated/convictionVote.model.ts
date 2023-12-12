@@ -53,6 +53,9 @@ export class ConvictionVote {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     delegatedVotingPower!: bigint | undefined | null
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     totalVotingPower!: bigint | undefined | null

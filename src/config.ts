@@ -1,17 +1,16 @@
 import {lookupArchive} from "@subsquid/archive-registry"
-import { ProcessorConfig } from './common/processorConfig'
 import { Store } from '@subsquid/typeorm-store'
 
-const config: ProcessorConfig<Store> = {
+const config: any = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'zeitgeist',
+        prefix: 73,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama-rpc.polkadot.io',
+        chain: 'wss://zeitgeist-rpc.dwellir.com',
+        archive: lookupArchive('zeitgeist', {type: "Substrate", release: "ArrowSquid"}),
     },
-    typesBundle: 'kusama',
+    typesBundle: 'zeitgeist',
     batchSize: 500,
     blockRange: {
         from: 0,

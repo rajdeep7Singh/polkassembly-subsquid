@@ -1,16 +1,16 @@
 import { In, IsNull } from 'typeorm'
-import { BatchContext } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
 import { ConvictionDelegatedVotes, ConvictionVote, StandardVoteBalance, VoteType, VotingDelegation, FlattenedConvictionVotes, DelegationType } from '../../../model'
 import { randomUUID } from 'crypto'
+import { ProcessorContext } from '../../../processor'
 
 export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
 }
 
-export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, nestedDelegations: VotingDelegation[], convictionVote: ConvictionVote): Promise<{delegatedVotesNested: ConvictionDelegatedVotes[], delegatedVotePower: bigint, flattenedVotesNested: FlattenedConvictionVotes[]}> {
+export async function addDelegatedVotesReferendum(ctx: ProcessorContext<Store>, block: number, blockTime: number, nestedDelegations: VotingDelegation[], convictionVote: ConvictionVote): Promise<{delegatedVotesNested: ConvictionDelegatedVotes[], delegatedVotePower: bigint, flattenedVotesNested: FlattenedConvictionVotes[]}> {
     let votingPower = BigInt(0)
     const delegatedVotes = [];
     let delegatedVotePower = BigInt(0)
@@ -70,7 +70,7 @@ export async function addDelegatedVotesReferendum(ctx: BatchContext<Store, unkno
 }
 
 
-export async function getDelegations(ctx: BatchContext<Store, unknown>, voter: string | undefined): Promise<any> {
+export async function getDelegations(ctx: ProcessorContext<Store>, voter: string | undefined): Promise<any> {
     try{
         let delegations = await ctx.store.find(VotingDelegation, { where: { to: voter, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
         if (delegations != null && delegations != undefined && delegations.length > 0) {
@@ -93,7 +93,7 @@ export async function getDelegations(ctx: BatchContext<Store, unknown>, voter: s
     }
 }
 
-export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, unknown>, block: number, blockTime: number, delegatedVotes: ConvictionDelegatedVotes[]): Promise<void> {
+export async function removeDelegatedVotesReferendum(ctx: ProcessorContext<Store>, block: number, blockTime: number, delegatedVotes: ConvictionDelegatedVotes[]): Promise<void> {
     const addresses: string[] = []
     for (let i = 0; i < delegatedVotes.length; i++) {
         const vote = delegatedVotes[i]
@@ -109,7 +109,7 @@ export async function removeDelegatedVotesReferendum(ctx: BatchContext<Store, un
     }
 }
 
-export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: string, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean): Promise<void> {
+export async function removeVote(ctx: ProcessorContext<Store>, wallet: string, proposalIndex: number, block: number, blockTime: number, shouldHaveVote: boolean, extrinsicIndex: string): Promise<void> {
     const votes = await ctx.store.find(ConvictionVote, { where: { voter: wallet, proposalIndex, removedAtBlock: IsNull(), type: VoteType.Referendum },
         relations: {
             delegatedVotes: true
@@ -130,6 +130,7 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
         const vote = votes[0]
         vote.removedAtBlock = block
         vote.removedAt = new Date(blockTime)
+        vote.extrinsicIndex = extrinsicIndex
         await ctx.store.save(vote)
         if(vote.delegatedVotes){
             await removeDelegatedVotesReferendum(ctx, block, blockTime, vote.delegatedVotes)
@@ -138,7 +139,7 @@ export async function removeVote(ctx: BatchContext<Store, unknown>, wallet: stri
     await removeFlattenedVotes(ctx, [wallet], proposalIndex, block, blockTime)
 }
 
-export async function removeFlattenedVotes(ctx: BatchContext<Store, unknown>, wallet: string[], proposalIndex: number, block: number, blockTime: number): Promise<void> {
+export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet: string[], proposalIndex: number, block: number, blockTime: number): Promise<void> {
     const flattenedVotes = await ctx.store.find(FlattenedConvictionVotes, { where: { voter: In(wallet), proposalIndex, removedAtBlock: IsNull(), type: VoteType.Referendum } })
     
     for (let i = 0; i < flattenedVotes.length; i++) {

@@ -1,31 +1,27 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { ss58codec } from '../../../common/tools'
 import { Proposal, ProposalType, Vote, VoteDecision, VoteType } from '../../../model'
-import { getVotesCount } from '../../utils/votes'
 import { getVotedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Block, Event } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto'
 
 
-export async function handleVoted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Council.Voted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { voter, hash, decision } = getVotedData(ctx, item.event)
+export async function handleVoted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { voter, hash, decision } = getVotedData(ctx, item)
 
-    const hexHash = toHex(hash)
     const proposal = await ctx.store.get(Proposal, {
-        where: { hash: hexHash, type: ProposalType.CouncilMotion },
+        where: { hash: hash, type: ProposalType.CouncilMotion },
     })
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.CouncilMotion, hexHash))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.CouncilMotion, hash))
         return
     }
 
     // const count = await getVotesCount(ctx, proposal.id)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await ctx.store.insert(
         new Vote({
@@ -36,6 +32,7 @@ export async function handleVoted(ctx: BatchContext<Store, unknown>,
             proposal,
             timestamp: new Date(header.timestamp),
             type: VoteType.Motion,
+            extrinsicIndex
         })
     )
 }

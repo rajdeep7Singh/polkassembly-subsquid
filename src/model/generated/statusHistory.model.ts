@@ -1,6 +1,7 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {Proposal} from "./proposal.model"
 import {ProposalStatus} from "./_proposalStatus"
+import {Preimage} from "./preimage.model"
 
 @Entity_()
 export class StatusHistory {
@@ -13,13 +14,20 @@ export class StatusHistory {
 
     @Index_()
     @ManyToOne_(() => Proposal, {nullable: true})
-    proposal!: Proposal
+    proposal!: Proposal | undefined | null
 
     @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Column_("int4", {nullable: false})
     block!: number
+
+    @Index_()
+    @ManyToOne_(() => Preimage, {nullable: true})
+    preimage!: Preimage | undefined | null
 
     @Column_("timestamp with time zone", {nullable: false})
     timestamp!: Date

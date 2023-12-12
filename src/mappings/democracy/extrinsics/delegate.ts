@@ -1,25 +1,21 @@
 
 import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { getDelegateData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Call } from '../../../processor'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addDelegatedVotesReferendum, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes, VoteDecision } from '../../../model'
 import { randomUUID } from 'crypto'
 
-export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Democracy.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const { to, lockPeriod, balance } = getDelegateData(ctx, item.call)
+export async function handleDelegate(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const { to, lockPeriod, balance } = getDelegateData(ctx, item)
     const toWallet = ss58codec.encode(to)
-    let from = getOriginAccountId(item.call.origin)
-    if(!from){
-        from = getOriginAccountId(item.extrinsic.call.origin)
-    }
+    let from = getOriginAccountId(item.origin)
     if(!from){
         return
     }
@@ -28,6 +24,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
     if (delegations != null && delegations != undefined && delegations.length > 1) {
         ctx.log.warn(TooManyOpenDelegations(header.height, undefined, from))
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const ongoingReferenda = await ctx.store.find(Proposal, { where: { endedAtBlock: IsNull(), type: ProposalType.Referendum } })
 
@@ -39,7 +36,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         for (let i = 0; i < ongoingReferenda.length; i++) {
             const referendum = ongoingReferenda[i]
             if(referendum.index || referendum.index === 0){
-                await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false)
+                await removeVote(ctx, from, referendum.index, header.height, header.timestamp, false, extrinsicIndex)
             }
         }
     }
@@ -54,6 +51,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             lockPeriod,
             type: DelegationType.Democracy,
             createdAt: new Date(header.timestamp),
+            extrinsicIndex,
         })
     )
     let votingPower = BigInt(0)

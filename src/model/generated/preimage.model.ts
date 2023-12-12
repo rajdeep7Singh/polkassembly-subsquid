@@ -37,6 +37,9 @@ export class Preimage {
     @Column_("varchar", {length: 21, nullable: false})
     status!: ProposalStatus
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Index_()
     @Column_("int4", {nullable: false})
     createdAtBlock!: number

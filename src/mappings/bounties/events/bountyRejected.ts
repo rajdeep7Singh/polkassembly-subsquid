@@ -1,29 +1,18 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
-import { getBountyRejectedData, getBountyRejectedDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { getBountyRejectedData } from './getters'
+import { ProcessorContext, Block, Event } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleRejectedOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.BountyRejected', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyRejectedDataOld(ctx, item.event)
+export async function handleRejected(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getBountyRejectedData(ctx, item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
         status: ProposalStatus.Rejected,
         isEnded: true,
-    })
-}
-
-export async function handleRejected(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Bounties.BountyRejected', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyRejectedData(ctx, item.event)
-
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
-        status: ProposalStatus.Rejected,
-        isEnded: true,
+        extrinsicIndex
     })
 }

@@ -99,8 +99,14 @@ export class Proposal {
     @Column_("int4", {nullable: true})
     trackNumber!: number | undefined | null
 
+    @Column_("int4", {nullable: true})
+    thresholdNumber!: number | undefined | null
+
     @Column_("text", {nullable: true})
     origin!: string | undefined | null
+
+    @Column_("jsonb", {nullable: true})
+    marketMetadata!: unknown | undefined | null
 
     @Column_("text", {nullable: true})
     metadata!: string | undefined | null
@@ -125,6 +131,9 @@ export class Proposal {
 
     @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new Tally(undefined, obj)}, nullable: true})
     tally!: Tally | undefined | null
+
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
 
     @Column_("int4", {nullable: true})
     executeAtBlockNumber!: number | undefined | null

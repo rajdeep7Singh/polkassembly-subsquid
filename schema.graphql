@@ -7,6 +7,7 @@ enum ProposalType {
   Bounty
   Tip
   ChildBounty
+  AdvisoryCommittee
   ReferendumV2
   FellowshipReferendum
 }
@@ -63,6 +64,7 @@ type Preimage @entity {
   section: String
   method: String
   status: ProposalStatus!
+  extrinsicIndex: String
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
   updatedAtBlock: Int
@@ -111,7 +113,9 @@ type Proposal @entity {
   status: ProposalStatus!
   statusHistory: [StatusHistory!] @derivedFrom(field: "proposal")
   trackNumber: Int
+  thresholdNumber: Int
   origin: String
+  marketMetadata: JSON
   metadata: String
   enactmentAtBlock: Int
   enactmentAfterBlock: Int
@@ -120,6 +124,7 @@ type Proposal @entity {
   decisionDeposit: DecisionDeposit
   deciding: Deciding
   tally: Tally
+  extrinsicIndex: String
   executeAtBlockNumber: Int
   executedAt: DateTime
   group: ProposalGroup
@@ -155,9 +160,11 @@ type Deciding {
 
 type StatusHistory @entity {
   id: ID!
-  proposal: Proposal!
+  proposal: Proposal
   status: ProposalStatus!
+  extrinsicIndex: String
   block: Int!
+  preimage: Preimage
   timestamp: DateTime!
 }
 
@@ -203,6 +210,7 @@ type Vote @entity {
   proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index
+  extrinsicIndex: String
   decision: VoteDecision
   balance: VoteBalance
   lockPeriod: Int
@@ -215,6 +223,7 @@ type Tippers @entity {
   tipper: String
   value: BigInt
   proposal: Proposal!
+  extrinsicIndex: String
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
 }
@@ -244,6 +253,7 @@ type ConvictionVote @entity {
   removedAt: DateTime @index
   selfVotingPower: BigInt @index
   delegatedVotingPower: BigInt @index
+  extrinsicIndex: String
   totalVotingPower: BigInt @index
   decision: VoteDecision! @index
   balance: VoteBalance!
@@ -298,6 +308,7 @@ type VotingDelegation @entity {
   balance: BigInt
   lockPeriod: Int!
   track: Int
+  extrinsicIndex: String
   type: DelegationType!
   createdAt: DateTime!
   createdAtBlock: Int! @index
@@ -309,6 +320,7 @@ type CurveData @entity {
   id: ID!
   block: Int! @index
   proposal: Proposal!
+  extrinsicIndex: String
   index: Int! @index
   timestamp: DateTime! @index
   approvalPercent: Float @index

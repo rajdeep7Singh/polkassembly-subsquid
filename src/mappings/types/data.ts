@@ -15,6 +15,7 @@ export type HashProposal =
     | ProposalType.Tip
     | ProposalType.CouncilMotion
     | ProposalType.TechCommitteeProposal
+    | ProposalType.AdvisoryCommittee
 
 export interface ProposedCallData {
     section: string
@@ -31,6 +32,7 @@ export interface DemocracyProposalData extends BaseProposalData {
     hash: string
     proposer: string
     deposit: bigint
+    extrinsicIndex: string
 }
 
 export interface ReferendumData extends BaseProposalData {
@@ -39,6 +41,7 @@ export interface ReferendumData extends BaseProposalData {
     threshold: ReferendumThresholdType
     end?: number
     delay?: number
+    extrinsicIndex: string
 }
 
 export interface CouncilMotionData extends BaseProposalData {
@@ -46,6 +49,17 @@ export interface CouncilMotionData extends BaseProposalData {
     hash: string
     threshold: number
     proposer: string
+    call: ProposedCallData
+    extrinsicIndex?: string
+}
+
+export interface AdvisoryCommitteeMotionData extends BaseProposalData {
+    hash: string
+    threshold: number
+    index?: number
+    proposer: string
+    marketMetadata?: any
+    extrinsicIndex: string
     call: ProposedCallData
 }
 
@@ -87,6 +101,7 @@ export interface TreasuryData extends BaseProposalData {
     reward: bigint
     deposit: bigint
     payee: string
+    extrinsicIndex: string
 }
 
 export interface PreimageData extends BaseProposalData {
@@ -94,6 +109,7 @@ export interface PreimageData extends BaseProposalData {
     proposer?: string
     deposit?: bigint
     call?: ProposedCallData
+    extrinsicIndex: string
     section?: string
     method?: string
     length?: number

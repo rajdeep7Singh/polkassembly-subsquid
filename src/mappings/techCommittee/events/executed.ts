@@ -1,23 +1,20 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
+
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getExecutedData } from './getters'
-
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Block, Event } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
+export async function handleExecuted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: Block) {
+    const {proposalHash, result} = getExecutedData(ctx, item)
 
-export async function handleExecuted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'TechnicalCommittee.Executed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const hash = getExecutedData(ctx, item.event)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.TechCommitteeProposal, {
+    await updateProposalStatus(ctx, header, proposalHash, ProposalType.TechCommitteeProposal, {
         isEnded: true,
-        status: ProposalStatus.Executed,
+        status: result ? ProposalStatus.Executed : ProposalStatus.ExecutionFailed,
+        extrinsicIndex
     })
 }

@@ -7,6 +7,7 @@ export enum ProposalType {
     Bounty = "Bounty",
     Tip = "Tip",
     ChildBounty = "ChildBounty",
+    AdvisoryCommittee = "AdvisoryCommittee",
     ReferendumV2 = "ReferendumV2",
     FellowshipReferendum = "FellowshipReferendum",
 }

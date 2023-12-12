@@ -6,8 +6,8 @@ export class UnknownVersionError extends Error {
     }
 }
 
-export function MissingProposalRecordWarn(proposal: ProposalType | string, hashOrIndex: string | number) {
-    return `Missing record for ${proposal} ${hashOrIndex}`
+export function MissingProposalRecordWarn(proposal: ProposalType | string, hashOrIndex: string | number, header?: any) {
+    return `Missing record for ${proposal} ${hashOrIndex} ${header?.height}, ${header?.hash}`
 }
 
 export function StorageNotExistsWarn(proposal: ProposalType | string, hashOrIndex: string | number) {

@@ -3,18 +3,18 @@ import { ProposalStatus } from '../../../model'
 import { updatePreimageStatus } from '../../utils/proposals'
 import { getPreimageMissingData } from './getters'
 
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Event } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handlePreimageMissing(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.PreimageMissing', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getPreimageMissingData(ctx, item.event)
+export async function handlePreimageMissing(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getPreimageMissingData(item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updatePreimageStatus(ctx, header, hexHash,{
+    await updatePreimageStatus(ctx, header, hash,{
         status: ProposalStatus.Missing,
+        extrinsicIndex
     })
 }

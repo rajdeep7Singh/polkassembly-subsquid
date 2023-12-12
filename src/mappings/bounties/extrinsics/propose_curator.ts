@@ -2,19 +2,17 @@ import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { getProposeCuratorData } from './getters'
-import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { updateProposalStatus } from '../../utils/proposals'
+import { Call, ProcessorContext } from '../../../processor'
 
 
+export async function handleProposeCurator(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!(item as any).success) return
 
-export async function handleProposeCurator(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Bounties.propose_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
-
-    const { index, curator, fee } = getProposeCuratorData(ctx, item.call)
+    const { index, curator, fee } = getProposeCuratorData(ctx, item)
     if(!curator || typeof curator == 'number'){
         return
     }
@@ -25,7 +23,9 @@ export async function handleProposeCurator(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const origin = getOriginAccountId(item.call.origin)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
+    const origin = getOriginAccountId(item.origin)
     if (!origin) {
         ctx.log.warn(`Origin for accept_curator is null`)
         return
@@ -35,5 +35,6 @@ export async function handleProposeCurator(ctx: BatchContext<Store, unknown>,
     await ctx.store.save(proposal)
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
         status: ProposalStatus.CuratorProposed,
+        extrinsicIndex
     })
 }

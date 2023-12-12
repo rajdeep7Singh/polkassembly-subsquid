@@ -1,47 +1,28 @@
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
-import { getUnassingCuratorData, getUnassingCuratorDataOld } from './getters'
+import { getUnassingCuratorData } from './getters'
 
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { Call, ProcessorContext } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { updateProposalStatus } from '../../utils/proposals'
 
-export async function handleUnassignCurator(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Bounties.unassign_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
-    const { index } = getUnassingCuratorData(ctx, item.call)
+export async function handleUnassignCurator(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!(item as any).success) return
+    const { index } = getUnassingCuratorData(ctx, item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Bounty } })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Bounty, index))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     proposal.curator = null
     await ctx.store.save(proposal)
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
         status: ProposalStatus.CuratorUnassigned,
-    })
-}
-
-export async function handleUnassignCuratorOld(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Treasury.unassign_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
-    const { index } = getUnassingCuratorDataOld(ctx, item.call)
-
-    const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Bounty } })
-    if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Bounty, index))
-        return
-    }
-
-    proposal.curator = null
-    await ctx.store.save(proposal)
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
-        status: ProposalStatus.CuratorUnassigned,
+        extrinsicIndex
     })
 }

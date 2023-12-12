@@ -2,19 +2,17 @@ import { getOriginAccountId } from '../../../common/tools'
 import { NoDelegationFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { ConvictionVote, DelegationType, Proposal, ProposalType, VoteType } from '../../../model'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import {
     VotingDelegation
 } from '../../../model'
 import { removeFlattenedVotes } from './utils'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Democracy.undelegate', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const from = getOriginAccountId(item.call.origin)
+export async function handleUndelegate(ctx: ProcessorContext<Store>, item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const from = getOriginAccountId(item.origin)
     let delegation = null;
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
     if(delegations != undefined && delegations != null){
@@ -25,8 +23,11 @@ export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
             ctx.log.warn(NoDelegationFound(header.height, undefined, from))
             return
         }
+        const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
         delegation = delegations[0]
         delegation.endedAtBlock = header.height
+        delegation.extrinsicIndex = extrinsicIndex
         delegation.endedAt = new Date(header.timestamp)
         await ctx.store.save(delegation)
     }

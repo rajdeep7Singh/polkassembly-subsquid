@@ -1,90 +1,53 @@
 import { UnknownVersionError } from '../common/errors'
+import { ProcessorContext, Event } from '../processor'
 import {
-    SchedulerScheduledEvent,
-    SchedulerDispatchedEvent
-} from '../types/events'
-import { Event } from '../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
+    scheduled,
+    dispatched
+} from '../types/scheduler/events'
 import { Store } from '@subsquid/typeorm-store'
 
 interface ScheduledData {
-    blockNumber: number,
+    blockNumber: bigint | number,
     result?: string
 }
 
-export function getScheduledEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData {
-    const event = new SchedulerScheduledEvent(ctx, itemEvent)
-    if (event.isV1058) {
-        const number = event.asV1058
-        return {
-            blockNumber: number
-        }
-    } else if (event.isV2005) {
-        const [index, number] = event.asV2005
-        return {
-            blockNumber: number
-        }
-    } else if (event.isV9160) {
-        const { when, index} = event.asV9160
+export function getScheduledEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ScheduledData {
+    if (scheduled.v34.is(itemEvent)) {
+        const { when, index} = scheduled.v34.decode(itemEvent)
         return {
             blockNumber: index
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getDispatchedEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ScheduledData | undefined {
-    const event = new SchedulerDispatchedEvent(ctx, itemEvent)
-    if (event.isV1058) {
-        const [[block, number], hash, result] = event.asV1058
-        return {
-            blockNumber: block,
-            result: result.__kind
-        }
-    } else if (event.isV9111) {
-        const [[block, number], hash, result] = event.asV9111
-        return {
-            blockNumber: block,
-            result: result.__kind
-        }
-    } else if (event.isV9160) {
-        const { task, id, result } = event.asV9160
+export function getDispatchedEventData(ctx: ProcessorContext<Store>, itemEvent: Event): ScheduledData | undefined {
+    if (dispatched.v34.is(itemEvent)) {
+        const { task, id, result } = dispatched.v34.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    } else if (event.isV9170) {
-        const { task, id, result } = event.asV9170
+    } else if (dispatched.v34.is(itemEvent)) {
+        const { task, id, result } = dispatched.v34.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    } else if (event.isV9190) {
-        const { task, id, result } = event.asV9190
+    }  else if (dispatched.v34.is(itemEvent)) {
+        const { task, id, result } = dispatched.v34.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    } else if (event.isV9320) {
-        const { task, id, result } = event.asV9320
-        return {
-            blockNumber: task[0],
-            result: result.__kind
-        }
-    }  else if (event.isV9420) {
-        const { task, id, result } = event.asV9420
-        return {
-            blockNumber: task[0],
-            result: result.__kind
-        }
-    }else if (event.isV9430) {
-        const { task, id, result } = event.asV9430
+    } else if (dispatched.v34.is(itemEvent)) {
+        const { task, id, result } = dispatched.v34.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError('Scheduler.Dispatched')
     }
 }

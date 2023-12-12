@@ -1,38 +1,24 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    BountiesAcceptCuratorCall,
-    BountiesUnassignCuratorCall,
-    TreasuryAcceptCuratorCall,
-    TreasuryUnassignCuratorCall,
-    BountiesProposeCuratorCall
-} from '../../../types/calls'
-import { BatchContext } from '@subsquid/substrate-processor'
+    acceptCurator,
+    unassignCurator,
+    proposeCurator
+} from '../../../types/bounties/calls'
+import { ProcessorContext } from '../../../processor'
+
 import { Store } from '@subsquid/typeorm-store'
 interface AccepterCuratorData {
     index: number
 }
 
-export function getAccepterCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
-    const call = new TreasuryAcceptCuratorCall(ctx, itemCall)
-    if (call.isV2025) {
-        const { bountyId } = call.asV2025
+export function getAccepterCuratorData(ctx: ProcessorContext<Store>, itemCall: any): AccepterCuratorData {
+    if (acceptCurator.v40.is(itemCall)) {
+        const { bountyId } = acceptCurator.v40.decode(itemCall)
         return {
             index: bountyId,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
-    }
-}
-
-export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
-    const call = new BountiesAcceptCuratorCall(ctx, itemCall)
-    if (call.isV2028) {
-        const { bountyId } = call.asV2028
-        return {
-            index: bountyId,
-        }
-    } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
@@ -40,53 +26,33 @@ interface UnassingCuratorData {
     index: number
 }
 
-export function getUnassingCuratorDataOld(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
-    const call = new TreasuryUnassignCuratorCall(ctx, itemCall)
-    if (call.isV2025) {
-        const { bountyId } = call.asV2025
+export function getUnassingCuratorData(ctx: ProcessorContext<Store>, itemCall: any): UnassingCuratorData {
+    if (unassignCurator.v40.is(itemCall)) {
+        const { bountyId } = unassignCurator.v40.decode(itemCall)
         return {
             index: bountyId,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
-    }
-}
-
-export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
-    const call = new BountiesUnassignCuratorCall(ctx, itemCall)
-    if (call.isV2028) {
-        const { bountyId } = call.asV2028
-        return {
-            index: bountyId,
-        }
-    } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
 interface ProposeCuratorData {
     index: number
     fee: bigint
-    curator?: Uint8Array | number | undefined | null
+    curator?: string | number | undefined | null
 }
 
-export function getProposeCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): ProposeCuratorData {
-    const call = new BountiesProposeCuratorCall(ctx, itemCall)
-    if (call.isV2028) {
-        const { bountyId, fee, curator } = call.asV2028
+export function getProposeCuratorData(ctx: ProcessorContext<Store>, itemCall: any): ProposeCuratorData {
+    if (proposeCurator.v40.is(itemCall)) {
+        const { bountyId, fee, curator } = proposeCurator.v40.decode(itemCall)
+
         return {
             index: bountyId,
             fee,
-            curator: curator.value
-        }
-    }else if (call.isV9111) {
-        const { bountyId, fee, curator } = call.asV9111
-        return {
-            index: bountyId,
-            fee,
-            curator: curator.value
+            curator: curator.__kind != "Index" ? curator.value : undefined
         }
     }else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }

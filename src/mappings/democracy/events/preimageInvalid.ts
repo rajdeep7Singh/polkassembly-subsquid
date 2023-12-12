@@ -3,18 +3,18 @@ import { ProposalStatus, ProposalType } from '../../../model'
 import { updatePreimageStatus } from '../../utils/proposals'
 import { getPreimageInvalidData } from './getters'
 
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Block, Event } from '../../../processor'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handlePreimageInvalid(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.PreimageInvalid', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getPreimageInvalidData(ctx, item.event)
+export async function handlePreimageInvalid(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getPreimageInvalidData(item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updatePreimageStatus(ctx, header, hexHash,{
+    await updatePreimageStatus(ctx, header, hash,{
         status: ProposalStatus.Invalid,
+        extrinsicIndex
     })
 }

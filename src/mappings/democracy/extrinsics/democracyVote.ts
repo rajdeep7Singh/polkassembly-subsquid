@@ -11,29 +11,29 @@ import {
     VoteType,
     FlattenedConvictionVotes
 } from '../../../model'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { ProcessorContext, Call } from '../../../processor'
 import { getOriginAccountId } from '../../../common/tools'
 import { getVoteData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { getDelegations, removeDelegatedVotesReferendum, addDelegatedVotesReferendum } from './utils'
 import { IsNull } from 'typeorm'
 import { randomUUID } from 'crypto'
 
-export async function handleVote(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Democracy.vote', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!(item.call as any).success) return
+export async function handleVote(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!(item as any).success) return
 
-    const { index, vote } = getVoteData(ctx, item.call)
+    const { index, vote } = getVoteData(ctx, item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Referendum } })
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Referendum, index, header))
         return
     }
 
-    const from = getOriginAccountId(item.call.origin)
+    const from = getOriginAccountId(item.origin)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     if(!from){
         ctx.log.warn('No from address found for democracy.vote call')
@@ -106,7 +106,7 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
 
     const convictionVote = new ConvictionVote({
         id: randomUUID(),
-        voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+        voter: item.origin ? getOriginAccountId(item.origin) : null,
         createdAtBlock: header.height,
         proposalIndex: index,
         proposalId: proposal.id,
@@ -117,11 +117,12 @@ export async function handleVote(ctx: BatchContext<Store, unknown>,
         createdAt: new Date(header.timestamp),
         selfVotingPower: votingPower,
         type: VoteType.Referendum,
+        extrinsicIndex
     })
 
     const flattened = new FlattenedConvictionVotes({
         id: randomUUID(),
-        voter: item.call.origin ? getOriginAccountId(item.call.origin) : null,
+        voter: item.origin ? getOriginAccountId(item.origin) : null,
         parentVote: convictionVote,
         isDelegated: false,
         delegatedTo: null,

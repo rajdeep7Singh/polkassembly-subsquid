@@ -28,6 +28,9 @@ export class VotingDelegation {
     @Column_("int4", {nullable: true})
     track!: number | undefined | null
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Column_("varchar", {length: 9, nullable: false})
     type!: DelegationType
 
