@@ -48,7 +48,7 @@ import { randomUUID } from 'crypto'
 import { ss58codec } from '../../common/tools'
 import { getActivityCount, getMetaActionsCount, getSalaryPayoutCount } from './votes'
 import { decodeHex } from '@subsquid/substrate-processor'
-import { ParamsType } from '../../types/v1000000'
+import { ParamsType } from '../../types/collectivesV1000000'
 
 type ProposalUpdateData = Partial<
     Omit<

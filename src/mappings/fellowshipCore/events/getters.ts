@@ -9,7 +9,7 @@ import {
     inducted,
     paramsChanged
 } from '../../../types/fellowship-core/events'
-import { ParamsType } from '../../../types/v1000000'
+import { ParamsType } from '../../../types/collectivesV1000000'
 interface activeChangedData {
     who: string
     isActive: boolean
@@ -121,8 +121,8 @@ export function getEvidenceJudgedData(itemEvent: Event): evidenceJudgedData  {
 }
 
 export function getParamsChangedData(itemEvent: Event): ParamsType  {
-    if (paramsChanged.v1000000.is(itemEvent)) { 
-        const {params } = paramsChanged.v1000000.decode(itemEvent)
+    if (paramsChanged.collectivesV1000000.is(itemEvent)) { 
+        const {params } = paramsChanged.collectivesV1000000.decode(itemEvent)
         return params
 
     } else {

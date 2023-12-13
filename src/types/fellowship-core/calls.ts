@@ -19,10 +19,10 @@ export const setParams =  {
     /**
      * See [`Pallet::set_params`].
      */
-    v1000000: new CallType(
+    collectivesV1000000: new CallType(
         'FellowshipCore.set_params',
         sts.struct({
-            params: v1000000.ParamsType,
+            params: collectivesV1000000.ParamsType,
         })
     ),
 }

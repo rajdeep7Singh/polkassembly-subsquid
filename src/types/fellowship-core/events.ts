@@ -6,10 +6,10 @@ export const paramsChanged =  {
     /**
      * Parameters for the pallet have changed.
      */
-    v1000000: new EventType(
+    collectivesV1000000: new EventType(
         'FellowshipCore.ParamsChanged',
         sts.struct({
-            params: v1000000.ParamsType,
+            params: collectivesV1000000.ParamsType,
         })
     ),
 }
