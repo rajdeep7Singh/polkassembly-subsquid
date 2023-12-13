@@ -1,6 +1,19 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v1000000 from '../v1000000'
 
+export const paramsChanged =  {
+    name: 'FellowshipCore.ParamsChanged',
+    /**
+     * Parameters for the pallet have changed.
+     */
+    v1000000: new EventType(
+        'FellowshipCore.ParamsChanged',
+        sts.struct({
+            params: v1000000.ParamsType,
+        })
+    ),
+}
+
 export const activeChanged =  {
     name: 'FellowshipCore.ActiveChanged',
     /**

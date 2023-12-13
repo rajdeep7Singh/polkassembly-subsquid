@@ -62,8 +62,8 @@
       "constants": []
     },
     "FellowshipCore": {
-      "events": ["ActiveChanged", "Inducted", "Offboarded", "Promoted", "Demoted", "Proven", "Imported", "EvidenceJudged"],
-      "calls": ["submit_evidence", "promote", "demote", "approve", "bump", "induct"],
+      "events": ["ActiveChanged", "Inducted", "Offboarded", "Promoted", "Demoted", "Proven", "Imported", "EvidenceJudged", "ParamsChanged"],
+      "calls": ["submit_evidence", "promote", "demote", "approve", "bump", "induct", "set_params"],
       "storage": ["MemberEvidence"],
       "constants": []
     },

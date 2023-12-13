@@ -52,6 +52,7 @@ export interface MetaActionsData {
     evidence?: string
     showClaimButton?: boolean
     evidenceJudged?: boolean
+    params?: any
     wish?: string,
     activityType: ActivityType
 }
