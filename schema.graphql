@@ -136,6 +136,14 @@ type SubmissionDeposit {
   amount: BigInt
 }
 
+type FellowshipParams {
+  activeSalary: [BigInt]
+  passiveSalary: [BigInt]
+  demotionPeriod: [Int]
+  minPromotionPeriod: [Int]
+  offboardTimeout: Int
+}
+
 type Deciding {
   since: Int
   confirming: Int
@@ -189,6 +197,7 @@ enum ActivityType {
   OffBoarded
   ActivityChanged
   RFC
+  ParamsChanged
   EvidenceSubmitted
   EvidenceJudged
 }
@@ -218,6 +227,7 @@ type MetaActions @entity {
   showClaimButton: Boolean
   evidenceJudged: Boolean
   wish: String
+  params: FellowshipParams
   createdAt: DateTime @index
   createdAtBlock: Int
   extrinsicIndex: String

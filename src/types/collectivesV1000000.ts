@@ -5511,16 +5511,6 @@ export const FellowshipCoreCall: sts.Type<FellowshipCoreCall> = sts.closedEnum((
     }
 })
 
-export const ParamsType: sts.Type<ParamsType> = sts.struct(() => {
-    return  {
-        activeSalary: sts.array(() => sts.bigint()),
-        passiveSalary: sts.array(() => sts.bigint()),
-        demotionPeriod: sts.array(() => sts.number()),
-        minPromotionPeriod: sts.array(() => sts.number()),
-        offboardTimeout: sts.number(),
-    }
-})
-
 /**
  * Contains a variant per dispatchable extrinsic that this pallet has.
  */
@@ -5771,3 +5761,13 @@ export const Wish: sts.Type<Wish> = sts.closedEnum(() => {
 })
 
 export const AccountId32 = sts.bytes()
+
+export const ParamsType: sts.Type<ParamsType> = sts.struct(() => {
+    return  {
+        activeSalary: sts.array(() => sts.bigint()),
+        passiveSalary: sts.array(() => sts.bigint()),
+        demotionPeriod: sts.array(() => sts.number()),
+        minPromotionPeriod: sts.array(() => sts.number()),
+        offboardTimeout: sts.number(),
+    }
+})

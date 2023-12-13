@@ -1,5 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
 import * as marshal from "./marshal"
+import {FellowshipParams} from "./_fellowshipParams"
 
 @Entity_()
 export class MetaActions {
@@ -37,6 +38,9 @@ export class MetaActions {
 
     @Column_("text", {nullable: true})
     wish!: string | undefined | null
+
+    @Column_("jsonb", {transformer: {to: obj => obj == null ? undefined : obj.toJSON(), from: obj => obj == null ? undefined : new FellowshipParams(undefined, obj)}, nullable: true})
+    params!: FellowshipParams | undefined | null
 
     @Index_()
     @Column_("timestamp with time zone", {nullable: true})

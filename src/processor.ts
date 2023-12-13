@@ -22,7 +22,7 @@ const processor = new SubstrateBatchProcessor()
         'FellowshipReferenda.Confirmed', 'FellowshipReferenda.ConfirmStarted', 'FellowshipReferenda.ConfirmAborted', 'FellowshipReferenda.Cancelled', 'FellowshipReferenda.MetadataSet', 'FellowshipReferenda.MetadataCleared',
         'FellowshipCollective.Voted', 'Scheduler.Dispatched', 'FellowshipCollective.RankChanged', 'FellowshipCollective.MemberAdded', 'FellowshipCollective.MemberRemoved', 'FellowshipCore.ActiveChanged', 'FellowshipCore.Inducted',
         'FellowshipCore.Offboarded', 'FellowshipCore.Promoted', 'FellowshipCore.Demoted', 'FellowshipCore.Proven', 'FellowshipCore.Imported', 'FellowshipCore.EvidenceJudged', 'FellowshipSalary.CycleStarted',
-        'FellowshipSalary.Inducted', 'FellowshipSalary.Registered', 'FellowshipSalary.Paid'
+        'FellowshipSalary.Inducted', 'FellowshipSalary.Registered', 'FellowshipSalary.Paid', 'FellowshipCore.ParamsChanged'
     ],
         call: true,
         extrinsic: true
@@ -123,6 +123,9 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (event.name == events.fellowshipCore.demoted.name){
                 await modules.fellowshipCore.events.handleDemoted(ctx, event, block.header)
+            }            
+            if (event.name == events.fellowshipCore.paramsChanged.name){
+                await modules.fellowshipCore.events.handleParamsChanged(ctx, event, block.header)
             }
             if (event.name == events.fellowshipCore.activeChanged.name){
                 await modules.fellowshipCore.events.handleActiveChanged(ctx, event, block.header)

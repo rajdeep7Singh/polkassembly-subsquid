@@ -17,6 +17,7 @@ export enum ActivityType {
     OffBoarded = "OffBoarded",
     ActivityChanged = "ActivityChanged",
     RFC = "RFC",
+    ParamsChanged = "ParamsChanged",
     EvidenceSubmitted = "EvidenceSubmitted",
     EvidenceJudged = "EvidenceJudged",
 }

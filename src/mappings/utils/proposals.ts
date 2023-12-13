@@ -26,6 +26,7 @@ import {
     Payout,
     MetaActions,
     Vote,
+    FellowshipParams,
 } from '../../model'
 import {
     AnnouncementsData,
@@ -47,6 +48,7 @@ import { randomUUID } from 'crypto'
 import { ss58codec } from '../../common/tools'
 import { getActivityCount, getMetaActionsCount, getSalaryPayoutCount } from './votes'
 import { decodeHex } from '@subsquid/substrate-processor'
+import { ParamsType } from '../../types/v1000000'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -567,7 +569,7 @@ export async function createSalaryCycleData(ctx: ProcessorContext<Store>, header
 }
 
 export async function createMetaActions(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: MetaActionsData, salaryCycle?: SalaryCycle) {
-    const { who, isActive, evidence, wish, activityType, amount, toRank, rank, evidenceJudged, showClaimButton } = data
+    const { who, isActive, evidence, wish, activityType, amount, toRank, rank, evidenceJudged, showClaimButton, params } = data
     const id = await getMetaActionsCount(ctx)
     if(activityType == ActivityType.EvidenceJudged){
         const evidenceJudgedObject = await ctx.store.get(MetaActions, {where: {who, evidenceJudged: false, wish: wish, evidence: evidence}})
@@ -587,6 +589,7 @@ export async function createMetaActions(ctx: ProcessorContext<Store>, header: an
             toRank,
             evidenceJudged: evidenceJudged || false,
             rank,
+            params: params ? createFellowshipParams(params) : null,
             showClaimButton,
             wish,
             createdAtBlock: header.height,
@@ -690,6 +693,10 @@ export async function createActivity (
 
 function createProposedCall(data: ProposedCallData): ProposedCall {
     return new ProposedCall(toJSON(data))
+}
+
+function createFellowshipParams(data: ParamsType): FellowshipParams {
+    return new FellowshipParams(toJSON(data))
 }
 
 export function createDeciding(data: DecidingData): Deciding {

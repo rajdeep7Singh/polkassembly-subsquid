@@ -1,5 +1,5 @@
-module.exports = class Data1701426771496 {
-    name = 'Data1701426771496'
+module.exports = class Data1702460365521 {
+    name = 'Data1702460365521'
 
     async up(db) {
         await db.query(`CREATE TABLE "preimage" ("id" character varying NOT NULL, "proposer" text, "hash" text NOT NULL, "deposit" numeric, "length" integer, "proposed_call" jsonb, "section" text, "method" text, "status" character varying(21) NOT NULL, "extrinsic_index" text, "created_at_block" integer NOT NULL, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "updated_at_block" integer, "updated_at" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_dff8526c5d16d71afbefb55b286" PRIMARY KEY ("id"))`)
@@ -42,7 +42,7 @@ module.exports = class Data1701426771496 {
         await db.query(`CREATE INDEX "IDX_254a98de9e15a6f60b30edd84a" ON "payout" ("cycle_index_id") `)
         await db.query(`CREATE INDEX "IDX_f6092614fdd0e92cbcfb0422b6" ON "payout" ("who") `)
         await db.query(`CREATE INDEX "IDX_c87c3d7a56cb8f69f30f4556cf" ON "payout" ("beneficiary") `)
-        await db.query(`CREATE TABLE "meta_actions" ("id" character varying NOT NULL, "who" text, "amount" numeric, "is_active" boolean, "evidence" text, "rank" integer, "to_rank" integer, "show_claim_button" boolean, "evidence_judged" boolean, "wish" text, "created_at" TIMESTAMP WITH TIME ZONE, "created_at_block" integer, "extrinsic_index" text, CONSTRAINT "PK_67f2a4652c3acc0c8d4c404d0da" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "meta_actions" ("id" character varying NOT NULL, "who" text, "amount" numeric, "is_active" boolean, "evidence" text, "rank" integer, "to_rank" integer, "show_claim_button" boolean, "evidence_judged" boolean, "wish" text, "params" jsonb, "created_at" TIMESTAMP WITH TIME ZONE, "created_at_block" integer, "extrinsic_index" text, CONSTRAINT "PK_67f2a4652c3acc0c8d4c404d0da" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_35f6e9584fe654fbea67684cea" ON "meta_actions" ("who") `)
         await db.query(`CREATE INDEX "IDX_58e3430352ebe171269adbd445" ON "meta_actions" ("created_at") `)
         await db.query(`CREATE TABLE "activity" ("id" character varying NOT NULL, "type" character varying(17) NOT NULL, "who" text, "created_at" TIMESTAMP WITH TIME ZONE NOT NULL, "created_at_block" integer NOT NULL, "proposal_id" character varying, "announcement_id" character varying, "salary_cycle_id" character varying, "payout_id" character varying, "other_actions_id" character varying, "vote_id" character varying, CONSTRAINT "PK_24625a1d6b1b089c8ae206fe467" PRIMARY KEY ("id"))`)
