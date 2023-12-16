@@ -14,7 +14,7 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const proposal = await ctx.store.get(Proposal, {
-        where: { hash: hash, type: ProposalType.AdvisoryCommittee, endedAt: undefined },
+        where: { hash: hash, type: ProposalType.AdvisoryCommittee },
     })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.AdvisoryCommittee, hash))
@@ -29,7 +29,7 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
             proposal,
             timestamp: new Date(header.timestamp),
-            type: VoteType.Motion,
+            type: VoteType.AdvisoryMotion,
             extrinsicIndex
         })
     )

@@ -4,4 +4,5 @@ export enum VoteType {
     ReferendumV2 = "ReferendumV2",
     Fellowship = "Fellowship",
     DemocracyProposal = "DemocracyProposal",
+    AdvisoryMotion = "AdvisoryMotion",
 }

@@ -18,7 +18,7 @@ const processor = new SubstrateBatchProcessor()
     .addEvent({
         name: [ 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Democracy.Proposed', 'Democracy.Tabled', 'Democracy.Started', 'Democracy.Passed', 'Democracy.NotPassed', 
         'Democracy.Cancelled', 'Democracy.Executed', 'Democracy.PreimageNoted', 'Democracy.PreimageUsed', 'Democracy.PreimageInvalid', 'Democracy.PreimageMissing', 'Democracy.PreimageReaped', 
-        'DemocracySeconded', 'Council.Proposed', 'Council.Approved', 'Council.Disapproved', 'Council.Closed', 'Council.Executed', 'AdvisoryCommittee.Approved', 'AdvisoryCommittee.Disapproved',
+        'DemocracySeconded', 'Council.Proposed', 'Council.Approved', 'Council.Disapproved', 'Council.Voted', 'Council.Closed', 'Council.Executed', 'AdvisoryCommittee.Approved', 'AdvisoryCommittee.Disapproved',
         'AdvisoryCommittee.Closed', 'AdvisoryCommittee.Voted', 'AdvisoryCommittee.Executed', 'AdvisoryCommittee.Proposed', 'TechnicalCommittee.Proposed', 'TechnicalCommittee.Approved',
         'TechnicalCommittee.Disapproved', 'TechnicalCommittee.Executed', 'TechnicalCommittee.Voted', 'TechnicalCommittee.Closed', 'Bounties.BountyProposed', 'Bounties.BountyRejected', 
         'Bounties.BountyBecameActive', 'Bounties.BountyAwarded', 'Bounties.BountyClaimed','Bounties.BountyCanceled', 'Bounties.BountyExtended', 'Multisig.MultisigExecuted', 'Treasury.Proposed', 

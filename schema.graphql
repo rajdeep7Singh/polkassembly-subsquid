@@ -201,6 +201,7 @@ enum VoteType {
   ReferendumV2
   Fellowship
   DemocracyProposal
+  AdvisoryMotion
 }
 
 type Vote @entity {
