@@ -6,7 +6,7 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://xx.api.onfinality.io/public-ws',
+        chain: 'wss://xxnetwork-rpc.dwellir.com',
         archive: 'https://xx-network.archive.subsquid.io/graphql'
     })
     .setBlockRange({from: 0})
