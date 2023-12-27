@@ -1,40 +1,43 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
-import { ss58codec, parseProposalCall } from '../../../common/tools'
+import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createTechCommitteeMotion } from '../../utils/proposals'
 import { getProposedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'TechnicalCommittee.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, proposer, hash, threshold } = getProposedData(ctx, item.event)
-
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, proposer, hash, threshold } = getProposedData(item)
     const storageData = await storage.techCommittee.getProposalOf(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.TechCommitteeProposal, index))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const { section, method, args, description } = parseProposalCall(ctx._chain, storageData)
+    const section = storageData.__kind as string
+    const method = storageData.value.__kind as string
+    const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
 
-    await createTechCommitteeMotion(ctx, header, {
+    const { __kind, ...argsValue } = storageData.value;
+
+    // const { section, method, args, description } = parseProposalCall(ctx._chain, storageData)
+
+    await createTechCommitteeMotion(ctx, header, extrinsicIndex, {
         index,
-        hash: toHex(hash),
+        hash: hash,
         proposer: ss58codec.encode(proposer),
         status: ProposalStatus.Proposed,
         threshold,
         call: {
             section,
             method,
-            description,
-            args: args as Record<string, unknown>,
+            description: desc,
+            args: argsValue as Record<string, unknown>,
         },
     })
 }

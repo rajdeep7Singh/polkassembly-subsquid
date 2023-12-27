@@ -1,16 +1,14 @@
 
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
+import { ProcessorContext, Event } from '../../../processor'
 import { createDeciding, updateProposalStatus } from '../../utils/proposals'
 import { getConfirmStartedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleConfirmStarted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.ConfirmStarted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getConfirmStartedData(ctx, item.event)
+export async function handleConfirmStarted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getConfirmStartedData(item)
 
     const proposal = await ctx.store.get(Proposal, {
         where: {
@@ -30,8 +28,9 @@ export async function handleConfirmStarted(ctx: BatchContext<Store, unknown>,
     else {
         deciding = createDeciding({confirming: header.height, since: header.height})
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
+    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.ConfirmStarted,
         data: {
             deciding: deciding

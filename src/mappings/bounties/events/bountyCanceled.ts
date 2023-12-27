@@ -1,28 +1,28 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getBountyCanceledData, getBountyCanceledDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleCanceledOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.BountyCanceled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyCanceledDataOld(ctx, item.event)
+export async function handleCanceledOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getBountyCanceledDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Cancelled,
         isEnded: true,
     })
 }
 
-export async function handleCanceled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Bounties.BountyCanceled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyCanceledData(ctx, item.event)
+export async function handleCanceled(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getBountyCanceledData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Cancelled,
         isEnded: true,
     })

@@ -1,44 +1,37 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    PreimageNotedEvent,
-    PreimageRequestedEvent,
-    PreimageClearedEvent
-} from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { Event } from '../../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
-
+    noted,
+    requested,
+    cleared
+} from '../../../types/preimage/events'
+import { Event } from '../../../processor'
 interface PreimageNotedData {
-    hash: Uint8Array
+    hash: string
 }
 
-export function getPreimageNotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageNotedData {
-    const event = new PreimageNotedEvent(ctx, itemEvent)
-    if (event.isV9170) {
-        const { hash } = event.asV9170
+export function getPreimageNotedData(itemEvent: Event): PreimageNotedData {
+    if (noted.v9170.is(itemEvent)) {
+        const { hash } = noted.v9170.decode(itemEvent)
         return {
             hash
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export interface PreimageRequestedData {
-    hash: Uint8Array
+    hash: string
 }
 
-export function getPreimageRequestedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageRequestedData {
-    const event = new PreimageRequestedEvent(ctx, itemEvent)
-    if (event.isV9170) {
-        const {hash} = event.asV9170
+export function getPreimageRequestedData(itemEvent: Event): PreimageRequestedData {
+    if (requested.v9170.is(itemEvent)) {
+        const {hash} = requested.v9170.decode(itemEvent)
         return {
             hash
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -46,14 +39,13 @@ export interface PreimageClearedData {
     hash: Uint8Array
 }
 
-export function getPreimageClearedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): PreimageClearedData {
-    const event = new PreimageClearedEvent(ctx, itemEvent)
-    if (event.isV9170) {
-        const {hash} = event.asV9170
+export function getPreimageClearedData(itemEvent: Event): PreimageRequestedData {
+    if (cleared.v9170.is(itemEvent)) {
+        const {hash} = cleared.v9170.decode(itemEvent)
         return {
             hash
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

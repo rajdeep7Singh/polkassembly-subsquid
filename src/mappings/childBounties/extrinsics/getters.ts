@@ -1,28 +1,25 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    ChildBountiesAcceptCuratorCall,
-    ChildBountiesProposeCuratorCall,
-    ChildBountiesUnassignCuratorCall,
-} from '../../../types/calls'
-import { BatchContext } from '@subsquid/substrate-processor'
+    acceptCurator,
+    proposeCurator,
+    unassignCurator,
+} from '../../../types/child-bounties/calls'
 import { Store } from '@subsquid/typeorm-store'
-import { CallContext } from '../../types/contexts'
 
 interface AccepterCuratorData {
     parentBountyId: number,
     childBountyId: number,
 }
 
-export function getAccepterCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
-    const call = new ChildBountiesAcceptCuratorCall(ctx, itemCall)
-    if (call.isV9190) {
-        const { parentBountyId, childBountyId } = call.asV9190
+export function getAccepterCuratorData(itemCall: any): AccepterCuratorData {
+    if (acceptCurator.v9190.is(itemCall)) {
+        const { parentBountyId, childBountyId } =acceptCurator.v9190.decode(itemCall)
         return {
             childBountyId,
             parentBountyId,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
@@ -31,16 +28,15 @@ interface UnassingCuratorData {
     childBountyId: number
 }
 
-export function getUnassingCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): UnassingCuratorData {
-    const call = new ChildBountiesUnassignCuratorCall(ctx, itemCall)
-    if (call.isV9190) {
-        const {parentBountyId, childBountyId} = call.asV9190
+export function getUnassingCuratorData(itemCall: any): UnassingCuratorData {
+    if (unassignCurator.v9190.is(itemCall)) {
+        const {parentBountyId, childBountyId} = unassignCurator.v9190.decode(itemCall)
         return {
             parentBountyId,
             childBountyId,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
@@ -48,20 +44,19 @@ interface ProposeCuratorData {
     parentBountyId: number
     childBountyId: number
     fee: bigint
-    curator?: Uint8Array | number | undefined | null
+    curator?: string | number | undefined | null
 }
 
-export function getProposeCuratorData(ctx: BatchContext<Store, unknown>, itemCall: any): ProposeCuratorData {
-    const call = new ChildBountiesProposeCuratorCall(ctx, itemCall)
-    if (call.isV9190) {
-        const { parentBountyId, childBountyId, curator, fee } = call.asV9190
+export function getProposeCuratorData(itemCall: any): ProposeCuratorData {
+    if (proposeCurator.v9190.is(itemCall)) {
+        const { parentBountyId, childBountyId, curator, fee } = proposeCurator.v9190.decode(itemCall)
         return {
             parentBountyId: parentBountyId,
             childBountyId,
             fee,
-            curator: curator.value
+            curator: curator.__kind != "Index" ? curator.value : null
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }

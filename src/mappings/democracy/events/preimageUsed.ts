@@ -1,20 +1,16 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { ProposalStatus, ProposalType } from '../../../model'
+import { ProposalStatus } from '../../../model'
 import { updatePreimageStatus } from '../../utils/proposals'
 import { getPreimageUsedData } from './getters'
-
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handlePreimageUsed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.PreimageUsed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getPreimageUsedData(ctx, item.event)
+export async function handlePreimageUsed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getPreimageUsedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updatePreimageStatus(ctx, header, hexHash,{
+    await updatePreimageStatus(ctx, header, hash, extrinsicIndex, {
         status: ProposalStatus.Used,
     })
 }

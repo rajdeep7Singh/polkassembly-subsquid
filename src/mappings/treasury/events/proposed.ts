@@ -1,29 +1,28 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createTreasury } from '../../utils/proposals'
 import { getProposedData, getSpendApprovedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getProposedData(ctx, item.event)
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getProposedData(item)
 
     const storageData = await storage.treasury.getProposals(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.TreasuryProposal, index))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const { proposer, beneficiary, value, bond } = storageData
 
-    await createTreasury(ctx, header, {
+    await createTreasury(ctx, header, extrinsicIndex, {
         index,
         proposer: ss58codec.encode(proposer),
         status: ProposalStatus.Proposed,
@@ -33,12 +32,13 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
     })
 }
 
-export async function handleSpendApproved(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.SpendApproved', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { proposalIndex, amount, beneficiary } = getSpendApprovedData(ctx, item.event)
+export async function handleSpendApproved(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { proposalIndex, amount, beneficiary } = getSpendApprovedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await createTreasury(ctx, header, {
+    await createTreasury(ctx, header, extrinsicIndex, {
         index: proposalIndex,
         proposer: ss58codec.encode(beneficiary),
         status: ProposalStatus.Approved,

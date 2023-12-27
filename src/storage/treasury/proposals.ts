@@ -1,27 +1,23 @@
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
-import { TreasuryProposalsStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
+import { proposals } from '../../types/treasury/storage'
+import { ProcessorContext } from '../../processor'
 
 interface TreasuryProposalStorageData {
-    proposer: Uint8Array
+    proposer: string
     value: bigint
-    beneficiary: Uint8Array
+    beneficiary: string
     bond: bigint
 }
 
-async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<TreasuryProposalStorageData | undefined> {
-    const storage = new TreasuryProposalsStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV0) {
-        return await storage.asV0.get(index)
+async function getStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<TreasuryProposalStorageData | undefined> {
+    if (proposals.v0.is(block)) {
+        return await proposals.v0.get(block, index)
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Treasury.Proposals")
     }
 }
 
-export async function getProposals(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
+export async function getProposals(ctx: ProcessorContext<Store>, index: number, block: any) {
     return await getStorageData(ctx, index, block)
 }

@@ -1,28 +1,28 @@
 
-import { getOriginAccountId, ss58codec } from '../../../common/tools'
+import { getOriginAccountId } from '../../../common/tools'
 import { getDelegateData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { NoOpenVoteFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addDelegatedVotesReferendum, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes, VoteDecision } from '../../../model'
 import { randomUUID } from 'crypto'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Democracy.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const { to, lockPeriod, balance } = getDelegateData(ctx, item.call)
-    const toWallet = ss58codec.encode(to)
-    let from = getOriginAccountId(item.call.origin)
+export async function handleDelegate(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const { to, lockPeriod, balance } = getDelegateData(item)
+    let from = getOriginAccountId(item.origin)
     if(!from){
-        from = getOriginAccountId(item.extrinsic.call.origin)
+        from = getOriginAccountId(item?.extrinsic?.call?.origin)
     }
     if(!from){
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), type: DelegationType.Democracy } })
 
     if (delegations != null && delegations != undefined && delegations.length > 1) {
@@ -49,11 +49,12 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             id: `${await ctx.store.count(VotingDelegation)}`,
             createdAtBlock: header.height,
             from: from,
-            to: toWallet,
+            to: to,
             balance,
             lockPeriod,
             type: DelegationType.Democracy,
             createdAt: new Date(header.timestamp),
+            extrinsicIndex
         })
     )
     let votingPower = BigInt(0)
@@ -68,10 +69,10 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         if(!referendum || referendum.index === undefined || referendum.index === null){
             continue
         }
-        const votes = await ctx.store.find(ConvictionVote, { where: { voter: toWallet, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
+        const votes = await ctx.store.find(ConvictionVote, { where: { voter: to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.Referendum } })
         if(votes){
             if (votes.length > 1) {
-                ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, toWallet))
+                ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, to))
                 continue
             }
             else if (votes.length === 0) {
@@ -112,7 +113,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
                             voter: voter,
                             parentVote: vote,
                             isDelegated: true,
-                            delegatedTo: toWallet,
+                            delegatedTo: to,
                             proposalIndex: referendum.index,
                             proposal: referendum,
                             createdAtBlock: header.height,

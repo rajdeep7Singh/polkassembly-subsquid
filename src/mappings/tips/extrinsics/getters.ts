@@ -1,44 +1,36 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    TipsTipCall, TreasuryTipCall
-} from '../../../types/calls'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+    tip
+} from '../../../types/tips/calls'
+import {
+    tip as TreasuryTipCall
+} from '../../../types/treasury/calls'
 
 interface AccepterCuratorData {
-    hash: Uint8Array,
+    hash: string,
     tipValue: bigint,
 }
 
-export function getTipsTipData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
-    const call = new TipsTipCall(ctx, itemCall)
-    if (call.isV28) {
-        const { hash, tipValue } = call.asV28
+export function getTipsTipData(itemCall: any): AccepterCuratorData {
+    if (tip.v28.is(itemCall)) {
+        const { hash, tipValue } = tip.v28.decode(itemCall)
         return {
             hash,
             tipValue,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
-export function getTreasuryTipData(ctx: BatchContext<Store, unknown>, itemCall: any): AccepterCuratorData {
-    const call = new TreasuryTipCall(ctx, itemCall)
-    if (call.isV0) {
-        const { hash, tipValue } = call.asV0
-        return {
-            hash,
-            tipValue,
-        }
-    }else if (call.isV25) {
-        const { hash, tipValue } = call.asV25
+export function getTreasuryTipData(itemCall: any): AccepterCuratorData {
+    if (TreasuryTipCall.v0.is(itemCall)) {
+        const { hash, tipValue } = TreasuryTipCall.v0.decode(itemCall)
         return {
             hash,
             tipValue,
         }
     } else {
-        throw new UnknownVersionError(call.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }

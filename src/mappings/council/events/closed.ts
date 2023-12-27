@@ -1,21 +1,16 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
-import { getClosedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import {  getClosedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
+export async function handleClosed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const hash = getClosedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-export async function handleClosed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Council.Closed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const hash = getClosedData(ctx, item.event)
-
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.CouncilMotion, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.CouncilMotion, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Closed,
     })

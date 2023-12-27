@@ -1,33 +1,27 @@
 import { UnknownVersionError } from '../../common/errors'
-import { TipsTipsStorage, TipsReasonsStorage, TreasuryTipsStorage, TreasuryReasonsStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { tips, reasons } from '../../types/tips/storage'
+import { tips as TreasuryTipsStorage, reasons as TreasuryReasonsStorage } from '../../types/treasury/storage'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext } from '../../processor'
 interface TipStorageData {
-    who: Uint8Array
-    finder?: Uint8Array
+    who: string
+    finder?: string
     deposit?: bigint
-    reason: Uint8Array
+    reason: string
 }
 
 
-async function getTipsStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<TipStorageData | undefined> {
-    const storage = new TipsTipsStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV9110) {
-        return await storage.asV9110.get(hash)
+async function getTipsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<TipStorageData | undefined> {
+    if (tips.v28.is(block)) {
+        return await tips.v28.get(block, hash)
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Tips.tips")
     }
 }
 
-async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<TipStorageData | undefined> {
-    const storage = new TreasuryTipsStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV0) {
-        const storageData = await storage.asV0.get(hash)
+async function getTreasuryStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<TipStorageData | undefined> {
+    if (TreasuryTipsStorage.v0.is(block)) {
+        const storageData = await TreasuryTipsStorage.v0.get(block, hash)
         if (!storageData) return undefined
 
         const { who, finder, reason } = storageData
@@ -37,41 +31,45 @@ async function getTreasuryStorageData(ctx: BatchContext<Store, unknown>, hash: U
             deposit: finder?.[1],
             reason,
         }
-    } else if (storage.isV13) {
-        return await storage.asV13.get(hash)
+    } else if (TreasuryTipsStorage.v13.is(block)) {
+        return await TreasuryTipsStorage.v13.get(block, hash)
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Treasury.Tips")
     }
 }
 
-async function getTipsReasonsStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<string | undefined> {
-    const storage = new TipsReasonsStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV9110) {
-        return await storage.asV9110.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
+async function getTipsReasonsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<string | undefined> {
+    if (reasons.v28.is(block)) {
+        return await reasons.v28.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Treasury.Tips")
     }
 }
 
-async function getTreasuryReasonsStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<string | undefined> {
-    const storage = new TreasuryReasonsStorage(ctx, block)
-    if (!storage.isExists) return undefined
+async function getTreasuryReasonsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<string | undefined> {
 
-    if (storage.isV0) {
-        return await storage.asV0.get(hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (TreasuryReasonsStorage.v0.is(block)) {
+        return TreasuryReasonsStorage.v0.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Treasury.Reasons")
     }
 }
 
-async function getReason(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock) {
-    return (await getTipsReasonsStorageData(ctx, hash, block)) || (await getTreasuryReasonsStorageData(ctx, hash, block))
+async function getReason(ctx: ProcessorContext<Store>, hash: string, block: any) {
+    try{
+        return (await getTipsReasonsStorageData(ctx, hash, block)) 
+    }catch {
+        return (await getTreasuryReasonsStorageData(ctx, hash, block))
+    }
 }
 
-export async function getTips( ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock) {
-    let tipInfo = (await getTipsStorageData(ctx, hash, block)) || (await getTreasuryStorageData(ctx, hash, block))
+export async function getTips( ctx: ProcessorContext<Store>, hash: string, block: any) {
+    let tipInfo;
+    try{
+        tipInfo = await getTipsStorageData(ctx, hash, block)
+    }catch(e){
+        tipInfo = await getTreasuryStorageData(ctx, hash, block)
+    }
     if (!tipInfo) return undefined
 
     let reason = await getReason(ctx, tipInfo.reason, block).then((r) => r || '')

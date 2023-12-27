@@ -1,21 +1,20 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getDecisionDepositPlacedData } from './getters'
 import {createDecisionDeposit} from '../../utils/proposals'
 import { ss58codec } from '../../../common/tools'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleDecisionDepositPlaced(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.DecisionDepositPlaced', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, who, amount } = getDecisionDepositPlacedData(ctx, item.event)
+export async function handleDecisionDepositPlaced(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, who, amount } = getDecisionDepositPlacedData(item)
 
     const decisionDeposit = createDecisionDeposit({who: ss58codec.encode(who), amount})
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
+    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.DecisionDepositPlaced,
         data: {
             decisionDeposit: decisionDeposit

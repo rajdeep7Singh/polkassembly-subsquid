@@ -1,17 +1,16 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getChildBountyCancelledData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleCancelled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'ChildBounties.Canceled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { parentIndex, childIndex } = getChildBountyCancelledData(ctx, item.event)
+export async function handleCancelled(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { parentIndex, childIndex } = getChildBountyCancelledData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, childIndex, ProposalType.ChildBounty, {
+    await updateProposalStatus(ctx, header, childIndex, ProposalType.ChildBounty, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Cancelled,
     })

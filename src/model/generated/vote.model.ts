@@ -32,6 +32,9 @@ export class Vote {
     @Column_("timestamp with time zone", {nullable: false})
     timestamp!: Date
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Column_("varchar", {length: 12, nullable: true})
     decision!: VoteDecision | undefined | null
 

@@ -1,37 +1,37 @@
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
 import { getUnassingCuratorData, getUnassingCuratorDataOld } from './getters'
 
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { updateProposalStatus } from '../../utils/proposals'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleUnassignCurator(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Bounties.unassign_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
-    const { index } = getUnassingCuratorData(ctx, item.call)
+export async function handleUnassignCurator(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!item.success) return
+    const { index } = getUnassingCuratorData(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Bounty } })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.Bounty, index))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     proposal.curator = null
     await ctx.store.save(proposal)
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.CuratorUnassigned,
     })
 }
 
-export async function handleUnassignCuratorOld(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Treasury.unassign_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
-    const { index } = getUnassingCuratorDataOld(ctx, item.call)
+export async function handleUnassignCuratorOld(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!item.success) return
+    const { index } = getUnassingCuratorDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.Bounty } })
     if (!proposal) {
@@ -41,7 +41,7 @@ export async function handleUnassignCuratorOld(ctx: BatchContext<Store, unknown>
 
     proposal.curator = null
     await ctx.store.save(proposal)
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.CuratorUnassigned,
     })
 }

@@ -155,8 +155,10 @@ type Deciding {
 
 type StatusHistory @entity {
   id: ID!
-  proposal: Proposal!
+  proposal: Proposal
+  preimage: Preimage
   status: ProposalStatus!
+  extrinsicIndex: String
   block: Int!
   timestamp: DateTime!
 }
@@ -203,6 +205,7 @@ type Vote @entity {
   proposal: Proposal!
   blockNumber: Int! @index
   timestamp: DateTime! @index
+  extrinsicIndex: String
   decision: VoteDecision
   balance: VoteBalance
   lockPeriod: Int
@@ -214,6 +217,7 @@ type Tippers @entity {
   hash: String! @index
   tipper: String
   value: BigInt
+  extrinsicIndex: String
   proposal: Proposal!
   createdAtBlock: Int! @index
   createdAt: DateTime! @index
@@ -244,6 +248,7 @@ type ConvictionVote @entity {
   removedAt: DateTime @index
   selfVotingPower: BigInt @index
   delegatedVotingPower: BigInt @index
+  extrinsicIndex: String
   totalVotingPower: BigInt @index
   decision: VoteDecision! @index
   balance: VoteBalance!
@@ -299,6 +304,7 @@ type VotingDelegation @entity {
   lockPeriod: Int!
   track: Int
   type: DelegationType!
+  extrinsicIndex: String
   createdAt: DateTime!
   createdAtBlock: Int! @index
   endedAt: DateTime

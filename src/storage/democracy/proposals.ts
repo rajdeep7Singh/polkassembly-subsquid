@@ -1,31 +1,29 @@
 import { UnknownVersionError } from '../../common/errors'
-import { BlockContext } from '../../types/support'
-import { DemocracyPublicPropsStorage } from '../../types/storage'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { ProcessorContext } from '../../processor'
+import { publicProps } from '../../types/democracy/storage'
 import { Store } from '@subsquid/typeorm-store'
 
 interface DemocracyProposalStorageData {
     index: number
-    hash: Uint8Array
-    proposer: Uint8Array
+    hash: string
+    proposer: string
 }
 
-async function getStorageData(ctx: BatchContext<Store, unknown>, block: SubstrateBlock): Promise<DemocracyProposalStorageData[] | undefined> {
-    const storage = new DemocracyPublicPropsStorage(ctx, block)
-    if (storage.isV0) {
-        const storageData = await storage.asV0.get()
+async function getStorageData(ctx: ProcessorContext<Store>, block: any): Promise<DemocracyProposalStorageData[] | undefined> {
+    if (publicProps.v0.is(block)) {
+        const storageData = await publicProps.v0.get(block)
         if (!storageData) return undefined
 
         return storageData.map((proposal): DemocracyProposalStorageData => {
             const [index, hash, proposer] = proposal
             return {
                 index,
-                hash,
+                hash: hash,
                 proposer,
             }
         })
-    } else if(storage.isV9340){
-        const storageData = await storage.asV9340.get()
+    } else if(publicProps.v9340.is(block)){
+        const storageData = await publicProps.v9340.get(block)
         if (!storageData) return undefined
 
         return storageData.map((proposal): DemocracyProposalStorageData => {
@@ -46,10 +44,10 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, block: Substrat
         })
 
     }else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Democracy.publicProps")
     }
 }
 
-export async function getProposals(ctx: BatchContext<Store, unknown>, block: SubstrateBlock) {
+export async function getProposals(ctx: ProcessorContext<Store>, block: any) {
     return await getStorageData(ctx, block)
 }

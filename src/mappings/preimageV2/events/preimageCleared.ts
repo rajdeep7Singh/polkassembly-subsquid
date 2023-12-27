@@ -1,20 +1,17 @@
 import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
-import { ProposalStatus, ProposalType } from '../../../model'
+import { ProposalStatus } from '../../../model'
 import { updatePreimageStatusV2 } from '../../utils/proposals'
 import { getPreimageClearedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handlePreimageV2Cleared(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Preimage.Cleared', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getPreimageClearedData(ctx, item.event)
+export async function handlePreimageV2Cleared(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getPreimageClearedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updatePreimageStatusV2(ctx, header, hexHash, {
+    await updatePreimageStatusV2(ctx, header, hash, extrinsicIndex, {
         status: ProposalStatus.Cleared,
     })
 }

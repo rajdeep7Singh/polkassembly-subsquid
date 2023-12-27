@@ -1,138 +1,129 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    TipsNewTipEvent,
-    TipsTipClosedEvent,
-    TipsTipRetractedEvent,
-    TipsTipSlashedEvent,
-    TreasuryNewTipEvent,
-    TreasuryTipClosedEvent,
-    TreasuryTipRetractedEvent,
-} from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { Event } from '../../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
-
+    newTip,
+    tipClosed,
+    tipRetracted,
+    tipSlashed
+} from '../../../types/tips/events'
+import {
+    tipClosed as TipsClosedEvent,
+    tipRetracted as TipsRetractedEvent,
+    newTip as TipsNewTipEvent,
+} from '../../../types/treasury/events'
+import { Event } from '../../../processor'
 interface ClosedData {
-    hash: Uint8Array
+    hash: string
     reward: bigint
 }
 
-export function getClosedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
-    const event = new TreasuryTipClosedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const [hash, , reward] = event.asV0
+export function getClosedDataOld(itemEvent: Event): ClosedData {
+    if (TipsClosedEvent.v0.is(itemEvent)) {
+        const [hash, , reward] = TipsClosedEvent.v0.decode(itemEvent)
         return {
             hash,
             reward,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ClosedData {
-    const event = new TipsTipClosedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const [hash, , reward] = event.asV28
+export function getClosedData(itemEvent: Event): ClosedData {
+    if (tipClosed.v28.is(itemEvent)) {
+        const [hash, , reward] = tipClosed.v28.decode(itemEvent)
         return {
             hash,
             reward,
         }
-    } else if (event.isV9140) {
-        const { tipHash: hash, payout: reward } = event.asV9140
+    } else if (tipClosed.v9140.is(itemEvent)) {
+        const { tipHash: hash, payout: reward } = tipClosed.v9140.decode(itemEvent)
         return {
             hash,
             reward,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface NewTipData {
-    hash: Uint8Array
+    hash: string
 }
 
-export function getNewTipDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
-    const event = new TreasuryNewTipEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const hash = event.asV0
+export function getNewTipDataOld(itemEvent: Event): NewTipData {
+    if (TipsNewTipEvent.v0.is(itemEvent)) {
+        const hash = TipsNewTipEvent.v0.decode(itemEvent)
         return {
-            hash,
+            hash
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getNewTipData(ctx: BatchContext<Store, unknown>, itemEvent: Event): NewTipData {
-    const event = new TipsNewTipEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const hash = event.asV28
+export function getNewTipData(itemEvent: Event): NewTipData {
+    if (newTip.v28.is(itemEvent)) {
+        const hash = newTip.v28.decode(itemEvent)
         return {
             hash,
         }
-    } else if (event.isV9140) {
-        const { tipHash: hash } = event.asV9140
+    } else if (newTip.v9140.is(itemEvent)) {
+        const { tipHash: hash } = newTip.v9140.decode(itemEvent)
         return {
             hash,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface RectractedData {
-    hash: Uint8Array
+    hash: string
 }
 
-export function getRectractedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
-    const event = new TreasuryTipRetractedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const hash = event.asV0
+export function getRectractedDataOld(itemEvent: Event): RectractedData {
+    if (TipsRetractedEvent.v0.is(itemEvent)) {
+        const hash = TipsRetractedEvent.v0.decode(itemEvent)
         return {
             hash,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getRectractedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): RectractedData {
-    const event = new TipsTipRetractedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const hash = event.asV28
+export function getRectractedData(itemEvent: Event): RectractedData {
+    if (tipRetracted.v28.is(itemEvent)) {
+        const hash = tipRetracted.v28.decode(itemEvent)
         return {
             hash,
         }
-    } else if (event.isV9140) {
-        const { tipHash: hash } = event.asV9140
+    } else if (tipRetracted.v9140.is(itemEvent)) {
+        const { tipHash: hash } = tipRetracted.v9140.decode(itemEvent)
         return {
             hash,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface SlashedData {
-    hash: Uint8Array
+    hash: string
 }
 
-export function getSlashedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): SlashedData {
-    const event = new TipsTipSlashedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const [hash] = event.asV28
+export function getSlashedData(itemEvent: Event): SlashedData {
+    if (tipSlashed.v28.is(itemEvent)) {
+        const [hash] = tipSlashed.v28.decode(itemEvent)
         return {
             hash,
         }
-    } else if (event.isV9140) {
-        const { tipHash: hash } = event.asV9140
+    } else if (tipSlashed.v9140.is(itemEvent)) {
+        const { tipHash: hash } = tipSlashed.v9140.decode(itemEvent)
         return {
             hash,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

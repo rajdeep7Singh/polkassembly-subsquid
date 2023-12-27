@@ -1,11 +1,11 @@
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto';
 import { getStorageData } from '../mappings/referendumV2/events/referendaSubmitted';
 import { Proposal, CurveData } from '../model'
 import { getTotalInactiveIssuanceStorageData, getTotalIssuanceStorageData } from '../storage/balances';
+import { ProcessorContext } from '../processor';
 
-export async function updateCurveData(ctx: BatchContext<Store, unknown>, header: SubstrateBlock, proposal: Proposal) {
+export async function updateCurveData(ctx: ProcessorContext<Store>, header: any, proposal: Proposal) {
     if(proposal.index == null || proposal.index == undefined){
         return;
     }

@@ -1,27 +1,27 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getBountyBacameActiveData, getBountyBacameActiveDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleBecameActiveOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.BountyBecameActive', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyBacameActiveDataOld(ctx, item.event)
+export async function handleBecameActiveOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getBountyBacameActiveDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header,  index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header,  index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Active,
     })
 }
 
-export async function handleBecameActive(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Bounties.BountyBecameActive', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getBountyBacameActiveData(ctx, item.event)
+export async function handleBecameActive(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getBountyBacameActiveData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header,  index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header,  index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Active,
     })
 }

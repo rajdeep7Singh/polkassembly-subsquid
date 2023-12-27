@@ -1,44 +1,40 @@
 import { toHex } from '@subsquid/substrate-processor'
-import { DemocracyProposedEvent } from '../../../types/events'
+import { proposed } from '../../../types/democracy/events'
 import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
-import { EventContext } from '../../../types/support'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createDemocracyProposal } from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
-import { Event } from '../../../types/support'
+import { ProcessorContext, Event } from '../../../processor'
 
 interface DemocracyProposalEventData {
     index: number
     deposit: bigint
 }
 
-function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): DemocracyProposalEventData {
-    const event = new DemocracyProposedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const [index, deposit] = event.asV0
+function getEventData(itemEvent: Event): DemocracyProposalEventData {
+    if (proposed.v0.is(itemEvent)) {
+        const [index, deposit] = proposed.v0.decode(itemEvent)
         return {
             index,
             deposit,
         }
-    } else if (event.isV9140) {
-        const { proposalIndex: index, deposit } = event.asV9140
+    } else if (proposed.v9140.is(itemEvent)) {
+        const { proposalIndex: index, deposit } = proposed.v9140.decode(itemEvent)
         return {
             index,
             deposit,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, deposit } = getEventData(ctx, item.event)
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, deposit } = getEventData(item)
 
     const storageData = await storage.democracy.getProposals(ctx, header)
     if (!storageData) {
@@ -52,10 +48,10 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
         return
     }
     const { hash, proposer } = proposalData
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await createDemocracyProposal(ctx, header, {
-        hash: hexHash,
+    await createDemocracyProposal(ctx, header, extrinsicIndex, {
+        hash,
         index,
         proposer: ss58codec.encode(proposer),
         status: ProposalStatus.Proposed,

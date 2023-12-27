@@ -1,21 +1,16 @@
-
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
-import { getDissaprovedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { getDisapprovedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleDisapproved(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Council.Disapproved', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const hash = getDissaprovedData(ctx, item.event)
+export async function handleDisapproved(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const hash = getDisapprovedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.CouncilMotion, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.CouncilMotion, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Disapproved,
     })

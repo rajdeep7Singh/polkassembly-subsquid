@@ -1,6 +1,5 @@
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import fetch from 'node-fetch'
@@ -46,6 +45,7 @@ import {
 import { randomUUID } from 'crypto'
 import config from '../../config'
 import referendumV2 from '../referendumV2'
+import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -55,9 +55,10 @@ type ProposalUpdateData = Partial<
 >
 
 export async function updatePreimageStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
+    extrinsicIndex: string,
     options: {
         status: ProposalStatus
         isEnded?: boolean
@@ -77,12 +78,26 @@ export async function updatePreimageStatus(
     proposal.status = options.status
 
     await ctx.store.save(proposal)
+
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.updatedAtBlock || undefined,
+            timestamp: proposal.updatedAt,
+            extrinsicIndex,
+            status: proposal.status,
+            preimage: proposal,
+        })
+    )
+
+    await ctx.store.save(proposal)
 }
 
 export async function updatePreimageStatusV2(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
+    extrinsicIndex: string,
     options: {
         status: ProposalStatus
         isEnded?: boolean
@@ -101,14 +116,26 @@ export async function updatePreimageStatusV2(
     proposal.updatedAtBlock = header.height
     proposal.status = options.status
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: proposal.updatedAtBlock || undefined,
+            timestamp: proposal.updatedAt,
+            extrinsicIndex,
+            status: proposal.status,
+            preimage: proposal,
+        })
+    )
+
     await ctx.store.save(proposal)
 }
 
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     index: number,
     type: IndexProposal,
+    extrinsicIndex: string,
     options: {
         status: ProposalStatus
         isEnded?: boolean
@@ -116,10 +143,11 @@ export async function updateProposalStatus(
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hash: string,
     type: HashProposal,
+    extrinsicIndex: string,
     options: {
         status: ProposalStatus
         isEnded?: boolean
@@ -127,10 +155,11 @@ export async function updateProposalStatus(
     }
 ): Promise<void>
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     hashOrIndex: string | number,
     type: ProposalType,
+    extrinsicIndex: string,
     options: {
         status: ProposalStatus
         isEnded?: boolean
@@ -180,8 +209,9 @@ export async function updateProposalStatus(
     await ctx.store.insert(
         new StatusHistory({
             id: randomUUID(),
-            block: proposal.updatedAtBlock,
+            block: proposal.updatedAtBlock || undefined,
             timestamp: proposal.updatedAt,
+            extrinsicIndex,
             status: proposal.status,
             proposal,
         })
@@ -191,7 +221,7 @@ export async function updateProposalStatus(
 }
 
 async function getOrCreateProposalGroup(
-    ctx: BatchContext<Store, unknown>,
+    ctx: ProcessorContext<Store>,
     index: number,
     type: ProposalType,
     parentId: number,
@@ -339,8 +369,9 @@ async function getPreimageId(store: Store) {
 // }
 
 export async function createDemocracyProposal(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
+    extrinsicIndex: string,
     data: DemocracyProposalData
 ): Promise<Proposal> {
     const { index, hash, proposer, deposit, status } = data
@@ -382,6 +413,7 @@ export async function createDemocracyProposal(
             timestamp: proposal.createdAt,
             status: proposal.status,
             proposal,
+            extrinsicIndex
         })
     )
 
@@ -390,7 +422,7 @@ export async function createDemocracyProposal(
     return proposal
 }
 
-export async function createReferendum( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ReferendumData): Promise<Proposal> {
+export async function createReferendum( ctx: ProcessorContext<Store>, header: any,  extrinsicIndex: string, data: ReferendumData): Promise<Proposal> {
     const { index, threshold, hash, status, end, delay } = data
 
     const type = ProposalType.Referendum
@@ -458,8 +490,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
     if (!proposer && preimage && preimage.proposer) {
         proposer = preimage.proposer
     }
-
-
+    
     const proposal = new Proposal({
         id,
         index,
@@ -488,6 +519,7 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
             timestamp: proposal.createdAt,
             status: proposal.status,
             proposal,
+            extrinsicIndex
         })
     )
 
@@ -497,8 +529,9 @@ export async function createReferendum( ctx: BatchContext<Store, unknown>, heade
 }
 
 export async function createCoucilMotion(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
+    extrinsicIndex: string,
     data: CouncilMotionData,
     type: ProposalType.CouncilMotion | ProposalType.TechCommitteeProposal = ProposalType.CouncilMotion
 ): Promise<Proposal> {
@@ -640,6 +673,7 @@ export async function createCoucilMotion(
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex,
             proposal,
         })
     )
@@ -650,14 +684,15 @@ export async function createCoucilMotion(
 }
 
 export async function createTechCommitteeMotion(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
+    extrinsicIndex: string,
     data: TechCommitteeMotionData
 ): Promise<Proposal> {
-    return await createCoucilMotion(ctx, header, data, ProposalType.TechCommitteeProposal)
+    return await createCoucilMotion(ctx, header, extrinsicIndex, data, ProposalType.TechCommitteeProposal)
 }
 
-export async function createTip( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TipData): Promise<Proposal> {
+export async function createTip( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: TipData): Promise<Proposal> {
     const { status, hash, proposer, payee, deposit, reason } = data
 
     const type = ProposalType.Tip
@@ -686,6 +721,7 @@ export async function createTip( ctx: BatchContext<Store, unknown>, header: Subs
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex,
             proposal,
         })
     )
@@ -695,7 +731,7 @@ export async function createTip( ctx: BatchContext<Store, unknown>, header: Subs
     return proposal
 }
 
-export async function createBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: BountyData): Promise<Proposal> {
+export async function createBounty( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: BountyData): Promise<Proposal> {
     const { status, index, proposer, deposit, reward, curatorDeposit, description, fee } = data
 
     const type = ProposalType.Bounty
@@ -728,6 +764,7 @@ export async function createBounty( ctx: BatchContext<Store, unknown>, header: S
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex,
             proposal,
         })
     )
@@ -737,7 +774,7 @@ export async function createBounty( ctx: BatchContext<Store, unknown>, header: S
     return proposal
 }
 
-export async function createChildBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ChildBountyData): Promise<Proposal> {
+export async function createChildBounty( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: ChildBountyData): Promise<Proposal> {
     const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description, proposer } = data
 
     const type = ProposalType.ChildBounty
@@ -770,6 +807,7 @@ export async function createChildBounty( ctx: BatchContext<Store, unknown>, head
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex,
             proposal,
         })
     )
@@ -779,7 +817,7 @@ export async function createChildBounty( ctx: BatchContext<Store, unknown>, head
     return proposal
 }
 
-export async function createTreasury( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TreasuryData): Promise<Proposal> {
+export async function createTreasury( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: TreasuryData): Promise<Proposal> {
     const { status, index, proposer, deposit, reward, payee } = data
 
     const type = ProposalType.TreasuryProposal
@@ -837,6 +875,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
             block: proposal.createdAtBlock,
             timestamp: proposal.createdAt,
             status: proposal.status,
+            extrinsicIndex,
             proposal,
         })
     )
@@ -846,7 +885,7 @@ export async function createTreasury( ctx: BatchContext<Store, unknown>, header:
     return proposal
 }
 
-export async function createPreimage( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+export async function createPreimage( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: PreimageData): Promise<Preimage> {
     const { status, hash, proposer, call, section, method } = data
 
     // const type = ProposalType.Preimage
@@ -877,10 +916,21 @@ export async function createPreimage( ctx: BatchContext<Store, unknown>, header:
         await ctx.store.save(proposal)
     }
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: preimage.createdAtBlock,
+            timestamp: preimage.createdAt,
+            status: preimage.status,
+            extrinsicIndex,
+            preimage,
+        })
+    )
+
     return preimage
 }
 
-export async function createPreimageV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+export async function createPreimageV2( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: PreimageData): Promise<Preimage> {
     const { status, hash, proposer, call, section, method, deposit, length } = data
 
     // const type = ProposalType.Preimage
@@ -913,10 +963,21 @@ export async function createPreimageV2( ctx: BatchContext<Store, unknown>, heade
         await ctx.store.save(associatedProposal)
     }
 
+    await ctx.store.insert(
+        new StatusHistory({
+            id: randomUUID(),
+            block: preimage.createdAtBlock,
+            timestamp: preimage.createdAt,
+            status: preimage.status,
+            extrinsicIndex,
+            preimage,
+        })
+    )
+
     return preimage
 }
 
-export async function createReferendumV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ReferendumDataV2, type: ProposalType): Promise<Proposal> {
+export async function createReferendumV2( ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: ReferendumDataV2, type: ProposalType): Promise<Proposal> {
 
     const { status, index, proposer, hash, tally, origin, trackNumber, submissionDeposit, submittedAt, enactmentAfter, enactmentAt, deciding, decisionDeposit } = data
 
@@ -990,6 +1051,7 @@ export async function createReferendumV2( ctx: BatchContext<Store, unknown>, hea
             timestamp: proposal.createdAt,
             status: proposal.status,
             proposal,
+            extrinsicIndex
         })
     )
 
@@ -1019,7 +1081,7 @@ export function createSubmissionDeposit(data: SubmissionDepositData): Submission
     return new SubmissionDeposit(toJSON(data))
 }
 
-export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
+export async function sendNotification(ctx: ProcessorContext<Store>, proposal: Proposal, trigger: String) {
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
     return
@@ -1102,7 +1164,7 @@ export async function sendNotification(ctx: BatchContext<Store, unknown>, propos
     // }
 }
 
-export async function updateRedis(ctx: BatchContext<Store, unknown>, proposal: Proposal){
+export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     return
     // try{

@@ -1,11 +1,10 @@
 import { ConvictionDelegatedVotes, ConvictionVote, FlattenedConvictionVotes, Vote } from '../../model'
-import { CommonHandlerContext } from '../types/contexts'
 import { Store } from '@subsquid/typeorm-store'
-import { BatchContext } from '@subsquid/substrate-processor'
+import { ProcessorContext } from '../../processor'
 
 const proposalsVotes = new Map<string, number>()
 
-export async function getVotesCount(ctx: CommonHandlerContext, proposalId: string) {
+export async function getVotesCount(ctx: ProcessorContext<Store>, proposalId: string) {
     let count = proposalsVotes.get(proposalId)
     if (count == null) {
         count = await ctx.store.count(Vote, {
@@ -20,7 +19,7 @@ export async function getVotesCount(ctx: CommonHandlerContext, proposalId: strin
 
 const proposals = new Map<number, number>()
 
-export async function getConvictionVotesCount(ctx: BatchContext<Store, unknown>, proposalId: number) {
+export async function getConvictionVotesCount(ctx: ProcessorContext<Store>, proposalId: number) {
     let count = proposals.get(proposalId)
     if (count == null) {
         count = await ctx.store.count(ConvictionVote, {
@@ -35,7 +34,7 @@ export async function getConvictionVotesCount(ctx: BatchContext<Store, unknown>,
 
 const delegatedVotesCount = new Map<String, number>()
 
-export async function getConvictionDelegatedVotesCount(ctx: BatchContext<Store, unknown>) {
+export async function getConvictionDelegatedVotesCount(ctx: ProcessorContext<Store>) {
     let count = delegatedVotesCount.get('delegatedVoteCount')
     if (count == null) {
         count = await ctx.store.count(ConvictionDelegatedVotes)
@@ -46,7 +45,7 @@ export async function getConvictionDelegatedVotesCount(ctx: BatchContext<Store, 
 
 const flattenedVotesCount = new Map<String, number>()
 
-export async function getFlattenedConvictionVotesCount(ctx: BatchContext<Store, unknown>) {
+export async function getFlattenedConvictionVotesCount(ctx: ProcessorContext<Store>) {
     let count = flattenedVotesCount.get('flattenedVoteCount')
     if (count == null) {
         count = await ctx.store.count(FlattenedConvictionVotes)

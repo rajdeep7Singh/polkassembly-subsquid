@@ -2,16 +2,16 @@ import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getBountyClaimedData, getBountyClaimedDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleClaimedOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.BountyClaimed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, payout, beneficiary } = getBountyClaimedDataOld(ctx, item.event)
+export async function handleClaimedOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, payout, beneficiary } = getBountyClaimedDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Claimed,
         data: {
             reward: payout,
@@ -20,12 +20,13 @@ export async function handleClaimedOld(ctx: BatchContext<Store, unknown>,
     })
 }
 
-export async function handleClaimed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Bounty.BountyClaimed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, payout, beneficiary } = getBountyClaimedData(ctx, item.event)
+export async function handleClaimed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, payout, beneficiary } = getBountyClaimedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Claimed,
         data: {
             reward: payout,

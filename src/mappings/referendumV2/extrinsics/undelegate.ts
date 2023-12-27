@@ -3,20 +3,19 @@ import { NoDelegationFound, TooManyOpenDelegations, TooManyOpenVotes } from '../
 import { IsNull } from 'typeorm'
 import { ConvictionVote, DelegationType, Proposal, ProposalType, VoteType } from '../../../model'
 import { getUndelegateData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import {
     VotingDelegation
 } from '../../../model'
 import { removeFlattenedVotes } from './utils'
+import { Call, ProcessorContext } from '../../../processor'
 
-export async function handleUndelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.undelegate', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const from = getOriginAccountId(item.call.origin)
-    const { track } = getUndelegateData(ctx, item.call)
+export async function handleUndelegate(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const from = getOriginAccountId(item.origin)
+    const { track } = getUndelegateData(item)
     let delegation = null;
     const delegations = await ctx.store.find(VotingDelegation, { where: { from, endedAtBlock: IsNull(), track, type: DelegationType.OpenGov } })
     if(delegations != undefined && delegations != null){

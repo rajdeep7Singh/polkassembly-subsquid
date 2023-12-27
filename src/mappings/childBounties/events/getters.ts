@@ -1,33 +1,29 @@
 import { Index } from 'typeorm'
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    ChildBountiesAddedEvent,
-    ChildBountiesAwardedEvent,
-    ChildBountiesCanceledEvent,
-    ChildBountiesClaimedEvent,
-} from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { Event } from '../../../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
+    added,
+    awarded,
+    canceled,
+    claimed,
+} from '../../../types/child-bounties/events'
 import { Store } from '@subsquid/typeorm-store'
 
 interface ChildBountyAwardedData {
     parentIndex: number
     childIndex: number
-    beneficiary: Uint8Array
+    beneficiary: string
 }
 
-export function getChildBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAwardedData {
-    const event = new ChildBountiesAwardedEvent(ctx, itemEvent)
-    if (event.isV9190) {
-        const { index, childIndex, beneficiary } = event.asV9190
+export function getChildBountyAwardedData(itemEvent: any): ChildBountyAwardedData {
+    if (awarded.v9190.is(itemEvent)) {
+        const { index, childIndex, beneficiary } = awarded.v9190.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
             beneficiary,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -36,16 +32,15 @@ interface ChildBountyCancelledData {
     childIndex: number,
 }
 
-export function getChildBountyCancelledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyCancelledData {
-    const event = new ChildBountiesCanceledEvent(ctx, itemEvent)
-    if (event.isV9190) {
-        const { index, childIndex } = event.asV9190
+export function getChildBountyCancelledData(itemEvent: any): ChildBountyCancelledData {
+    if (canceled.v9190.is(itemEvent)) {
+        const { index, childIndex } = canceled.v9190.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -53,13 +48,12 @@ interface ChildBountyClaimedData {
     parentIndex: number
     childIndex: number
     payout: bigint
-    beneficiary: Uint8Array
+    beneficiary: string
 }
 
-export function getChildBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyClaimedData {
-    const event = new ChildBountiesClaimedEvent(ctx, itemEvent)
-    if (event.isV9190) {
-        const { index, childIndex, payout, beneficiary } = event.asV9190
+export function getChildBountyClaimedData(itemEvent: any): ChildBountyClaimedData {
+    if (claimed.v9190.is(itemEvent)) {
+        const { index, childIndex, payout, beneficiary } = claimed.v9190.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
@@ -67,7 +61,7 @@ export function getChildBountyClaimedData(ctx: BatchContext<Store, unknown>, ite
             beneficiary,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -76,15 +70,14 @@ interface ChildBountyAddedData {
     childIndex: number
 }
 
-export function getChildBountyAddedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ChildBountyAddedData {
-    const event = new ChildBountiesAddedEvent(ctx, itemEvent)
-    if (event.isV9190) {
-        const { index, childIndex } = event.asV9190
+export function getChildBountyAddedData(itemEvent: any): ChildBountyAddedData {
+    if (added.v9190.is(itemEvent)) {
+        const { index, childIndex } = added.v9190.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

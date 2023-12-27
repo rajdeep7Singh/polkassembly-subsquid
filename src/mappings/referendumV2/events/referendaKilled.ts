@@ -1,20 +1,19 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getKilledData } from './getters'
 import {createTally} from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleKilled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.Killed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, tally } = getKilledData(ctx, item.event)
+export async function handleKilled(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, tally } = getKilledData(item)
 
     const tallyData = createTally(tally)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
+    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Killed,
         data: {

@@ -1,91 +1,86 @@
 import assert from 'assert'
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    CouncilApprovedEvent,
-    CouncilClosedEvent,
-    CouncilDisapprovedEvent,
-    CouncilExecutedEvent,
-    CouncilProposedEvent,
-    CouncilVotedEvent,
-} from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { Event } from '../../../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
+    approved,
+    closed,
+    disapproved,
+    executed,
+    proposed,
+    voted,
+} from '../../../types/council/events'
 
-export function getApprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilApprovedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        return event.asV0
-    } else if (event.isV9140) {
-        return event.asV9140.proposalHash
+import { Event } from '../../../processor'
+
+export function getApprovedData(itemEvent: Event): string {
+    if (approved.v0.is(itemEvent)) {
+        return approved.v0.decode(itemEvent)
+    } else if (approved.v9140.is(itemEvent)) {
+        return approved.v9140.decode(itemEvent).proposalHash
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getClosedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilClosedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        return event.asV0[0]
-    } else if (event.isV9140) {
-        return event.asV9140.proposalHash
+export function getClosedData(itemEvent: Event): string {
+    if (closed.v0.is(itemEvent)) {
+        return closed.v0.decode(itemEvent)[0]
+    } else if (closed.v9140.is(itemEvent)) {
+        return closed.v9140.decode(itemEvent).proposalHash
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getDissaprovedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilDisapprovedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        return event.asV0
-    } else if (event.isV9140) {
-        return event.asV9140.proposalHash
+export function getDisapprovedData(itemEvent: Event): string {
+    if (disapproved.v0.is(itemEvent)) {
+        return disapproved.v0.decode(itemEvent)[0]
+    } else if (disapproved.v9140.is(itemEvent)) {
+        return disapproved.v9140.decode(itemEvent).proposalHash
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getExecutedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): Uint8Array {
-    const event = new CouncilExecutedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        return event.asV0[0]
-    } else if (event.isV9110) {
-        return event.asV9110[0]
-    } else if (event.isV9140) {
-        return event.asV9140.proposalHash
-    } else if (event.isV9170) {
-        return event.asV9170.proposalHash
-    }else if (event.isV9190) {
-        return event.asV9190.proposalHash
-    }else if (event.isV9340) {
-        return event.asV9340.proposalHash
+export function getExecutedData(itemEvent: Event): string {
+    if (executed.v0.is(itemEvent)) {
+        return executed.v0.decode(itemEvent)[0]
+    } else if (executed.v9110.is(itemEvent)) {
+        return executed.v9110.decode(itemEvent)[0]
+    } else if (executed.v9140.is(itemEvent)) {
+        return executed.v9140.decode(itemEvent).proposalHash
+    } else if (executed.v9170.is(itemEvent)) {
+        return executed.v9170.decode(itemEvent).proposalHash
+    } else if (executed.v9190.is(itemEvent)) {
+        return executed.v9190.decode(itemEvent).proposalHash
+    }else if (executed.v9340.is(itemEvent)) {
+        return executed.v9340.decode(itemEvent).proposalHash
+    } else if (executed.v9420.is(itemEvent)) {
+        return executed.v9420.decode(itemEvent).proposalHash
+    } else if (executed.v9430.is(itemEvent)) {
+        return executed.v9430.decode(itemEvent).proposalHash
     } else {
-        const data = ctx._chain.decodeEvent(itemEvent)
-        assert(Buffer.isBuffer(data.proposalHash))
-        return data.proposalHash
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export interface ProposedData {
-    proposer: Uint8Array
+    proposer: string
     index: number
-    hash: Uint8Array
+    hash: string
     threshold: number
 }
 
-export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): ProposedData {
-    const event = new CouncilProposedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const [proposer, index, hash, threshold] = event.asV0
+export function getProposedData(itemEvent: Event): ProposedData {
+    if (proposed.v0.is(itemEvent)) {
+        const [proposer, index, hash, threshold] = proposed.v0.decode(itemEvent)
         return {
             proposer,
             index,
             hash,
             threshold,
         }
-    } else if (event.isV9140) {
-        const { account, proposalIndex, proposalHash, threshold } = event.asV9140
+    } else if (proposed.v9140.is(itemEvent)) {
+        const { account, proposalIndex, proposalHash, threshold } = proposed.v9140.decode(itemEvent)
         return {
             proposer: account,
             index: proposalIndex,
@@ -93,33 +88,32 @@ export function getProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Ev
             threshold,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export interface VotedData {
-    voter: Uint8Array
-    hash: Uint8Array
+    voter: string
+    hash: string
     decision: boolean
 }
 
-export function getVotedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): VotedData {
-    const event = new CouncilVotedEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const [voter, hash, decision] = event.asV0
+export function getVotedData(itemEvent: Event): VotedData {
+    if (voted.v0.is(itemEvent)) {
+        const [voter, hash, decision] = voted.v0.decode(itemEvent)
         return {
             voter,
             hash,
             decision,
         }
-    } else if (event.isV9140) {
-        const { account, proposalHash, voted } = event.asV9140
+    } else if (voted.v9140.is(itemEvent)) {
+        const { account, proposalHash, voted: voteData } = voted.v9140.decode(itemEvent)
         return {
             voter: account,
             hash: proposalHash,
-            decision: voted,
+            decision: voteData,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

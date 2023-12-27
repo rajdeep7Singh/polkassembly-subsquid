@@ -1,33 +1,30 @@
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getRectractedData, getRectractedDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleRetractedOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.TipRetracted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getRectractedDataOld(ctx, item.event)
+export async function handleRetractedOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getRectractedDataOld(item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Retracted,
     })
 }
 
-export async function handleRetracted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Tips.TipRetracted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getRectractedData(ctx, item.event)
+export async function handleRetracted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getRectractedData(item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Retracted,
     })

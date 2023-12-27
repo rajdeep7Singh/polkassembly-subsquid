@@ -1,19 +1,17 @@
 
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { storage } from '../../../storage'
 import { createChildBounty } from '../../utils/proposals'
 import { getChildBountyAddedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'ChildBounties.Added', { event: { args: true; extrinsic: { hash: true, call: {origin: true} } } }>,
-    header: SubstrateBlock) {
-    const { parentIndex, childIndex } = getChildBountyAddedData(ctx, item.event)
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { parentIndex, childIndex } = getChildBountyAddedData(item)
 
     const storageData = await storage.childBounties.getChildBounties(ctx, parentIndex, childIndex, header)
     if (!storageData) {
@@ -21,15 +19,18 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const origin = item.event.extrinsic?.call?.origin
+    const origin = item.extrinsic?.call?.origin
     let proposer;
     if(origin){
         proposer = getOriginAccountId(origin)
     }
 
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
+
     const { value, fee, description, curatorDeposit } = storageData
 
-    await createChildBounty(ctx, header, {
+    await createChildBounty(ctx, header, extrinsicIndex, {
         index: childIndex,
         parentBountyIndex: parentIndex,
         status: ProposalStatus.Added,

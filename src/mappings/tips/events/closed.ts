@@ -2,18 +2,16 @@ import { toHex } from '@subsquid/substrate-processor'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getClosedData, getClosedDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleClosedOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'TechnicalCommittee.Executed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash, reward } = getClosedDataOld(ctx, item.event)
+export async function handleClosedOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash, reward } = getClosedDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Closed,
         data: {
@@ -22,14 +20,14 @@ export async function handleClosedOld(ctx: BatchContext<Store, unknown>,
     })
 }
 
-export async function handleClosed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'TechnicalCommittee.Executed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash, reward } = getClosedData(ctx, item.event)
+export async function handleClosed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash, reward } = getClosedData( item)
 
-    const hexHash = toHex(hash)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Closed,
         data: {

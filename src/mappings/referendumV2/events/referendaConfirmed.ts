@@ -1,21 +1,20 @@
 import { ProposalStatus, ProposalType } from '../../../model'
-import { EventHandlerContext } from '../../types/contexts'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getConfirmedData } from './getters'
 import {createTally} from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleConfirmed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.Confirmed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
+export async function handleConfirmed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
         
-    const { index, tally } = getConfirmedData(ctx, item.event)
+    const { index, tally } = getConfirmedData(item)
 
     const tallyData = createTally(tally)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
+    await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.Confirmed,
         data: {
             tally: tallyData

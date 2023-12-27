@@ -1,53 +1,50 @@
-import { EventHandlerContext } from '../../types/contexts'
-import { DemocracyTabledEvent } from '../../../types/events'
+import { tabled } from '../../../types/democracy/events'
 import { UnknownVersionError } from '../../../common/errors'
-import { EventContext } from '../../../types/support'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
-import { Event } from '../../../types/support'
+import { ProcessorContext, Event } from '../../../processor'
+
 interface TabledEventData {
     index: number
     deposit: bigint
-    depositors?: Uint8Array[]
+    depositors?: string[]
 }
 
-function getEventData(ctx: BatchContext<Store, unknown>, itemEvent: Event): TabledEventData {
-    const event = new DemocracyTabledEvent(ctx, itemEvent)
-    if (event.isV0) {
-        const [index, deposit, depositors] = event.asV0
+function getEventData(itemEvent: Event): TabledEventData {
+    if (tabled.v0.is(itemEvent)) {
+        const [index, deposit, depositors] = tabled.v0.decode(itemEvent)
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (event.isV9140) {
-        const { proposalIndex: index, deposit, depositors } = event.asV9140
+    } else if (tabled.v9140.is(itemEvent)) {
+        const { proposalIndex: index, deposit, depositors } = tabled.v9140.decode(itemEvent)
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (event.isV9340) {
-        const { proposalIndex: index, deposit } = event.asV9340
+    } else if (tabled.v9340.is(itemEvent)) {
+        const { proposalIndex: index, deposit } = tabled.v9340.decode(itemEvent)
         return {
             index,
             deposit,
         }
     }
      else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export async function handleTabled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.Tabled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getEventData(ctx,  item.event)
+export async function handleTabled(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getEventData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.DemocracyProposal, {
+    await updateProposalStatus(ctx, header, index, ProposalType.DemocracyProposal, extrinsicIndex, {
         status: ProposalStatus.Tabled,
         isEnded: true,
     })

@@ -1,28 +1,25 @@
-import { toHex } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getOriginAccountId } from '../../../common/tools'
 import { Proposal, ProposalType, Tippers } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
 import { getTipsTipData, getTreasuryTipData } from './getters'
 import { randomUUID } from 'crypto'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleNewTipValue(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Tips.tip', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
+export async function handleNewTipValue(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!item.success) return
 
-    const { hash, tipValue } = getTipsTipData(ctx, item.call)
-    const hexHash = toHex(hash)
-    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip } })
+    const { hash, tipValue } = getTipsTipData(item)
+    const proposal = await ctx.store.get(Proposal, { where: { hash: hash, type: ProposalType.Tip } })
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hexHash))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hash))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const origin = getOriginAccountId(item.call.origin)
+    const origin = getOriginAccountId(item.origin)
 
     if (!origin) {
         ctx.log.warn(`Origin for Tips.tip is null`)
@@ -31,31 +28,32 @@ export async function handleNewTipValue(ctx: BatchContext<Store, unknown>,
 
     const tipper = new Tippers({
         id: randomUUID(),
-        hash: hexHash,
+        hash: hash,
         tipper: origin,
         value: tipValue,
         proposal: proposal,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
+        extrinsicIndex
     })
 
     await ctx.store.save(tipper)
 }
 
-export async function handleNewTipValueOld(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'Treasury.tip', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
+export async function handleNewTipValueOld(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!item.success) return
 
-    const { hash, tipValue } = getTreasuryTipData(ctx, item.call)
-    const hexHash = toHex(hash)
-    const proposal = await ctx.store.get(Proposal, { where: { hash: hexHash, type: ProposalType.Tip } })
+    const { hash, tipValue } = getTreasuryTipData(item)
+    const proposal = await ctx.store.get(Proposal, { where: { hash: hash, type: ProposalType.Tip } })
     if (!proposal) {
-        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hexHash))
+        ctx.log.warn(MissingProposalRecordWarn(ProposalType.Tip, hash))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const origin = getOriginAccountId(item.call.origin)
+    const origin = getOriginAccountId(item.origin)
 
     if (!origin) {
         ctx.log.warn(`Origin for Tips.tip is null`)
@@ -64,12 +62,13 @@ export async function handleNewTipValueOld(ctx: BatchContext<Store, unknown>,
 
     const tipper = new Tippers({
         id: randomUUID(),
-        hash: hexHash,
+        hash: hash,
         tipper: origin,
         value: tipValue,
         proposal: proposal,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
+        extrinsicIndex
     })
 
     await ctx.store.save(tipper)

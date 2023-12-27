@@ -1,21 +1,18 @@
-import { toHex } from '@subsquid/substrate-processor'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getSlashedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
+export async function handleSlashed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { hash } = getSlashedData(item)
 
-export async function handleSlashed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Tips.TipSlashed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getSlashedData(ctx, item.event)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await updateProposalStatus(ctx, header, hexHash, ProposalType.Tip, {
+    await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
-        status: ProposalStatus.Retracted,
+        status: ProposalStatus.Slashed,
     })
 }

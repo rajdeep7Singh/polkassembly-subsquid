@@ -1,24 +1,23 @@
 
 import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { getDelegateData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
 import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './utils'
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes, VoteDecision } from '../../../model'
 import { randomUUID } from 'crypto'
+import { Call, ProcessorContext } from '../../../processor'
 
-export async function handleDelegate(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.delegate', { call: { args: true; origin: true}, extrinsic: true }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const { to, lockPeriod, balance, track } = getDelegateData(ctx, item.call)
+export async function handleDelegate(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const { to, lockPeriod, balance, track } = getDelegateData(item)
     const toWallet = ss58codec.encode(to)
-    let from = getOriginAccountId(item.call.origin)
+    let from = getOriginAccountId(item.origin)
     if(!from){
-        from = getOriginAccountId(item.extrinsic.call.origin)
+        from = getOriginAccountId(item?.extrinsic?.call?.origin)
     }
     if(!from){
         return
@@ -44,6 +43,8 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
         }
     }
 
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    
     await ctx.store.insert(
         new VotingDelegation({
             id: randomUUID(),
@@ -54,6 +55,7 @@ export async function handleDelegate(ctx: BatchContext<Store, unknown>,
             lockPeriod,
             type: DelegationType.OpenGov,
             track,
+            extrinsicIndex,
             createdAt: new Date(header.timestamp),
         })
     )

@@ -1,59 +1,56 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    BountiesBountyAwardedEvent,
-    BountiesBountyBecameActiveEvent,
-    BountiesBountyCanceledEvent,
-    BountiesBountyClaimedEvent,
-    BountiesBountyExtendedEvent,
-    BountiesBountyProposedEvent,
-    BountiesBountyRejectedEvent,
-    TreasuryBountyAwardedEvent,
-    TreasuryBountyBecameActiveEvent,
-    TreasuryBountyCanceledEvent,
-    TreasuryBountyClaimedEvent,
-    TreasuryBountyExtendedEvent,
-    TreasuryBountyProposedEvent,
-    TreasuryBountyRejectedEvent,
-} from '../../../types/events'
-import { EventContext } from '../../types/contexts'
-import { Event } from '../../../types/support'
-import { BatchContext } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
+    bountyExtended as TreasuryBountyExtendedEvent,
+    bountyBecameActive as TreasuryBountyBecameActiveEvent,
+    bountyCanceled as TreasuryBountyCanceledEvent,
+    bountyAwarded as TreasuryBountyAwardedEvent,
+    bountyClaimed as TreasuryBountyClaimedEvent,
+    bountyProposed as TreasuryBountyProposedEvent,
+    bountyRejected as TreasuryBountyRejectedEvent,
+} from '../../../types/treasury/events'
+import {
+    bountyAwarded,
+    bountyBecameActive,
+    bountyCanceled,
+    bountyClaimed,
+    bountyExtended,
+    bountyProposed,
+    bountyRejected
+} from '../../../types/bounties/events'
+import {Event} from '../../../processor'
 
 interface BountyAwardedData {
     index: number
-    beneficiary: Uint8Array
+    beneficiary: string
 }
 
-export function getBountyAwardedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
-    const event = new TreasuryBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const [index, beneficiary] = event.asV25
+export function getBountyAwardedData(itemEvent: Event): BountyAwardedData {
+    if (bountyAwarded.v28.is(itemEvent)) {
+        const [index, beneficiary] = bountyAwarded.v28.decode(itemEvent)
         return {
             index,
             beneficiary,
         }
-    } else {
-        throw new UnknownVersionError(event.constructor.name)
+    } else if (bountyAwarded.v9140.is(itemEvent)) {
+        const { index, beneficiary } = bountyAwarded.v9140.decode(itemEvent)
+        return {
+            index,
+            beneficiary,
+        }
+    }  else {
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyAwardedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyAwardedData {
-    const event = new BountiesBountyAwardedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const [index, beneficiary] = event.asV28
-        return {
-            index,
-            beneficiary,
-        }
-    } else if (event.isV9140) {
-        const { index, beneficiary } = event.asV9140
+export function getBountyAwardedDataOld(itemEvent: Event): BountyAwardedData {
+    if (TreasuryBountyAwardedEvent.v25.is(itemEvent)) {
+        const [index, beneficiary] = TreasuryBountyAwardedEvent.v25.decode(itemEvent)
         return {
             index,
             beneficiary,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -61,32 +58,30 @@ interface BountyBacameActiveData {
     index: number
 }
 
-export function getBountyBacameActiveDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
-    const event = new TreasuryBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const index = event.asV25
+export function getBountyBacameActiveDataOld(itemEvent: Event): BountyBacameActiveData {
+    if (TreasuryBountyBecameActiveEvent.v25.is(itemEvent)) {
+        const index = TreasuryBountyBecameActiveEvent.v25.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyBacameActiveData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyBacameActiveData {
-    const event = new BountiesBountyBecameActiveEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const index = event.asV28
+export function getBountyBacameActiveData(itemEvent: Event): BountyBacameActiveData {
+    if (bountyBecameActive.v28.is(itemEvent)) {
+        const index = bountyBecameActive.v28.decode(itemEvent)
         return {
             index,
         }
-    } else if (event.isV9140) {
-        const { index } = event.asV9140
+    } else if (bountyBecameActive.v9140.is(itemEvent)) {
+        const { index } = bountyBecameActive.v9140.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -94,73 +89,69 @@ interface BountyCanceledData {
     index: number
 }
 
-export function getBountyCanceledDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
-    const event = new TreasuryBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const index = event.asV25
+export function getBountyCanceledDataOld(itemEvent: Event): BountyCanceledData {
+    if (TreasuryBountyCanceledEvent.v25.is(itemEvent)) {
+        const index = TreasuryBountyCanceledEvent.v25.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyCanceledData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyCanceledData {
-    const event = new BountiesBountyCanceledEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const index = event.asV28
+export function getBountyCanceledData(itemEvent: Event): BountyCanceledData {
+    if (bountyCanceled.v28.is(itemEvent)) {
+        const index = bountyCanceled.v28.decode(itemEvent)
         return {
             index,
         }
-    } else if (event.isV9140) {
-        const { index } = event.asV9140
+    } else if (bountyCanceled.v9140.is(itemEvent)) {
+        const { index } = bountyCanceled.v9140.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface BountyClaimedData {
     index: number
     payout: bigint
-    beneficiary: Uint8Array
+    beneficiary: string
 }
 
-export function getBountyClaimedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
-    const event = new TreasuryBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const [index, payout, beneficiary] = event.asV25
+export function getBountyClaimedDataOld(itemEvent: Event): BountyClaimedData {
+    if (TreasuryBountyClaimedEvent.v25.is(itemEvent)) {
+        const [index, payout, beneficiary] = TreasuryBountyClaimedEvent.v25.decode(itemEvent)
         return {
             index,
             beneficiary,
             payout,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyClaimedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyClaimedData {
-    const event = new BountiesBountyClaimedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const [index, payout, beneficiary] = event.asV28
+export function getBountyClaimedData(itemEvent: Event): BountyClaimedData {
+    if (bountyClaimed.v28.is(itemEvent)) {
+        const [index, payout, beneficiary] = bountyClaimed.v28.decode(itemEvent)
         return {
             index,
             payout,
             beneficiary,
         }
-    } else if (event.isV9140) {
-        const { index, payout, beneficiary } = event.asV9140
+    } else if (bountyClaimed.v9140.is(itemEvent)) {
+        const { index, payout, beneficiary } = bountyClaimed.v9140.decode(itemEvent)
         return {
             index,
             payout,
             beneficiary,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -168,32 +159,30 @@ interface BountyExtendedData {
     index: number
 }
 
-export function getBountyExtendedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
-    const event = new TreasuryBountyExtendedEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const index = event.asV25
+export function getBountyExtendedDataOld(itemEvent: Event): BountyExtendedData {
+    if (TreasuryBountyExtendedEvent.v25.is(itemEvent)) {
+        const index = TreasuryBountyExtendedEvent.v25.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyExtendedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyExtendedData {
-    const event = new BountiesBountyExtendedEvent(ctx,  itemEvent)
-    if (event.isV28) {
-        const index = event.asV28
+export function getBountyExtendedData(itemEvent: Event): BountyExtendedData {
+    if (bountyExtended.v28.is(itemEvent)) {
+        const index = bountyExtended.v28.decode(itemEvent)
         return {
             index,
         }
-    } else if (event.isV9140) {
-        const { index } = event.asV9140
+    } else if (bountyExtended.v9140.is(itemEvent)) {
+        const { index } = bountyExtended.v9140.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -201,32 +190,30 @@ interface BountyProposedData {
     index: number
 }
 
-export function getBountyProposedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
-    const event = new TreasuryBountyProposedEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const index = event.asV25
+export function getBountyProposedDataOld(itemEvent: Event): BountyProposedData {
+    if (TreasuryBountyProposedEvent.v25.is(itemEvent)) {
+        const index = TreasuryBountyProposedEvent.v25.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyProposedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyProposedData {
-    const event = new BountiesBountyProposedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const index = event.asV28
+export function getBountyProposedData(itemEvent: Event): BountyProposedData {
+    if (bountyProposed.v28.is(itemEvent)) {
+        const index = bountyProposed.v28.decode(itemEvent)
         return {
             index,
         }
-    } else if (event.isV9140) {
-        const { index } = event.asV9140
+    } else if (bountyProposed.v9140.is(itemEvent)) {
+        const { index } = bountyProposed.v9140.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -234,31 +221,29 @@ interface BountyRejectedData {
     index: number
 }
 
-export function getBountyRejectedDataOld(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
-    const event = new TreasuryBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV25) {
-        const [index] = event.asV25
+export function getBountyRejectedDataOld(itemEvent: Event): BountyRejectedData {
+    if (TreasuryBountyRejectedEvent.v25.is(itemEvent)) {
+        const [index] = TreasuryBountyRejectedEvent.v25.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
-export function getBountyRejectedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): BountyRejectedData {
-    const event = new BountiesBountyRejectedEvent(ctx, itemEvent)
-    if (event.isV28) {
-        const [index] = event.asV28
+export function getBountyRejectedData(itemEvent: Event): BountyRejectedData {
+    if (bountyRejected.v28.is(itemEvent)) {
+        const [index] = bountyRejected.v28.decode(itemEvent)
         return {
             index,
         }
-    } else if (event.isV9140) {
-        const { index } = event.asV9140
+    } else if (bountyRejected.v9140.is(itemEvent)) {
+        const { index } = bountyRejected.v9140.decode(itemEvent)
         return {
             index,
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

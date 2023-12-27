@@ -1,49 +1,42 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { toHex } from '@subsquid/substrate-processor'
-import { EventHandlerContext } from '../../types/contexts'
 import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
-import { BlockContext } from '../../../types/support'
-import { PreimagePreimageForStorage, PreimageStatusForStorage } from '../../../types/storage'
-import { ProposalStatus, ProposalType } from '../../../model'
-import { ss58codec, parseProposalCall } from '../../../common/tools'
-import { Chain } from '@subsquid/substrate-processor/lib/chain'
-import { Call } from '../../../types/v9370'
+import {
+    statusFor,
+    preimageFor
+} from '../../../types/preimage/storage'
+
+import { ProposalStatus } from '../../../model'
 import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event, Block } from '../../../processor'
 
-type ProposalCall = Call
+type ProposalCall = any
 
 interface PreimageStorageData {
-    data: Uint8Array
+    data: string
     status?: string
-    value?: number | [Uint8Array, bigint] | undefined
+    value?: number | [string, bigint] | undefined
     len?: number
 }
 
-function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
-    // @ts-ignore
-    return chain.scaleCodec.decodeBinary(chain.description.call, data)
-}
+// function decodeProposal(chain: Chain, data: string): ProposalCall {
+//     // @ts-ignore
+//     return chain.scaleCodec.decodeBinary(chain.description.call, data)
+// }
 
-async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStorageData | undefined> {
-    const storage = new PreimagePreimageForStorage(ctx, block)
+async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-
-    if (storage.isV9170) {
-        const storageData = await storage.asV9170.get(hash)
+    if(preimageFor.v9170.is(block)) {
+        const storageData = await preimageFor.v9170.get(block, hash)
         if (!storageData) return undefined
-
         return {
             data: storageData,
             ...preimageStatus
         }
-    }
-    else if(storage.isV9340) {
+    }else if(preimageFor.v9340.is(block)) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await storage.asV9340.get([hash, preimageStatus.len])
+            const storageData = await preimageFor.v9340.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -51,33 +44,31 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, hash: Uint8Arra
             }
         }
         else {
-            throw new UnknownVersionError(storage.constructor.name)
+            throw new UnknownVersionError('preimage.PreimageFor')
         }
     }
     else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError('preimage.PreimageFor')
     }
 }
 
 interface PreimageStatusStorageData{
     status: string
-    value: number | [Uint8Array, bigint] | undefined
+    value: number | [string, bigint] | undefined
     len?: number
 }
 
-export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, hash: Uint8Array, block: SubstrateBlock): Promise<PreimageStatusStorageData | undefined> {
-    const preimageStorage = new PreimageStatusForStorage(ctx, block)
-    if (preimageStorage.isV9170) {
-        const storageData = await preimageStorage.asV9170.get(hash)
+export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
+    if(statusFor.v9170.is(block)) {
+        const storageData = await statusFor.v9170.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
         }
-    }
-    else if(preimageStorage.isV9340) {
-        const storageData = await preimageStorage.asV9340.get(hash)
+    }else if(statusFor.v9340.is(block)) {
+        const storageData = await statusFor.v9340.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -86,52 +77,54 @@ export async function getPreimageStatusData(ctx: BatchContext<Store, unknown>, h
         }
     }
     else {
-        throw new UnknownVersionError(preimageStorage.constructor.name)
+        throw new UnknownVersionError('preimage.StatusFor')
     }
 }
 
-export async function handlePreimageV2Noted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Preimage.Noted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { hash } = getPreimageNotedData(ctx, item.event)
-    const hexHash = toHex(hash)
+export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    if(!item.call) return;
+    const { hash } = getPreimageNotedData(item)
+
+    if(!item.call.args?.bytes) return;
+
+    const hexHash = hash
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     const storageData = await getStorageData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('PreimageV2', hexHash))
         return
     }
-
-    let decodedCall:
-        | {
-              section: string
-              method: string
-              description: string
-              args: Record<string, unknown>
-          }
-        | undefined
-
+    let args;
     try {
-        const proposal = decodeProposal(ctx._chain as Chain, storageData.data)
-
-        const { section, method, args, description } = parseProposalCall(ctx._chain, proposal)
-
-        decodedCall = {
-            section,
-            method,
-            description,
-            args: args as Record<string, unknown>,
-        }
-    } catch (e) {
-        ctx.log.warn(`Failed to decode ProposedCall of Preimage ${hexHash} at block ${header.height}:\n ${e}`)
+        args = item.block._runtime.decodeCall(item?.call.args.bytes);
+    }
+    catch (e) {
+        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.extrinsicIndex} ${e}`)
+        return
     }
 
-    const value = storageData.value as [Uint8Array, bigint]
+    const section = args.__kind as string
+    const method = args.value.__kind as string
+    const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
 
-    const proposer =  storageData.value ? ss58codec.encode(value[0] as Uint8Array) : undefined
+    const { __kind, ...argsValue } = args.value;
+
+    const decodedCall = {
+        section,
+        method,
+        description: desc,
+        args: argsValue,
+    }
+
+    const value = storageData.value as [string, bigint]
+
+    const proposer =  storageData.value ? value[0] : undefined
     const deposit = storageData.value ? value[1] : undefined
 
-    await createPreimageV2(ctx, header, {
+    await createPreimageV2(ctx, header, extrinsicIndex, {
         hash: hexHash,
         proposer,
         deposit,

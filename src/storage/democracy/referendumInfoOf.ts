@@ -1,10 +1,9 @@
 import { UnknownVersionError } from '../../common/errors'
-import { BlockContext } from '../../types/support'
-import { DemocracyReferendumInfoOfStorage } from '../../types/storage'
+import { ProcessorContext } from '../../processor'
+import { referendumInfoOf } from '../../types/democracy/storage'
 import * as v0 from '../../types/v0'
 import * as v9110 from '../../types/v9110'
 import * as v9340 from '../../types/v9340'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
 
 type Threshold = 'SuperMajorityApprove' | 'SuperMajorityAgainst' | 'SimpleMajority'
@@ -18,7 +17,7 @@ type FinishedReferendumData = {
 type OngoingReferendumData = {
     status: 'Ongoing'
     end: number
-    hash: Uint8Array
+    hash: string
     threshold: Threshold
     delay: number
 }
@@ -26,10 +25,9 @@ type OngoingReferendumData = {
 type ReferendumStorageData = FinishedReferendumData | OngoingReferendumData
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumStorageData | undefined> {
-    const storage = new DemocracyReferendumInfoOfStorage(ctx, block)
-    if (storage.isV0) {
-        const storageData = await storage.asV0.get(index)
+async function getStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<ReferendumStorageData | undefined> {
+    if (referendumInfoOf.v0.is(block)) {
+        const storageData = await referendumInfoOf.v0.get(block, index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
@@ -50,8 +48,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
                 approved,
             }
         }
-    } else if (storage.isV9110) {
-        const storageData = await storage.asV9110.get(index)
+    } else if (referendumInfoOf.v9110.is(block)) {
+        const storageData = await referendumInfoOf.v9110.get(block, index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
@@ -73,8 +71,8 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
             }
         }
     }
-    else if(storage.isV9340){
-        const storageData = await storage.asV9340.get(index)
+    else if(referendumInfoOf.v9340.is(block)){
+        const storageData = await referendumInfoOf.v9340.get(block, index)
         if (!storageData) return undefined
 
         const { __kind: status } = storageData
@@ -105,10 +103,10 @@ async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, 
 
     }
      else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("Democracy.ReferendumInfoOf")
     }
 }
 
-export async function getReferendumInfoOf(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
+export async function getReferendumInfoOf(ctx: ProcessorContext<Store>, index: number, block: any) {
     return await getStorageData(ctx, index, block)
 }

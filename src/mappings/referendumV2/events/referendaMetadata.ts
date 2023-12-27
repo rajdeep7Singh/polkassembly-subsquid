@@ -1,13 +1,12 @@
 import { Proposal, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { getMetadataSetData, getMetadataClearedData } from './getters'
-import { BatchContext, SubstrateBlock, toHex } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleMetadataSet(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.MetadataSet', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, hash } = getMetadataSetData(ctx, item.event)
+export async function handleMetadataSet(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, hash } = getMetadataSetData(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal) {
@@ -15,7 +14,7 @@ export async function handleMetadataSet(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    proposal.metadata = toHex(hash)
+    proposal.metadata = hash
     proposal.updatedAt = new Date(header.timestamp)
     proposal.updatedAtBlock = header.height
 
@@ -23,10 +22,10 @@ export async function handleMetadataSet(ctx: BatchContext<Store, unknown>,
 
 }
 
-export async function handleMetadataCleared(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.MetadataCleared', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getMetadataClearedData(ctx, item.event)
+export async function handleMetadataCleared(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getMetadataClearedData(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2 } })
     if (!proposal) {

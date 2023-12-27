@@ -1,18 +1,19 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { ss58codec } from '../../../common/tools'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getBountyAwardedData, getBountyAwardedDataOld } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
+
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleAwardedOld(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.BountyAwarded', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, beneficiary } = getBountyAwardedDataOld(ctx, item.event)
+export async function handleAwardedOld(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, beneficiary } = getBountyAwardedDataOld(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex,
+        {
         isEnded: true,
         status: ProposalStatus.Awarded,
         data: {
@@ -21,12 +22,14 @@ export async function handleAwardedOld(ctx: BatchContext<Store, unknown>,
     })
 }
 
-export async function handleAwarded(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Bounties.BountyAwarded', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, beneficiary } = getBountyAwardedData(ctx, item.event)
+export async function handleAwarded(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, beneficiary } = getBountyAwardedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex,
+        {
         isEnded: true,
         status: ProposalStatus.Awarded,
         data: {

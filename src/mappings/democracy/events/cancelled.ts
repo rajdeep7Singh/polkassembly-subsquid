@@ -1,16 +1,16 @@
 import { ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getCancelledData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleCancelled(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.Cancelled', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const index = getCancelledData(ctx, item.event)
+export async function handleCancelled(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const index = getCancelledData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Cancelled,
     })

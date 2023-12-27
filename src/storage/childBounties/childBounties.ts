@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { UnknownVersionError } from '../../common/errors'
-import { ChildBountiesChildBountiesStorage, ChildBountiesChildBountyDescriptionsStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { ProcessorContext } from '../../processor'
+import { childBounties, childBountyDescriptions } from '../../types/child-bounties/storage'
 import { Store } from '@subsquid/typeorm-store'
 
 interface ChildBountyBountyStorageData {
@@ -12,19 +11,16 @@ interface ChildBountyBountyStorageData {
     curatorDeposit: bigint,
 }
 
-async function getChildBountyStorageData(ctx: BatchContext<Store, unknown>, parentBountyId: number, index: number, block: SubstrateBlock): Promise<ChildBountyBountyStorageData | undefined> {
-    const storage = new ChildBountiesChildBountiesStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV9190) {
-        return await storage.asV9190.get(parentBountyId, index)
+async function getChildBountyStorageData(ctx: ProcessorContext<Store>, parentBountyId: number, index: number, block: any): Promise<ChildBountyBountyStorageData | undefined> {
+    if (childBounties.v9190.is(block)) {
+        return await childBounties.v9190.get(block, parentBountyId,index)
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("ChildBounties.childbounty")
     }
 }
 
 
-export async function getChildBounties(ctx: BatchContext<Store, unknown>, parentBountyId: number, index: number, block: SubstrateBlock) {
+export async function getChildBounties(ctx: ProcessorContext<Store>, parentBountyId: number, index: number, block: any) {
     let childBountyInfo = await getChildBountyStorageData(ctx, parentBountyId, index, block)
     if(!childBountyInfo) return undefined;
     let description = await getDescription(ctx, index, block).then((r) => r || '');
@@ -34,17 +30,14 @@ export async function getChildBounties(ctx: BatchContext<Store, unknown>, parent
     }
 }
 
-async function getDescription(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock) {
+async function getDescription(ctx: ProcessorContext<Store>, index: number, block: any) {
     return (await getChildBountyStorageReasonData(ctx, index, block))
 }
 
-async function getChildBountyStorageReasonData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<string | undefined> {
-    const storage = new ChildBountiesChildBountyDescriptionsStorage(ctx, block)
-    if (!storage.isExists) return undefined
-
-    if (storage.isV9190) {
-        return await storage.asV9190.get(index).then((r) => Buffer.from(r || []).toString('utf8'))
+async function getChildBountyStorageReasonData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<string | undefined> {
+    if (childBountyDescriptions.v9190.is(block)) {
+        return await childBountyDescriptions.v9190.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
-        throw new UnknownVersionError(storage.constructor.name)
+        throw new UnknownVersionError("ChildBounties.description")
     }
 }

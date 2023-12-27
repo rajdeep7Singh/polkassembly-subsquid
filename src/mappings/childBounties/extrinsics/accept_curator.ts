@@ -1,18 +1,16 @@
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { getOriginAccountId } from '../../../common/tools'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Proposal, ProposalType } from '../../../model'
-import { CallHandlerContext } from '../../types/contexts'
 import { getAccepterCuratorData } from './getters'
+import { ProcessorContext, Call } from '../../../processor'
 
-export async function handleAcceptCurator(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ChildBounties.accept_curator', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock) {
-    if (!item.call.success) return
+export async function handleAcceptCurator(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any) {
+    if (!item.success) return
 
-    const { parentBountyId, childBountyId } = getAccepterCuratorData(ctx, item.call)
+    const { parentBountyId, childBountyId } = getAccepterCuratorData(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index: childBountyId, parentBountyIndex: parentBountyId, type: ProposalType.ChildBounty } })
     if (!proposal) {
@@ -20,7 +18,7 @@ export async function handleAcceptCurator(ctx: BatchContext<Store, unknown>,
         return
     }
 
-    const origin = getOriginAccountId(item.call.origin)
+    const origin = getOriginAccountId(item.origin)
     if (!origin) {
         ctx.log.warn(`Origin for accept_curator is null`)
         return

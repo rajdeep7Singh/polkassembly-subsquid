@@ -3,15 +3,14 @@ import { MissingProposalRecordWarn } from '../../../common/errors'
 import { ss58codec } from '../../../common/tools'
 import { Proposal, ProposalType, StandardVoteBalance, Vote, VoteType } from '../../../model'
 import { getDemocracySecondedData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 import { VoteDecision } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.Seconded', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { accountId, refIndex } = getDemocracySecondedData(ctx, item.event)
+export async function handleDemocracySeconds(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { accountId, refIndex } = getDemocracySecondedData(item)
 
     const amount = undefined;
 
@@ -22,6 +21,7 @@ export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
     }
 
     //const count = await getVotesCount(ctx, proposal.id)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
     await ctx.store.insert(
         new Vote({
@@ -35,6 +35,7 @@ export async function handleDemocracySeconds(ctx: BatchContext<Store, unknown>,
             }),
             timestamp: new Date(header.timestamp),
             type: VoteType.DemocracyProposal,
+            extrinsicIndex
         })
     )
 }

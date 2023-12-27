@@ -1,18 +1,16 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getNotPassedData } from './getters'
-
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleNotPassed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.NotPassed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const index = getNotPassedData(ctx, item.event)
+export async function handleNotPassed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const index = getNotPassedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.NotPassed,
     })

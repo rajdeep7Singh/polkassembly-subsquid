@@ -31,6 +31,9 @@ export class VotingDelegation {
     @Column_("varchar", {length: 9, nullable: false})
     type!: DelegationType
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Column_("timestamp with time zone", {nullable: false})
     createdAt!: Date
 

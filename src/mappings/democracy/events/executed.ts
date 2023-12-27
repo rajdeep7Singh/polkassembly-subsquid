@@ -1,17 +1,16 @@
 import { ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getExecutedData } from './getters'
-
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleExecuted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Democracy.Executed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const index = getExecutedData(ctx, item.event)
+export async function handleExecuted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const index = getExecutedData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
+    await updateProposalStatus(ctx, header, index, ProposalType.Referendum, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Executed,
     })

@@ -1,18 +1,17 @@
 import { Proposal, ProposalType } from '../../../model'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
-import { CallItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { ss58codec } from '../../../common/tools'
 import { getRemoveOtherVoteData } from './getters'
 import { MissingProposalRecordWarn } from '../../../common/errors'
 import { removeVote } from './utils'
 import { updateCurveData } from '../../../common/curveData'
+import { Call, ProcessorContext } from '../../../processor'
 
-export async function handleRemoveOtherVote(ctx: BatchContext<Store, unknown>,
-    item: CallItem<'ConvictionVoting.remove_other_vote', { call: { args: true; origin: true } }>,
-    header: SubstrateBlock): Promise<void> {
-    if (!(item.call as any).success) return
-    const { target, index } = getRemoveOtherVoteData(ctx, item.call)
+export async function handleRemoveOtherVote(ctx: ProcessorContext<Store>,
+    item: Call,
+    header: any): Promise<void> {
+    if (!(item as any).success) return
+    const { target, index } = getRemoveOtherVoteData(item)
     const referendum = await ctx.store.get(Proposal, { where: { index, type: ProposalType.ReferendumV2} })
     if (!referendum || referendum.index == undefined || referendum.index == null || referendum.trackNumber == undefined || referendum.trackNumber == null) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.ReferendumV2, index))

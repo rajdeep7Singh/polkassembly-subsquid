@@ -21,6 +21,9 @@ export class Tippers {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     value!: bigint | undefined | null
 
+    @Column_("text", {nullable: true})
+    extrinsicIndex!: string | undefined | null
+
     @Index_()
     @ManyToOne_(() => Proposal, {nullable: true})
     proposal!: Proposal

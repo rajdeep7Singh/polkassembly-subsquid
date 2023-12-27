@@ -1,17 +1,16 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getAwarderData } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 
-export async function handleAwarded(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Treasury.Awarded', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index } = getAwarderData(ctx, item.event)
+export async function handleAwarded(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index } = getAwarderData(item)
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    await updateProposalStatus(ctx, header, index, ProposalType.TreasuryProposal, {
+    await updateProposalStatus(ctx, header, index, ProposalType.TreasuryProposal, extrinsicIndex, {
         isEnded: true,
         status: ProposalStatus.Awarded,
     })

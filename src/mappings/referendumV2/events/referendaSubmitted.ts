@@ -1,15 +1,10 @@
-import { EventHandlerContext } from '../../types/contexts'
-import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
-import { BlockContext, EventContext } from '../../../types/support'
+import { StorageNotExistsWarn } from '../../../common/errors'
 import { ProposalStatus, ProposalType } from '../../../model'
 import { createReferendumV2 } from '../../utils/proposals'
 import { getEventData } from './getters'
-import { ReferendaReferendumInfoForStorage } from "../../../types/storage";
-import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor';
 
 interface ReferendumInfo {
     index: number
@@ -25,10 +20,8 @@ interface ReferendumInfo {
 }
 
 
-export async function getStorageData(ctx: BatchContext<Store, unknown>, index: number, block: SubstrateBlock): Promise<ReferendumInfo | undefined> {
-    const storage = new ReferendaReferendumInfoForStorage(ctx, block)
-    if (!storage.isExists) return undefined
-    const storageData = await ctx._chain.getStorage(block.hash, 'Referenda', 'ReferendumInfoFor', index)
+export async function getStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<ReferendumInfo | undefined> {
+    const storageData = await block._runtime.getStorage(block.hash, 'Referenda.ReferendumInfoFor', index)
 
     if (!storageData) return undefined
     if(storageData.__kind === 'Ongoing') {
@@ -138,23 +131,22 @@ export async function getStorageData(ctx: BatchContext<Store, unknown>, index: n
 }
 
 
-export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Referenda.Submitted', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, hash } = getEventData(ctx, item.event)
+export async function handleSubmitted(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, hash } = getEventData(item)
 
     const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn(ProposalType.ReferendumV2, index))
         return
     }
+    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const hexHash = toHex(hash)
-
-    await createReferendumV2(ctx, header, {
+    await createReferendumV2(ctx, header, extrinsicIndex, {
         index,
         status: ProposalStatus.Submitted,
-        hash: hexHash,
+        hash,
         proposer: ss58codec.encode(storageData.submissionDeposit.who),
         submissionDeposit: storageData.submissionDeposit,
         decisionDeposit: storageData.decisionDeposit,
@@ -164,6 +156,6 @@ export async function handleSubmitted(ctx: BatchContext<Store, unknown>,
         origin: storageData.origin,
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
-        enactmentAfter: storageData.enactmentAfter 
+        enactmentAfter: storageData.enactmentAfter,
     }, ProposalType.ReferendumV2)
 }

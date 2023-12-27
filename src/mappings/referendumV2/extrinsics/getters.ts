@@ -1,7 +1,5 @@
 import {  UnknownVersionError } from '../../../common/errors'
-import { BatchContext } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
-import { ConvictionVotingDelegateCall, ConvictionVotingRemoveOtherVoteCall, ConvictionVotingRemoveVoteCall, ConvictionVotingUndelegateCall, ConvictionVotingVoteCall } from '../../../types/calls'
+import { delegate, removeOtherVote, removeVote, undelegate, vote } from '../../../types/conviction-voting/calls'
 import { convictionToLockPeriod } from './utils'
 
 type DemocracyVote =
@@ -28,27 +26,26 @@ interface DemocracyVoteCallData {
     vote: DemocracyVote
 }
 
-export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): DemocracyVoteCallData {
-    const event = new ConvictionVotingVoteCall(ctx, itemCall)
-    if(event.isV9420){
-        const { pollIndex, vote } = event.asV9420
-        if (vote.__kind === 'Standard') {
+export function getVoteData(itemCall: any): DemocracyVoteCallData {
+    if(vote.v9420.is(itemCall)){
+        const { pollIndex, vote: voteData } = vote.v9420.decode(itemCall)
+        if (voteData.__kind === 'Standard') {
             return {
                 index: pollIndex,
                 vote: {
                     type: 'Standard',
-                    balance: vote.balance,
-                    value: vote.vote
+                    balance: voteData.balance,
+                    value: voteData.vote
                 },
             }
         }
-        else if (vote.__kind === 'Split') {
+        else if (voteData.__kind === 'Split') {
             return {
                 index: pollIndex,
                 vote: {
                     type: 'Split',
-                    aye: vote.aye,
-                    nay: vote.nay,
+                    aye: voteData.aye,
+                    nay: voteData.nay,
                 },
             }
         }
@@ -57,15 +54,15 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): D
                 index: pollIndex,
                 vote: {
                     type: 'SplitAbstain',
-                    aye: vote.aye,
-                    nay: vote.nay,
-                    abstain: vote.abstain,
+                    aye: voteData.aye,
+                    nay: voteData.nay,
+                    abstain: voteData.abstain,
                 },
             }
         }
     }  
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
@@ -76,36 +73,32 @@ export interface ConvictionVoteDelegateCallData {
     balance?: bigint
 }
 
-export function getDelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteDelegateCallData {
-    const event = new ConvictionVotingDelegateCall(ctx, itemCall)
-   
-    if (event.isV9420) {
+export function getDelegateData(itemCall: any): ConvictionVoteDelegateCallData {   
+    if (delegate.v9420.is(itemCall)) {
         //{ class, to, conviction, balance}
-        const eventData = event.asV9420
+        const eventData = delegate.v9420.decode(itemCall)
         return {
             track: eventData.class,
-            to: eventData.to.value,
+            to: eventData.to.__kind != "Index" ? eventData.to.value : null,
             lockPeriod:convictionToLockPeriod(eventData.conviction.__kind),
             balance: eventData.balance
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 export interface ConvictionVoteUndelegateCallData {
     track: number
 }
 
-export function getUndelegateData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVoteUndelegateCallData {
-    const event = new ConvictionVotingUndelegateCall(ctx, itemCall)
-   
-    if (event.isV9420) {
-        const eventData = event.asV9420
+export function getUndelegateData(itemCall: any): ConvictionVoteUndelegateCallData {   
+    if (undelegate.v9420.is(itemCall)) {
+        const eventData = undelegate.v9420.decode(itemCall)
         return {
             track: eventData.class
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
@@ -114,35 +107,33 @@ export interface ConvictionVotingRemoveVoteCallData {
     track: number | undefined
 }
 
-export function getRemoveVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveVoteCallData {
-    const event = new ConvictionVotingRemoveVoteCall(ctx, itemCall)
-    if (event.isV9420) {
-        const eventData = event.asV9420
+export function getRemoveVoteData(itemCall: any): ConvictionVotingRemoveVoteCallData {
+    if (removeVote.v9420.is(itemCall)) {
+        const eventData = removeVote.v9420.decode(itemCall)
         return {
             index: eventData.index,
             track: eventData.class
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
 
 export interface ConvictionVotingRemoveOtherVoteCallData {
     index: number
     track: number | undefined
-    target: Uint8Array | null
+    target: string | null
 }
 
-export function getRemoveOtherVoteData(ctx: BatchContext<Store, unknown>, itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
-    const event = new ConvictionVotingRemoveOtherVoteCall(ctx, itemCall)
-    if (event.isV9420) {
-        const eventData = event.asV9420
+export function getRemoveOtherVoteData(itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
+    if (removeOtherVote.v9420.is(itemCall)) {
+        const eventData = removeOtherVote.v9420.decode(itemCall)
         return {
             index: eventData.index,
             track: eventData.class,
-            target: eventData.target.value
+            target: eventData.target.__kind != "Index" ? eventData.target.value : null
         }
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemCall.name)
     }
 }
