@@ -13,14 +13,14 @@ interface ReferendumEventData {
 }
 
 function getEventData(itemEvent: Event): ReferendumEventData {
-    if (started.v0.is(itemEvent)) {
-        const [index, threshold] = started.v0.decode(itemEvent)
+    if (started.v1020.is(itemEvent)) {
+        const [index, threshold] = started.v1020.decode(itemEvent)
         return {
             index,
             threshold: threshold.__kind,
         }
-    } else if (started.v9140.is(itemEvent)) {
-        const { refIndex: index, threshold } =started.v9140.decode(itemEvent)
+    } else if (started.v9130.is(itemEvent)) {
+        const { refIndex: index, threshold } = started.v9130.decode(itemEvent)
         return {
             index,
             threshold: threshold.__kind,

@@ -1,10 +1,27 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v9110 from '../v9110'
+import * as v1020 from '../v1020'
+import * as v1055 from '../v1055'
+import * as v9111 from '../v9111'
 import * as v9291 from '../v9291'
 
 export const vote =  {
     name: 'Democracy.vote',
+    /**
+     *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
+     *  otherwise it is a vote to keep the status quo.
+     * 
+     *  # <weight>
+     *  - O(1).
+     *  - One DB change, one DB entry.
+     *  # </weight>
+     */
+    v1020: new CallType(
+        'Democracy.vote',
+        sts.struct({
+            refIndex: sts.number(),
+            vote: v1020.Vote,
+        })
+    ),
     /**
      *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
      *  otherwise it is a vote to keep the status quo.
@@ -15,21 +32,15 @@ export const vote =  {
      *  - `vote`: The vote configuration.
      * 
      *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter has voted on.
-     *    weight is charged as if maximum votes.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`, `balances locks`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`, `balances locks`
-     *  --------------------
-     *  - Base Weight:
-     *      - Vote New: 49.24 + .333 * R µs
-     *      - Vote Existing: 49.94 + .343 * R µs
+     *  - `O(1)`.
+     *  - One DB change, one DB entry.
      *  # </weight>
      */
-    v0: new CallType(
+    v1055: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v0.AccountVote,
+            vote: v1055.AccountVote,
         })
     ),
     /**
@@ -43,17 +54,31 @@ export const vote =  {
      * 
      * Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    v9110: new CallType(
+    v9111: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v9110.AccountVote,
+            vote: v9111.AccountVote,
         })
     ),
 }
 
 export const delegate =  {
     name: 'Democracy.delegate',
+    /**
+     *  Delegate vote.
+     * 
+     *  # <weight>
+     *  - One extra DB entry.
+     *  # </weight>
+     */
+    v1020: new CallType(
+        'Democracy.delegate',
+        sts.struct({
+            to: v1020.AccountId,
+            conviction: v1020.Conviction,
+        })
+    ),
     /**
      *  Delegate the voting power (with some given conviction) of the sending account.
      * 
@@ -74,21 +99,14 @@ export const delegate =  {
      *  Emits `Delegated`.
      * 
      *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
-     *    voted on. Weight is charged as if maximum votes.
-     *  - Db reads: 2*`VotingOf`, `balances locks`
-     *  - Db writes: 2*`VotingOf`, `balances locks`
-     *  - Db reads per votes: `ReferendumInfoOf`
-     *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 65.78 + 8.229 * R µs
      *  # </weight>
      */
-    v0: new CallType(
+    v1055: new CallType(
         'Democracy.delegate',
         sts.struct({
-            to: v0.AccountId,
-            conviction: v0.Conviction,
-            balance: v0.BalanceOf,
+            to: v1055.AccountId,
+            conviction: v1055.Conviction,
+            balance: v1055.BalanceOf,
         })
     ),
     /**
@@ -126,27 +144,13 @@ export const delegate =  {
 export const undelegate =  {
     name: 'Democracy.undelegate',
     /**
-     *  Undelegate the voting power of the sending account.
-     * 
-     *  Tokens may be unlocked following once an amount of time consistent with the lock period
-     *  of the conviction with which the delegation was issued.
-     * 
-     *  The dispatch origin of this call must be _Signed_ and the signing account must be
-     *  currently delegating.
-     * 
-     *  Emits `Undelegated`.
+     *  Undelegate vote.
      * 
      *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
-     *    voted on. Weight is charged as if maximum votes.
-     *  - Db reads: 2*`VotingOf`
-     *  - Db writes: 2*`VotingOf`
-     *  - Db reads per votes: `ReferendumInfoOf`
-     *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 33.29 + 8.104 * R µs
+     *  - O(1).
      *  # </weight>
      */
-    v0: new CallType(
+    v1020: new CallType(
         'Democracy.undelegate',
         sts.unit()
     ),
@@ -182,16 +186,12 @@ export const removeVote =  {
      * 
      *  # <weight>
      *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *    Weight is calculated for the maximum number of vote.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 21.03 + .359 * R
      *  # </weight>
      */
-    v0: new CallType(
+    v1055: new CallType(
         'Democracy.remove_vote',
         sts.struct({
-            index: v0.ReferendumIndex,
+            index: v1055.ReferendumIndex,
         })
     ),
 }
@@ -214,17 +214,13 @@ export const removeOtherVote =  {
      * 
      *  # <weight>
      *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *    Weight is calculated for the maximum number of vote.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 19.15 + .372 * R
      *  # </weight>
      */
-    v0: new CallType(
+    v1055: new CallType(
         'Democracy.remove_other_vote',
         sts.struct({
-            target: v0.AccountId,
-            index: v0.ReferendumIndex,
+            target: v1055.AccountId,
+            index: v1055.ReferendumIndex,
         })
     ),
     /**

@@ -7,8 +7,8 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://polkadot-rpc.dwellir.com',
-        archive: lookupArchive('polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://kusama-rpc.dwellir.com',
+        archive: lookupArchive('kusama',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
@@ -19,7 +19,8 @@ const processor = new SubstrateBatchProcessor()
     ]
     })
     .addEvent({
-        name: [ 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.MetadataSet', 'Referenda.MetadataCleared',  'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
+        name: [ 'FellowshipReferenda.Submitted', 'FellowshipReferenda.DecisionDepositPlaced', 'FellowshipReferenda.Rejected', 'FellowshipReferenda.MetadataSet', 'FellowshipReferenda.MetadataCleared',  'FellowshipReferenda.TimedOut', 'FellowshipReferenda.Approved', 'FellowshipReferenda.DecisionStarted', 'FellowshipReferenda.ConfirmStarted', 
+        'FellowshipReferenda.ConfirmAborted', 'FellowshipReferenda.Killed', 'FellowshipReferenda.Voted', 'FellowshipReferenda.Confirmed', 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.MetadataSet', 'Referenda.MetadataCleared',  'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Referenda.Killed', 'Referenda.Confirmed', 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Democracy.Proposed', 'Democracy.Tabled', 'Democracy.Started', 'Democracy.Passed', 'Democracy.NotPassed', 'Democracy.Cancelled', 'Democracy.Executed', 
         'Democracy.PreimageNoted', 'Democracy.PreimageUsed', 'Democracy.PreimageInvalid', 'Democracy.PreimageMissing', 'Democracy.PreimageReaped', 'DemocracySeconded', 'Treasury.Proposed', 
@@ -444,8 +445,48 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             if (item.name == 'Referenda.MetadataCleared'){
                 await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
             }
+            if (item.name == 'FellowshipReferenda.Submitted'){
+                await modules.fellowshipReferendum.events.handleSubmitted(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.Approved'){
+                await modules.fellowshipReferendum.events.handleApproved(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.Cancelled'){
+                await modules.fellowshipReferendum.events.handleCancelled(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.ConfirmAborted'){
+                await modules.fellowshipReferendum.events.handleConfirmAborted(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.Confirmed'){
+                await modules.fellowshipReferendum.events.handleConfirmed(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.ConfirmStarted'){
+                await modules.fellowshipReferendum.events.handleConfirmStarted(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.DecisionDepositPlaced'){
+                await modules.fellowshipReferendum.events.handleDecisionDepositPlaced(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.DecisionStarted'){
+                await modules.fellowshipReferendum.events.handleDecisionStarted(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.Killed'){
+                await modules.fellowshipReferendum.events.handleKilled(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.Rejected'){
+                await modules.fellowshipReferendum.events.handleRejected(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.TimedOut'){
+                await modules.fellowshipReferendum.events.handleTimedOut(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.MetadataSet'){
+                await modules.fellowshipReferendum.events.handleMetadataSet(ctx, item, block.header)
+            }
+            if (item.name == 'FellowshipReferenda.MetadataCleared'){
+                await modules.fellowshipReferendum.events.handleMetadataCleared(ctx, item, block.header)
+            }
             if(item.name == 'Scheduler.Dispatched'){
                 await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
+                await modules.fellowshipReferendum.events.handleReferendumV2Execution(ctx, item, block.header)
             }
         }
     }

@@ -15,8 +15,8 @@ interface AccepterCuratorData {
 }
 
 export function getAccepterCuratorDataOld(itemCall: any): AccepterCuratorData {
-    if (TreasuryAcceptCuratorCall.v25.is(itemCall)) {
-        const { bountyId } = TreasuryAcceptCuratorCall.v25.decode(itemCall)
+    if (TreasuryAcceptCuratorCall.v2025.is(itemCall)) {
+        const { bountyId } = TreasuryAcceptCuratorCall.v2025.decode(itemCall)
         return {
             index: bountyId,
         }
@@ -26,8 +26,8 @@ export function getAccepterCuratorDataOld(itemCall: any): AccepterCuratorData {
 }
 
 export function getAccepterCuratorData(itemCall: any): AccepterCuratorData {
-    if (acceptCurator.v28.is(itemCall)) {
-        const { bountyId } = acceptCurator.v28.decode(itemCall)
+    if (acceptCurator.v2028.is(itemCall)) {
+        const { bountyId } = acceptCurator.v2028.decode(itemCall)
         return {
             index: bountyId,
         }
@@ -41,8 +41,8 @@ interface UnassingCuratorData {
 }
 
 export function getUnassingCuratorDataOld(itemCall: any): UnassingCuratorData {
-    if (TreasuryUnassignCuratorCall.v25.is(itemCall)) {
-        const { bountyId } = TreasuryUnassignCuratorCall.v25.decode(itemCall)
+    if (TreasuryUnassignCuratorCall.v2025.is(itemCall)) {
+        const { bountyId } = TreasuryUnassignCuratorCall.v2025.decode(itemCall)
         return {
             index: bountyId,
         }
@@ -52,8 +52,8 @@ export function getUnassingCuratorDataOld(itemCall: any): UnassingCuratorData {
 }
 
 export function getUnassingCuratorData(itemCall: any): UnassingCuratorData {
-    if (unassignCurator.v28.is(itemCall)) {
-        const { bountyId } = unassignCurator.v28.decode(itemCall)
+    if (unassignCurator.v2028.is(itemCall)) {
+        const { bountyId } = unassignCurator.v2028.decode(itemCall)
         return {
             index: bountyId,
         }
@@ -69,15 +69,15 @@ interface ProposeCuratorData {
 }
 
 export function getProposeCuratorData(itemCall: any): ProposeCuratorData {
-    if (proposeCurator.v28.is(itemCall)) {
-        const { bountyId, curator, fee } = proposeCurator.v28.decode(itemCall)
+    if (proposeCurator.v2028.is(itemCall)) {
+        const { bountyId, curator, fee } = proposeCurator.v2028.decode(itemCall)
         return {
             index: bountyId,
             fee,
             curator: curator.value
         }
-    }else if (proposeCurator.v9110.decode(itemCall)) {
-        const { bountyId, curator, fee } = proposeCurator.v9110.decode(itemCall)
+    }else if (proposeCurator.v9111.decode(itemCall)) {
+        const { bountyId, curator, fee } = proposeCurator.v9111.decode(itemCall)
         return {
             index: bountyId,
             fee,

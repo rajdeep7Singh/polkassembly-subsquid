@@ -6,13 +6,13 @@ interface ProposedData {
 }
 
 export function getProposedData(itemEvent: Event): ProposedData {
-    if (proposed.v0.is(itemEvent)) {
-        const index = proposed.v0.decode(itemEvent)
+    if (proposed.v1020.is(itemEvent)) {
+        const index = proposed.v1020.decode(itemEvent)
         return {
             index,
         }
-    } else if (proposed.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = proposed.v9170.decode(itemEvent)
+    } else if (proposed.v9160.is(itemEvent)) {
+        const { proposalIndex: index } = proposed.v9160.decode(itemEvent)
         return {
             index,
         }
@@ -26,13 +26,13 @@ interface RejectedData {
 }
 
 export function getRejectedData(itemEvent: Event): RejectedData {
-    if (rejected.v0.is(itemEvent)) {
-        const [index] = rejected.v0.decode(itemEvent)
+    if (rejected.v1032.is(itemEvent)) {
+        const [index] = rejected.v1032.decode(itemEvent)
         return {
             index,
         }
-    } else if (rejected.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = rejected.v9170.decode(itemEvent)
+    } else if (rejected.v9160.is(itemEvent)) {
+        const { proposalIndex: index } = rejected.v9160.decode(itemEvent)
         return {
             index,
         }
@@ -46,13 +46,13 @@ interface AwarderData {
 }
 
 export function getAwarderData(itemEvent: Event): AwarderData {
-    if (awarded.v0.is(itemEvent)) {
-        const [index] = awarded.v0.decode(itemEvent)
+    if (awarded.v1020.is(itemEvent)) {
+        const [index] = awarded.v1020.decode(itemEvent)
         return {
             index,
         }
-    } else if (awarded.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = awarded.v9170.decode(itemEvent)
+    } else if (awarded.v9160.is(itemEvent)) {
+        const { proposalIndex: index } = awarded.v9160.decode(itemEvent)
         return {
             index,
         }

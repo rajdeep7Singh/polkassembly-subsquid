@@ -1,21 +1,22 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
+import * as v1020 from '../v1020'
+import * as v1050 from '../v1050'
 import * as v9420 from '../v9420'
 
 export const totalIssuance =  {
     /**
      *  The total units issued in the system.
      */
-    v0: new StorageType('Balances.TotalIssuance', 'Default', [], v0.Balance) as TotalIssuanceV0,
+    v1020: new StorageType('Balances.TotalIssuance', 'Default', [], v1020.Balance) as TotalIssuanceV1020,
 }
 
 /**
  *  The total units issued in the system.
  */
-export interface TotalIssuanceV0  {
+export interface TotalIssuanceV1020  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v0.Balance
-    get(block: Block): Promise<(v0.Balance | undefined)>
+    getDefault(block: Block): v1020.Balance
+    get(block: Block): Promise<(v1020.Balance | undefined)>
 }
 
 export const account =  {
@@ -27,7 +28,7 @@ export const account =  {
      * 
      *  NOTE: This is only used in the case that this module is used to store balances.
      */
-    v0: new StorageType('Balances.Account', 'Default', [v0.AccountId], v0.AccountData) as AccountV0,
+    v1050: new StorageType('Balances.Account', 'Default', [v1050.AccountId], v1050.AccountData) as AccountV1050,
     /**
      *  The Balances pallet example of storing the balance of an account.
      * 
@@ -65,19 +66,11 @@ export const account =  {
  * 
  *  NOTE: This is only used in the case that this module is used to store balances.
  */
-export interface AccountV0  {
+export interface AccountV1050  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v0.AccountData
-    get(block: Block, key: v0.AccountId): Promise<(v0.AccountData | undefined)>
-    getMany(block: Block, keys: v0.AccountId[]): Promise<(v0.AccountData | undefined)[]>
-    getKeys(block: Block): Promise<v0.AccountId[]>
-    getKeys(block: Block, key: v0.AccountId): Promise<v0.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v0.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block, key: v0.AccountId): AsyncIterable<v0.AccountId[]>
-    getPairs(block: Block): Promise<[k: v0.AccountId, v: (v0.AccountData | undefined)][]>
-    getPairs(block: Block, key: v0.AccountId): Promise<[k: v0.AccountId, v: (v0.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v0.AccountId, v: (v0.AccountData | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v0.AccountId): AsyncIterable<[k: v0.AccountId, v: (v0.AccountData | undefined)][]>
+    getDefault(block: Block): v1050.AccountData
+    get(block: Block, key: v1050.AccountId): Promise<(v1050.AccountData | undefined)>
+    getMany(block: Block, keys: v1050.AccountId[]): Promise<(v1050.AccountData | undefined)[]>
 }
 
 /**

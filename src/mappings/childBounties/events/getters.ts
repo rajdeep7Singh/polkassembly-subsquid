@@ -6,7 +6,6 @@ import {
     canceled,
     claimed,
 } from '../../../types/child-bounties/events'
-import { Store } from '@subsquid/typeorm-store'
 
 interface ChildBountyAwardedData {
     parentIndex: number

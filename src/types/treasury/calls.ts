@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
+import * as v1038 from '../v1038'
 
 export const tip =  {
     name: 'Treasury.tip',
@@ -19,22 +19,16 @@ export const tip =  {
      *  has started.
      * 
      *  # <weight>
-     *  - Complexity: `O(T)` where `T` is the number of tippers.
-     *    decoding `Tipper` vec of length `T`, insert tip and check closing,
-     *    `T` is charged as upper bound given by `ContainsLengthBound`.
-     *    The actual cost depends on the implementation of `T::Tippers`.
-     * 
-     *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
-     *    is weighted as if almost full i.e of length `T-1`.
-     *  - DbReads: `Tippers`, `Tips`
-     *  - DbWrites: `Tips`
+     *  - `O(T)`
+     *  - One storage mutation (codec `O(T)`), one storage read `O(1)`.
+     *  - Up to one event.
      *  # </weight>
      */
-    v0: new CallType(
+    v1038: new CallType(
         'Treasury.tip',
         sts.struct({
-            hash: v0.Hash,
-            tipValue: v0.BalanceOf,
+            hash: v1038.Hash,
+            tipValue: v1038.BalanceOf,
         })
     ),
 }
@@ -63,7 +57,7 @@ export const unassignCurator =  {
      *  - One DB change.
      *  # </weight>
      */
-    v25: new CallType(
+    v2025: new CallType(
         'Treasury.unassign_curator',
         sts.struct({
             bountyId: sts.number(),
@@ -85,7 +79,7 @@ export const acceptCurator =  {
      *  - One DB change.
      *  # </weight>
      */
-    v25: new CallType(
+    v2025: new CallType(
         'Treasury.accept_curator',
         sts.struct({
             bountyId: sts.number(),

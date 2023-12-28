@@ -2,14 +2,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'kusama',
+        prefix: 'kusama',
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://rpc.polkadot.io',
+        archive: lookupArchive("kusama", {release: "FireSquid"}),
+        chain: 'wss://kusama-rpc.dwellir.com',
     },
-    typesBundle: 'polkadot',
+    typesBundle: 'kusama',
     batchSize: 500,
     blockRange: {
         from: 0,

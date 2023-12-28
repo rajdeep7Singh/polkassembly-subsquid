@@ -1,0 +1,3083 @@
+import {sts, Result, Option, Bytes, BitSequence} from './support'
+
+export type Hash = Bytes
+
+export type Proposal = Proposal_Attestations | Proposal_AuthorityDiscovery | Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Claims | Proposal_Council | Proposal_Democracy | Proposal_ElectionsPhragmen | Proposal_FinalityTracker | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_Nicks | Proposal_Offences | Proposal_Parachains | Proposal_Registrar | Proposal_Session | Proposal_Slots | Proposal_Staking | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalMembership | Proposal_Timestamp | Proposal_Treasury
+
+export interface Proposal_Attestations {
+    __kind: 'Attestations'
+    value: AttestationsCall
+}
+
+export interface Proposal_AuthorityDiscovery {
+    __kind: 'AuthorityDiscovery'
+    value: AuthorityDiscoveryCall
+}
+
+export interface Proposal_Authorship {
+    __kind: 'Authorship'
+    value: AuthorshipCall
+}
+
+export interface Proposal_Babe {
+    __kind: 'Babe'
+    value: BabeCall
+}
+
+export interface Proposal_Balances {
+    __kind: 'Balances'
+    value: BalancesCall
+}
+
+export interface Proposal_Claims {
+    __kind: 'Claims'
+    value: ClaimsCall
+}
+
+export interface Proposal_Council {
+    __kind: 'Council'
+    value: CouncilCall
+}
+
+export interface Proposal_Democracy {
+    __kind: 'Democracy'
+    value: DemocracyCall
+}
+
+export interface Proposal_ElectionsPhragmen {
+    __kind: 'ElectionsPhragmen'
+    value: ElectionsPhragmenCall
+}
+
+export interface Proposal_FinalityTracker {
+    __kind: 'FinalityTracker'
+    value: FinalityTrackerCall
+}
+
+export interface Proposal_Grandpa {
+    __kind: 'Grandpa'
+    value: GrandpaCall
+}
+
+export interface Proposal_Identity {
+    __kind: 'Identity'
+    value: IdentityCall
+}
+
+export interface Proposal_ImOnline {
+    __kind: 'ImOnline'
+    value: ImOnlineCall
+}
+
+export interface Proposal_Indices {
+    __kind: 'Indices'
+    value: IndicesCall
+}
+
+export interface Proposal_Nicks {
+    __kind: 'Nicks'
+    value: NicksCall
+}
+
+export interface Proposal_Offences {
+    __kind: 'Offences'
+    value: OffencesCall
+}
+
+export interface Proposal_Parachains {
+    __kind: 'Parachains'
+    value: ParachainsCall
+}
+
+export interface Proposal_Registrar {
+    __kind: 'Registrar'
+    value: RegistrarCall
+}
+
+export interface Proposal_Session {
+    __kind: 'Session'
+    value: SessionCall
+}
+
+export interface Proposal_Slots {
+    __kind: 'Slots'
+    value: SlotsCall
+}
+
+export interface Proposal_Staking {
+    __kind: 'Staking'
+    value: StakingCall
+}
+
+export interface Proposal_System {
+    __kind: 'System'
+    value: SystemCall
+}
+
+export interface Proposal_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: TechnicalCommitteeCall
+}
+
+export interface Proposal_TechnicalMembership {
+    __kind: 'TechnicalMembership'
+    value: TechnicalMembershipCall
+}
+
+export interface Proposal_Timestamp {
+    __kind: 'Timestamp'
+    value: TimestampCall
+}
+
+export interface Proposal_Treasury {
+    __kind: 'Treasury'
+    value: TreasuryCall
+}
+
+export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_propose_spend | TreasuryCall_reject_proposal
+
+/**
+ *  Approve a proposal. At a later time, the proposal will be allocated to the beneficiary
+ *  and the original deposit will be returned.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB change.
+ *  # </weight>
+ */
+export interface TreasuryCall_approve_proposal {
+    __kind: 'approve_proposal'
+    proposalId: number
+}
+
+/**
+ *  Put forward a suggestion for spending. A deposit proportional to the value
+ *  is reserved and slashed if the proposal is rejected. It is returned once the
+ *  proposal is awarded.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB change, one extra DB entry.
+ *  # </weight>
+ */
+export interface TreasuryCall_propose_spend {
+    __kind: 'propose_spend'
+    value: bigint
+    beneficiary: LookupSource
+}
+
+/**
+ *  Reject a proposed spend. The original deposit will be slashed.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - Limited storage reads.
+ *  - One DB clear.
+ *  # </weight>
+ */
+export interface TreasuryCall_reject_proposal {
+    __kind: 'reject_proposal'
+    proposalId: number
+}
+
+export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
+
+export interface LookupSource_Address20 {
+    __kind: 'Address20'
+    value: H160
+}
+
+export interface LookupSource_Address32 {
+    __kind: 'Address32'
+    value: H256
+}
+
+export interface LookupSource_Id {
+    __kind: 'Id'
+    value: AccountId
+}
+
+export interface LookupSource_Index {
+    __kind: 'Index'
+    value: number
+}
+
+export interface LookupSource_Raw {
+    __kind: 'Raw'
+    value: Bytes
+}
+
+export type AccountId = Bytes
+
+export type H256 = Bytes
+
+export type H160 = Bytes
+
+export type TimestampCall = TimestampCall_set
+
+/**
+ *  Set the current time.
+ * 
+ *  This call should be invoked exactly once per block. It will panic at the finalization
+ *  phase, if this call hasn't been invoked by that time.
+ * 
+ *  The timestamp should be greater than the previous one by the amount specified by
+ *  `MinimumPeriod`.
+ * 
+ *  The dispatch origin for this call must be `Inherent`.
+ */
+export interface TimestampCall_set {
+    __kind: 'set'
+    now: bigint
+}
+
+export type TechnicalMembershipCall = TechnicalMembershipCall_add_member | TechnicalMembershipCall_change_key | TechnicalMembershipCall_remove_member | TechnicalMembershipCall_reset_members | TechnicalMembershipCall_swap_member
+
+/**
+ *  Add a member `who` to the set.
+ * 
+ *  May only be called from `AddOrigin` or root.
+ */
+export interface TechnicalMembershipCall_add_member {
+    __kind: 'add_member'
+    who: AccountId
+}
+
+/**
+ *  Swap out the sending member for some other key `new`.
+ * 
+ *  May only be called from `Signed` origin of a current member.
+ */
+export interface TechnicalMembershipCall_change_key {
+    __kind: 'change_key'
+    new: AccountId
+}
+
+/**
+ *  Remove a member `who` from the set.
+ * 
+ *  May only be called from `RemoveOrigin` or root.
+ */
+export interface TechnicalMembershipCall_remove_member {
+    __kind: 'remove_member'
+    who: AccountId
+}
+
+/**
+ *  Change the membership to a new set, disregarding the existing membership. Be nice and
+ *  pass `members` pre-sorted.
+ * 
+ *  May only be called from `ResetOrigin` or root.
+ */
+export interface TechnicalMembershipCall_reset_members {
+    __kind: 'reset_members'
+    members: AccountId[]
+}
+
+/**
+ *  Swap out one member `remove` for another `add`.
+ * 
+ *  May only be called from `SwapOrigin` or root.
+ */
+export interface TechnicalMembershipCall_swap_member {
+    __kind: 'swap_member'
+    remove: AccountId
+    add: AccountId
+}
+
+export type TechnicalCommitteeCall = TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
+
+/**
+ *  Dispatch a proposal from a member using the `Member` origin.
+ * 
+ *  Origin must be a member of the collective.
+ */
+export interface TechnicalCommitteeCall_execute {
+    __kind: 'execute'
+    proposal: Proposal
+}
+
+/**
+ *  # <weight>
+ *  - Bounded storage reads and writes.
+ *  - Argument `threshold` has bearing on weight.
+ *  # </weight>
+ */
+export interface TechnicalCommitteeCall_propose {
+    __kind: 'propose'
+    threshold: number
+    proposal: Proposal
+}
+
+/**
+ *  Set the collective's membership manually to `new_members`. Be nice to the chain and
+ *  provide it pre-sorted.
+ * 
+ *  Requires root origin.
+ */
+export interface TechnicalCommitteeCall_set_members {
+    __kind: 'set_members'
+    newMembers: AccountId[]
+}
+
+/**
+ *  # <weight>
+ *  - Bounded storage read and writes.
+ *  - Will be slightly heavier if the proposal is approved / disapproved after the vote.
+ *  # </weight>
+ */
+export interface TechnicalCommitteeCall_vote {
+    __kind: 'vote'
+    proposal: Hash
+    index: number
+    approve: boolean
+}
+
+export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_set_code | SystemCall_set_heap_pages | SystemCall_set_storage
+
+/**
+ *  A big dispatch that will disallow any other transaction to be included.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+}
+
+/**
+ *  Kill all storage items with a key that starts with the given prefix.
+ */
+export interface SystemCall_kill_prefix {
+    __kind: 'kill_prefix'
+    prefix: Key
+}
+
+/**
+ *  Kill some items from storage.
+ */
+export interface SystemCall_kill_storage {
+    __kind: 'kill_storage'
+    keys: Key[]
+}
+
+/**
+ *  Make some on-chain remark.
+ */
+export interface SystemCall_remark {
+    __kind: 'remark'
+    remark: Bytes
+}
+
+/**
+ *  Set the new code.
+ */
+export interface SystemCall_set_code {
+    __kind: 'set_code'
+    new: Bytes
+}
+
+/**
+ *  Set the number of pages in the WebAssembly environment's heap.
+ */
+export interface SystemCall_set_heap_pages {
+    __kind: 'set_heap_pages'
+    pages: bigint
+}
+
+/**
+ *  Set some items of storage.
+ */
+export interface SystemCall_set_storage {
+    __kind: 'set_storage'
+    items: KeyValue[]
+}
+
+export type KeyValue = [StorageKey, StorageData]
+
+export type StorageData = Bytes
+
+export type StorageKey = Bytes
+
+export type Key = Bytes
+
+export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_cancel_deferred_slash | StakingCall_chill | StakingCall_force_new_era | StakingCall_force_new_era_always | StakingCall_force_no_eras | StakingCall_force_unstake | StakingCall_nominate | StakingCall_set_controller | StakingCall_set_invulnerables | StakingCall_set_payee | StakingCall_set_validator_count | StakingCall_unbond | StakingCall_validate | StakingCall_withdraw_unbonded
+
+/**
+ *  Take the origin account as a stash and lock up `value` of its balance. `controller` will
+ *  be the account that controls it.
+ * 
+ *  `value` must be more than the `minimum_balance` specified by `T::Currency`.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the stash account.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Moderate complexity.
+ *  - O(1).
+ *  - Three extra DB entries.
+ * 
+ *  NOTE: Two of the storage writes (`Self::bonded`, `Self::payee`) are _never_ cleaned unless
+ *  the `origin` falls below _existential deposit_ and gets removed as dust.
+ *  # </weight>
+ */
+export interface StakingCall_bond {
+    __kind: 'bond'
+    controller: LookupSource
+    value: bigint
+    payee: RewardDestination
+}
+
+/**
+ *  Add some extra amount that have appeared in the stash `free_balance` into the balance up
+ *  for staking.
+ * 
+ *  Use this if there are additional funds in your stash account that you wish to bond.
+ *  Unlike [`bond`] or [`unbond`] this function does not impose any limitation on the amount
+ *  that can be added.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the stash, not the controller.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Insignificant complexity.
+ *  - O(1).
+ *  - One DB entry.
+ *  # </weight>
+ */
+export interface StakingCall_bond_extra {
+    __kind: 'bond_extra'
+    maxAdditional: bigint
+}
+
+/**
+ *  Cancel enactment of a deferred slash. Can be called by either the root origin or
+ *  the `T::SlashCancelOrigin`.
+ *  passing the era and indices of the slashes for that era to kill.
+ * 
+ *  # <weight>
+ *  - One storage write.
+ *  # </weight>
+ */
+export interface StakingCall_cancel_deferred_slash {
+    __kind: 'cancel_deferred_slash'
+    era: EraIndex
+    slashIndices: number[]
+}
+
+/**
+ *  Declare no desire to either validate or nominate.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Insignificant complexity.
+ *  - Contains one read.
+ *  - Writes are limited to the `origin` account key.
+ *  # </weight>
+ */
+export interface StakingCall_chill {
+    __kind: 'chill'
+}
+
+/**
+ *  Force there to be a new era at the end of the next session. After this, it will be
+ *  reset to normal (non-forced) behaviour.
+ * 
+ *  # <weight>
+ *  - No arguments.
+ *  # </weight>
+ */
+export interface StakingCall_force_new_era {
+    __kind: 'force_new_era'
+}
+
+/**
+ *  Force there to be a new era at the end of sessions indefinitely.
+ * 
+ *  # <weight>
+ *  - One storage write
+ *  # </weight>
+ */
+export interface StakingCall_force_new_era_always {
+    __kind: 'force_new_era_always'
+}
+
+/**
+ *  Force there to be no new eras indefinitely.
+ * 
+ *  # <weight>
+ *  - No arguments.
+ *  # </weight>
+ */
+export interface StakingCall_force_no_eras {
+    __kind: 'force_no_eras'
+}
+
+/**
+ *  Force a current staker to become completely unstaked, immediately.
+ */
+export interface StakingCall_force_unstake {
+    __kind: 'force_unstake'
+    stash: AccountId
+}
+
+/**
+ *  Declare the desire to nominate `targets` for the origin controller.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  # <weight>
+ *  - The transaction's complexity is proportional to the size of `targets`,
+ *  which is capped at `MAX_NOMINATIONS`.
+ *  - Both the reads and writes follow a similar pattern.
+ *  # </weight>
+ */
+export interface StakingCall_nominate {
+    __kind: 'nominate'
+    targets: LookupSource[]
+}
+
+/**
+ *  (Re-)set the controller of a stash.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the stash, not the controller.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Insignificant complexity.
+ *  - Contains a limited number of reads.
+ *  - Writes are limited to the `origin` account key.
+ *  # </weight>
+ */
+export interface StakingCall_set_controller {
+    __kind: 'set_controller'
+    controller: LookupSource
+}
+
+/**
+ *  Set the validators who cannot be slashed (if any).
+ */
+export interface StakingCall_set_invulnerables {
+    __kind: 'set_invulnerables'
+    validators: AccountId[]
+}
+
+/**
+ *  (Re-)set the payment target for a controller.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Insignificant complexity.
+ *  - Contains a limited number of reads.
+ *  - Writes are limited to the `origin` account key.
+ *  # </weight>
+ */
+export interface StakingCall_set_payee {
+    __kind: 'set_payee'
+    payee: RewardDestination
+}
+
+/**
+ *  The ideal number of validators.
+ */
+export interface StakingCall_set_validator_count {
+    __kind: 'set_validator_count'
+    new: number
+}
+
+/**
+ *  Schedule a portion of the stash to be unlocked ready for transfer out after the bond
+ *  period ends. If this leaves an amount actively bonded less than
+ *  T::Currency::minimum_balance(), then it is increased to the full amount.
+ * 
+ *  Once the unlock period is done, you can call `withdraw_unbonded` to actually move
+ *  the funds out of management ready for transfer.
+ * 
+ *  No more than a limited number of unlocking chunks (see `MAX_UNLOCKING_CHUNKS`)
+ *  can co-exists at the same time. In that case, [`Call::withdraw_unbonded`] need
+ *  to be called first to remove some of the chunks (if possible).
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  See also [`Call::withdraw_unbonded`].
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Limited but potentially exploitable complexity.
+ *  - Contains a limited number of reads.
+ *  - Each call (requires the remainder of the bonded balance to be above `minimum_balance`)
+ *    will cause a new entry to be inserted into a vector (`Ledger.unlocking`) kept in storage.
+ *    The only way to clean the aforementioned storage item is also user-controlled via `withdraw_unbonded`.
+ *  - One DB entry.
+ *  </weight>
+ */
+export interface StakingCall_unbond {
+    __kind: 'unbond'
+    value: bigint
+}
+
+/**
+ *  Declare the desire to validate for the origin controller.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments. Insignificant complexity.
+ *  - Contains a limited number of reads.
+ *  - Writes are limited to the `origin` account key.
+ *  # </weight>
+ */
+export interface StakingCall_validate {
+    __kind: 'validate'
+    prefs: ValidatorPrefs
+}
+
+/**
+ *  Remove any unlocked chunks from the `unlocking` queue from our management.
+ * 
+ *  This essentially frees up that balance to be used by the stash account to do
+ *  whatever it wants.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
+ * 
+ *  See also [`Call::unbond`].
+ * 
+ *  # <weight>
+ *  - Could be dependent on the `origin` argument and how much `unlocking` chunks exist.
+ *   It implies `consolidate_unlocked` which loops over `Ledger.unlocking`, which is
+ *   indirectly user-controlled. See [`unbond`] for more detail.
+ *  - Contains a limited number of reads, yet the size of which could be large based on `ledger`.
+ *  - Writes are limited to the `origin` account key.
+ *  # </weight>
+ */
+export interface StakingCall_withdraw_unbonded {
+    __kind: 'withdraw_unbonded'
+}
+
+export interface ValidatorPrefs {
+    commission: number
+    blocked: boolean
+}
+
+export type EraIndex = number
+
+export type RewardDestination = RewardDestination_Account | RewardDestination_Controller | RewardDestination_None | RewardDestination_Staked | RewardDestination_Stash
+
+export interface RewardDestination_Account {
+    __kind: 'Account'
+    value: AccountId
+}
+
+export interface RewardDestination_Controller {
+    __kind: 'Controller'
+}
+
+export interface RewardDestination_None {
+    __kind: 'None'
+}
+
+export interface RewardDestination_Staked {
+    __kind: 'Staked'
+}
+
+export interface RewardDestination_Stash {
+    __kind: 'Stash'
+}
+
+export type SlotsCall = SlotsCall_bid | SlotsCall_bid_renew | SlotsCall_elaborate_deploy_data | SlotsCall_fix_deploy_data | SlotsCall_new_auction | SlotsCall_set_offboarding
+
+/**
+ *  Make a new bid from an account (including a parachain account) for deploying a new
+ *  parachain.
+ * 
+ *  Multiple simultaneous bids from the same bidder are allowed only as long as all active
+ *  bids overlap each other (i.e. are mutually exclusive). Bids cannot be redacted.
+ * 
+ *  - `sub` is the sub-bidder ID, allowing for multiple competing bids to be made by (and
+ *  funded by) the same account.
+ *  - `auction_index` is the index of the auction to bid on. Should just be the present
+ *  value of `AuctionCounter`.
+ *  - `first_slot` is the first lease period index of the range to bid on. This is the
+ *  absolute lease period index value, not an auction-specific offset.
+ *  - `last_slot` is the last lease period index of the range to bid on. This is the
+ *  absolute lease period index value, not an auction-specific offset.
+ *  - `amount` is the amount to bid to be held as deposit for the parachain should the
+ *  bid win. This amount is held throughout the range.
+ */
+export interface SlotsCall_bid {
+    __kind: 'bid'
+    sub: number
+    auctionIndex: number
+    firstSlot: number
+    lastSlot: number
+    amount: bigint
+}
+
+/**
+ *  Make a new bid from a parachain account for renewing that (pre-existing) parachain.
+ * 
+ *  The origin *must* be a parachain account.
+ * 
+ *  Multiple simultaneous bids from the same bidder are allowed only as long as all active
+ *  bids overlap each other (i.e. are mutually exclusive). Bids cannot be redacted.
+ * 
+ *  - `auction_index` is the index of the auction to bid on. Should just be the present
+ *  value of `AuctionCounter`.
+ *  - `first_slot` is the first lease period index of the range to bid on. This is the
+ *  absolute lease period index value, not an auction-specific offset.
+ *  - `last_slot` is the last lease period index of the range to bid on. This is the
+ *  absolute lease period index value, not an auction-specific offset.
+ *  - `amount` is the amount to bid to be held as deposit for the parachain should the
+ *  bid win. This amount is held throughout the range.
+ */
+export interface SlotsCall_bid_renew {
+    __kind: 'bid_renew'
+    auctionIndex: number
+    firstSlot: number
+    lastSlot: number
+    amount: bigint
+}
+
+/**
+ *  Note a new parachain's code.
+ * 
+ *  This must be called after `fix_deploy_data` and `code` must be the preimage of the
+ *  `code_hash` passed there for the same `para_id`.
+ * 
+ *  This may be called before or after the beginning of the parachain's first lease period.
+ *  If called before then the parachain will become active at the first block of its
+ *  starting lease period. If after, then it will become active immediately after this call.
+ * 
+ *  - `_origin` is irrelevant.
+ *  - `para_id` is the parachain ID whose code will be elaborated.
+ *  - `code` is the preimage of the registered `code_hash` of `para_id`.
+ */
+export interface SlotsCall_elaborate_deploy_data {
+    __kind: 'elaborate_deploy_data'
+    paraId: number
+    code: Bytes
+}
+
+/**
+ *  Set the deploy information for a successful bid to deploy a new parachain.
+ * 
+ *  - `origin` must be the successful bidder account.
+ *  - `sub` is the sub-bidder ID of the bidder.
+ *  - `para_id` is the parachain ID allotted to the winning bidder.
+ *  - `code_hash` is the hash of the parachain's Wasm validation function.
+ *  - `initial_head_data` is the parachain's initial head data.
+ */
+export interface SlotsCall_fix_deploy_data {
+    __kind: 'fix_deploy_data'
+    sub: number
+    paraId: number
+    codeHash: Hash
+    initialHeadData: Bytes
+}
+
+/**
+ *  Create a new auction.
+ * 
+ *  This can only happen when there isn't already an auction in progress and may only be
+ *  called by the root origin. Accepts the `duration` of this auction and the
+ *  `lease_period_index` of the initial lease period of the four that are to be auctioned.
+ */
+export interface SlotsCall_new_auction {
+    __kind: 'new_auction'
+    duration: number
+    leasePeriodIndex: number
+}
+
+/**
+ *  Set the off-boarding information for a parachain.
+ * 
+ *  The origin *must* be a parachain account.
+ * 
+ *  - `dest` is the destination account to receive the parachain's deposit.
+ */
+export interface SlotsCall_set_offboarding {
+    __kind: 'set_offboarding'
+    dest: LookupSource
+}
+
+export type SessionCall = SessionCall_set_keys
+
+/**
+ *  Sets the session key(s) of the function caller to `key`.
+ *  Allows an account to set its session key prior to becoming a validator.
+ *  This doesn't take effect until the next session.
+ * 
+ *  The dispatch origin of this function must be signed.
+ * 
+ *  # <weight>
+ *  - O(log n) in number of accounts.
+ *  - One extra DB entry.
+ *  # </weight>
+ */
+export interface SessionCall_set_keys {
+    __kind: 'set_keys'
+    keys: Keys
+    proof: Bytes
+}
+
+export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId]
+
+export type RegistrarCall = RegistrarCall_deregister_para | RegistrarCall_deregister_parathread | RegistrarCall_register_para | RegistrarCall_register_parathread | RegistrarCall_select_parathread | RegistrarCall_set_thread_count | RegistrarCall_swap
+
+/**
+ *  Deregister a parachain with given id
+ */
+export interface RegistrarCall_deregister_para {
+    __kind: 'deregister_para'
+    id: number
+}
+
+/**
+ *  Deregister a parathread and retrieve the deposit.
+ * 
+ *  Must be sent from a `Parachain` origin which is currently a parathread.
+ * 
+ *  Ensure that before calling this that any funds you want emptied from the parathread's
+ *  account is moved out; after this it will be impossible to retrieve them (without
+ *  governance intervention).
+ */
+export interface RegistrarCall_deregister_parathread {
+    __kind: 'deregister_parathread'
+}
+
+/**
+ *  Register a parachain with given code.
+ *  Fails if given ID is already used.
+ */
+export interface RegistrarCall_register_para {
+    __kind: 'register_para'
+    id: number
+    info: ParaInfo
+    code: Bytes
+    initialHeadData: Bytes
+}
+
+/**
+ *  Register a parathread for immediate use.
+ * 
+ *  Must be sent from a Signed origin that is able to have ParathreadDeposit reserved.
+ *  `code` and `initial_head_data` are used to initialize the parathread's state.
+ */
+export interface RegistrarCall_register_parathread {
+    __kind: 'register_parathread'
+    code: Bytes
+    initialHeadData: Bytes
+}
+
+/**
+ *  Place a bid for a parathread to be progressed in the next block.
+ * 
+ *  This is a kind of special transaction that should be heavily prioritized in the
+ *  transaction pool according to the `value`; only `ThreadCount` of them may be presented
+ *  in any single block.
+ */
+export interface RegistrarCall_select_parathread {
+    __kind: 'select_parathread'
+    id: number
+    collator: CollatorId
+    headHash: Hash
+}
+
+/**
+ *  Reset the number of parathreads that can pay to be scheduled in a single block.
+ * 
+ *  - `count`: The number of parathreads.
+ * 
+ *  Must be called from Root origin.
+ */
+export interface RegistrarCall_set_thread_count {
+    __kind: 'set_thread_count'
+    count: number
+}
+
+/**
+ *  Swap a parachain with another parachain or parathread. The origin must be a `Parachain`.
+ *  The swap will happen only if there is already an opposite swap pending. If there is not,
+ *  the swap will be stored in the pending swaps map, ready for a later confirmatory swap.
+ * 
+ *  The `ParaId`s remain mapped to the same head data and code so external code can rely on
+ *  `ParaId` to be a long-term identifier of a notional "parachain". However, their
+ *  scheduling info (i.e. whether they're a parathread or parachain), auction information
+ *  and the auction deposit are switched.
+ */
+export interface RegistrarCall_swap {
+    __kind: 'swap'
+    other: number
+}
+
+export type CollatorId = Bytes
+
+export interface ParaInfo {
+    manager: AccountId
+    deposit: Balance
+    locked: boolean
+}
+
+export type Balance = bigint
+
+export type ParachainsCall = ParachainsCall_set_heads
+
+/**
+ *  Provide candidate receipts for parachains, in ascending order by id.
+ */
+export interface ParachainsCall_set_heads {
+    __kind: 'set_heads'
+    heads: AttestedCandidate[]
+}
+
+export interface AttestedCandidate {
+    candidate: AbridgedCandidateReceipt
+    validityVotes: ValidityAttestation[]
+    validatorIndices: BitSequence
+}
+
+export type ValidityAttestation = ValidityAttestation_Explicit | ValidityAttestation_Implicit | ValidityAttestation_Never
+
+export interface ValidityAttestation_Explicit {
+    __kind: 'Explicit'
+    value: ValidatorSignature
+}
+
+export interface ValidityAttestation_Implicit {
+    __kind: 'Implicit'
+    value: ValidatorSignature
+}
+
+export interface ValidityAttestation_Never {
+    __kind: 'Never'
+}
+
+export type ValidatorSignature = Bytes
+
+export interface AbridgedCandidateReceipt {
+    parachainIndex: ParaId
+    relayParent: Hash
+    headData: HeadData
+    collator: CollatorId
+    signature: CollatorSignature
+    povBlockHash: Hash
+    commitments: CandidateCommitments
+}
+
+export interface CandidateCommitments {
+    upwardMessages: UpwardMessage[]
+    horizontalMessages: OutboundHrmpMessage[]
+    newValidationCode?: (ValidationCode | undefined)
+    headData: HeadData
+    processedDownwardMessages: number
+    hrmpWatermark: BlockNumber
+}
+
+export type BlockNumber = number
+
+export type ValidationCode = Bytes
+
+export interface OutboundHrmpMessage {
+    recipient: number
+    data: Bytes
+}
+
+export type UpwardMessage = Bytes
+
+export type CollatorSignature = Bytes
+
+export type HeadData = Bytes
+
+export type ParaId = number
+
+export type OffencesCall = never
+
+export type NicksCall = NicksCall_clear_name | NicksCall_force_name | NicksCall_kill_name | NicksCall_set_name
+
+/**
+ *  Clear an account's name and return the deposit. Fails if the account was not named.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - One balance operation.
+ *  - One storage read/write.
+ *  - One event.
+ *  # </weight>
+ */
+export interface NicksCall_clear_name {
+    __kind: 'clear_name'
+}
+
+/**
+ *  Set a third-party account's name with no deposit.
+ * 
+ *  No length checking is done on the name.
+ * 
+ *  The dispatch origin for this call must be _Root_ or match `T::ForceOrigin`.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - At most one balance operation.
+ *  - One storage read/write.
+ *  - One event.
+ *  # </weight>
+ */
+export interface NicksCall_force_name {
+    __kind: 'force_name'
+    target: LookupSource
+    name: Bytes
+}
+
+/**
+ *  Remove an account's name and take charge of the deposit.
+ * 
+ *  Fails if `who` has not been named. The deposit is dealt with through `T::Slashed`
+ *  imbalance handler.
+ * 
+ *  The dispatch origin for this call must be _Root_ or match `T::ForceOrigin`.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - One unbalanced handler (probably a balance transfer)
+ *  - One storage read/write.
+ *  - One event.
+ *  # </weight>
+ */
+export interface NicksCall_kill_name {
+    __kind: 'kill_name'
+    target: LookupSource
+}
+
+/**
+ *  Set an account's name. The name should be a UTF-8-encoded string by convention, though
+ *  we don't check it.
+ * 
+ *  The name may not be more than `T::MaxLength` bytes, nor less than `T::MinLength` bytes.
+ * 
+ *  If the account doesn't already have a name, then a fee of `ReservationFee` is reserved
+ *  in the account.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - At most one balance operation.
+ *  - One storage read/write.
+ *  - One event.
+ *  # </weight>
+ */
+export interface NicksCall_set_name {
+    __kind: 'set_name'
+    name: Bytes
+}
+
+export type IndicesCall = never
+
+export type ImOnlineCall = ImOnlineCall_heartbeat
+
+export interface ImOnlineCall_heartbeat {
+    __kind: 'heartbeat'
+    heartbeat: Heartbeat
+    signature: Signature
+}
+
+export type Signature = Bytes
+
+export interface Heartbeat {
+    blockNumber: BlockNumber
+    networkState: OpaqueNetworkState
+    sessionIndex: SessionIndex
+    authorityIndex: AuthIndex
+    validatorsLen: number
+}
+
+export type AuthIndex = number
+
+export type SessionIndex = number
+
+export interface OpaqueNetworkState {
+    peerId: OpaquePeerId
+    externalAddresses: OpaqueMultiaddr[]
+}
+
+export type OpaqueMultiaddr = Bytes
+
+export type OpaquePeerId = Bytes
+
+export type IdentityCall = IdentityCall_add_registrar | IdentityCall_cancel_request | IdentityCall_clear_identity | IdentityCall_kill_identity | IdentityCall_provide_judgement | IdentityCall_request_judgement | IdentityCall_set_account_id | IdentityCall_set_fee | IdentityCall_set_fields | IdentityCall_set_identity | IdentityCall_set_subs
+
+/**
+ *  Add a registrar to the system.
+ * 
+ *  The dispatch origin for this call must be `RegistrarOrigin` or `Root`.
+ * 
+ *  - `account`: the account of the registrar.
+ * 
+ *  Emits `RegistrarAdded` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R)` where `R` registrar-count (governance-bounded).
+ *  - One storage mutation (codec `O(R)`).
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_add_registrar {
+    __kind: 'add_registrar'
+    account: AccountId
+}
+
+/**
+ *  Cancel a previous request.
+ * 
+ *  Payment: A previously reserved deposit is returned on success.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a
+ *  registered identity.
+ * 
+ *  - `reg_index`: The index of the registrar whose judgement is no longer requested.
+ * 
+ *  Emits `JudgementUnrequested` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R + X)`.
+ *  - One balance-reserve operation.
+ *  - One storage mutation `O(R + X)`.
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_cancel_request {
+    __kind: 'cancel_request'
+    regIndex: RegistrarIndex
+}
+
+/**
+ *  Clear an account's identity info and all sub-account and return all deposits.
+ * 
+ *  Payment: All reserved balances on the account are returned.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  identity.
+ * 
+ *  Emits `IdentityCleared` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R + S + X)`.
+ *  - One balance-reserve operation.
+ *  - `S + 2` storage deletions.
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_clear_identity {
+    __kind: 'clear_identity'
+}
+
+/**
+ *  Remove an account's identity and sub-account information and slash the deposits.
+ * 
+ *  Payment: Reserved balances from `set_subs` and `set_identity` are slashed and handled by
+ *  `Slash`. Verification request deposits are not returned; they should be cancelled
+ *  manually using `cancel_request`.
+ * 
+ *  The dispatch origin for this call must be _Root_ or match `T::ForceOrigin`.
+ * 
+ *  - `target`: the account whose identity the judgement is upon. This must be an account
+ *    with a registered identity.
+ * 
+ *  Emits `IdentityKilled` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R + S + X)`.
+ *  - One balance-reserve operation.
+ *  - `S + 2` storage mutations.
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_kill_identity {
+    __kind: 'kill_identity'
+    target: LookupSource
+}
+
+/**
+ *  Provide a judgement for an account's identity.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must be the account
+ *  of the registrar whose index is `reg_index`.
+ * 
+ *  - `reg_index`: the index of the registrar whose judgement is being made.
+ *  - `target`: the account whose identity the judgement is upon. This must be an account
+ *    with a registered identity.
+ *  - `judgement`: the judgement of the registrar of index `reg_index` about `target`.
+ * 
+ *  Emits `JudgementGiven` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R + X)`.
+ *  - One balance-transfer operation.
+ *  - Up to one account-lookup operation.
+ *  - Storage: 1 read `O(R)`, 1 mutate `O(R + X)`.
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_provide_judgement {
+    __kind: 'provide_judgement'
+    regIndex: number
+    target: LookupSource
+    judgement: IdentityJudgement
+}
+
+/**
+ *  Request a judgement from a registrar.
+ * 
+ *  Payment: At most `max_fee` will be reserved for payment to the registrar if judgement
+ *  given.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a
+ *  registered identity.
+ * 
+ *  - `reg_index`: The index of the registrar whose judgement is requested.
+ *  - `max_fee`: The maximum fee that may be paid. This should just be auto-populated as:
+ * 
+ *  ```nocompile
+ *  Self::registrars(reg_index).uwnrap().fee
+ *  ```
+ * 
+ *  Emits `JudgementRequested` if successful.
+ * 
+ *  # <weight>
+ *  - `O(R + X)`.
+ *  - One balance-reserve operation.
+ *  - Storage: 1 read `O(R)`, 1 mutate `O(X + R)`.
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_request_judgement {
+    __kind: 'request_judgement'
+    regIndex: number
+    maxFee: bigint
+}
+
+/**
+ *  Change the account associated with a registrar.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must be the account
+ *  of the registrar whose index is `index`.
+ * 
+ *  - `index`: the index of the registrar whose fee is to be set.
+ *  - `new`: the new account ID.
+ * 
+ *  # <weight>
+ *  - `O(R)`.
+ *  - One storage mutation `O(R)`.
+ *  # </weight>
+ */
+export interface IdentityCall_set_account_id {
+    __kind: 'set_account_id'
+    index: number
+    new: AccountId
+}
+
+/**
+ *  Set the fee required for a judgement to be requested from a registrar.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must be the account
+ *  of the registrar whose index is `index`.
+ * 
+ *  - `index`: the index of the registrar whose fee is to be set.
+ *  - `fee`: the new fee.
+ * 
+ *  # <weight>
+ *  - `O(R)`.
+ *  - One storage mutation `O(R)`.
+ *  # </weight>
+ */
+export interface IdentityCall_set_fee {
+    __kind: 'set_fee'
+    index: number
+    fee: bigint
+}
+
+/**
+ *  Set the field information for a registrar.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must be the account
+ *  of the registrar whose index is `index`.
+ * 
+ *  - `index`: the index of the registrar whose fee is to be set.
+ *  - `fields`: the fields that the registrar concerns themselves with.
+ * 
+ *  # <weight>
+ *  - `O(R)`.
+ *  - One storage mutation `O(R)`.
+ *  # </weight>
+ */
+export interface IdentityCall_set_fields {
+    __kind: 'set_fields'
+    index: number
+    fields: bigint
+}
+
+/**
+ *  Set an account's identity information and reserve the appropriate deposit.
+ * 
+ *  If the account already has identity information, the deposit is taken as part payment
+ *  for the new deposit.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  identity.
+ * 
+ *  - `info`: The identity information.
+ * 
+ *  Emits `IdentitySet` if successful.
+ * 
+ *  # <weight>
+ *  - `O(X + R)` where `X` additional-field-count (deposit-bounded).
+ *  - At most two balance operations.
+ *  - One storage mutation (codec `O(X + R)`).
+ *  - One event.
+ *  # </weight>
+ */
+export interface IdentityCall_set_identity {
+    __kind: 'set_identity'
+    info: IdentityInfo
+}
+
+/**
+ *  Set the sub-accounts of the sender.
+ * 
+ *  Payment: Any aggregate balance reserved by previous `set_subs` calls will be returned
+ *  and an amount `SubAccountDeposit` will be reserved for each item in `subs`.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  identity.
+ * 
+ *  - `subs`: The identity's sub-accounts.
+ * 
+ *  # <weight>
+ *  - `O(S)` where `S` subs-count (hard- and deposit-bounded).
+ *  - At most two balance operations.
+ *  - At most O(2 * S + 1) storage mutations; codec complexity `O(1 * S + S * 1)`);
+ *    one storage-exists.
+ *  # </weight>
+ */
+export interface IdentityCall_set_subs {
+    __kind: 'set_subs'
+    subs: [AccountId, Data][]
+}
+
+export type Data = Data_BlakeTwo256 | Data_Keccak256 | Data_None | Data_Raw0 | Data_Raw1 | Data_Raw10 | Data_Raw11 | Data_Raw12 | Data_Raw13 | Data_Raw14 | Data_Raw15 | Data_Raw16 | Data_Raw17 | Data_Raw18 | Data_Raw19 | Data_Raw2 | Data_Raw20 | Data_Raw21 | Data_Raw22 | Data_Raw23 | Data_Raw24 | Data_Raw25 | Data_Raw26 | Data_Raw27 | Data_Raw28 | Data_Raw29 | Data_Raw3 | Data_Raw30 | Data_Raw31 | Data_Raw32 | Data_Raw4 | Data_Raw5 | Data_Raw6 | Data_Raw7 | Data_Raw8 | Data_Raw9 | Data_Sha256 | Data_ShaThree256
+
+export interface Data_BlakeTwo256 {
+    __kind: 'BlakeTwo256'
+    value: H256
+}
+
+export interface Data_Keccak256 {
+    __kind: 'Keccak256'
+    value: H256
+}
+
+export interface Data_None {
+    __kind: 'None'
+}
+
+export interface Data_Raw0 {
+    __kind: 'Raw0'
+    value: Bytes
+}
+
+export interface Data_Raw1 {
+    __kind: 'Raw1'
+    value: Bytes
+}
+
+export interface Data_Raw10 {
+    __kind: 'Raw10'
+    value: Bytes
+}
+
+export interface Data_Raw11 {
+    __kind: 'Raw11'
+    value: Bytes
+}
+
+export interface Data_Raw12 {
+    __kind: 'Raw12'
+    value: Bytes
+}
+
+export interface Data_Raw13 {
+    __kind: 'Raw13'
+    value: Bytes
+}
+
+export interface Data_Raw14 {
+    __kind: 'Raw14'
+    value: Bytes
+}
+
+export interface Data_Raw15 {
+    __kind: 'Raw15'
+    value: Bytes
+}
+
+export interface Data_Raw16 {
+    __kind: 'Raw16'
+    value: Bytes
+}
+
+export interface Data_Raw17 {
+    __kind: 'Raw17'
+    value: Bytes
+}
+
+export interface Data_Raw18 {
+    __kind: 'Raw18'
+    value: Bytes
+}
+
+export interface Data_Raw19 {
+    __kind: 'Raw19'
+    value: Bytes
+}
+
+export interface Data_Raw2 {
+    __kind: 'Raw2'
+    value: Bytes
+}
+
+export interface Data_Raw20 {
+    __kind: 'Raw20'
+    value: Bytes
+}
+
+export interface Data_Raw21 {
+    __kind: 'Raw21'
+    value: Bytes
+}
+
+export interface Data_Raw22 {
+    __kind: 'Raw22'
+    value: Bytes
+}
+
+export interface Data_Raw23 {
+    __kind: 'Raw23'
+    value: Bytes
+}
+
+export interface Data_Raw24 {
+    __kind: 'Raw24'
+    value: Bytes
+}
+
+export interface Data_Raw25 {
+    __kind: 'Raw25'
+    value: Bytes
+}
+
+export interface Data_Raw26 {
+    __kind: 'Raw26'
+    value: Bytes
+}
+
+export interface Data_Raw27 {
+    __kind: 'Raw27'
+    value: Bytes
+}
+
+export interface Data_Raw28 {
+    __kind: 'Raw28'
+    value: Bytes
+}
+
+export interface Data_Raw29 {
+    __kind: 'Raw29'
+    value: Bytes
+}
+
+export interface Data_Raw3 {
+    __kind: 'Raw3'
+    value: Bytes
+}
+
+export interface Data_Raw30 {
+    __kind: 'Raw30'
+    value: Bytes
+}
+
+export interface Data_Raw31 {
+    __kind: 'Raw31'
+    value: Bytes
+}
+
+export interface Data_Raw32 {
+    __kind: 'Raw32'
+    value: Bytes
+}
+
+export interface Data_Raw4 {
+    __kind: 'Raw4'
+    value: Bytes
+}
+
+export interface Data_Raw5 {
+    __kind: 'Raw5'
+    value: Bytes
+}
+
+export interface Data_Raw6 {
+    __kind: 'Raw6'
+    value: Bytes
+}
+
+export interface Data_Raw7 {
+    __kind: 'Raw7'
+    value: Bytes
+}
+
+export interface Data_Raw8 {
+    __kind: 'Raw8'
+    value: Bytes
+}
+
+export interface Data_Raw9 {
+    __kind: 'Raw9'
+    value: Bytes
+}
+
+export interface Data_Sha256 {
+    __kind: 'Sha256'
+    value: H256
+}
+
+export interface Data_ShaThree256 {
+    __kind: 'ShaThree256'
+    value: H256
+}
+
+export interface IdentityInfo {
+    additional: IdentityInfoAdditional[]
+    display: Data
+    legal: Data
+    web: Data
+    riot: Data
+    email: Data
+    pgpFingerprint?: (H160 | undefined)
+    image: Data
+    twitter: Data
+}
+
+export type IdentityInfoAdditional = [Data, Data]
+
+export type IdentityJudgement = IdentityJudgement_Erroneous | IdentityJudgement_FeePaid | IdentityJudgement_KnownGood | IdentityJudgement_LowQuality | IdentityJudgement_OutOfDate | IdentityJudgement_Reasonable | IdentityJudgement_Unknown
+
+export interface IdentityJudgement_Erroneous {
+    __kind: 'Erroneous'
+}
+
+export interface IdentityJudgement_FeePaid {
+    __kind: 'FeePaid'
+    value: Balance
+}
+
+export interface IdentityJudgement_KnownGood {
+    __kind: 'KnownGood'
+}
+
+export interface IdentityJudgement_LowQuality {
+    __kind: 'LowQuality'
+}
+
+export interface IdentityJudgement_OutOfDate {
+    __kind: 'OutOfDate'
+}
+
+export interface IdentityJudgement_Reasonable {
+    __kind: 'Reasonable'
+}
+
+export interface IdentityJudgement_Unknown {
+    __kind: 'Unknown'
+}
+
+export type RegistrarIndex = number
+
+export type GrandpaCall = GrandpaCall_report_misbehavior
+
+/**
+ *  Report some misbehavior.
+ */
+export interface GrandpaCall_report_misbehavior {
+    __kind: 'report_misbehavior'
+    report: Bytes
+}
+
+export type FinalityTrackerCall = FinalityTrackerCall_final_hint
+
+/**
+ *  Hint that the author of this block thinks the best finalized
+ *  block is the given number.
+ */
+export interface FinalityTrackerCall_final_hint {
+    __kind: 'final_hint'
+    hint: number
+}
+
+export type ElectionsPhragmenCall = ElectionsPhragmenCall_remove_member | ElectionsPhragmenCall_remove_voter | ElectionsPhragmenCall_renounce_candidacy | ElectionsPhragmenCall_report_defunct_voter | ElectionsPhragmenCall_submit_candidacy | ElectionsPhragmenCall_vote
+
+/**
+ *  Remove a particular member from the set. This is effective immediately and the bond of
+ *  the outgoing member is slashed.
+ * 
+ *  If a runner-up is available, then the best runner-up will be removed and replaces the
+ *  outgoing member. Otherwise, a new phragmen round is started.
+ * 
+ *  Note that this does not affect the designated block number of the next election.
+ * 
+ *  # <weight>
+ *  #### State
+ *  Reads: O(do_phragmen)
+ *  Writes: O(do_phragmen)
+ *  # </weight>
+ */
+export interface ElectionsPhragmenCall_remove_member {
+    __kind: 'remove_member'
+    who: LookupSource
+}
+
+/**
+ *  Remove `origin` as a voter. This removes the lock and returns the bond.
+ * 
+ *  # <weight>
+ *  #### State
+ *  Reads: O(1)
+ *  Writes: O(1)
+ *  # </weight>
+ */
+export interface ElectionsPhragmenCall_remove_voter {
+    __kind: 'remove_voter'
+}
+
+/**
+ *  Renounce one's intention to be a candidate for the next election round. 3 potential
+ *  outcomes exist:
+ *  - `origin` is a candidate and not elected in any set. In this case, the bond is
+ *    unreserved, returned and origin is removed as a candidate.
+ *  - `origin` is a current runner up. In this case, the bond is unreserved, returned and
+ *    origin is removed as a runner.
+ *  - `origin` is a current member. In this case, the bond is unreserved and origin is
+ *    removed as a member, consequently not being a candidate for the next round anymore.
+ *    Similar to [`remove_voter`], if replacement runners exists, they are immediately used.
+ */
+export interface ElectionsPhragmenCall_renounce_candidacy {
+    __kind: 'renounce_candidacy'
+}
+
+/**
+ *  Report `target` for being an defunct voter. In case of a valid report, the reporter is
+ *  rewarded by the bond amount of `target`. Otherwise, the reporter itself is removed and
+ *  their bond is slashed.
+ * 
+ *  A defunct voter is defined to be:
+ *    - a voter whose current submitted votes are all invalid. i.e. all of them are no
+ *      longer a candidate nor an active member.
+ * 
+ *  # <weight>
+ *  #### State
+ *  Reads: O(NLogM) given M current candidates and N votes for `target`.
+ *  Writes: O(1)
+ *  # </weight>
+ */
+export interface ElectionsPhragmenCall_report_defunct_voter {
+    __kind: 'report_defunct_voter'
+    target: LookupSource
+}
+
+/**
+ *  Submit oneself for candidacy.
+ * 
+ *  A candidate will either:
+ *    - Lose at the end of the term and forfeit their deposit.
+ *    - Win and become a member. Members will eventually get their stash back.
+ *    - Become a runner-up. Runners-ups are reserved members in case one gets forcefully
+ *      removed.
+ * 
+ *  # <weight>
+ *  #### State
+ *  Reads: O(LogN) Given N candidates.
+ *  Writes: O(1)
+ *  # </weight>
+ */
+export interface ElectionsPhragmenCall_submit_candidacy {
+    __kind: 'submit_candidacy'
+}
+
+/**
+ *  Vote for a set of candidates for the upcoming round of election.
+ * 
+ *  The `votes` should:
+ *    - not be empty.
+ *    - be less than the number of candidates.
+ * 
+ *  Upon voting, `value` units of `who`'s balance is locked and a bond amount is reserved.
+ *  It is the responsibility of the caller to not place all of their balance into the lock
+ *  and keep some for further transactions.
+ * 
+ *  # <weight>
+ *  #### State
+ *  Reads: O(1)
+ *  Writes: O(V) given `V` votes. V is bounded by 16.
+ *  # </weight>
+ */
+export interface ElectionsPhragmenCall_vote {
+    __kind: 'vote'
+    votes: AccountId[]
+    value: bigint
+}
+
+export type DemocracyCall = DemocracyCall_cancel_queued | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_note_imminent_preimage | DemocracyCall_note_preimage | DemocracyCall_propose | DemocracyCall_proxy_vote | DemocracyCall_reap_preimage | DemocracyCall_remove_proxy | DemocracyCall_resign_proxy | DemocracyCall_second | DemocracyCall_set_proxy | DemocracyCall_undelegate | DemocracyCall_veto_external | DemocracyCall_vote
+
+/**
+ *  Cancel a proposal queued for enactment.
+ */
+export interface DemocracyCall_cancel_queued {
+    __kind: 'cancel_queued'
+    which: ReferendumIndex
+}
+
+/**
+ *  Remove a referendum.
+ */
+export interface DemocracyCall_cancel_referendum {
+    __kind: 'cancel_referendum'
+    refIndex: number
+}
+
+/**
+ *  Veto and blacklist the proposal hash. Must be from Root origin.
+ */
+export interface DemocracyCall_clear_public_proposals {
+    __kind: 'clear_public_proposals'
+}
+
+/**
+ *  Delegate vote.
+ * 
+ *  # <weight>
+ *  - One extra DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_delegate {
+    __kind: 'delegate'
+    to: AccountId
+    conviction: Conviction
+}
+
+/**
+ *  Schedule an emergency cancellation of a referendum. Cannot happen twice to the same
+ *  referendum.
+ */
+export interface DemocracyCall_emergency_cancel {
+    __kind: 'emergency_cancel'
+    refIndex: ReferendumIndex
+}
+
+/**
+ *  Schedule a referendum to be tabled once it is legal to schedule an external
+ *  referendum.
+ */
+export interface DemocracyCall_external_propose {
+    __kind: 'external_propose'
+    proposalHash: Hash
+}
+
+/**
+ *  Schedule a negative-turnout-bias referendum to be tabled next once it is legal to
+ *  schedule an external referendum.
+ * 
+ *  Unlike `external_propose`, blacklisting has no effect on this and it may replace a
+ *  pre-scheduled `external_propose` call.
+ */
+export interface DemocracyCall_external_propose_default {
+    __kind: 'external_propose_default'
+    proposalHash: Hash
+}
+
+/**
+ *  Schedule a majority-carries referendum to be tabled next once it is legal to schedule
+ *  an external referendum.
+ * 
+ *  Unlike `external_propose`, blacklisting has no effect on this and it may replace a
+ *  pre-scheduled `external_propose` call.
+ */
+export interface DemocracyCall_external_propose_majority {
+    __kind: 'external_propose_majority'
+    proposalHash: Hash
+}
+
+/**
+ *  Schedule the currently externally-proposed majority-carries referendum to be tabled
+ *  immediately. If there is no externally-proposed referendum currently, or if there is one
+ *  but it is not a majority-carries referendum then it fails.
+ * 
+ *  - `proposal_hash`: The hash of the current external proposal.
+ *  - `voting_period`: The period that is allowed for voting on this proposal. Increased to
+ *    `EmergencyVotingPeriod` if too low.
+ *  - `delay`: The number of block after voting has ended in approval and this should be
+ *    enacted. This doesn't have a minimum amount.
+ */
+export interface DemocracyCall_fast_track {
+    __kind: 'fast_track'
+    proposalHash: Hash
+    votingPeriod: BlockNumber
+    delay: BlockNumber
+}
+
+/**
+ *  Register the preimage for an upcoming proposal. This requires the proposal to be
+ *  in the dispatch queue. No deposit is needed.
+ */
+export interface DemocracyCall_note_imminent_preimage {
+    __kind: 'note_imminent_preimage'
+    encodedProposal: Bytes
+}
+
+/**
+ *  Register the preimage for an upcoming proposal. This doesn't require the proposal to be
+ *  in the dispatch queue but does require a deposit, returned once enacted.
+ */
+export interface DemocracyCall_note_preimage {
+    __kind: 'note_preimage'
+    encodedProposal: Bytes
+}
+
+/**
+ *  Propose a sensitive action to be taken.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - Two DB changes, one DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_propose {
+    __kind: 'propose'
+    proposalHash: Hash
+    value: bigint
+}
+
+/**
+ *  Vote in a referendum on behalf of a stash. If `vote.is_aye()`, the vote is to enact
+ *  the proposal;  otherwise it is a vote to keep the status quo.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - One DB change, one DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_proxy_vote {
+    __kind: 'proxy_vote'
+    refIndex: number
+    vote: Vote
+}
+
+/**
+ *  Remove an expired proposal preimage and collect the deposit.
+ * 
+ *  This will only work after `VotingPeriod` blocks from the time that the preimage was
+ *  noted, if it's the same account doing it. If it's a different account, then it'll only
+ *  work an additional `EnactmentPeriod` later.
+ */
+export interface DemocracyCall_reap_preimage {
+    __kind: 'reap_preimage'
+    proposalHash: Hash
+}
+
+/**
+ *  Clear the proxy. Called by the stash.
+ * 
+ *  # <weight>
+ *  - One DB clear.
+ *  # </weight>
+ */
+export interface DemocracyCall_remove_proxy {
+    __kind: 'remove_proxy'
+    proxy: AccountId
+}
+
+/**
+ *  Clear the proxy. Called by the proxy.
+ * 
+ *  # <weight>
+ *  - One DB clear.
+ *  # </weight>
+ */
+export interface DemocracyCall_resign_proxy {
+    __kind: 'resign_proxy'
+}
+
+/**
+ *  Propose a sensitive action to be taken.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - One DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_second {
+    __kind: 'second'
+    proposal: number
+}
+
+/**
+ *  Specify a proxy. Called by the stash.
+ * 
+ *  # <weight>
+ *  - One extra DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_set_proxy {
+    __kind: 'set_proxy'
+    proxy: AccountId
+}
+
+/**
+ *  Undelegate vote.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
+ */
+export interface DemocracyCall_undelegate {
+    __kind: 'undelegate'
+}
+
+/**
+ *  Veto and blacklist the external proposal hash.
+ */
+export interface DemocracyCall_veto_external {
+    __kind: 'veto_external'
+    proposalHash: Hash
+}
+
+/**
+ *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
+ *  otherwise it is a vote to keep the status quo.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  - One DB change, one DB entry.
+ *  # </weight>
+ */
+export interface DemocracyCall_vote {
+    __kind: 'vote'
+    refIndex: number
+    vote: Vote
+}
+
+export type Vote = number
+
+export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
+
+export interface Conviction_Locked1x {
+    __kind: 'Locked1x'
+}
+
+export interface Conviction_Locked2x {
+    __kind: 'Locked2x'
+}
+
+export interface Conviction_Locked3x {
+    __kind: 'Locked3x'
+}
+
+export interface Conviction_Locked4x {
+    __kind: 'Locked4x'
+}
+
+export interface Conviction_Locked5x {
+    __kind: 'Locked5x'
+}
+
+export interface Conviction_Locked6x {
+    __kind: 'Locked6x'
+}
+
+export interface Conviction_None {
+    __kind: 'None'
+}
+
+export type ReferendumIndex = number
+
+export type CouncilCall = CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
+
+/**
+ *  Dispatch a proposal from a member using the `Member` origin.
+ * 
+ *  Origin must be a member of the collective.
+ */
+export interface CouncilCall_execute {
+    __kind: 'execute'
+    proposal: Proposal
+}
+
+/**
+ *  # <weight>
+ *  - Bounded storage reads and writes.
+ *  - Argument `threshold` has bearing on weight.
+ *  # </weight>
+ */
+export interface CouncilCall_propose {
+    __kind: 'propose'
+    threshold: number
+    proposal: Proposal
+}
+
+/**
+ *  Set the collective's membership manually to `new_members`. Be nice to the chain and
+ *  provide it pre-sorted.
+ * 
+ *  Requires root origin.
+ */
+export interface CouncilCall_set_members {
+    __kind: 'set_members'
+    newMembers: AccountId[]
+}
+
+/**
+ *  # <weight>
+ *  - Bounded storage read and writes.
+ *  - Will be slightly heavier if the proposal is approved / disapproved after the vote.
+ *  # </weight>
+ */
+export interface CouncilCall_vote {
+    __kind: 'vote'
+    proposal: Hash
+    index: number
+    approve: boolean
+}
+
+export type ClaimsCall = ClaimsCall_claim | ClaimsCall_mint_claim
+
+/**
+ *  Make a claim.
+ */
+export interface ClaimsCall_claim {
+    __kind: 'claim'
+    dest: AccountId
+    ethereumSignature: EcdsaSignature
+}
+
+/**
+ *  Add a new claim, if you are root.
+ */
+export interface ClaimsCall_mint_claim {
+    __kind: 'mint_claim'
+    who: EthereumAddress
+    value: BalanceOf
+    vestingSchedule?: ([BalanceOf, BalanceOf, BlockNumber] | undefined)
+}
+
+export type BalanceOf = bigint
+
+export type EthereumAddress = Bytes
+
+export type EcdsaSignature = Bytes
+
+export type BalancesCall = BalancesCall_force_transfer | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_keep_alive
+
+/**
+ *  Exactly as `transfer`, except the origin must be root and the source account may be
+ *  specified.
+ */
+export interface BalancesCall_force_transfer {
+    __kind: 'force_transfer'
+    source: LookupSource
+    dest: LookupSource
+    value: bigint
+}
+
+/**
+ *  Set the balances of a given account.
+ * 
+ *  This will alter `FreeBalance` and `ReservedBalance` in storage. it will
+ *  also decrease the total issuance of the system (`TotalIssuance`).
+ *  If the new free or reserved balance is below the existential deposit,
+ *  it will reset the account nonce (`frame_system::AccountNonce`).
+ * 
+ *  The dispatch origin for this call is `root`.
+ * 
+ *  # <weight>
+ *  - Independent of the arguments.
+ *  - Contains a limited number of reads and writes.
+ *  # </weight>
+ */
+export interface BalancesCall_set_balance {
+    __kind: 'set_balance'
+    who: LookupSource
+    newFree: bigint
+    newReserved: bigint
+}
+
+/**
+ *  Transfer some liquid free balance to another account.
+ * 
+ *  `transfer` will set the `FreeBalance` of the sender and receiver.
+ *  It will decrease the total issuance of the system by the `TransferFee`.
+ *  If the sender's account is below the existential deposit as a result
+ *  of the transfer, the account will be reaped.
+ * 
+ *  The dispatch origin for this call must be `Signed` by the transactor.
+ * 
+ *  # <weight>
+ *  - Dependent on arguments but not critical, given proper implementations for
+ *    input config types. See related functions below.
+ *  - It contains a limited number of reads and writes internally and no complex computation.
+ * 
+ *  Related functions:
+ * 
+ *    - `ensure_can_withdraw` is always called internally but has a bounded complexity.
+ *    - Transferring balances to accounts that did not exist before will cause
+ *       `T::OnNewAccount::on_new_account` to be called.
+ *    - Removing enough funds from an account will trigger
+ *      `T::DustRemoval::on_unbalanced` and `T::OnFreeBalanceZero::on_free_balance_zero`.
+ *    - `transfer_keep_alive` works the same way as `transfer`, but has an additional
+ *      check that the transfer will not kill the origin account.
+ * 
+ *  # </weight>
+ */
+export interface BalancesCall_transfer {
+    __kind: 'transfer'
+    dest: LookupSource
+    value: bigint
+}
+
+/**
+ *  Same as the [`transfer`] call, but with a check that the transfer will not kill the
+ *  origin account.
+ * 
+ *  99% of the time you want [`transfer`] instead.
+ * 
+ *  [`transfer`]: struct.Module.html#method.transfer
+ */
+export interface BalancesCall_transfer_keep_alive {
+    __kind: 'transfer_keep_alive'
+    dest: LookupSource
+    value: bigint
+}
+
+export type BabeCall = never
+
+export type AuthorshipCall = AuthorshipCall_set_uncles
+
+/**
+ *  Provide a set of uncles.
+ */
+export interface AuthorshipCall_set_uncles {
+    __kind: 'set_uncles'
+    newUncles: Header[]
+}
+
+export interface Header {
+    parentHash: Hash
+    number: number
+    stateRoot: Hash
+    extrinsicsRoot: Hash
+    digest: Digest
+}
+
+export interface Digest {
+    logs: DigestItem[]
+}
+
+export type DigestItem = DigestItem_AuthoritiesChange | DigestItem_ChangesTrieRoot | DigestItem_ChangesTrieSignal | DigestItem_Consensus | DigestItem_Other | DigestItem_PreRuntime | DigestItem_RuntimeEnvironmentUpdated | DigestItem_Seal | DigestItem_SealV0
+
+export interface DigestItem_AuthoritiesChange {
+    __kind: 'AuthoritiesChange'
+    value: AuthorityId[]
+}
+
+export interface DigestItem_ChangesTrieRoot {
+    __kind: 'ChangesTrieRoot'
+    value: Hash
+}
+
+export interface DigestItem_ChangesTrieSignal {
+    __kind: 'ChangesTrieSignal'
+    value: ChangesTrieSignal
+}
+
+export interface DigestItem_Consensus {
+    __kind: 'Consensus'
+    value: Consensus
+}
+
+export interface DigestItem_Other {
+    __kind: 'Other'
+    value: Bytes
+}
+
+export interface DigestItem_PreRuntime {
+    __kind: 'PreRuntime'
+    value: PreRuntime
+}
+
+export interface DigestItem_RuntimeEnvironmentUpdated {
+    __kind: 'RuntimeEnvironmentUpdated'
+}
+
+export interface DigestItem_Seal {
+    __kind: 'Seal'
+    value: Seal
+}
+
+export interface DigestItem_SealV0 {
+    __kind: 'SealV0'
+    value: SealV0
+}
+
+export type SealV0 = [bigint, Signature]
+
+export type Seal = [ConsensusEngineId, Bytes]
+
+export type PreRuntime = [ConsensusEngineId, Bytes]
+
+export type Consensus = [ConsensusEngineId, Bytes]
+
+export type ConsensusEngineId = Bytes
+
+export type ChangesTrieSignal = ChangesTrieSignal_NewConfiguration
+
+export interface ChangesTrieSignal_NewConfiguration {
+    __kind: 'NewConfiguration'
+    value?: (ChangesTrieConfiguration | undefined)
+}
+
+export interface ChangesTrieConfiguration {
+    digestInterval: number
+    digestLevels: number
+}
+
+export type AuthorityId = Bytes
+
+export type AuthorityDiscoveryCall = never
+
+export type AttestationsCall = AttestationsCall_more_attestations
+
+/**
+ *  Provide candidate receipts for parachains, in ascending order by id.
+ */
+export interface AttestationsCall_more_attestations {
+    __kind: 'more_attestations'
+}
+
+export const Proposal: sts.Type<Proposal> = sts.closedEnum(() => {
+    return  {
+        Attestations: AttestationsCall,
+        AuthorityDiscovery: AuthorityDiscoveryCall,
+        Authorship: AuthorshipCall,
+        Babe: BabeCall,
+        Balances: BalancesCall,
+        Claims: ClaimsCall,
+        Council: CouncilCall,
+        Democracy: DemocracyCall,
+        ElectionsPhragmen: ElectionsPhragmenCall,
+        FinalityTracker: FinalityTrackerCall,
+        Grandpa: GrandpaCall,
+        Identity: IdentityCall,
+        ImOnline: ImOnlineCall,
+        Indices: IndicesCall,
+        Nicks: NicksCall,
+        Offences: OffencesCall,
+        Parachains: ParachainsCall,
+        Registrar: RegistrarCall,
+        Session: SessionCall,
+        Slots: SlotsCall,
+        Staking: StakingCall,
+        System: SystemCall,
+        TechnicalCommittee: TechnicalCommitteeCall,
+        TechnicalMembership: TechnicalMembershipCall,
+        Timestamp: TimestampCall,
+        Treasury: TreasuryCall,
+    }
+})
+
+export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
+    return  {
+        approve_proposal: sts.enumStruct({
+            proposalId: sts.number(),
+        }),
+        propose_spend: sts.enumStruct({
+            value: sts.bigint(),
+            beneficiary: LookupSource,
+        }),
+        reject_proposal: sts.enumStruct({
+            proposalId: sts.number(),
+        }),
+    }
+})
+
+export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
+    return  {
+        Address20: H160,
+        Address32: H256,
+        Id: AccountId,
+        Index: sts.number(),
+        Raw: sts.bytes(),
+    }
+})
+
+export const AccountId = sts.bytes()
+
+export const H256 = sts.bytes()
+
+export const H160 = sts.bytes()
+
+export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
+    return  {
+        set: sts.enumStruct({
+            now: sts.bigint(),
+        }),
+    }
+})
+
+export const TechnicalMembershipCall: sts.Type<TechnicalMembershipCall> = sts.closedEnum(() => {
+    return  {
+        add_member: sts.enumStruct({
+            who: AccountId,
+        }),
+        change_key: sts.enumStruct({
+            new: AccountId,
+        }),
+        remove_member: sts.enumStruct({
+            who: AccountId,
+        }),
+        reset_members: sts.enumStruct({
+            members: sts.array(() => AccountId),
+        }),
+        swap_member: sts.enumStruct({
+            remove: AccountId,
+            add: AccountId,
+        }),
+    }
+})
+
+export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.closedEnum(() => {
+    return  {
+        execute: sts.enumStruct({
+            proposal: Proposal,
+        }),
+        propose: sts.enumStruct({
+            threshold: sts.number(),
+            proposal: Proposal,
+        }),
+        set_members: sts.enumStruct({
+            newMembers: sts.array(() => AccountId),
+        }),
+        vote: sts.enumStruct({
+            proposal: Hash,
+            index: sts.number(),
+            approve: sts.boolean(),
+        }),
+    }
+})
+
+export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
+    return  {
+        fill_block: sts.unit(),
+        kill_prefix: sts.enumStruct({
+            prefix: Key,
+        }),
+        kill_storage: sts.enumStruct({
+            keys: sts.array(() => Key),
+        }),
+        remark: sts.enumStruct({
+            remark: sts.bytes(),
+        }),
+        set_code: sts.enumStruct({
+            new: sts.bytes(),
+        }),
+        set_heap_pages: sts.enumStruct({
+            pages: sts.bigint(),
+        }),
+        set_storage: sts.enumStruct({
+            items: sts.array(() => KeyValue),
+        }),
+    }
+})
+
+export const KeyValue = sts.tuple(() => [StorageKey, StorageData])
+
+export const StorageData = sts.bytes()
+
+export const StorageKey = sts.bytes()
+
+export const Key = sts.bytes()
+
+export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
+    return  {
+        bond: sts.enumStruct({
+            controller: LookupSource,
+            value: sts.bigint(),
+            payee: RewardDestination,
+        }),
+        bond_extra: sts.enumStruct({
+            maxAdditional: sts.bigint(),
+        }),
+        cancel_deferred_slash: sts.enumStruct({
+            era: EraIndex,
+            slashIndices: sts.array(() => sts.number()),
+        }),
+        chill: sts.unit(),
+        force_new_era: sts.unit(),
+        force_new_era_always: sts.unit(),
+        force_no_eras: sts.unit(),
+        force_unstake: sts.enumStruct({
+            stash: AccountId,
+        }),
+        nominate: sts.enumStruct({
+            targets: sts.array(() => LookupSource),
+        }),
+        set_controller: sts.enumStruct({
+            controller: LookupSource,
+        }),
+        set_invulnerables: sts.enumStruct({
+            validators: sts.array(() => AccountId),
+        }),
+        set_payee: sts.enumStruct({
+            payee: RewardDestination,
+        }),
+        set_validator_count: sts.enumStruct({
+            new: sts.number(),
+        }),
+        unbond: sts.enumStruct({
+            value: sts.bigint(),
+        }),
+        validate: sts.enumStruct({
+            prefs: ValidatorPrefs,
+        }),
+        withdraw_unbonded: sts.unit(),
+    }
+})
+
+export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
+    return  {
+        commission: sts.number(),
+        blocked: sts.boolean(),
+    }
+})
+
+export const EraIndex = sts.number()
+
+export const RewardDestination: sts.Type<RewardDestination> = sts.closedEnum(() => {
+    return  {
+        Account: AccountId,
+        Controller: sts.unit(),
+        None: sts.unit(),
+        Staked: sts.unit(),
+        Stash: sts.unit(),
+    }
+})
+
+export const SlotsCall: sts.Type<SlotsCall> = sts.closedEnum(() => {
+    return  {
+        bid: sts.enumStruct({
+            sub: sts.number(),
+            auctionIndex: sts.number(),
+            firstSlot: sts.number(),
+            lastSlot: sts.number(),
+            amount: sts.bigint(),
+        }),
+        bid_renew: sts.enumStruct({
+            auctionIndex: sts.number(),
+            firstSlot: sts.number(),
+            lastSlot: sts.number(),
+            amount: sts.bigint(),
+        }),
+        elaborate_deploy_data: sts.enumStruct({
+            paraId: sts.number(),
+            code: sts.bytes(),
+        }),
+        fix_deploy_data: sts.enumStruct({
+            sub: sts.number(),
+            paraId: sts.number(),
+            codeHash: Hash,
+            initialHeadData: sts.bytes(),
+        }),
+        new_auction: sts.enumStruct({
+            duration: sts.number(),
+            leasePeriodIndex: sts.number(),
+        }),
+        set_offboarding: sts.enumStruct({
+            dest: LookupSource,
+        }),
+    }
+})
+
+export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
+    return  {
+        set_keys: sts.enumStruct({
+            keys: Keys,
+            proof: sts.bytes(),
+        }),
+    }
+})
+
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId])
+
+export const RegistrarCall: sts.Type<RegistrarCall> = sts.closedEnum(() => {
+    return  {
+        deregister_para: sts.enumStruct({
+            id: sts.number(),
+        }),
+        deregister_parathread: sts.unit(),
+        register_para: sts.enumStruct({
+            id: sts.number(),
+            info: ParaInfo,
+            code: sts.bytes(),
+            initialHeadData: sts.bytes(),
+        }),
+        register_parathread: sts.enumStruct({
+            code: sts.bytes(),
+            initialHeadData: sts.bytes(),
+        }),
+        select_parathread: sts.enumStruct({
+            id: sts.number(),
+            collator: CollatorId,
+            headHash: Hash,
+        }),
+        set_thread_count: sts.enumStruct({
+            count: sts.number(),
+        }),
+        swap: sts.enumStruct({
+            other: sts.number(),
+        }),
+    }
+})
+
+export const CollatorId = sts.bytes()
+
+export const ParaInfo: sts.Type<ParaInfo> = sts.struct(() => {
+    return  {
+        manager: AccountId,
+        deposit: Balance,
+        locked: sts.boolean(),
+    }
+})
+
+export const Balance = sts.bigint()
+
+export const ParachainsCall: sts.Type<ParachainsCall> = sts.closedEnum(() => {
+    return  {
+        set_heads: sts.enumStruct({
+            heads: sts.array(() => AttestedCandidate),
+        }),
+    }
+})
+
+export const AttestedCandidate: sts.Type<AttestedCandidate> = sts.struct(() => {
+    return  {
+        candidate: AbridgedCandidateReceipt,
+        validityVotes: sts.array(() => ValidityAttestation),
+        validatorIndices: sts.bitseq(),
+    }
+})
+
+export const ValidityAttestation: sts.Type<ValidityAttestation> = sts.closedEnum(() => {
+    return  {
+        Explicit: ValidatorSignature,
+        Implicit: ValidatorSignature,
+        Never: sts.unit(),
+    }
+})
+
+export const ValidatorSignature = sts.bytes()
+
+export const AbridgedCandidateReceipt: sts.Type<AbridgedCandidateReceipt> = sts.struct(() => {
+    return  {
+        parachainIndex: ParaId,
+        relayParent: Hash,
+        headData: HeadData,
+        collator: CollatorId,
+        signature: CollatorSignature,
+        povBlockHash: Hash,
+        commitments: CandidateCommitments,
+    }
+})
+
+export const CandidateCommitments: sts.Type<CandidateCommitments> = sts.struct(() => {
+    return  {
+        upwardMessages: sts.array(() => UpwardMessage),
+        horizontalMessages: sts.array(() => OutboundHrmpMessage),
+        newValidationCode: sts.option(() => ValidationCode),
+        headData: HeadData,
+        processedDownwardMessages: sts.number(),
+        hrmpWatermark: BlockNumber,
+    }
+})
+
+export const BlockNumber = sts.number()
+
+export const ValidationCode = sts.bytes()
+
+export const OutboundHrmpMessage: sts.Type<OutboundHrmpMessage> = sts.struct(() => {
+    return  {
+        recipient: sts.number(),
+        data: sts.bytes(),
+    }
+})
+
+export const UpwardMessage = sts.bytes()
+
+export const CollatorSignature = sts.bytes()
+
+export const HeadData = sts.bytes()
+
+export const ParaId = sts.number()
+
+export const OffencesCall: sts.Type<OffencesCall> = sts.closedEnum(() => {
+    return  {
+    }
+})
+
+export const NicksCall: sts.Type<NicksCall> = sts.closedEnum(() => {
+    return  {
+        clear_name: sts.unit(),
+        force_name: sts.enumStruct({
+            target: LookupSource,
+            name: sts.bytes(),
+        }),
+        kill_name: sts.enumStruct({
+            target: LookupSource,
+        }),
+        set_name: sts.enumStruct({
+            name: sts.bytes(),
+        }),
+    }
+})
+
+export const IndicesCall: sts.Type<IndicesCall> = sts.closedEnum(() => {
+    return  {
+    }
+})
+
+export const ImOnlineCall: sts.Type<ImOnlineCall> = sts.closedEnum(() => {
+    return  {
+        heartbeat: sts.enumStruct({
+            heartbeat: Heartbeat,
+            signature: Signature,
+        }),
+    }
+})
+
+export const Signature = sts.bytes()
+
+export const Heartbeat: sts.Type<Heartbeat> = sts.struct(() => {
+    return  {
+        blockNumber: BlockNumber,
+        networkState: OpaqueNetworkState,
+        sessionIndex: SessionIndex,
+        authorityIndex: AuthIndex,
+        validatorsLen: sts.number(),
+    }
+})
+
+export const AuthIndex = sts.number()
+
+export const SessionIndex = sts.number()
+
+export const OpaqueNetworkState: sts.Type<OpaqueNetworkState> = sts.struct(() => {
+    return  {
+        peerId: OpaquePeerId,
+        externalAddresses: sts.array(() => OpaqueMultiaddr),
+    }
+})
+
+export const OpaqueMultiaddr = sts.bytes()
+
+export const OpaquePeerId = sts.bytes()
+
+export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
+    return  {
+        add_registrar: sts.enumStruct({
+            account: AccountId,
+        }),
+        cancel_request: sts.enumStruct({
+            regIndex: RegistrarIndex,
+        }),
+        clear_identity: sts.unit(),
+        kill_identity: sts.enumStruct({
+            target: LookupSource,
+        }),
+        provide_judgement: sts.enumStruct({
+            regIndex: sts.number(),
+            target: LookupSource,
+            judgement: IdentityJudgement,
+        }),
+        request_judgement: sts.enumStruct({
+            regIndex: sts.number(),
+            maxFee: sts.bigint(),
+        }),
+        set_account_id: sts.enumStruct({
+            index: sts.number(),
+            new: AccountId,
+        }),
+        set_fee: sts.enumStruct({
+            index: sts.number(),
+            fee: sts.bigint(),
+        }),
+        set_fields: sts.enumStruct({
+            index: sts.number(),
+            fields: sts.bigint(),
+        }),
+        set_identity: sts.enumStruct({
+            info: IdentityInfo,
+        }),
+        set_subs: sts.enumStruct({
+            subs: sts.array(() => sts.tuple(() => [AccountId, Data])),
+        }),
+    }
+})
+
+export const Data: sts.Type<Data> = sts.closedEnum(() => {
+    return  {
+        BlakeTwo256: H256,
+        Keccak256: H256,
+        None: sts.unit(),
+        Raw0: sts.bytes(),
+        Raw1: sts.bytes(),
+        Raw10: sts.bytes(),
+        Raw11: sts.bytes(),
+        Raw12: sts.bytes(),
+        Raw13: sts.bytes(),
+        Raw14: sts.bytes(),
+        Raw15: sts.bytes(),
+        Raw16: sts.bytes(),
+        Raw17: sts.bytes(),
+        Raw18: sts.bytes(),
+        Raw19: sts.bytes(),
+        Raw2: sts.bytes(),
+        Raw20: sts.bytes(),
+        Raw21: sts.bytes(),
+        Raw22: sts.bytes(),
+        Raw23: sts.bytes(),
+        Raw24: sts.bytes(),
+        Raw25: sts.bytes(),
+        Raw26: sts.bytes(),
+        Raw27: sts.bytes(),
+        Raw28: sts.bytes(),
+        Raw29: sts.bytes(),
+        Raw3: sts.bytes(),
+        Raw30: sts.bytes(),
+        Raw31: sts.bytes(),
+        Raw32: sts.bytes(),
+        Raw4: sts.bytes(),
+        Raw5: sts.bytes(),
+        Raw6: sts.bytes(),
+        Raw7: sts.bytes(),
+        Raw8: sts.bytes(),
+        Raw9: sts.bytes(),
+        Sha256: H256,
+        ShaThree256: H256,
+    }
+})
+
+export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
+    return  {
+        additional: sts.array(() => IdentityInfoAdditional),
+        display: Data,
+        legal: Data,
+        web: Data,
+        riot: Data,
+        email: Data,
+        pgpFingerprint: sts.option(() => H160),
+        image: Data,
+        twitter: Data,
+    }
+})
+
+export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
+
+export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() => {
+    return  {
+        Erroneous: sts.unit(),
+        FeePaid: Balance,
+        KnownGood: sts.unit(),
+        LowQuality: sts.unit(),
+        OutOfDate: sts.unit(),
+        Reasonable: sts.unit(),
+        Unknown: sts.unit(),
+    }
+})
+
+export const RegistrarIndex = sts.number()
+
+export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
+    return  {
+        report_misbehavior: sts.enumStruct({
+            report: sts.bytes(),
+        }),
+    }
+})
+
+export const FinalityTrackerCall: sts.Type<FinalityTrackerCall> = sts.closedEnum(() => {
+    return  {
+        final_hint: sts.enumStruct({
+            hint: sts.number(),
+        }),
+    }
+})
+
+export const ElectionsPhragmenCall: sts.Type<ElectionsPhragmenCall> = sts.closedEnum(() => {
+    return  {
+        remove_member: sts.enumStruct({
+            who: LookupSource,
+        }),
+        remove_voter: sts.unit(),
+        renounce_candidacy: sts.unit(),
+        report_defunct_voter: sts.enumStruct({
+            target: LookupSource,
+        }),
+        submit_candidacy: sts.unit(),
+        vote: sts.enumStruct({
+            votes: sts.array(() => AccountId),
+            value: sts.bigint(),
+        }),
+    }
+})
+
+export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
+    return  {
+        cancel_queued: sts.enumStruct({
+            which: ReferendumIndex,
+        }),
+        cancel_referendum: sts.enumStruct({
+            refIndex: sts.number(),
+        }),
+        clear_public_proposals: sts.unit(),
+        delegate: sts.enumStruct({
+            to: AccountId,
+            conviction: Conviction,
+        }),
+        emergency_cancel: sts.enumStruct({
+            refIndex: ReferendumIndex,
+        }),
+        external_propose: sts.enumStruct({
+            proposalHash: Hash,
+        }),
+        external_propose_default: sts.enumStruct({
+            proposalHash: Hash,
+        }),
+        external_propose_majority: sts.enumStruct({
+            proposalHash: Hash,
+        }),
+        fast_track: sts.enumStruct({
+            proposalHash: Hash,
+            votingPeriod: BlockNumber,
+            delay: BlockNumber,
+        }),
+        note_imminent_preimage: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
+        note_preimage: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
+        propose: sts.enumStruct({
+            proposalHash: Hash,
+            value: sts.bigint(),
+        }),
+        proxy_vote: sts.enumStruct({
+            refIndex: sts.number(),
+            vote: Vote,
+        }),
+        reap_preimage: sts.enumStruct({
+            proposalHash: Hash,
+        }),
+        remove_proxy: sts.enumStruct({
+            proxy: AccountId,
+        }),
+        resign_proxy: sts.unit(),
+        second: sts.enumStruct({
+            proposal: sts.number(),
+        }),
+        set_proxy: sts.enumStruct({
+            proxy: AccountId,
+        }),
+        undelegate: sts.unit(),
+        veto_external: sts.enumStruct({
+            proposalHash: Hash,
+        }),
+        vote: sts.enumStruct({
+            refIndex: sts.number(),
+            vote: Vote,
+        }),
+    }
+})
+
+export const Vote = sts.number()
+
+export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
+    return  {
+        Locked1x: sts.unit(),
+        Locked2x: sts.unit(),
+        Locked3x: sts.unit(),
+        Locked4x: sts.unit(),
+        Locked5x: sts.unit(),
+        Locked6x: sts.unit(),
+        None: sts.unit(),
+    }
+})
+
+export const ReferendumIndex = sts.number()
+
+export const CouncilCall: sts.Type<CouncilCall> = sts.closedEnum(() => {
+    return  {
+        execute: sts.enumStruct({
+            proposal: Proposal,
+        }),
+        propose: sts.enumStruct({
+            threshold: sts.number(),
+            proposal: Proposal,
+        }),
+        set_members: sts.enumStruct({
+            newMembers: sts.array(() => AccountId),
+        }),
+        vote: sts.enumStruct({
+            proposal: Hash,
+            index: sts.number(),
+            approve: sts.boolean(),
+        }),
+    }
+})
+
+export const ClaimsCall: sts.Type<ClaimsCall> = sts.closedEnum(() => {
+    return  {
+        claim: sts.enumStruct({
+            dest: AccountId,
+            ethereumSignature: EcdsaSignature,
+        }),
+        mint_claim: sts.enumStruct({
+            who: EthereumAddress,
+            value: BalanceOf,
+            vestingSchedule: sts.option(() => sts.tuple(() => [BalanceOf, BalanceOf, BlockNumber])),
+        }),
+    }
+})
+
+export const BalanceOf = sts.bigint()
+
+export const EthereumAddress = sts.bytes()
+
+export const EcdsaSignature = sts.bytes()
+
+export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
+    return  {
+        force_transfer: sts.enumStruct({
+            source: LookupSource,
+            dest: LookupSource,
+            value: sts.bigint(),
+        }),
+        set_balance: sts.enumStruct({
+            who: LookupSource,
+            newFree: sts.bigint(),
+            newReserved: sts.bigint(),
+        }),
+        transfer: sts.enumStruct({
+            dest: LookupSource,
+            value: sts.bigint(),
+        }),
+        transfer_keep_alive: sts.enumStruct({
+            dest: LookupSource,
+            value: sts.bigint(),
+        }),
+    }
+})
+
+export const BabeCall: sts.Type<BabeCall> = sts.closedEnum(() => {
+    return  {
+    }
+})
+
+export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
+    return  {
+        set_uncles: sts.enumStruct({
+            newUncles: sts.array(() => Header),
+        }),
+    }
+})
+
+export const Header: sts.Type<Header> = sts.struct(() => {
+    return  {
+        parentHash: Hash,
+        number: sts.number(),
+        stateRoot: Hash,
+        extrinsicsRoot: Hash,
+        digest: Digest,
+    }
+})
+
+export const Digest: sts.Type<Digest> = sts.struct(() => {
+    return  {
+        logs: sts.array(() => DigestItem),
+    }
+})
+
+export const DigestItem: sts.Type<DigestItem> = sts.closedEnum(() => {
+    return  {
+        AuthoritiesChange: sts.array(() => AuthorityId),
+        ChangesTrieRoot: Hash,
+        ChangesTrieSignal: ChangesTrieSignal,
+        Consensus: Consensus,
+        Other: sts.bytes(),
+        PreRuntime: PreRuntime,
+        RuntimeEnvironmentUpdated: sts.unit(),
+        Seal: Seal,
+        SealV0: SealV0,
+    }
+})
+
+export const SealV0 = sts.tuple(() => [sts.bigint(), Signature])
+
+export const Seal = sts.tuple(() => [ConsensusEngineId, sts.bytes()])
+
+export const PreRuntime = sts.tuple(() => [ConsensusEngineId, sts.bytes()])
+
+export const Consensus = sts.tuple(() => [ConsensusEngineId, sts.bytes()])
+
+export const ConsensusEngineId = sts.bytes()
+
+export const ChangesTrieSignal: sts.Type<ChangesTrieSignal> = sts.closedEnum(() => {
+    return  {
+        NewConfiguration: sts.option(() => ChangesTrieConfiguration),
+    }
+})
+
+export const ChangesTrieConfiguration: sts.Type<ChangesTrieConfiguration> = sts.struct(() => {
+    return  {
+        digestInterval: sts.number(),
+        digestLevels: sts.number(),
+    }
+})
+
+export const AuthorityId = sts.bytes()
+
+export const AuthorityDiscoveryCall: sts.Type<AuthorityDiscoveryCall> = sts.closedEnum(() => {
+    return  {
+    }
+})
+
+export const AttestationsCall: sts.Type<AttestationsCall> = sts.closedEnum(() => {
+    return  {
+        more_attestations: sts.unit(),
+    }
+})
+
+export const Hash = sts.bytes()

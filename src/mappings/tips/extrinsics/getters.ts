@@ -12,8 +12,8 @@ interface AccepterCuratorData {
 }
 
 export function getTipsTipData(itemCall: any): AccepterCuratorData {
-    if (tip.v28.is(itemCall)) {
-        const { hash, tipValue } = tip.v28.decode(itemCall)
+    if (tip.v2028.is(itemCall)) {
+        const { hash, tipValue } = tip.v2028.decode(itemCall)
         return {
             hash,
             tipValue,
@@ -24,8 +24,8 @@ export function getTipsTipData(itemCall: any): AccepterCuratorData {
 }
 
 export function getTreasuryTipData(itemCall: any): AccepterCuratorData {
-    if (TreasuryTipCall.v0.is(itemCall)) {
-        const { hash, tipValue } = TreasuryTipCall.v0.decode(itemCall)
+    if (TreasuryTipCall.v1038.is(itemCall)) {
+        const { hash, tipValue } = TreasuryTipCall.v1038.decode(itemCall)
         return {
             hash,
             tipValue,
