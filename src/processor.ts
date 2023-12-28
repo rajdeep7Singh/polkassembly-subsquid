@@ -7,7 +7,7 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://polkadot-rpc.dwellir.com',
+        chain: 'wss://rpc.polkadot.io',
         archive: lookupArchive('polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})

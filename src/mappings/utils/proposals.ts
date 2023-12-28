@@ -1084,118 +1084,116 @@ export function createSubmissionDeposit(data: SubmissionDepositData): Submission
 export async function sendNotification(ctx: ProcessorContext<Store>, proposal: Proposal, trigger: String) {
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
-    return
     // if difference between proposal update time and current time > 10 mins return
-    // if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
-    //     ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
-    //     return
-    // }
+    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+        return
+    }
 
-    // if([ProposalStatus.Started, 
-    //     ProposalStatus.Submitted, 
-    //     ProposalStatus.Added, 
-    //     ProposalStatus.Proposed, 
-    //     ProposalStatus.Opened,
-    // ].includes(status)){
-    //     statusName = 'submitted'
-    // }
-    // else if([ProposalStatus.Executed,
-    //     ProposalStatus.Cancelled,
-    //     ProposalStatus.Killed,
-    //     ProposalStatus.Rejected,
-    //     ProposalStatus.Executed,
-    //     ProposalStatus.ExecutionFailed,
-    //     ProposalStatus.Closed,
-    //     ProposalStatus.Approved,
-    //     ProposalStatus.Disapproved,
-    //     ProposalStatus.Awarded,
-    //     ProposalStatus.Claimed,
-    //     ProposalStatus.NotPassed,
-    //     ProposalStatus.Passed,
-    //     ProposalStatus.Tabled,
-    //     ProposalStatus.Retracted,
-    //     ProposalStatus.Slashed,
-    //     ProposalStatus.TimedOut,
-    // ].includes(status)){
-    //     statusName = 'closed'
-    // }
-    // else if([ProposalStatus.Deciding,
-    //     ProposalStatus.ConfirmStarted,
-    //     ProposalStatus.ConfirmAborted,
-    // ].includes(status)){
-    //     statusName = 'voting'
-    // }
+    if([ProposalStatus.Started, 
+        ProposalStatus.Submitted, 
+        ProposalStatus.Added, 
+        ProposalStatus.Proposed, 
+        ProposalStatus.Opened,
+    ].includes(status)){
+        statusName = 'submitted'
+    }
+    else if([ProposalStatus.Executed,
+        ProposalStatus.Cancelled,
+        ProposalStatus.Killed,
+        ProposalStatus.Rejected,
+        ProposalStatus.Executed,
+        ProposalStatus.ExecutionFailed,
+        ProposalStatus.Closed,
+        ProposalStatus.Approved,
+        ProposalStatus.Disapproved,
+        ProposalStatus.Awarded,
+        ProposalStatus.Claimed,
+        ProposalStatus.NotPassed,
+        ProposalStatus.Passed,
+        ProposalStatus.Tabled,
+        ProposalStatus.Retracted,
+        ProposalStatus.Slashed,
+        ProposalStatus.TimedOut,
+    ].includes(status)){
+        statusName = 'closed'
+    }
+    else if([ProposalStatus.Deciding,
+        ProposalStatus.ConfirmStarted,
+        ProposalStatus.ConfirmAborted,
+    ].includes(status)){
+        statusName = 'voting'
+    }
 
-    // const notification = {
-    //     trigger: trigger,
-    //     args : {
-    //         network: config.chain.name,
-    //         postType: type,
-    //         postId: type != ProposalType.Tip ? String(index) : hash,
-    //         proposerAddress: proposer || curator,
-    //         statusType: statusName,
-    //         track: String(trackNumber),
-    //         statusName: status,
-    //       }
-    // }
+    const notification = {
+        trigger: trigger,
+        args : {
+            network: config.chain.name,
+            postType: type,
+            postId: type != ProposalType.Tip ? String(index) : hash,
+            proposerAddress: proposer || curator,
+            statusType: statusName,
+            track: String(trackNumber),
+            statusName: status,
+          }
+    }
 
-    // if(!process.env.NOTIFICATION_API_KEY){
-    //     ctx.log.error(`Notification Api Key not found`)
-    //     return
-    // }
+    if(!process.env.NOTIFICATION_API_KEY){
+        ctx.log.error(`Notification Api Key not found`)
+        return
+    }
 
-    // ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
 
-    // const response = await fetch(NOTIFICATION_URL, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'x-api-key': process.env.NOTIFICATION_API_KEY || '',
-    //         'x-source': 'polkassembly'
-    //     },
-    //     body: JSON.stringify(notification),
-    // })
+    const response = await fetch(NOTIFICATION_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+            'x-source': 'polkassembly'
+        },
+        body: JSON.stringify(notification),
+    })
 
-    // ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-    // if (response.status !== 200) {
-    //     ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
-    //     return
-    // }
+    if (response.status !== 200) {
+        ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+        return
+    }
 }
 
 export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
-    return
-    // try{
-    //     if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
-    //         const redisData = {
-    //             network: config.chain.name,
-    //             govType: 'OpenGov',
-    //             postId: index,
-    //             track: trackNumber,
-    //             proposalType: type,
-    //         }
-    //         ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
+    try{
+        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
+            const redisData = {
+                network: config.chain.name,
+                govType: 'OpenGov',
+                postId: index,
+                track: trackNumber,
+                proposalType: type,
+            }
+            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
 
-    //         const response = await fetch(REDIS_CF_URL, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(redisData),
-    //         })
+            const response = await fetch(REDIS_CF_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(redisData),
+            })
         
-    //         ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
         
-    //         if (response.status !== 200) {
-    //             ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
-    //             return
-    //         }
-    //     }
-    // }
-    // catch(e){
-    //     ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
-    //     return
-    // }
+            if (response.status !== 200) {
+                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
+                return
+            }
+        }
+    }
+    catch(e){
+        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
+        return
+    }
 }
