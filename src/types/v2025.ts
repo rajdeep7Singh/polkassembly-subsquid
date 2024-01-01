@@ -349,36 +349,7 @@ export interface VestingInfo {
     startingBlock: BlockNumber
 }
 
-export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
-
-export interface LookupSource_Address20 {
-    __kind: 'Address20'
-    value: H160
-}
-
-export interface LookupSource_Address32 {
-    __kind: 'Address32'
-    value: H256
-}
-
-export interface LookupSource_Id {
-    __kind: 'Id'
-    value: AccountId
-}
-
-export interface LookupSource_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface LookupSource_Raw {
-    __kind: 'Raw'
-    value: Bytes
-}
-
-export type H256 = Bytes
-
-export type H160 = Bytes
+export type LookupSource = Bytes
 
 export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch
 
@@ -400,7 +371,7 @@ export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch
 export interface UtilityCall_as_derivative {
     __kind: 'as_derivative'
     index: number
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -427,147 +398,147 @@ export interface UtilityCall_as_derivative {
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_200[]
+    calls: Type_195[]
 }
 
-export type Type_200 = Type_200_AuthorityDiscovery | Type_200_Authorship | Type_200_Babe | Type_200_Balances | Type_200_Claims | Type_200_Council | Type_200_Democracy | Type_200_ElectionsPhragmen | Type_200_FinalityTracker | Type_200_Grandpa | Type_200_Identity | Type_200_ImOnline | Type_200_Indices | Type_200_Multisig | Type_200_Offences | Type_200_Proxy | Type_200_Recovery | Type_200_Scheduler | Type_200_Session | Type_200_Society | Type_200_Staking | Type_200_System | Type_200_TechnicalCommittee | Type_200_TechnicalMembership | Type_200_Timestamp | Type_200_Treasury | Type_200_Utility | Type_200_Vesting
+export type Type_195 = Type_195_AuthorityDiscovery | Type_195_Authorship | Type_195_Babe | Type_195_Balances | Type_195_Claims | Type_195_Council | Type_195_Democracy | Type_195_ElectionsPhragmen | Type_195_FinalityTracker | Type_195_Grandpa | Type_195_Identity | Type_195_ImOnline | Type_195_Indices | Type_195_Multisig | Type_195_Offences | Type_195_Proxy | Type_195_Recovery | Type_195_Scheduler | Type_195_Session | Type_195_Society | Type_195_Staking | Type_195_System | Type_195_TechnicalCommittee | Type_195_TechnicalMembership | Type_195_Timestamp | Type_195_Treasury | Type_195_Utility | Type_195_Vesting
 
-export interface Type_200_AuthorityDiscovery {
+export interface Type_195_AuthorityDiscovery {
     __kind: 'AuthorityDiscovery'
     value: AuthorityDiscoveryCall
 }
 
-export interface Type_200_Authorship {
+export interface Type_195_Authorship {
     __kind: 'Authorship'
     value: AuthorshipCall
 }
 
-export interface Type_200_Babe {
+export interface Type_195_Babe {
     __kind: 'Babe'
     value: BabeCall
 }
 
-export interface Type_200_Balances {
+export interface Type_195_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_200_Claims {
+export interface Type_195_Claims {
     __kind: 'Claims'
     value: ClaimsCall
 }
 
-export interface Type_200_Council {
+export interface Type_195_Council {
     __kind: 'Council'
     value: CouncilCall
 }
 
-export interface Type_200_Democracy {
+export interface Type_195_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
 }
 
-export interface Type_200_ElectionsPhragmen {
+export interface Type_195_ElectionsPhragmen {
     __kind: 'ElectionsPhragmen'
     value: ElectionsPhragmenCall
 }
 
-export interface Type_200_FinalityTracker {
+export interface Type_195_FinalityTracker {
     __kind: 'FinalityTracker'
     value: FinalityTrackerCall
 }
 
-export interface Type_200_Grandpa {
+export interface Type_195_Grandpa {
     __kind: 'Grandpa'
     value: GrandpaCall
 }
 
-export interface Type_200_Identity {
+export interface Type_195_Identity {
     __kind: 'Identity'
     value: IdentityCall
 }
 
-export interface Type_200_ImOnline {
+export interface Type_195_ImOnline {
     __kind: 'ImOnline'
     value: ImOnlineCall
 }
 
-export interface Type_200_Indices {
+export interface Type_195_Indices {
     __kind: 'Indices'
     value: IndicesCall
 }
 
-export interface Type_200_Multisig {
+export interface Type_195_Multisig {
     __kind: 'Multisig'
     value: MultisigCall
 }
 
-export interface Type_200_Offences {
+export interface Type_195_Offences {
     __kind: 'Offences'
     value: OffencesCall
 }
 
-export interface Type_200_Proxy {
+export interface Type_195_Proxy {
     __kind: 'Proxy'
     value: ProxyCall
 }
 
-export interface Type_200_Recovery {
+export interface Type_195_Recovery {
     __kind: 'Recovery'
     value: RecoveryCall
 }
 
-export interface Type_200_Scheduler {
+export interface Type_195_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
 }
 
-export interface Type_200_Session {
+export interface Type_195_Session {
     __kind: 'Session'
     value: SessionCall
 }
 
-export interface Type_200_Society {
+export interface Type_195_Society {
     __kind: 'Society'
     value: SocietyCall
 }
 
-export interface Type_200_Staking {
+export interface Type_195_Staking {
     __kind: 'Staking'
     value: StakingCall
 }
 
-export interface Type_200_System {
+export interface Type_195_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_200_TechnicalCommittee {
+export interface Type_195_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
     value: TechnicalCommitteeCall
 }
 
-export interface Type_200_TechnicalMembership {
+export interface Type_195_TechnicalMembership {
     __kind: 'TechnicalMembership'
     value: TechnicalMembershipCall
 }
 
-export interface Type_200_Timestamp {
+export interface Type_195_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_200_Treasury {
+export interface Type_195_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_200_Utility {
+export interface Type_195_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_200_Vesting {
+export interface Type_195_Vesting {
     __kind: 'Vesting'
     value: VestingCall
 }
@@ -1945,7 +1916,6 @@ export interface StakingCall_withdraw_unbonded {
 
 export interface ValidatorPrefs {
     commission: number
-    blocked: boolean
 }
 
 export interface ElectionSize {
@@ -2441,7 +2411,7 @@ export interface SessionCall_set_keys {
     proof: Bytes
 }
 
-export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId]
+export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId]
 
 export type SchedulerCall = SchedulerCall_cancel | SchedulerCall_cancel_named | SchedulerCall_schedule | SchedulerCall_schedule_after | SchedulerCall_schedule_named | SchedulerCall_schedule_named_after
 
@@ -2497,7 +2467,7 @@ export interface SchedulerCall_schedule {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -2512,7 +2482,7 @@ export interface SchedulerCall_schedule_after {
     after: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -2533,7 +2503,7 @@ export interface SchedulerCall_schedule_named {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -2549,7 +2519,7 @@ export interface SchedulerCall_schedule_named_after {
     after: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_200
+    call: Type_195
 }
 
 export type Priority = number
@@ -2576,7 +2546,7 @@ export type RecoveryCall = RecoveryCall_as_recovered | RecoveryCall_cancel_recov
 export interface RecoveryCall_as_recovered {
     __kind: 'as_recovered'
     account: AccountId
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -2934,7 +2904,7 @@ export interface ProxyCall_proxy {
     __kind: 'proxy'
     real: AccountId
     forceProxyType?: (ProxyType | undefined)
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -2961,7 +2931,7 @@ export interface ProxyCall_proxy_announced {
     delegate: AccountId
     real: AccountId
     forceProxyType?: (ProxyType | undefined)
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -3050,7 +3020,7 @@ export interface ProxyCall_remove_proxy {
 
 export type CallHashOf = Bytes
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
@@ -3078,10 +3048,6 @@ export interface ProxyType_NonTransfer {
 
 export interface ProxyType_Staking {
     __kind: 'Staking'
-}
-
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
 }
 
 export type OffencesCall = never
@@ -3214,7 +3180,7 @@ export interface MultisigCall_as_multi {
 export interface MultisigCall_as_multi_threshold_1 {
     __kind: 'as_multi_threshold_1'
     otherSignatories: AccountId[]
-    call: Type_200
+    call: Type_195
 }
 
 /**
@@ -3781,6 +3747,8 @@ export interface IdentityInfo {
     twitter: Data
 }
 
+export type H160 = Bytes
+
 export type IdentityInfoAdditional = [Data, Data]
 
 export type IdentityJudgement = IdentityJudgement_Erroneous | IdentityJudgement_FeePaid | IdentityJudgement_KnownGood | IdentityJudgement_LowQuality | IdentityJudgement_OutOfDate | IdentityJudgement_Reasonable | IdentityJudgement_Unknown
@@ -4006,6 +3974,8 @@ export interface Data_ShaThree256 {
     __kind: 'ShaThree256'
     value: H256
 }
+
+export type H256 = Bytes
 
 export type GrandpaCall = GrandpaCall_note_stalled | GrandpaCall_report_equivocation | GrandpaCall_report_equivocation_unsigned
 
@@ -5439,33 +5409,21 @@ export const VestingInfo: sts.Type<VestingInfo> = sts.struct(() => {
     }
 })
 
-export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
-    return  {
-        Address20: H160,
-        Address32: H256,
-        Id: AccountId,
-        Index: sts.number(),
-        Raw: sts.bytes(),
-    }
-})
-
-export const H256 = sts.bytes()
-
-export const H160 = sts.bytes()
+export const LookupSource = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
         as_derivative: sts.enumStruct({
             index: sts.number(),
-            call: Type_200,
+            call: Type_195,
         }),
         batch: sts.enumStruct({
-            calls: sts.array(() => Type_200),
+            calls: sts.array(() => Type_195),
         }),
     }
 })
 
-export const Type_200: sts.Type<Type_200> = sts.closedEnum(() => {
+export const Type_195: sts.Type<Type_195> = sts.closedEnum(() => {
     return  {
         AuthorityDiscovery: AuthorityDiscoveryCall,
         Authorship: AuthorshipCall,
@@ -5770,7 +5728,6 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
 export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
     return  {
         commission: sts.number(),
-        blocked: sts.boolean(),
     }
 })
 
@@ -5892,7 +5849,7 @@ export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     }
 })
 
-export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId])
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId])
 
 export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
     return  {
@@ -5907,27 +5864,27 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_200,
+            call: Type_195,
         }),
         schedule_after: sts.enumStruct({
             after: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_200,
+            call: Type_195,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_200,
+            call: Type_195,
         }),
         schedule_named_after: sts.enumStruct({
             id: sts.bytes(),
             after: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_200,
+            call: Type_195,
         }),
     }
 })
@@ -5940,7 +5897,7 @@ export const RecoveryCall: sts.Type<RecoveryCall> = sts.closedEnum(() => {
     return  {
         as_recovered: sts.enumStruct({
             account: AccountId,
-            call: Type_200,
+            call: Type_195,
         }),
         cancel_recovered: sts.enumStruct({
             account: AccountId,
@@ -5997,13 +5954,13 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
         proxy: sts.enumStruct({
             real: AccountId,
             forceProxyType: sts.option(() => ProxyType),
-            call: Type_200,
+            call: Type_195,
         }),
         proxy_announced: sts.enumStruct({
             delegate: AccountId,
             real: AccountId,
             forceProxyType: sts.option(() => ProxyType),
-            call: Type_200,
+            call: Type_195,
         }),
         reject_announcement: sts.enumStruct({
             delegate: AccountId,
@@ -6033,7 +5990,6 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
         IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 
@@ -6061,7 +6017,7 @@ export const MultisigCall: sts.Type<MultisigCall> = sts.closedEnum(() => {
         }),
         as_multi_threshold_1: sts.enumStruct({
             otherSignatories: sts.array(() => AccountId),
-            call: Type_200,
+            call: Type_195,
         }),
         cancel_as_multi: sts.enumStruct({
             threshold: sts.number(),
@@ -6212,6 +6168,8 @@ export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
     }
 })
 
+export const H160 = sts.bytes()
+
 export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
 
 export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() => {
@@ -6270,6 +6228,8 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
         ShaThree256: H256,
     }
 })
+
+export const H256 = sts.bytes()
 
 export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
     return  {

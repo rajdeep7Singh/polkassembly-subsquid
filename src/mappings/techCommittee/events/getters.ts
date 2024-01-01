@@ -45,12 +45,16 @@ export function getExecutedData(itemEvent: Event): string {
     if (executed.v1020.is(itemEvent)) {
         return executed.v1020.decode(itemEvent)[0]
     } else if (executed.v2005.is(itemEvent)) {
+        return executed.v2005.decode(itemEvent)[0]
+    } else if (executed.v9111.is(itemEvent)) {
         return executed.v9111.decode(itemEvent)[0]
     } else if (executed.v9130.is(itemEvent)) {
         return executed.v9130.decode(itemEvent).proposalHash
-    } else if (executed.v9170.is(itemEvent)) {
+    } else if (executed.v9160.is(itemEvent)) {
+        return executed.v9160.decode(itemEvent).proposalHash
+    }else if (executed.v9170.is(itemEvent)) {
         return executed.v9170.decode(itemEvent).proposalHash
-    } else if (executed.v9190.is(itemEvent)) {
+    }else if (executed.v9190.is(itemEvent)) {
         return executed.v9190.decode(itemEvent).proposalHash
     }else if (executed.v9320.is(itemEvent)) {
         return executed.v9320.decode(itemEvent).proposalHash

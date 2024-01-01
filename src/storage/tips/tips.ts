@@ -28,11 +28,11 @@ async function getTreasuryStorageData(ctx: ProcessorContext<Store>, hash: string
         return {
             who,
             finder: finder?.[0],
-            deposit: BigInt(finder?.[1]),
+            deposit: finder?.[1],
             reason,
         }
-    } else if (TreasuryTipsStorage.v1038.is(block)) {
-        return await TreasuryTipsStorage.v1038.get(block, hash)
+    } else if (TreasuryTipsStorage.v2013.is(block)) {
+        return await TreasuryTipsStorage.v2013.get(block, hash)
     } else {
         throw new UnknownVersionError("Treasury.Tips")
     }

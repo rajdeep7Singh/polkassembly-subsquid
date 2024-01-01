@@ -14,6 +14,7 @@ import * as v1050 from '../v1050'
 import * as v1054 from '../v1054'
 import * as v1055 from '../v1055'
 import * as v1058 from '../v1058'
+import * as v1062 from '../v1062'
 import * as v2005 from '../v2005'
 import * as v2007 from '../v2007'
 import * as v2011 from '../v2011'
@@ -114,6 +115,10 @@ export const proposalOf =  {
      *  Actual proposal for a given hash, if it's current.
      */
     v1058: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v1058.Hash], v1058.Proposal) as ProposalOfV1058,
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    v1062: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v1062.Hash], v1062.Proposal) as ProposalOfV1062,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
@@ -425,6 +430,23 @@ export interface ProposalOfV1058  {
     getPairs(block: Block, key: v1058.Hash): Promise<[k: v1058.Hash, v: (v1058.Proposal | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1058.Hash, v: (v1058.Proposal | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v1058.Hash): AsyncIterable<[k: v1058.Hash, v: (v1058.Proposal | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface ProposalOfV1062  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1062.Hash): Promise<(v1062.Proposal | undefined)>
+    getMany(block: Block, keys: v1062.Hash[]): Promise<(v1062.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v1062.Hash[]>
+    getKeys(block: Block, key: v1062.Hash): Promise<v1062.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1062.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v1062.Hash): AsyncIterable<v1062.Hash[]>
+    getPairs(block: Block): Promise<[k: v1062.Hash, v: (v1062.Proposal | undefined)][]>
+    getPairs(block: Block, key: v1062.Hash): Promise<[k: v1062.Hash, v: (v1062.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1062.Hash, v: (v1062.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v1062.Hash): AsyncIterable<[k: v1062.Hash, v: (v1062.Proposal | undefined)][]>
 }
 
 /**

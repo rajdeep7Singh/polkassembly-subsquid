@@ -8,6 +8,11 @@ export async function getTotalIssuanceStorageData(ctx: ProcessorContext<Store>, 
 }
 
 export async function getTotalInactiveIssuanceStorageData(ctx: ProcessorContext<Store>, block: any): Promise<bigint> {
+    try{
     const storageData = await block._runtime.getStorage(block.hash, 'Balances.InactiveIssuance')
     return storageData || BigInt(0)
+    }
+    catch{
+        return BigInt(0)
+    }
 }

@@ -4399,7 +4399,7 @@ export interface ProxyCall_remove_proxy {
 
 export type CallHashOf = Bytes
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
@@ -4427,10 +4427,6 @@ export interface ProxyType_NonTransfer {
 
 export interface ProxyType_Staking {
     __kind: 'Staking'
-}
-
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
 }
 
 export type PhragmenElectionCall = PhragmenElectionCall_clean_defunct_voters | PhragmenElectionCall_remove_member | PhragmenElectionCall_remove_voter | PhragmenElectionCall_renounce_candidacy | PhragmenElectionCall_submit_candidacy | PhragmenElectionCall_vote
@@ -6097,12 +6093,12 @@ export interface SolutionOrSnapshotSize {
 }
 
 export interface RawSolution {
-    compact: CompactAssignmentsWith16
+    compact: CompactAssignmentsWith24
     score: ElectionScore
     round: number
 }
 
-export interface CompactAssignmentsWith16 {
+export interface CompactAssignmentsWith24 {
     votes1: [NominatorIndexCompact, ValidatorIndexCompact][]
     votes2: [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact][]
     votes3: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
@@ -6119,6 +6115,14 @@ export interface CompactAssignmentsWith16 {
     votes14: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
     votes15: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
     votes16: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes17: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes18: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes19: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes20: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes21: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes22: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes23: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes24: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
 }
 
 export type CompactScoreCompact = [ValidatorIndexCompact, OffchainAccuracyCompact]
@@ -9254,7 +9258,6 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
         IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 
@@ -9873,13 +9876,13 @@ export const SolutionOrSnapshotSize: sts.Type<SolutionOrSnapshotSize> = sts.stru
 
 export const RawSolution: sts.Type<RawSolution> = sts.struct(() => {
     return  {
-        compact: CompactAssignmentsWith16,
+        compact: CompactAssignmentsWith24,
         score: ElectionScore,
         round: sts.number(),
     }
 })
 
-export const CompactAssignmentsWith16: sts.Type<CompactAssignmentsWith16> = sts.struct(() => {
+export const CompactAssignmentsWith24: sts.Type<CompactAssignmentsWith24> = sts.struct(() => {
     return  {
         votes1: sts.array(() => sts.tuple(() => [NominatorIndexCompact, ValidatorIndexCompact])),
         votes2: sts.array(() => sts.tuple(() => [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact])),
@@ -9897,6 +9900,14 @@ export const CompactAssignmentsWith16: sts.Type<CompactAssignmentsWith16> = sts.
         votes14: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
         votes15: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
         votes16: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes17: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes18: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes19: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes20: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes21: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes22: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes23: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes24: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
     }
 })
 

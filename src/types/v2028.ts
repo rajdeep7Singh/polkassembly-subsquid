@@ -2982,7 +2982,7 @@ export interface ProxyCall_remove_proxy {
 
 export type CallHashOf = Bytes
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
@@ -3010,10 +3010,6 @@ export interface ProxyType_NonTransfer {
 
 export interface ProxyType_Staking {
     __kind: 'Staking'
-}
-
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
 }
 
 export type OffencesCall = never
@@ -5989,7 +5985,6 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
         IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 

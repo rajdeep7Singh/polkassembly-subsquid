@@ -256,7 +256,7 @@ export type XcmPalletCall = XcmPalletCall_execute | XcmPalletCall_reserve_transf
  */
 export interface XcmPalletCall_execute {
     __kind: 'execute'
-    message: InstructionV2[]
+    message: Xcm
     maxWeight: Weight
 }
 
@@ -285,7 +285,7 @@ export interface XcmPalletCall_reserve_transfer_assets {
 export interface XcmPalletCall_send {
     __kind: 'send'
     dest: MultiLocation
-    message: InstructionV2[]
+    message: Xcm
 }
 
 /**
@@ -309,167 +309,163 @@ export interface XcmPalletCall_teleport_assets {
     destWeight: Weight
 }
 
-export interface MultiAsset {
-    id: XcmAssetId
-    fungibility: FungibilityV1
+export type MultiAsset = MultiAsset_AbstractFungible | MultiAsset_AbstractNonFungible | MultiAsset_All | MultiAsset_AllAbstractFungible | MultiAsset_AllAbstractNonFungible | MultiAsset_AllConcreteFungible | MultiAsset_AllConcreteNonFungible | MultiAsset_AllFungible | MultiAsset_AllNonFungible | MultiAsset_ConcreteFungible | MultiAsset_ConcreteNonFungible | MultiAsset_None
+
+export interface MultiAsset_AbstractFungible {
+    __kind: 'AbstractFungible'
+    id: Bytes
+    instance: bigint
 }
 
-export type FungibilityV1 = FungibilityV1_Fungible | FungibilityV1_NonFungible
-
-export interface FungibilityV1_Fungible {
-    __kind: 'Fungible'
-    value: bigint
+export interface MultiAsset_AbstractNonFungible {
+    __kind: 'AbstractNonFungible'
+    class: Bytes
+    instance: AssetInstanceV0
 }
 
-export interface FungibilityV1_NonFungible {
-    __kind: 'NonFungible'
-    value: AssetInstanceV1
+export interface MultiAsset_All {
+    __kind: 'All'
 }
 
-export type AssetInstanceV1 = AssetInstanceV1_Array16 | AssetInstanceV1_Array32 | AssetInstanceV1_Array4 | AssetInstanceV1_Array8 | AssetInstanceV1_Blob | AssetInstanceV1_Index | AssetInstanceV1_Undefined
-
-export interface AssetInstanceV1_Array16 {
-    __kind: 'Array16'
+export interface MultiAsset_AllAbstractFungible {
+    __kind: 'AllAbstractFungible'
     value: Bytes
 }
 
-export interface AssetInstanceV1_Array32 {
-    __kind: 'Array32'
+export interface MultiAsset_AllAbstractNonFungible {
+    __kind: 'AllAbstractNonFungible'
     value: Bytes
 }
 
-export interface AssetInstanceV1_Array4 {
-    __kind: 'Array4'
-    value: Bytes
+export interface MultiAsset_AllConcreteFungible {
+    __kind: 'AllConcreteFungible'
+    value: MultiLocationV0
 }
 
-export interface AssetInstanceV1_Array8 {
-    __kind: 'Array8'
-    value: Bytes
+export interface MultiAsset_AllConcreteNonFungible {
+    __kind: 'AllConcreteNonFungible'
+    value: MultiLocationV0
 }
 
-export interface AssetInstanceV1_Blob {
-    __kind: 'Blob'
-    value: Bytes
+export interface MultiAsset_AllFungible {
+    __kind: 'AllFungible'
 }
 
-export interface AssetInstanceV1_Index {
-    __kind: 'Index'
-    value: bigint
+export interface MultiAsset_AllNonFungible {
+    __kind: 'AllNonFungible'
 }
 
-export interface AssetInstanceV1_Undefined {
-    __kind: 'Undefined'
+export interface MultiAsset_ConcreteFungible {
+    __kind: 'ConcreteFungible'
+    id: MultiLocationV0
+    amount: bigint
 }
 
-export type XcmAssetId = XcmAssetId_Abstract | XcmAssetId_Concrete
-
-export interface XcmAssetId_Abstract {
-    __kind: 'Abstract'
-    value: Bytes
+export interface MultiAsset_ConcreteNonFungible {
+    __kind: 'ConcreteNonFungible'
+    class: MultiLocationV0
+    instance: AssetInstanceV0
 }
 
-export interface XcmAssetId_Concrete {
-    __kind: 'Concrete'
-    value: MultiLocation
+export interface MultiAsset_None {
+    __kind: 'None'
 }
 
-export interface MultiLocation {
-    parents: number
-    interior: JunctionsV1
-}
+export type MultiLocationV0 = MultiLocationV0_Here | MultiLocationV0_X1 | MultiLocationV0_X2 | MultiLocationV0_X3 | MultiLocationV0_X4 | MultiLocationV0_X5 | MultiLocationV0_X6 | MultiLocationV0_X7 | MultiLocationV0_X8
 
-export type JunctionsV1 = JunctionsV1_Here | JunctionsV1_X1 | JunctionsV1_X2 | JunctionsV1_X3 | JunctionsV1_X4 | JunctionsV1_X5 | JunctionsV1_X6 | JunctionsV1_X7 | JunctionsV1_X8
-
-export interface JunctionsV1_Here {
+export interface MultiLocationV0_Here {
     __kind: 'Here'
 }
 
-export interface JunctionsV1_X1 {
+export interface MultiLocationV0_X1 {
     __kind: 'X1'
-    value: JunctionV1
+    value: JunctionV0
 }
 
-export interface JunctionsV1_X2 {
+export interface MultiLocationV0_X2 {
     __kind: 'X2'
-    value: [JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X3 {
+export interface MultiLocationV0_X3 {
     __kind: 'X3'
-    value: [JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X4 {
+export interface MultiLocationV0_X4 {
     __kind: 'X4'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X5 {
+export interface MultiLocationV0_X5 {
     __kind: 'X5'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X6 {
+export interface MultiLocationV0_X6 {
     __kind: 'X6'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X7 {
+export interface MultiLocationV0_X7 {
     __kind: 'X7'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
 }
 
-export interface JunctionsV1_X8 {
+export interface MultiLocationV0_X8 {
     __kind: 'X8'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
 }
 
-export type JunctionV1 = JunctionV1_AccountId32 | JunctionV1_AccountIndex64 | JunctionV1_AccountKey20 | JunctionV1_GeneralIndex | JunctionV1_GeneralKey | JunctionV1_OnlyChild | JunctionV1_PalletInstance | JunctionV1_Parachain | JunctionV1_Plurality
+export type JunctionV0 = JunctionV0_AccountId32 | JunctionV0_AccountIndex64 | JunctionV0_AccountKey20 | JunctionV0_GeneralIndex | JunctionV0_GeneralKey | JunctionV0_OnlyChild | JunctionV0_PalletInstance | JunctionV0_Parachain | JunctionV0_Parent | JunctionV0_Plurality
 
-export interface JunctionV1_AccountId32 {
+export interface JunctionV0_AccountId32 {
     __kind: 'AccountId32'
     network: NetworkId
     id: AccountId
 }
 
-export interface JunctionV1_AccountIndex64 {
+export interface JunctionV0_AccountIndex64 {
     __kind: 'AccountIndex64'
     network: NetworkId
     index: bigint
 }
 
-export interface JunctionV1_AccountKey20 {
+export interface JunctionV0_AccountKey20 {
     __kind: 'AccountKey20'
     network: NetworkId
     key: Bytes
 }
 
-export interface JunctionV1_GeneralIndex {
+export interface JunctionV0_GeneralIndex {
     __kind: 'GeneralIndex'
     value: bigint
 }
 
-export interface JunctionV1_GeneralKey {
+export interface JunctionV0_GeneralKey {
     __kind: 'GeneralKey'
     value: Bytes
 }
 
-export interface JunctionV1_OnlyChild {
+export interface JunctionV0_OnlyChild {
     __kind: 'OnlyChild'
 }
 
-export interface JunctionV1_PalletInstance {
+export interface JunctionV0_PalletInstance {
     __kind: 'PalletInstance'
     value: number
 }
 
-export interface JunctionV1_Parachain {
+export interface JunctionV0_Parachain {
     __kind: 'Parachain'
     value: number
 }
 
-export interface JunctionV1_Plurality {
+export interface JunctionV0_Parent {
+    __kind: 'Parent'
+}
+
+export interface JunctionV0_Plurality {
     __kind: 'Plurality'
     id: BodyId
     part: BodyPart
@@ -557,451 +553,396 @@ export interface NetworkId_Polkadot {
     __kind: 'Polkadot'
 }
 
+export type AssetInstanceV0 = AssetInstanceV0_Array16 | AssetInstanceV0_Array32 | AssetInstanceV0_Array4 | AssetInstanceV0_Array8 | AssetInstanceV0_Blob | AssetInstanceV0_Index128 | AssetInstanceV0_Index16 | AssetInstanceV0_Index32 | AssetInstanceV0_Index64 | AssetInstanceV0_Index8 | AssetInstanceV0_Undefined
+
+export interface AssetInstanceV0_Array16 {
+    __kind: 'Array16'
+    value: Bytes
+}
+
+export interface AssetInstanceV0_Array32 {
+    __kind: 'Array32'
+    value: Bytes
+}
+
+export interface AssetInstanceV0_Array4 {
+    __kind: 'Array4'
+    value: Bytes
+}
+
+export interface AssetInstanceV0_Array8 {
+    __kind: 'Array8'
+    value: Bytes
+}
+
+export interface AssetInstanceV0_Blob {
+    __kind: 'Blob'
+    value: Bytes
+}
+
+export interface AssetInstanceV0_Index128 {
+    __kind: 'Index128'
+    value: bigint
+}
+
+export interface AssetInstanceV0_Index16 {
+    __kind: 'Index16'
+    value: number
+}
+
+export interface AssetInstanceV0_Index32 {
+    __kind: 'Index32'
+    value: number
+}
+
+export interface AssetInstanceV0_Index64 {
+    __kind: 'Index64'
+    value: bigint
+}
+
+export interface AssetInstanceV0_Index8 {
+    __kind: 'Index8'
+    value: number
+}
+
+export interface AssetInstanceV0_Undefined {
+    __kind: 'Undefined'
+}
+
+export type MultiLocation = MultiLocation_Here | MultiLocation_X1 | MultiLocation_X2 | MultiLocation_X3 | MultiLocation_X4 | MultiLocation_X5 | MultiLocation_X6 | MultiLocation_X7 | MultiLocation_X8
+
+export interface MultiLocation_Here {
+    __kind: 'Here'
+}
+
+export interface MultiLocation_X1 {
+    __kind: 'X1'
+    value: JunctionV0
+}
+
+export interface MultiLocation_X2 {
+    __kind: 'X2'
+    value: [JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X3 {
+    __kind: 'X3'
+    value: [JunctionV0, JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X4 {
+    __kind: 'X4'
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X5 {
+    __kind: 'X5'
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X6 {
+    __kind: 'X6'
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X7 {
+    __kind: 'X7'
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
+}
+
+export interface MultiLocation_X8 {
+    __kind: 'X8'
+    value: [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]
+}
+
 export type Weight = bigint
 
-export type InstructionV2 = InstructionV2_BuyExecution | InstructionV2_ClaimAsset | InstructionV2_ClearError | InstructionV2_ClearOrigin | InstructionV2_DepositAsset | InstructionV2_DepositReserveAsset | InstructionV2_DescendOrigin | InstructionV2_ExchangeAsset | InstructionV2_HrmpChannelAccepted | InstructionV2_HrmpChannelClosing | InstructionV2_HrmpNewChannelOpenRequest | InstructionV2_InitiateReserveWithdraw | InstructionV2_InitiateTeleport | InstructionV2_QueryHolding | InstructionV2_QueryResponse | InstructionV2_ReceiveTeleportedAsset | InstructionV2_RefundSurplus | InstructionV2_ReportError | InstructionV2_ReserveAssetDeposited | InstructionV2_SetAppendix | InstructionV2_SetErrorHandler | InstructionV2_Transact | InstructionV2_TransferAsset | InstructionV2_TransferReserveAsset | InstructionV2_Trap | InstructionV2_WithdrawAsset
+export type Xcm = Xcm_HrmpChannelAccepted | Xcm_HrmpChannelClosing | Xcm_HrmpNewChannelOpenRequest | Xcm_QueryResponse | Xcm_ReceiveTeleportedAsset | Xcm_RelayedFrom | Xcm_ReserveAssetDeposit | Xcm_Transact | Xcm_TransferAsset | Xcm_TransferReserveAsset | Xcm_WithdrawAsset
 
-export interface InstructionV2_BuyExecution {
-    __kind: 'BuyExecution'
-    fees: MultiAssetV2
-    weightLimit: WeightLimitV2
-}
-
-export interface InstructionV2_ClaimAsset {
-    __kind: 'ClaimAsset'
-    assets: MultiAssetV1[]
-    ticket: MultiLocationV2
-}
-
-export interface InstructionV2_ClearError {
-    __kind: 'ClearError'
-}
-
-export interface InstructionV2_ClearOrigin {
-    __kind: 'ClearOrigin'
-}
-
-export interface InstructionV2_DepositAsset {
-    __kind: 'DepositAsset'
-    assets: MultiAssetFilterV2
-    maxAssets: number
-    beneficiary: MultiLocationV2
-}
-
-export interface InstructionV2_DepositReserveAsset {
-    __kind: 'DepositReserveAsset'
-    assets: MultiAssetFilterV2
-    maxAssets: number
-    dest: MultiLocationV2
-    xcm: InstructionV2[]
-}
-
-export interface InstructionV2_DescendOrigin {
-    __kind: 'DescendOrigin'
-    value: InteriorMultiLocation
-}
-
-export interface InstructionV2_ExchangeAsset {
-    __kind: 'ExchangeAsset'
-    give: MultiAssetFilterV2
-    receive: MultiAssetV1[]
-}
-
-export interface InstructionV2_HrmpChannelAccepted {
+export interface Xcm_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface InstructionV2_HrmpChannelClosing {
+export interface Xcm_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface InstructionV2_HrmpNewChannelOpenRequest {
+export interface Xcm_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface InstructionV2_InitiateReserveWithdraw {
-    __kind: 'InitiateReserveWithdraw'
-    assets: MultiAssetFilterV2
-    reserve: MultiLocationV2
-    xcm: InstructionV2[]
-}
-
-export interface InstructionV2_InitiateTeleport {
-    __kind: 'InitiateTeleport'
-    assets: MultiAssetFilterV2
-    dest: MultiLocationV2
-    xcm: InstructionV2[]
-}
-
-export interface InstructionV2_QueryHolding {
-    __kind: 'QueryHolding'
-    queryId: bigint
-    dest: MultiLocationV2
-    assets: MultiAssetFilterV2
-    maxResponseWeight: bigint
-}
-
-export interface InstructionV2_QueryResponse {
+export interface Xcm_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
-    response: ResponseV2
-    maxWeight: bigint
+    response: ResponseV0
 }
 
-export interface InstructionV2_ReceiveTeleportedAsset {
+export interface Xcm_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
-    value: MultiAssetV1[]
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
 }
 
-export interface InstructionV2_RefundSurplus {
-    __kind: 'RefundSurplus'
+export interface Xcm_RelayedFrom {
+    __kind: 'RelayedFrom'
+    who: MultiLocationV0
+    message: XcmV0
 }
 
-export interface InstructionV2_ReportError {
-    __kind: 'ReportError'
-    queryId: bigint
-    dest: MultiLocationV2
-    maxResponseWeight: bigint
+export interface Xcm_ReserveAssetDeposit {
+    __kind: 'ReserveAssetDeposit'
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
 }
 
-export interface InstructionV2_ReserveAssetDeposited {
-    __kind: 'ReserveAssetDeposited'
-    value: MultiAssetV1[]
-}
-
-export interface InstructionV2_SetAppendix {
-    __kind: 'SetAppendix'
-    value: InstructionV2[]
-}
-
-export interface InstructionV2_SetErrorHandler {
-    __kind: 'SetErrorHandler'
-    value: InstructionV2[]
-}
-
-export interface InstructionV2_Transact {
+export interface Xcm_Transact {
     __kind: 'Transact'
-    originType: OriginKindV2
+    originType: XcmOriginKind
     requireWeightAtMost: bigint
     call: DoubleEncodedCall
 }
 
-export interface InstructionV2_TransferAsset {
+export interface Xcm_TransferAsset {
     __kind: 'TransferAsset'
-    assets: MultiAssetV1[]
-    beneficiary: MultiLocationV2
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
 }
 
-export interface InstructionV2_TransferReserveAsset {
+export interface Xcm_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
-    assets: MultiAssetV1[]
-    dest: MultiLocationV2
-    xcm: InstructionV2[]
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
+    effects: XcmOrderV0[]
 }
 
-export interface InstructionV2_Trap {
-    __kind: 'Trap'
-    value: bigint
-}
-
-export interface InstructionV2_WithdrawAsset {
+export interface Xcm_WithdrawAsset {
     __kind: 'WithdrawAsset'
-    value: MultiAssetV1[]
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
 }
 
 export interface DoubleEncodedCall {
     encoded: Bytes
 }
 
-export type OriginKindV2 = OriginKindV2_Native | OriginKindV2_SovereignAccount | OriginKindV2_Superuser | OriginKindV2_Xcm
+export type XcmOriginKind = XcmOriginKind_Native | XcmOriginKind_SovereignAccount | XcmOriginKind_Superuser | XcmOriginKind_Xcm
 
-export interface OriginKindV2_Native {
+export interface XcmOriginKind_Native {
     __kind: 'Native'
 }
 
-export interface OriginKindV2_SovereignAccount {
+export interface XcmOriginKind_SovereignAccount {
     __kind: 'SovereignAccount'
 }
 
-export interface OriginKindV2_Superuser {
+export interface XcmOriginKind_Superuser {
     __kind: 'Superuser'
 }
 
-export interface OriginKindV2_Xcm {
+export interface XcmOriginKind_Xcm {
     __kind: 'Xcm'
 }
 
-export type ResponseV2 = ResponseV2_Assets | ResponseV2_ExecutionResult | ResponseV2_Null
+export type XcmV0 = XcmV0_HrmpChannelAccepted | XcmV0_HrmpChannelClosing | XcmV0_HrmpNewChannelOpenRequest | XcmV0_QueryResponse | XcmV0_ReceiveTeleportedAsset | XcmV0_RelayedFrom | XcmV0_ReserveAssetDeposit | XcmV0_Transact | XcmV0_TransferAsset | XcmV0_TransferReserveAsset | XcmV0_WithdrawAsset
 
-export interface ResponseV2_Assets {
-    __kind: 'Assets'
-    value: MultiAssetV1[]
+export interface XcmV0_HrmpChannelAccepted {
+    __kind: 'HrmpChannelAccepted'
+    recipient: number
 }
 
-export interface ResponseV2_ExecutionResult {
-    __kind: 'ExecutionResult'
-    value: ResponseV2Result
+export interface XcmV0_HrmpChannelClosing {
+    __kind: 'HrmpChannelClosing'
+    initiator: number
+    sender: number
+    recipient: number
 }
 
-export interface ResponseV2_Null {
+export interface XcmV0_HrmpNewChannelOpenRequest {
+    __kind: 'HrmpNewChannelOpenRequest'
+    sender: number
+    maxMessageSize: number
+    maxCapacity: number
+}
+
+export interface XcmV0_QueryResponse {
+    __kind: 'QueryResponse'
+    queryId: bigint
+    response: ResponseV0
+}
+
+export interface XcmV0_ReceiveTeleportedAsset {
+    __kind: 'ReceiveTeleportedAsset'
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
+}
+
+export interface XcmV0_RelayedFrom {
+    __kind: 'RelayedFrom'
+    who: MultiLocationV0
+    message: XcmV0
+}
+
+export interface XcmV0_ReserveAssetDeposit {
+    __kind: 'ReserveAssetDeposit'
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
+}
+
+export interface XcmV0_Transact {
+    __kind: 'Transact'
+    originType: XcmOriginKind
+    requireWeightAtMost: bigint
+    call: DoubleEncodedCall
+}
+
+export interface XcmV0_TransferAsset {
+    __kind: 'TransferAsset'
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
+}
+
+export interface XcmV0_TransferReserveAsset {
+    __kind: 'TransferReserveAsset'
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
+    effects: XcmOrderV0[]
+}
+
+export interface XcmV0_WithdrawAsset {
+    __kind: 'WithdrawAsset'
+    assets: MultiAssetV0[]
+    effects: XcmOrderV0[]
+}
+
+export type XcmOrderV0 = XcmOrderV0_BuyExecution | XcmOrderV0_DepositAsset | XcmOrderV0_DepositReserveAsset | XcmOrderV0_ExchangeAsset | XcmOrderV0_InitiateReserveWithdraw | XcmOrderV0_InitiateTeleport | XcmOrderV0_Null | XcmOrderV0_QueryHolding
+
+export interface XcmOrderV0_BuyExecution {
+    __kind: 'BuyExecution'
+    fees: MultiAsset
+    weight: bigint
+    debt: bigint
+    haltOnError: boolean
+    xcm: XcmV0[]
+}
+
+export interface XcmOrderV0_DepositAsset {
+    __kind: 'DepositAsset'
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
+}
+
+export interface XcmOrderV0_DepositReserveAsset {
+    __kind: 'DepositReserveAsset'
+    assets: MultiAssetV0[]
+    dest: MultiLocationV0
+    effects: XcmOrderV0[]
+}
+
+export interface XcmOrderV0_ExchangeAsset {
+    __kind: 'ExchangeAsset'
+    give: MultiAssetV0[]
+    receive: MultiAssetV0[]
+}
+
+export interface XcmOrderV0_InitiateReserveWithdraw {
+    __kind: 'InitiateReserveWithdraw'
+    assets: MultiAssetV0[]
+    reserve: MultiLocationV0
+    effects: XcmOrderV0[]
+}
+
+export interface XcmOrderV0_InitiateTeleport {
+    __kind: 'InitiateTeleport'
+    assets: MultiAsset[]
+    dest: MultiLocationV0
+    effects: XcmOrderV0[]
+}
+
+export interface XcmOrderV0_Null {
     __kind: 'Null'
 }
 
-export type ResponseV2Result = Result<null, ResponseV2Error>
-
-export type ResponseV2Error = [number, XcmErrorV2]
-
-export type XcmErrorV2 = XcmErrorV2_AssetNotFound | XcmErrorV2_BadOrigin | XcmErrorV2_Barrier | XcmErrorV2_DestinationBufferOverflow | XcmErrorV2_DestinationUnsupported | XcmErrorV2_EscalationOfPrivilege | XcmErrorV2_ExceedsMaxMessageSize | XcmErrorV2_FailedToDecode | XcmErrorV2_FailedToTransactAsset | XcmErrorV2_InvalidLocation | XcmErrorV2_LocationCannotHold | XcmErrorV2_MultiLocationFull | XcmErrorV2_MultiLocationNotInvertible | XcmErrorV2_NotHoldingFees | XcmErrorV2_NotWithdrawable | XcmErrorV2_Overflow | XcmErrorV2_RecursionLimitReached | XcmErrorV2_TooExpensive | XcmErrorV2_TooMuchWeightRequired | XcmErrorV2_Transport | XcmErrorV2_Trap | XcmErrorV2_Undefined | XcmErrorV2_UnhandledEffect | XcmErrorV2_UnhandledXcmMessage | XcmErrorV2_UnhandledXcmVersion | XcmErrorV2_Unimplemented | XcmErrorV2_UnknownClaim | XcmErrorV2_UnknownWeightRequired | XcmErrorV2_Unroutable | XcmErrorV2_UntrustedReserveLocation | XcmErrorV2_UntrustedTeleportLocation | XcmErrorV2_WeightLimitReached | XcmErrorV2_WeightNotComputable | XcmErrorV2_Wildcard
-
-export interface XcmErrorV2_AssetNotFound {
-    __kind: 'AssetNotFound'
+export interface XcmOrderV0_QueryHolding {
+    __kind: 'QueryHolding'
+    queryId: bigint
+    dest: MultiLocationV0
+    assets: MultiAssetV0[]
 }
 
-export interface XcmErrorV2_BadOrigin {
-    __kind: 'BadOrigin'
+export type MultiAssetV0 = MultiAssetV0_AbstractFungible | MultiAssetV0_AbstractNonFungible | MultiAssetV0_All | MultiAssetV0_AllAbstractFungible | MultiAssetV0_AllAbstractNonFungible | MultiAssetV0_AllConcreteFungible | MultiAssetV0_AllConcreteNonFungible | MultiAssetV0_AllFungible | MultiAssetV0_AllNonFungible | MultiAssetV0_ConcreteFungible | MultiAssetV0_ConcreteNonFungible | MultiAssetV0_None
+
+export interface MultiAssetV0_AbstractFungible {
+    __kind: 'AbstractFungible'
+    id: Bytes
+    instance: bigint
 }
 
-export interface XcmErrorV2_Barrier {
-    __kind: 'Barrier'
+export interface MultiAssetV0_AbstractNonFungible {
+    __kind: 'AbstractNonFungible'
+    class: Bytes
+    instance: AssetInstanceV0
 }
 
-export interface XcmErrorV2_DestinationBufferOverflow {
-    __kind: 'DestinationBufferOverflow'
-}
-
-export interface XcmErrorV2_DestinationUnsupported {
-    __kind: 'DestinationUnsupported'
-}
-
-export interface XcmErrorV2_EscalationOfPrivilege {
-    __kind: 'EscalationOfPrivilege'
-}
-
-export interface XcmErrorV2_ExceedsMaxMessageSize {
-    __kind: 'ExceedsMaxMessageSize'
-}
-
-export interface XcmErrorV2_FailedToDecode {
-    __kind: 'FailedToDecode'
-}
-
-export interface XcmErrorV2_FailedToTransactAsset {
-    __kind: 'FailedToTransactAsset'
-}
-
-export interface XcmErrorV2_InvalidLocation {
-    __kind: 'InvalidLocation'
-}
-
-export interface XcmErrorV2_LocationCannotHold {
-    __kind: 'LocationCannotHold'
-}
-
-export interface XcmErrorV2_MultiLocationFull {
-    __kind: 'MultiLocationFull'
-}
-
-export interface XcmErrorV2_MultiLocationNotInvertible {
-    __kind: 'MultiLocationNotInvertible'
-}
-
-export interface XcmErrorV2_NotHoldingFees {
-    __kind: 'NotHoldingFees'
-}
-
-export interface XcmErrorV2_NotWithdrawable {
-    __kind: 'NotWithdrawable'
-}
-
-export interface XcmErrorV2_Overflow {
-    __kind: 'Overflow'
-}
-
-export interface XcmErrorV2_RecursionLimitReached {
-    __kind: 'RecursionLimitReached'
-}
-
-export interface XcmErrorV2_TooExpensive {
-    __kind: 'TooExpensive'
-}
-
-export interface XcmErrorV2_TooMuchWeightRequired {
-    __kind: 'TooMuchWeightRequired'
-}
-
-export interface XcmErrorV2_Transport {
-    __kind: 'Transport'
-}
-
-export interface XcmErrorV2_Trap {
-    __kind: 'Trap'
-    value: bigint
-}
-
-export interface XcmErrorV2_Undefined {
-    __kind: 'Undefined'
-}
-
-export interface XcmErrorV2_UnhandledEffect {
-    __kind: 'UnhandledEffect'
-}
-
-export interface XcmErrorV2_UnhandledXcmMessage {
-    __kind: 'UnhandledXcmMessage'
-}
-
-export interface XcmErrorV2_UnhandledXcmVersion {
-    __kind: 'UnhandledXcmVersion'
-}
-
-export interface XcmErrorV2_Unimplemented {
-    __kind: 'Unimplemented'
-}
-
-export interface XcmErrorV2_UnknownClaim {
-    __kind: 'UnknownClaim'
-}
-
-export interface XcmErrorV2_UnknownWeightRequired {
-    __kind: 'UnknownWeightRequired'
-}
-
-export interface XcmErrorV2_Unroutable {
-    __kind: 'Unroutable'
-}
-
-export interface XcmErrorV2_UntrustedReserveLocation {
-    __kind: 'UntrustedReserveLocation'
-}
-
-export interface XcmErrorV2_UntrustedTeleportLocation {
-    __kind: 'UntrustedTeleportLocation'
-}
-
-export interface XcmErrorV2_WeightLimitReached {
-    __kind: 'WeightLimitReached'
-    value: Weight
-}
-
-export interface XcmErrorV2_WeightNotComputable {
-    __kind: 'WeightNotComputable'
-}
-
-export interface XcmErrorV2_Wildcard {
-    __kind: 'Wildcard'
-}
-
-export type InteriorMultiLocation = InteriorMultiLocation_Here | InteriorMultiLocation_X1 | InteriorMultiLocation_X2 | InteriorMultiLocation_X3 | InteriorMultiLocation_X4 | InteriorMultiLocation_X5 | InteriorMultiLocation_X6 | InteriorMultiLocation_X7 | InteriorMultiLocation_X8
-
-export interface InteriorMultiLocation_Here {
-    __kind: 'Here'
-}
-
-export interface InteriorMultiLocation_X1 {
-    __kind: 'X1'
-    value: JunctionV1
-}
-
-export interface InteriorMultiLocation_X2 {
-    __kind: 'X2'
-    value: [JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X3 {
-    __kind: 'X3'
-    value: [JunctionV1, JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X4 {
-    __kind: 'X4'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X5 {
-    __kind: 'X5'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X6 {
-    __kind: 'X6'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X7 {
-    __kind: 'X7'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
-}
-
-export interface InteriorMultiLocation_X8 {
-    __kind: 'X8'
-    value: [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]
-}
-
-export type MultiAssetFilterV2 = MultiAssetFilterV2_Definite | MultiAssetFilterV2_Wild
-
-export interface MultiAssetFilterV2_Definite {
-    __kind: 'Definite'
-    value: MultiAssetV1[]
-}
-
-export interface MultiAssetFilterV2_Wild {
-    __kind: 'Wild'
-    value: WildMultiAssetV1
-}
-
-export type WildMultiAssetV1 = WildMultiAssetV1_All | WildMultiAssetV1_AllOf
-
-export interface WildMultiAssetV1_All {
+export interface MultiAssetV0_All {
     __kind: 'All'
 }
 
-export interface WildMultiAssetV1_AllOf {
-    __kind: 'AllOf'
-    id: XcmAssetId
-    fungibility: WildFungibilityV1
+export interface MultiAssetV0_AllAbstractFungible {
+    __kind: 'AllAbstractFungible'
+    value: Bytes
 }
 
-export type WildFungibilityV1 = WildFungibilityV1_Fungible | WildFungibilityV1_NonFungible
-
-export interface WildFungibilityV1_Fungible {
-    __kind: 'Fungible'
+export interface MultiAssetV0_AllAbstractNonFungible {
+    __kind: 'AllAbstractNonFungible'
+    value: Bytes
 }
 
-export interface WildFungibilityV1_NonFungible {
-    __kind: 'NonFungible'
+export interface MultiAssetV0_AllConcreteFungible {
+    __kind: 'AllConcreteFungible'
+    value: MultiLocationV0
 }
 
-export interface MultiLocationV2 {
-    parents: number
-    interior: JunctionsV1
+export interface MultiAssetV0_AllConcreteNonFungible {
+    __kind: 'AllConcreteNonFungible'
+    value: MultiLocationV0
 }
 
-export interface MultiAssetV1 {
-    id: XcmAssetId
-    fungibility: FungibilityV1
+export interface MultiAssetV0_AllFungible {
+    __kind: 'AllFungible'
 }
 
-export type WeightLimitV2 = WeightLimitV2_Limited | WeightLimitV2_Unlimited
-
-export interface WeightLimitV2_Limited {
-    __kind: 'Limited'
-    value: bigint
+export interface MultiAssetV0_AllNonFungible {
+    __kind: 'AllNonFungible'
 }
 
-export interface WeightLimitV2_Unlimited {
-    __kind: 'Unlimited'
+export interface MultiAssetV0_ConcreteFungible {
+    __kind: 'ConcreteFungible'
+    id: MultiLocationV0
+    amount: bigint
 }
 
-export interface MultiAssetV2 {
-    id: XcmAssetId
-    fungibility: FungibilityV1
+export interface MultiAssetV0_ConcreteNonFungible {
+    __kind: 'ConcreteNonFungible'
+    class: MultiLocationV0
+    instance: AssetInstanceV0
+}
+
+export interface MultiAssetV0_None {
+    __kind: 'None'
+}
+
+export type ResponseV0 = ResponseV0_Assets
+
+export interface ResponseV0_Assets {
+    __kind: 'Assets'
+    value: MultiAssetV0[]
 }
 
 export type VestingCall = VestingCall_force_vested_transfer | VestingCall_vest | VestingCall_vest_other | VestingCall_vested_transfer
@@ -3909,7 +3850,7 @@ export interface ProxyCall_remove_proxy {
 
 export type CallHashOf = Bytes
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
@@ -3937,10 +3878,6 @@ export interface ProxyType_NonTransfer {
 
 export interface ProxyType_Staking {
     __kind: 'Staking'
-}
-
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
 }
 
 export type PhragmenElectionCall = PhragmenElectionCall_clean_defunct_voters | PhragmenElectionCall_remove_member | PhragmenElectionCall_remove_voter | PhragmenElectionCall_renounce_candidacy | PhragmenElectionCall_submit_candidacy | PhragmenElectionCall_vote
@@ -5907,12 +5844,12 @@ export interface SolutionOrSnapshotSize {
 }
 
 export interface RawSolution {
-    compact: CompactAssignmentsWith16
+    compact: CompactAssignmentsWith24
     score: ElectionScore
     round: number
 }
 
-export interface CompactAssignmentsWith16 {
+export interface CompactAssignmentsWith24 {
     votes1: [NominatorIndexCompact, ValidatorIndexCompact][]
     votes2: [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact][]
     votes3: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
@@ -5929,6 +5866,14 @@ export interface CompactAssignmentsWith16 {
     votes14: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
     votes15: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
     votes16: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes17: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes18: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes19: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes20: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes21: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes22: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes23: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes24: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
 }
 
 export type CompactScoreCompact = [ValidatorIndexCompact, OffchainAccuracyCompact]
@@ -7408,7 +7353,7 @@ export const Proposal: sts.Type<Proposal> = sts.closedEnum(() => {
 export const XcmPalletCall: sts.Type<XcmPalletCall> = sts.closedEnum(() => {
     return  {
         execute: sts.enumStruct({
-            message: sts.array(() => InstructionV2),
+            message: Xcm,
             maxWeight: Weight,
         }),
         reserve_transfer_assets: sts.enumStruct({
@@ -7419,7 +7364,7 @@ export const XcmPalletCall: sts.Type<XcmPalletCall> = sts.closedEnum(() => {
         }),
         send: sts.enumStruct({
             dest: MultiLocation,
-            message: sts.array(() => InstructionV2),
+            message: Xcm,
         }),
         teleport_assets: sts.enumStruct({
             dest: MultiLocation,
@@ -7430,61 +7375,50 @@ export const XcmPalletCall: sts.Type<XcmPalletCall> = sts.closedEnum(() => {
     }
 })
 
-export const MultiAsset: sts.Type<MultiAsset> = sts.struct(() => {
+export const MultiAsset: sts.Type<MultiAsset> = sts.closedEnum(() => {
     return  {
-        id: XcmAssetId,
-        fungibility: FungibilityV1,
+        AbstractFungible: sts.enumStruct({
+            id: sts.bytes(),
+            instance: sts.bigint(),
+        }),
+        AbstractNonFungible: sts.enumStruct({
+            class: sts.bytes(),
+            instance: AssetInstanceV0,
+        }),
+        All: sts.unit(),
+        AllAbstractFungible: sts.bytes(),
+        AllAbstractNonFungible: sts.bytes(),
+        AllConcreteFungible: MultiLocationV0,
+        AllConcreteNonFungible: MultiLocationV0,
+        AllFungible: sts.unit(),
+        AllNonFungible: sts.unit(),
+        ConcreteFungible: sts.enumStruct({
+            id: MultiLocationV0,
+            amount: sts.bigint(),
+        }),
+        ConcreteNonFungible: sts.enumStruct({
+            class: MultiLocationV0,
+            instance: AssetInstanceV0,
+        }),
+        None: sts.unit(),
     }
 })
 
-export const FungibilityV1: sts.Type<FungibilityV1> = sts.closedEnum(() => {
-    return  {
-        Fungible: sts.bigint(),
-        NonFungible: AssetInstanceV1,
-    }
-})
-
-export const AssetInstanceV1: sts.Type<AssetInstanceV1> = sts.closedEnum(() => {
-    return  {
-        Array16: sts.bytes(),
-        Array32: sts.bytes(),
-        Array4: sts.bytes(),
-        Array8: sts.bytes(),
-        Blob: sts.bytes(),
-        Index: sts.bigint(),
-        Undefined: sts.unit(),
-    }
-})
-
-export const XcmAssetId: sts.Type<XcmAssetId> = sts.closedEnum(() => {
-    return  {
-        Abstract: sts.bytes(),
-        Concrete: MultiLocation,
-    }
-})
-
-export const MultiLocation: sts.Type<MultiLocation> = sts.struct(() => {
-    return  {
-        parents: sts.number(),
-        interior: JunctionsV1,
-    }
-})
-
-export const JunctionsV1: sts.Type<JunctionsV1> = sts.closedEnum(() => {
+export const MultiLocationV0: sts.Type<MultiLocationV0> = sts.closedEnum(() => {
     return  {
         Here: sts.unit(),
-        X1: JunctionV1,
-        X2: sts.tuple(() => [JunctionV1, JunctionV1]),
-        X3: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1]),
-        X4: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X5: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X6: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X7: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X8: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
+        X1: JunctionV0,
+        X2: sts.tuple(() => [JunctionV0, JunctionV0]),
+        X3: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0]),
+        X4: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X5: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X6: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X7: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X8: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
     }
 })
 
-export const JunctionV1: sts.Type<JunctionV1> = sts.closedEnum(() => {
+export const JunctionV0: sts.Type<JunctionV0> = sts.closedEnum(() => {
     return  {
         AccountId32: sts.enumStruct({
             network: NetworkId,
@@ -7503,6 +7437,7 @@ export const JunctionV1: sts.Type<JunctionV1> = sts.closedEnum(() => {
         OnlyChild: sts.unit(),
         PalletInstance: sts.number(),
         Parachain: sts.number(),
+        Parent: sts.unit(),
         Plurality: sts.enumStruct({
             id: BodyId,
             part: BodyPart,
@@ -7552,36 +7487,40 @@ export const NetworkId: sts.Type<NetworkId> = sts.closedEnum(() => {
     }
 })
 
+export const AssetInstanceV0: sts.Type<AssetInstanceV0> = sts.closedEnum(() => {
+    return  {
+        Array16: sts.bytes(),
+        Array32: sts.bytes(),
+        Array4: sts.bytes(),
+        Array8: sts.bytes(),
+        Blob: sts.bytes(),
+        Index128: sts.bigint(),
+        Index16: sts.number(),
+        Index32: sts.number(),
+        Index64: sts.bigint(),
+        Index8: sts.number(),
+        Undefined: sts.unit(),
+    }
+})
+
+export const MultiLocation: sts.Type<MultiLocation> = sts.closedEnum(() => {
+    return  {
+        Here: sts.unit(),
+        X1: JunctionV0,
+        X2: sts.tuple(() => [JunctionV0, JunctionV0]),
+        X3: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0]),
+        X4: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X5: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X6: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X7: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+        X8: sts.tuple(() => [JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0, JunctionV0]),
+    }
+})
+
 export const Weight = sts.bigint()
 
-export const InstructionV2: sts.Type<InstructionV2> = sts.closedEnum(() => {
+export const Xcm: sts.Type<Xcm> = sts.closedEnum(() => {
     return  {
-        BuyExecution: sts.enumStruct({
-            fees: MultiAssetV2,
-            weightLimit: WeightLimitV2,
-        }),
-        ClaimAsset: sts.enumStruct({
-            assets: sts.array(() => MultiAssetV1),
-            ticket: MultiLocationV2,
-        }),
-        ClearError: sts.unit(),
-        ClearOrigin: sts.unit(),
-        DepositAsset: sts.enumStruct({
-            assets: MultiAssetFilterV2,
-            maxAssets: sts.number(),
-            beneficiary: MultiLocationV2,
-        }),
-        DepositReserveAsset: sts.enumStruct({
-            assets: MultiAssetFilterV2,
-            maxAssets: sts.number(),
-            dest: MultiLocationV2,
-            xcm: sts.array(() => InstructionV2),
-        }),
-        DescendOrigin: InteriorMultiLocation,
-        ExchangeAsset: sts.enumStruct({
-            give: MultiAssetFilterV2,
-            receive: sts.array(() => MultiAssetV1),
-        }),
         HrmpChannelAccepted: sts.enumStruct({
             recipient: sts.number(),
         }),
@@ -7595,53 +7534,40 @@ export const InstructionV2: sts.Type<InstructionV2> = sts.closedEnum(() => {
             maxMessageSize: sts.number(),
             maxCapacity: sts.number(),
         }),
-        InitiateReserveWithdraw: sts.enumStruct({
-            assets: MultiAssetFilterV2,
-            reserve: MultiLocationV2,
-            xcm: sts.array(() => InstructionV2),
-        }),
-        InitiateTeleport: sts.enumStruct({
-            assets: MultiAssetFilterV2,
-            dest: MultiLocationV2,
-            xcm: sts.array(() => InstructionV2),
-        }),
-        QueryHolding: sts.enumStruct({
-            queryId: sts.bigint(),
-            dest: MultiLocationV2,
-            assets: MultiAssetFilterV2,
-            maxResponseWeight: sts.bigint(),
-        }),
         QueryResponse: sts.enumStruct({
             queryId: sts.bigint(),
-            response: ResponseV2,
-            maxWeight: sts.bigint(),
+            response: ResponseV0,
         }),
-        ReceiveTeleportedAsset: sts.array(() => MultiAssetV1),
-        RefundSurplus: sts.unit(),
-        ReportError: sts.enumStruct({
-            queryId: sts.bigint(),
-            dest: MultiLocationV2,
-            maxResponseWeight: sts.bigint(),
+        ReceiveTeleportedAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
         }),
-        ReserveAssetDeposited: sts.array(() => MultiAssetV1),
-        SetAppendix: sts.array(() => InstructionV2),
-        SetErrorHandler: sts.array(() => InstructionV2),
+        RelayedFrom: sts.enumStruct({
+            who: MultiLocationV0,
+            message: XcmV0,
+        }),
+        ReserveAssetDeposit: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
+        }),
         Transact: sts.enumStruct({
-            originType: OriginKindV2,
+            originType: XcmOriginKind,
             requireWeightAtMost: sts.bigint(),
             call: DoubleEncodedCall,
         }),
         TransferAsset: sts.enumStruct({
-            assets: sts.array(() => MultiAssetV1),
-            beneficiary: MultiLocationV2,
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
         }),
         TransferReserveAsset: sts.enumStruct({
-            assets: sts.array(() => MultiAssetV1),
-            dest: MultiLocationV2,
-            xcm: sts.array(() => InstructionV2),
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
+            effects: sts.array(() => XcmOrderV0),
         }),
-        Trap: sts.bigint(),
-        WithdrawAsset: sts.array(() => MultiAssetV1),
+        WithdrawAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
+        }),
     }
 })
 
@@ -7651,7 +7577,7 @@ export const DoubleEncodedCall: sts.Type<DoubleEncodedCall> = sts.struct(() => {
     }
 })
 
-export const OriginKindV2: sts.Type<OriginKindV2> = sts.closedEnum(() => {
+export const XcmOriginKind: sts.Type<XcmOriginKind> = sts.closedEnum(() => {
     return  {
         Native: sts.unit(),
         SovereignAccount: sts.unit(),
@@ -7660,120 +7586,131 @@ export const OriginKindV2: sts.Type<OriginKindV2> = sts.closedEnum(() => {
     }
 })
 
-export const ResponseV2: sts.Type<ResponseV2> = sts.closedEnum(() => {
+export const XcmV0: sts.Type<XcmV0> = sts.closedEnum(() => {
     return  {
-        Assets: sts.array(() => MultiAssetV1),
-        ExecutionResult: ResponseV2Result,
-        Null: sts.unit(),
-    }
-})
-
-export const ResponseV2Result = sts.result(() => sts.unit(), () => ResponseV2Error)
-
-export const ResponseV2Error = sts.tuple(() => [sts.number(), XcmErrorV2])
-
-export const XcmErrorV2: sts.Type<XcmErrorV2> = sts.closedEnum(() => {
-    return  {
-        AssetNotFound: sts.unit(),
-        BadOrigin: sts.unit(),
-        Barrier: sts.unit(),
-        DestinationBufferOverflow: sts.unit(),
-        DestinationUnsupported: sts.unit(),
-        EscalationOfPrivilege: sts.unit(),
-        ExceedsMaxMessageSize: sts.unit(),
-        FailedToDecode: sts.unit(),
-        FailedToTransactAsset: sts.unit(),
-        InvalidLocation: sts.unit(),
-        LocationCannotHold: sts.unit(),
-        MultiLocationFull: sts.unit(),
-        MultiLocationNotInvertible: sts.unit(),
-        NotHoldingFees: sts.unit(),
-        NotWithdrawable: sts.unit(),
-        Overflow: sts.unit(),
-        RecursionLimitReached: sts.unit(),
-        TooExpensive: sts.unit(),
-        TooMuchWeightRequired: sts.unit(),
-        Transport: sts.unit(),
-        Trap: sts.bigint(),
-        Undefined: sts.unit(),
-        UnhandledEffect: sts.unit(),
-        UnhandledXcmMessage: sts.unit(),
-        UnhandledXcmVersion: sts.unit(),
-        Unimplemented: sts.unit(),
-        UnknownClaim: sts.unit(),
-        UnknownWeightRequired: sts.unit(),
-        Unroutable: sts.unit(),
-        UntrustedReserveLocation: sts.unit(),
-        UntrustedTeleportLocation: sts.unit(),
-        WeightLimitReached: Weight,
-        WeightNotComputable: sts.unit(),
-        Wildcard: sts.unit(),
-    }
-})
-
-export const InteriorMultiLocation: sts.Type<InteriorMultiLocation> = sts.closedEnum(() => {
-    return  {
-        Here: sts.unit(),
-        X1: JunctionV1,
-        X2: sts.tuple(() => [JunctionV1, JunctionV1]),
-        X3: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1]),
-        X4: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X5: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X6: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X7: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-        X8: sts.tuple(() => [JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1, JunctionV1]),
-    }
-})
-
-export const MultiAssetFilterV2: sts.Type<MultiAssetFilterV2> = sts.closedEnum(() => {
-    return  {
-        Definite: sts.array(() => MultiAssetV1),
-        Wild: WildMultiAssetV1,
-    }
-})
-
-export const WildMultiAssetV1: sts.Type<WildMultiAssetV1> = sts.closedEnum(() => {
-    return  {
-        All: sts.unit(),
-        AllOf: sts.enumStruct({
-            id: XcmAssetId,
-            fungibility: WildFungibilityV1,
+        HrmpChannelAccepted: sts.enumStruct({
+            recipient: sts.number(),
+        }),
+        HrmpChannelClosing: sts.enumStruct({
+            initiator: sts.number(),
+            sender: sts.number(),
+            recipient: sts.number(),
+        }),
+        HrmpNewChannelOpenRequest: sts.enumStruct({
+            sender: sts.number(),
+            maxMessageSize: sts.number(),
+            maxCapacity: sts.number(),
+        }),
+        QueryResponse: sts.enumStruct({
+            queryId: sts.bigint(),
+            response: ResponseV0,
+        }),
+        ReceiveTeleportedAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        RelayedFrom: sts.enumStruct({
+            who: MultiLocationV0,
+            message: XcmV0,
+        }),
+        ReserveAssetDeposit: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        Transact: sts.enumStruct({
+            originType: XcmOriginKind,
+            requireWeightAtMost: sts.bigint(),
+            call: DoubleEncodedCall,
+        }),
+        TransferAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
+        }),
+        TransferReserveAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        WithdrawAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            effects: sts.array(() => XcmOrderV0),
         }),
     }
 })
 
-export const WildFungibilityV1: sts.Type<WildFungibilityV1> = sts.closedEnum(() => {
+export const XcmOrderV0: sts.Type<XcmOrderV0> = sts.closedEnum(() => {
     return  {
-        Fungible: sts.unit(),
-        NonFungible: sts.unit(),
+        BuyExecution: sts.enumStruct({
+            fees: MultiAsset,
+            weight: sts.bigint(),
+            debt: sts.bigint(),
+            haltOnError: sts.boolean(),
+            xcm: sts.array(() => XcmV0),
+        }),
+        DepositAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
+        }),
+        DepositReserveAsset: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            dest: MultiLocationV0,
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        ExchangeAsset: sts.enumStruct({
+            give: sts.array(() => MultiAssetV0),
+            receive: sts.array(() => MultiAssetV0),
+        }),
+        InitiateReserveWithdraw: sts.enumStruct({
+            assets: sts.array(() => MultiAssetV0),
+            reserve: MultiLocationV0,
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        InitiateTeleport: sts.enumStruct({
+            assets: sts.array(() => MultiAsset),
+            dest: MultiLocationV0,
+            effects: sts.array(() => XcmOrderV0),
+        }),
+        Null: sts.unit(),
+        QueryHolding: sts.enumStruct({
+            queryId: sts.bigint(),
+            dest: MultiLocationV0,
+            assets: sts.array(() => MultiAssetV0),
+        }),
     }
 })
 
-export const MultiLocationV2: sts.Type<MultiLocationV2> = sts.struct(() => {
+export const MultiAssetV0: sts.Type<MultiAssetV0> = sts.closedEnum(() => {
     return  {
-        parents: sts.number(),
-        interior: JunctionsV1,
+        AbstractFungible: sts.enumStruct({
+            id: sts.bytes(),
+            instance: sts.bigint(),
+        }),
+        AbstractNonFungible: sts.enumStruct({
+            class: sts.bytes(),
+            instance: AssetInstanceV0,
+        }),
+        All: sts.unit(),
+        AllAbstractFungible: sts.bytes(),
+        AllAbstractNonFungible: sts.bytes(),
+        AllConcreteFungible: MultiLocationV0,
+        AllConcreteNonFungible: MultiLocationV0,
+        AllFungible: sts.unit(),
+        AllNonFungible: sts.unit(),
+        ConcreteFungible: sts.enumStruct({
+            id: MultiLocationV0,
+            amount: sts.bigint(),
+        }),
+        ConcreteNonFungible: sts.enumStruct({
+            class: MultiLocationV0,
+            instance: AssetInstanceV0,
+        }),
+        None: sts.unit(),
     }
 })
 
-export const MultiAssetV1: sts.Type<MultiAssetV1> = sts.struct(() => {
+export const ResponseV0: sts.Type<ResponseV0> = sts.closedEnum(() => {
     return  {
-        id: XcmAssetId,
-        fungibility: FungibilityV1,
-    }
-})
-
-export const WeightLimitV2: sts.Type<WeightLimitV2> = sts.closedEnum(() => {
-    return  {
-        Limited: sts.bigint(),
-        Unlimited: sts.unit(),
-    }
-})
-
-export const MultiAssetV2: sts.Type<MultiAssetV2> = sts.struct(() => {
-    return  {
-        id: XcmAssetId,
-        fungibility: FungibilityV1,
+        Assets: sts.array(() => MultiAssetV0),
     }
 })
 
@@ -8413,7 +8350,6 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
         IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 
@@ -9175,13 +9111,13 @@ export const SolutionOrSnapshotSize: sts.Type<SolutionOrSnapshotSize> = sts.stru
 
 export const RawSolution: sts.Type<RawSolution> = sts.struct(() => {
     return  {
-        compact: CompactAssignmentsWith16,
+        compact: CompactAssignmentsWith24,
         score: ElectionScore,
         round: sts.number(),
     }
 })
 
-export const CompactAssignmentsWith16: sts.Type<CompactAssignmentsWith16> = sts.struct(() => {
+export const CompactAssignmentsWith24: sts.Type<CompactAssignmentsWith24> = sts.struct(() => {
     return  {
         votes1: sts.array(() => sts.tuple(() => [NominatorIndexCompact, ValidatorIndexCompact])),
         votes2: sts.array(() => sts.tuple(() => [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact])),
@@ -9199,6 +9135,14 @@ export const CompactAssignmentsWith16: sts.Type<CompactAssignmentsWith16> = sts.
         votes14: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
         votes15: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
         votes16: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes17: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes18: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes19: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes20: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes21: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes22: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes23: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes24: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
     }
 })
 

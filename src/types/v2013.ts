@@ -1,5 +1,43 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export interface OpenTip {
+    reason: Hash
+    who: AccountId
+    finder: AccountId
+    deposit: Balance
+    closes?: (BlockNumber | undefined)
+    tips: OpenTipTip[]
+    findersFee: boolean
+}
+
+export type OpenTipTip = [AccountId, Balance]
+
+export type BlockNumber = number
+
+export type Balance = bigint
+
+export type AccountId = Bytes
+
+export const OpenTip: sts.Type<OpenTip> = sts.struct(() => {
+    return  {
+        reason: Hash,
+        who: AccountId,
+        finder: AccountId,
+        deposit: Balance,
+        closes: sts.option(() => BlockNumber),
+        tips: sts.array(() => OpenTipTip),
+        findersFee: sts.boolean(),
+    }
+})
+
+export const OpenTipTip = sts.tuple(() => [AccountId, Balance])
+
+export const BlockNumber = sts.number()
+
+export const Balance = sts.bigint()
+
+export const AccountId = sts.bytes()
+
 export type Hash = Bytes
 
 export type Proposal = Proposal_Attestations | Proposal_AuthorityDiscovery | Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Claims | Proposal_Council | Proposal_Democracy | Proposal_ElectionsPhragmen | Proposal_FinalityTracker | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_Multisig | Proposal_Offences | Proposal_Parachains | Proposal_Proxy | Proposal_Recovery | Proposal_Registrar | Proposal_Scheduler | Proposal_Session | Proposal_Slots | Proposal_Society | Proposal_Staking | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalMembership | Proposal_Timestamp | Proposal_Treasury | Proposal_Utility | Proposal_Vesting
@@ -275,42 +313,7 @@ export interface VestingInfo {
     startingBlock: BlockNumber
 }
 
-export type BlockNumber = number
-
-export type Balance = bigint
-
-export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
-
-export interface LookupSource_Address20 {
-    __kind: 'Address20'
-    value: H160
-}
-
-export interface LookupSource_Address32 {
-    __kind: 'Address32'
-    value: H256
-}
-
-export interface LookupSource_Id {
-    __kind: 'Id'
-    value: AccountId
-}
-
-export interface LookupSource_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface LookupSource_Raw {
-    __kind: 'Raw'
-    value: Bytes
-}
-
-export type AccountId = Bytes
-
-export type H256 = Bytes
-
-export type H160 = Bytes
+export type LookupSource = Bytes
 
 export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch
 
@@ -337,7 +340,7 @@ export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch
 export interface UtilityCall_as_derivative {
     __kind: 'as_derivative'
     index: number
-    call: Type_197
+    call: Type_190
 }
 
 /**
@@ -364,167 +367,167 @@ export interface UtilityCall_as_derivative {
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_197[]
+    calls: Type_190[]
 }
 
-export type Type_197 = Type_197_Attestations | Type_197_AuthorityDiscovery | Type_197_Authorship | Type_197_Babe | Type_197_Balances | Type_197_Claims | Type_197_Council | Type_197_Democracy | Type_197_ElectionsPhragmen | Type_197_FinalityTracker | Type_197_Grandpa | Type_197_Identity | Type_197_ImOnline | Type_197_Indices | Type_197_Multisig | Type_197_Offences | Type_197_Parachains | Type_197_Proxy | Type_197_Recovery | Type_197_Registrar | Type_197_Scheduler | Type_197_Session | Type_197_Slots | Type_197_Society | Type_197_Staking | Type_197_System | Type_197_TechnicalCommittee | Type_197_TechnicalMembership | Type_197_Timestamp | Type_197_Treasury | Type_197_Utility | Type_197_Vesting
+export type Type_190 = Type_190_Attestations | Type_190_AuthorityDiscovery | Type_190_Authorship | Type_190_Babe | Type_190_Balances | Type_190_Claims | Type_190_Council | Type_190_Democracy | Type_190_ElectionsPhragmen | Type_190_FinalityTracker | Type_190_Grandpa | Type_190_Identity | Type_190_ImOnline | Type_190_Indices | Type_190_Multisig | Type_190_Offences | Type_190_Parachains | Type_190_Proxy | Type_190_Recovery | Type_190_Registrar | Type_190_Scheduler | Type_190_Session | Type_190_Slots | Type_190_Society | Type_190_Staking | Type_190_System | Type_190_TechnicalCommittee | Type_190_TechnicalMembership | Type_190_Timestamp | Type_190_Treasury | Type_190_Utility | Type_190_Vesting
 
-export interface Type_197_Attestations {
+export interface Type_190_Attestations {
     __kind: 'Attestations'
     value: AttestationsCall
 }
 
-export interface Type_197_AuthorityDiscovery {
+export interface Type_190_AuthorityDiscovery {
     __kind: 'AuthorityDiscovery'
     value: AuthorityDiscoveryCall
 }
 
-export interface Type_197_Authorship {
+export interface Type_190_Authorship {
     __kind: 'Authorship'
     value: AuthorshipCall
 }
 
-export interface Type_197_Babe {
+export interface Type_190_Babe {
     __kind: 'Babe'
     value: BabeCall
 }
 
-export interface Type_197_Balances {
+export interface Type_190_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_197_Claims {
+export interface Type_190_Claims {
     __kind: 'Claims'
     value: ClaimsCall
 }
 
-export interface Type_197_Council {
+export interface Type_190_Council {
     __kind: 'Council'
     value: CouncilCall
 }
 
-export interface Type_197_Democracy {
+export interface Type_190_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
 }
 
-export interface Type_197_ElectionsPhragmen {
+export interface Type_190_ElectionsPhragmen {
     __kind: 'ElectionsPhragmen'
     value: ElectionsPhragmenCall
 }
 
-export interface Type_197_FinalityTracker {
+export interface Type_190_FinalityTracker {
     __kind: 'FinalityTracker'
     value: FinalityTrackerCall
 }
 
-export interface Type_197_Grandpa {
+export interface Type_190_Grandpa {
     __kind: 'Grandpa'
     value: GrandpaCall
 }
 
-export interface Type_197_Identity {
+export interface Type_190_Identity {
     __kind: 'Identity'
     value: IdentityCall
 }
 
-export interface Type_197_ImOnline {
+export interface Type_190_ImOnline {
     __kind: 'ImOnline'
     value: ImOnlineCall
 }
 
-export interface Type_197_Indices {
+export interface Type_190_Indices {
     __kind: 'Indices'
     value: IndicesCall
 }
 
-export interface Type_197_Multisig {
+export interface Type_190_Multisig {
     __kind: 'Multisig'
     value: MultisigCall
 }
 
-export interface Type_197_Offences {
+export interface Type_190_Offences {
     __kind: 'Offences'
     value: OffencesCall
 }
 
-export interface Type_197_Parachains {
+export interface Type_190_Parachains {
     __kind: 'Parachains'
     value: ParachainsCall
 }
 
-export interface Type_197_Proxy {
+export interface Type_190_Proxy {
     __kind: 'Proxy'
     value: ProxyCall
 }
 
-export interface Type_197_Recovery {
+export interface Type_190_Recovery {
     __kind: 'Recovery'
     value: RecoveryCall
 }
 
-export interface Type_197_Registrar {
+export interface Type_190_Registrar {
     __kind: 'Registrar'
     value: RegistrarCall
 }
 
-export interface Type_197_Scheduler {
+export interface Type_190_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
 }
 
-export interface Type_197_Session {
+export interface Type_190_Session {
     __kind: 'Session'
     value: SessionCall
 }
 
-export interface Type_197_Slots {
+export interface Type_190_Slots {
     __kind: 'Slots'
     value: SlotsCall
 }
 
-export interface Type_197_Society {
+export interface Type_190_Society {
     __kind: 'Society'
     value: SocietyCall
 }
 
-export interface Type_197_Staking {
+export interface Type_190_Staking {
     __kind: 'Staking'
     value: StakingCall
 }
 
-export interface Type_197_System {
+export interface Type_190_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_197_TechnicalCommittee {
+export interface Type_190_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
     value: TechnicalCommitteeCall
 }
 
-export interface Type_197_TechnicalMembership {
+export interface Type_190_TechnicalMembership {
     __kind: 'TechnicalMembership'
     value: TechnicalMembershipCall
 }
 
-export interface Type_197_Timestamp {
+export interface Type_190_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_197_Treasury {
+export interface Type_190_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_197_Utility {
+export interface Type_190_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_197_Vesting {
+export interface Type_190_Vesting {
     __kind: 'Vesting'
     value: VestingCall
 }
@@ -1758,7 +1761,6 @@ export interface StakingCall_withdraw_unbonded {
 
 export interface ValidatorPrefs {
     commission: number
-    blocked: boolean
 }
 
 export interface ElectionSize {
@@ -1769,31 +1771,29 @@ export interface ElectionSize {
 export type ElectionScore = bigint[]
 
 export interface CompactAssignments {
-    votes1: [NominatorIndexCompact, ValidatorIndexCompact][]
-    votes2: [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact][]
-    votes3: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes4: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes5: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes6: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes7: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes8: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes9: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes10: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes11: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes12: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes13: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes14: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes15: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
-    votes16: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes1: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes2: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes3: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes4: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes5: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes6: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes7: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes8: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes9: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes10: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes11: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes12: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes13: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes14: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes15: [NominatorIndex, CompactScore[], ValidatorIndex][]
+    votes16: [NominatorIndex, CompactScore[], ValidatorIndex][]
 }
 
-export type CompactScoreCompact = [ValidatorIndexCompact, OffchainAccuracyCompact]
+export type CompactScore = [ValidatorIndex, OffchainAccuracy]
 
-export type OffchainAccuracyCompact = number
+export type OffchainAccuracy = number
 
-export type ValidatorIndexCompact = number
-
-export type NominatorIndexCompact = number
+export type NominatorIndex = number
 
 export type ValidatorIndex = number
 
@@ -2373,7 +2373,7 @@ export interface SessionCall_set_keys {
     proof: Bytes
 }
 
-export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId]
+export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId]
 
 export type SchedulerCall = SchedulerCall_cancel | SchedulerCall_cancel_named | SchedulerCall_schedule | SchedulerCall_schedule_named
 
@@ -2429,7 +2429,7 @@ export interface SchedulerCall_schedule {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_197
+    call: Type_190
 }
 
 /**
@@ -2450,7 +2450,7 @@ export interface SchedulerCall_schedule_named {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_197
+    call: Type_190
 }
 
 export type Priority = number
@@ -2580,7 +2580,7 @@ export type RecoveryCall = RecoveryCall_as_recovered | RecoveryCall_cancel_recov
 export interface RecoveryCall_as_recovered {
     __kind: 'as_recovered'
     account: AccountId
-    call: Type_197
+    call: Type_190
 }
 
 /**
@@ -2909,7 +2909,7 @@ export interface ProxyCall_proxy {
     __kind: 'proxy'
     real: AccountId
     forceProxyType?: (ProxyType | undefined)
-    call: Type_197
+    call: Type_190
 }
 
 /**
@@ -2951,7 +2951,7 @@ export interface ProxyCall_remove_proxy {
     proxyType: ProxyType
 }
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
@@ -2979,10 +2979,6 @@ export interface ProxyType_NonTransfer {
 
 export interface ProxyType_Staking {
     __kind: 'Staking'
-}
-
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
 }
 
 export type ParachainsCall = ParachainsCall_report_double_vote | ParachainsCall_send_xcmp_message | ParachainsCall_set_heads | ParachainsCall_transfer_to_parachain
@@ -3268,7 +3264,7 @@ export interface MultisigCall_as_multi {
 export interface MultisigCall_as_multi_threshold_1 {
     __kind: 'as_multi_threshold_1'
     otherSignatories: AccountId[]
-    call: Type_197
+    call: Type_190
 }
 
 /**
@@ -3960,6 +3956,8 @@ export interface Data_ShaThree256 {
     value: H256
 }
 
+export type H256 = Bytes
+
 export interface IdentityInfo {
     additional: IdentityInfoAdditional[]
     display: Data
@@ -3971,6 +3969,8 @@ export interface IdentityInfo {
     image: Data
     twitter: Data
 }
+
+export type H160 = Bytes
 
 export type IdentityInfoAdditional = [Data, Data]
 
@@ -5453,39 +5453,21 @@ export const VestingInfo: sts.Type<VestingInfo> = sts.struct(() => {
     }
 })
 
-export const BlockNumber = sts.number()
-
-export const Balance = sts.bigint()
-
-export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
-    return  {
-        Address20: H160,
-        Address32: H256,
-        Id: AccountId,
-        Index: sts.number(),
-        Raw: sts.bytes(),
-    }
-})
-
-export const AccountId = sts.bytes()
-
-export const H256 = sts.bytes()
-
-export const H160 = sts.bytes()
+export const LookupSource = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
         as_derivative: sts.enumStruct({
             index: sts.number(),
-            call: Type_197,
+            call: Type_190,
         }),
         batch: sts.enumStruct({
-            calls: sts.array(() => Type_197),
+            calls: sts.array(() => Type_190),
         }),
     }
 })
 
-export const Type_197: sts.Type<Type_197> = sts.closedEnum(() => {
+export const Type_190: sts.Type<Type_190> = sts.closedEnum(() => {
     return  {
         Attestations: AttestationsCall,
         AuthorityDiscovery: AuthorityDiscoveryCall,
@@ -5764,7 +5746,6 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
 export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
     return  {
         commission: sts.number(),
-        blocked: sts.boolean(),
     }
 })
 
@@ -5779,32 +5760,30 @@ export const ElectionScore = sts.array(() => sts.bigint())
 
 export const CompactAssignments: sts.Type<CompactAssignments> = sts.struct(() => {
     return  {
-        votes1: sts.array(() => sts.tuple(() => [NominatorIndexCompact, ValidatorIndexCompact])),
-        votes2: sts.array(() => sts.tuple(() => [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact])),
-        votes3: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes4: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes5: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes6: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes7: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes8: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes9: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes10: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes11: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes12: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes13: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes14: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes15: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
-        votes16: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes1: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes2: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes3: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes4: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes5: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes6: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes7: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes8: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes9: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes10: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes11: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes12: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes13: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes14: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes15: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
+        votes16: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
     }
 })
 
-export const CompactScoreCompact = sts.tuple(() => [ValidatorIndexCompact, OffchainAccuracyCompact])
+export const CompactScore = sts.tuple(() => [ValidatorIndex, OffchainAccuracy])
 
-export const OffchainAccuracyCompact = sts.number()
+export const OffchainAccuracy = sts.number()
 
-export const ValidatorIndexCompact = sts.number()
-
-export const NominatorIndexCompact = sts.number()
+export const NominatorIndex = sts.number()
 
 export const ValidatorIndex = sts.number()
 
@@ -5924,7 +5903,7 @@ export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     }
 })
 
-export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId])
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId])
 
 export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
     return  {
@@ -5939,14 +5918,14 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_197,
+            call: Type_190,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_197,
+            call: Type_190,
         }),
     }
 })
@@ -5999,7 +5978,7 @@ export const RecoveryCall: sts.Type<RecoveryCall> = sts.closedEnum(() => {
     return  {
         as_recovered: sts.enumStruct({
             account: AccountId,
-            call: Type_197,
+            call: Type_190,
         }),
         cancel_recovered: sts.enumStruct({
             account: AccountId,
@@ -6050,7 +6029,7 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
         proxy: sts.enumStruct({
             real: AccountId,
             forceProxyType: sts.option(() => ProxyType),
-            call: Type_197,
+            call: Type_190,
         }),
         remove_proxies: sts.unit(),
         remove_proxy: sts.enumStruct({
@@ -6069,7 +6048,6 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
         IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 
@@ -6213,7 +6191,7 @@ export const MultisigCall: sts.Type<MultisigCall> = sts.closedEnum(() => {
         }),
         as_multi_threshold_1: sts.enumStruct({
             otherSignatories: sts.array(() => AccountId),
-            call: Type_197,
+            call: Type_190,
         }),
         cancel_as_multi: sts.enumStruct({
             threshold: sts.number(),
@@ -6377,6 +6355,8 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
     }
 })
 
+export const H256 = sts.bytes()
+
 export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
     return  {
         additional: sts.array(() => IdentityInfoAdditional),
@@ -6390,6 +6370,8 @@ export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
         twitter: Data,
     }
 })
+
+export const H160 = sts.bytes()
 
 export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
 

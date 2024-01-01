@@ -225,38 +225,7 @@ export type BlockNumber = number
 
 export type Balance = bigint
 
-export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
-
-export interface LookupSource_Address20 {
-    __kind: 'Address20'
-    value: H160
-}
-
-export interface LookupSource_Address32 {
-    __kind: 'Address32'
-    value: H256
-}
-
-export interface LookupSource_Id {
-    __kind: 'Id'
-    value: AccountId
-}
-
-export interface LookupSource_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface LookupSource_Raw {
-    __kind: 'Raw'
-    value: Bytes
-}
-
-export type AccountId = Bytes
-
-export type H256 = Bytes
-
-export type H160 = Bytes
+export type LookupSource = Bytes
 
 export type UtilityCall = UtilityCall_approve_as_multi | UtilityCall_as_multi | UtilityCall_as_sub | UtilityCall_batch | UtilityCall_cancel_as_multi
 
@@ -350,7 +319,7 @@ export interface UtilityCall_as_multi {
     threshold: number
     otherSignatories: AccountId[]
     maybeTimepoint?: (Timepoint | undefined)
-    call: Type_121
+    call: Type_116
 }
 
 /**
@@ -365,7 +334,7 @@ export interface UtilityCall_as_multi {
 export interface UtilityCall_as_sub {
     __kind: 'as_sub'
     index: number
-    call: Type_121
+    call: Type_116
 }
 
 /**
@@ -390,7 +359,7 @@ export interface UtilityCall_as_sub {
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_121[]
+    calls: Type_116[]
 }
 
 /**
@@ -425,149 +394,149 @@ export interface UtilityCall_cancel_as_multi {
     callHash: Bytes
 }
 
-export type Type_121 = Type_121_Attestations | Type_121_AuthorityDiscovery | Type_121_Authorship | Type_121_Babe | Type_121_Balances | Type_121_Claims | Type_121_Council | Type_121_Democracy | Type_121_ElectionsPhragmen | Type_121_FinalityTracker | Type_121_Grandpa | Type_121_Identity | Type_121_ImOnline | Type_121_Indices | Type_121_Offences | Type_121_Parachains | Type_121_Recovery | Type_121_Registrar | Type_121_Session | Type_121_Slots | Type_121_Society | Type_121_Staking | Type_121_System | Type_121_TechnicalCommittee | Type_121_TechnicalMembership | Type_121_Timestamp | Type_121_Treasury | Type_121_Utility | Type_121_Vesting
+export type Type_116 = Type_116_Attestations | Type_116_AuthorityDiscovery | Type_116_Authorship | Type_116_Babe | Type_116_Balances | Type_116_Claims | Type_116_Council | Type_116_Democracy | Type_116_ElectionsPhragmen | Type_116_FinalityTracker | Type_116_Grandpa | Type_116_Identity | Type_116_ImOnline | Type_116_Indices | Type_116_Offences | Type_116_Parachains | Type_116_Recovery | Type_116_Registrar | Type_116_Session | Type_116_Slots | Type_116_Society | Type_116_Staking | Type_116_System | Type_116_TechnicalCommittee | Type_116_TechnicalMembership | Type_116_Timestamp | Type_116_Treasury | Type_116_Utility | Type_116_Vesting
 
-export interface Type_121_Attestations {
+export interface Type_116_Attestations {
     __kind: 'Attestations'
     value: AttestationsCall
 }
 
-export interface Type_121_AuthorityDiscovery {
+export interface Type_116_AuthorityDiscovery {
     __kind: 'AuthorityDiscovery'
     value: AuthorityDiscoveryCall
 }
 
-export interface Type_121_Authorship {
+export interface Type_116_Authorship {
     __kind: 'Authorship'
     value: AuthorshipCall
 }
 
-export interface Type_121_Babe {
+export interface Type_116_Babe {
     __kind: 'Babe'
     value: BabeCall
 }
 
-export interface Type_121_Balances {
+export interface Type_116_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_121_Claims {
+export interface Type_116_Claims {
     __kind: 'Claims'
     value: ClaimsCall
 }
 
-export interface Type_121_Council {
+export interface Type_116_Council {
     __kind: 'Council'
     value: CouncilCall
 }
 
-export interface Type_121_Democracy {
+export interface Type_116_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
 }
 
-export interface Type_121_ElectionsPhragmen {
+export interface Type_116_ElectionsPhragmen {
     __kind: 'ElectionsPhragmen'
     value: ElectionsPhragmenCall
 }
 
-export interface Type_121_FinalityTracker {
+export interface Type_116_FinalityTracker {
     __kind: 'FinalityTracker'
     value: FinalityTrackerCall
 }
 
-export interface Type_121_Grandpa {
+export interface Type_116_Grandpa {
     __kind: 'Grandpa'
     value: GrandpaCall
 }
 
-export interface Type_121_Identity {
+export interface Type_116_Identity {
     __kind: 'Identity'
     value: IdentityCall
 }
 
-export interface Type_121_ImOnline {
+export interface Type_116_ImOnline {
     __kind: 'ImOnline'
     value: ImOnlineCall
 }
 
-export interface Type_121_Indices {
+export interface Type_116_Indices {
     __kind: 'Indices'
     value: IndicesCall
 }
 
-export interface Type_121_Offences {
+export interface Type_116_Offences {
     __kind: 'Offences'
     value: OffencesCall
 }
 
-export interface Type_121_Parachains {
+export interface Type_116_Parachains {
     __kind: 'Parachains'
     value: ParachainsCall
 }
 
-export interface Type_121_Recovery {
+export interface Type_116_Recovery {
     __kind: 'Recovery'
     value: RecoveryCall
 }
 
-export interface Type_121_Registrar {
+export interface Type_116_Registrar {
     __kind: 'Registrar'
     value: RegistrarCall
 }
 
-export interface Type_121_Session {
+export interface Type_116_Session {
     __kind: 'Session'
     value: SessionCall
 }
 
-export interface Type_121_Slots {
+export interface Type_116_Slots {
     __kind: 'Slots'
     value: SlotsCall
 }
 
-export interface Type_121_Society {
+export interface Type_116_Society {
     __kind: 'Society'
     value: SocietyCall
 }
 
-export interface Type_121_Staking {
+export interface Type_116_Staking {
     __kind: 'Staking'
     value: StakingCall
 }
 
-export interface Type_121_System {
+export interface Type_116_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_121_TechnicalCommittee {
+export interface Type_116_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
     value: TechnicalCommitteeCall
 }
 
-export interface Type_121_TechnicalMembership {
+export interface Type_116_TechnicalMembership {
     __kind: 'TechnicalMembership'
     value: TechnicalMembershipCall
 }
 
-export interface Type_121_Timestamp {
+export interface Type_116_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_121_Treasury {
+export interface Type_116_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_121_Utility {
+export interface Type_116_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_121_Vesting {
+export interface Type_116_Vesting {
     __kind: 'Vesting'
     value: VestingCall
 }
@@ -576,6 +545,8 @@ export interface Timepoint {
     height: BlockNumber
     index: number
 }
+
+export type AccountId = Bytes
 
 export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_close_tip | TreasuryCall_propose_spend | TreasuryCall_reject_proposal | TreasuryCall_report_awesome | TreasuryCall_retract_tip | TreasuryCall_tip | TreasuryCall_tip_new
 
@@ -1381,7 +1352,6 @@ export interface StakingCall_withdraw_unbonded {
 
 export interface ValidatorPrefs {
     commission: number
-    blocked: boolean
 }
 
 export type EraIndex = number
@@ -1950,7 +1920,7 @@ export interface SessionCall_set_keys {
     proof: Bytes
 }
 
-export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId]
+export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId]
 
 export type RegistrarCall = RegistrarCall_deregister_para | RegistrarCall_deregister_parathread | RegistrarCall_register_para | RegistrarCall_register_parathread | RegistrarCall_select_parathread | RegistrarCall_set_thread_count | RegistrarCall_swap
 
@@ -2075,7 +2045,7 @@ export type RecoveryCall = RecoveryCall_as_recovered | RecoveryCall_cancel_recov
 export interface RecoveryCall_as_recovered {
     __kind: 'as_recovered'
     account: AccountId
-    call: Type_121
+    call: Type_116
 }
 
 /**
@@ -2479,7 +2449,6 @@ export interface Heartbeat {
     networkState: OpaqueNetworkState
     sessionIndex: SessionIndex
     authorityIndex: AuthIndex
-    validatorsLen: number
 }
 
 export type AuthIndex = number
@@ -2946,6 +2915,8 @@ export interface Data_ShaThree256 {
     value: H256
 }
 
+export type H256 = Bytes
+
 export interface IdentityInfo {
     additional: IdentityInfoAdditional[]
     display: Data
@@ -2957,6 +2928,8 @@ export interface IdentityInfo {
     image: Data
     twitter: Data
 }
+
+export type H160 = Bytes
 
 export type IdentityInfoAdditional = [Data, Data]
 
@@ -3762,8 +3735,6 @@ export interface Conviction_None {
     __kind: 'None'
 }
 
-export type ReferendumIndex = number
-
 export type CouncilCall = CouncilCall_close | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
 
 /**
@@ -4148,19 +4119,7 @@ export const BlockNumber = sts.number()
 
 export const Balance = sts.bigint()
 
-export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
-    return  {
-        Address20: H160,
-        Address32: H256,
-        Id: AccountId,
-        Index: sts.number(),
-        Raw: sts.bytes(),
-    }
-})
-
-export const H256 = sts.bytes()
-
-export const H160 = sts.bytes()
+export const LookupSource = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
@@ -4174,14 +4133,14 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
             threshold: sts.number(),
             otherSignatories: sts.array(() => AccountId),
             maybeTimepoint: sts.option(() => Timepoint),
-            call: Type_121,
+            call: Type_116,
         }),
         as_sub: sts.enumStruct({
             index: sts.number(),
-            call: Type_121,
+            call: Type_116,
         }),
         batch: sts.enumStruct({
-            calls: sts.array(() => Type_121),
+            calls: sts.array(() => Type_116),
         }),
         cancel_as_multi: sts.enumStruct({
             threshold: sts.number(),
@@ -4192,7 +4151,7 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     }
 })
 
-export const Type_121: sts.Type<Type_121> = sts.closedEnum(() => {
+export const Type_116: sts.Type<Type_116> = sts.closedEnum(() => {
     return  {
         Attestations: AttestationsCall,
         AuthorityDiscovery: AuthorityDiscoveryCall,
@@ -4440,7 +4399,6 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
 export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
     return  {
         commission: sts.number(),
-        blocked: sts.boolean(),
     }
 })
 
@@ -4554,7 +4512,7 @@ export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     }
 })
 
-export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId])
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId])
 
 export const RegistrarCall: sts.Type<RegistrarCall> = sts.closedEnum(() => {
     return  {
@@ -4600,7 +4558,7 @@ export const RecoveryCall: sts.Type<RecoveryCall> = sts.closedEnum(() => {
     return  {
         as_recovered: sts.enumStruct({
             account: AccountId,
-            call: Type_121,
+            call: Type_116,
         }),
         cancel_recovered: sts.enumStruct({
             account: AccountId,
@@ -4740,7 +4698,6 @@ export const Heartbeat: sts.Type<Heartbeat> = sts.struct(() => {
         networkState: OpaqueNetworkState,
         sessionIndex: SessionIndex,
         authorityIndex: AuthIndex,
-        validatorsLen: sts.number(),
     }
 })
 
@@ -4844,6 +4801,8 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
     }
 })
 
+export const H256 = sts.bytes()
+
 export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
     return  {
         additional: sts.array(() => IdentityInfoAdditional),
@@ -4857,6 +4816,8 @@ export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
         twitter: Data,
     }
 })
+
+export const H160 = sts.bytes()
 
 export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
 
@@ -5138,6 +5099,93 @@ export const AttestationsCall: sts.Type<AttestationsCall> = sts.closedEnum(() =>
 })
 
 export const Hash = sts.bytes()
+
+export type ReferendumIndex = number
+
+export type ReferendumInfo = ReferendumInfo_Finished | ReferendumInfo_Ongoing
+
+export interface ReferendumInfo_Finished {
+    __kind: 'Finished'
+    value: ReferendumInfoFinished
+}
+
+export interface ReferendumInfo_Ongoing {
+    __kind: 'Ongoing'
+    value: ReferendumStatus
+}
+
+export interface ReferendumStatus {
+    end: BlockNumber
+    proposalHash: Hash
+    threshold: VoteThreshold
+    delay: BlockNumber
+    tally: Tally
+}
+
+export interface Tally {
+    ayes: Balance
+    nays: Balance
+    turnout: Balance
+}
+
+export type VoteThreshold = VoteThreshold_SimpleMajority | VoteThreshold_SuperMajorityAgainst | VoteThreshold_SuperMajorityApprove
+
+export interface VoteThreshold_SimpleMajority {
+    __kind: 'SimpleMajority'
+}
+
+export interface VoteThreshold_SuperMajorityAgainst {
+    __kind: 'SuperMajorityAgainst'
+}
+
+export interface VoteThreshold_SuperMajorityApprove {
+    __kind: 'SuperMajorityApprove'
+}
+
+export interface ReferendumInfoFinished {
+    approved: boolean
+    end: BlockNumber
+}
+
+export const ReferendumInfo: sts.Type<ReferendumInfo> = sts.closedEnum(() => {
+    return  {
+        Finished: ReferendumInfoFinished,
+        Ongoing: ReferendumStatus,
+    }
+})
+
+export const ReferendumStatus: sts.Type<ReferendumStatus> = sts.struct(() => {
+    return  {
+        end: BlockNumber,
+        proposalHash: Hash,
+        threshold: VoteThreshold,
+        delay: BlockNumber,
+        tally: Tally,
+    }
+})
+
+export const Tally: sts.Type<Tally> = sts.struct(() => {
+    return  {
+        ayes: Balance,
+        nays: Balance,
+        turnout: Balance,
+    }
+})
+
+export const VoteThreshold: sts.Type<VoteThreshold> = sts.closedEnum(() => {
+    return  {
+        SimpleMajority: sts.unit(),
+        SuperMajorityAgainst: sts.unit(),
+        SuperMajorityApprove: sts.unit(),
+    }
+})
+
+export const ReferendumInfoFinished: sts.Type<ReferendumInfoFinished> = sts.struct(() => {
+    return  {
+        approved: sts.boolean(),
+        end: BlockNumber,
+    }
+})
 
 export const ReferendumIndex = sts.number()
 

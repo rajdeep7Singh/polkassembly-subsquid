@@ -32,9 +32,11 @@ export function getExecutedData(itemEvent: Event): number {
         return executed.v9111.decode(itemEvent)[0]
     } else if (executed.v9130.is(itemEvent)) {
         return executed.v9130.decode(itemEvent).refIndex
+    } else if (executed.v9160.is(itemEvent)) {
+        return executed.v9160.decode(itemEvent).refIndex
     } else if (executed.v9170.is(itemEvent)) {
         return executed.v9170.decode(itemEvent).refIndex
-    } else if (executed.v9190.is(itemEvent)) {
+    }else if (executed.v9190.is(itemEvent)) {
         return executed.v9190.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)

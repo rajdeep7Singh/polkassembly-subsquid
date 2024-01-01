@@ -225,38 +225,7 @@ export type BlockNumber = number
 
 export type Balance = bigint
 
-export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
-
-export interface LookupSource_Address20 {
-    __kind: 'Address20'
-    value: H160
-}
-
-export interface LookupSource_Address32 {
-    __kind: 'Address32'
-    value: H256
-}
-
-export interface LookupSource_Id {
-    __kind: 'Id'
-    value: AccountId
-}
-
-export interface LookupSource_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface LookupSource_Raw {
-    __kind: 'Raw'
-    value: Bytes
-}
-
-export type AccountId = Bytes
-
-export type H256 = Bytes
-
-export type H160 = Bytes
+export type LookupSource = Bytes
 
 export type UtilityCall = UtilityCall_approve_as_multi | UtilityCall_as_multi | UtilityCall_as_sub | UtilityCall_batch | UtilityCall_cancel_as_multi
 
@@ -350,7 +319,7 @@ export interface UtilityCall_as_multi {
     threshold: number
     otherSignatories: AccountId[]
     maybeTimepoint?: (Timepoint | undefined)
-    call: Type_118
+    call: Type_113
 }
 
 /**
@@ -365,7 +334,7 @@ export interface UtilityCall_as_multi {
 export interface UtilityCall_as_sub {
     __kind: 'as_sub'
     index: number
-    call: Type_118
+    call: Type_113
 }
 
 /**
@@ -390,7 +359,7 @@ export interface UtilityCall_as_sub {
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_118[]
+    calls: Type_113[]
 }
 
 /**
@@ -425,149 +394,149 @@ export interface UtilityCall_cancel_as_multi {
     callHash: Bytes
 }
 
-export type Type_118 = Type_118_Attestations | Type_118_AuthorityDiscovery | Type_118_Authorship | Type_118_Babe | Type_118_Balances | Type_118_Claims | Type_118_Council | Type_118_Democracy | Type_118_ElectionsPhragmen | Type_118_FinalityTracker | Type_118_Grandpa | Type_118_Identity | Type_118_ImOnline | Type_118_Indices | Type_118_Offences | Type_118_Parachains | Type_118_Recovery | Type_118_Registrar | Type_118_Session | Type_118_Slots | Type_118_Society | Type_118_Staking | Type_118_System | Type_118_TechnicalCommittee | Type_118_TechnicalMembership | Type_118_Timestamp | Type_118_Treasury | Type_118_Utility | Type_118_Vesting
+export type Type_113 = Type_113_Attestations | Type_113_AuthorityDiscovery | Type_113_Authorship | Type_113_Babe | Type_113_Balances | Type_113_Claims | Type_113_Council | Type_113_Democracy | Type_113_ElectionsPhragmen | Type_113_FinalityTracker | Type_113_Grandpa | Type_113_Identity | Type_113_ImOnline | Type_113_Indices | Type_113_Offences | Type_113_Parachains | Type_113_Recovery | Type_113_Registrar | Type_113_Session | Type_113_Slots | Type_113_Society | Type_113_Staking | Type_113_System | Type_113_TechnicalCommittee | Type_113_TechnicalMembership | Type_113_Timestamp | Type_113_Treasury | Type_113_Utility | Type_113_Vesting
 
-export interface Type_118_Attestations {
+export interface Type_113_Attestations {
     __kind: 'Attestations'
     value: AttestationsCall
 }
 
-export interface Type_118_AuthorityDiscovery {
+export interface Type_113_AuthorityDiscovery {
     __kind: 'AuthorityDiscovery'
     value: AuthorityDiscoveryCall
 }
 
-export interface Type_118_Authorship {
+export interface Type_113_Authorship {
     __kind: 'Authorship'
     value: AuthorshipCall
 }
 
-export interface Type_118_Babe {
+export interface Type_113_Babe {
     __kind: 'Babe'
     value: BabeCall
 }
 
-export interface Type_118_Balances {
+export interface Type_113_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_118_Claims {
+export interface Type_113_Claims {
     __kind: 'Claims'
     value: ClaimsCall
 }
 
-export interface Type_118_Council {
+export interface Type_113_Council {
     __kind: 'Council'
     value: CouncilCall
 }
 
-export interface Type_118_Democracy {
+export interface Type_113_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
 }
 
-export interface Type_118_ElectionsPhragmen {
+export interface Type_113_ElectionsPhragmen {
     __kind: 'ElectionsPhragmen'
     value: ElectionsPhragmenCall
 }
 
-export interface Type_118_FinalityTracker {
+export interface Type_113_FinalityTracker {
     __kind: 'FinalityTracker'
     value: FinalityTrackerCall
 }
 
-export interface Type_118_Grandpa {
+export interface Type_113_Grandpa {
     __kind: 'Grandpa'
     value: GrandpaCall
 }
 
-export interface Type_118_Identity {
+export interface Type_113_Identity {
     __kind: 'Identity'
     value: IdentityCall
 }
 
-export interface Type_118_ImOnline {
+export interface Type_113_ImOnline {
     __kind: 'ImOnline'
     value: ImOnlineCall
 }
 
-export interface Type_118_Indices {
+export interface Type_113_Indices {
     __kind: 'Indices'
     value: IndicesCall
 }
 
-export interface Type_118_Offences {
+export interface Type_113_Offences {
     __kind: 'Offences'
     value: OffencesCall
 }
 
-export interface Type_118_Parachains {
+export interface Type_113_Parachains {
     __kind: 'Parachains'
     value: ParachainsCall
 }
 
-export interface Type_118_Recovery {
+export interface Type_113_Recovery {
     __kind: 'Recovery'
     value: RecoveryCall
 }
 
-export interface Type_118_Registrar {
+export interface Type_113_Registrar {
     __kind: 'Registrar'
     value: RegistrarCall
 }
 
-export interface Type_118_Session {
+export interface Type_113_Session {
     __kind: 'Session'
     value: SessionCall
 }
 
-export interface Type_118_Slots {
+export interface Type_113_Slots {
     __kind: 'Slots'
     value: SlotsCall
 }
 
-export interface Type_118_Society {
+export interface Type_113_Society {
     __kind: 'Society'
     value: SocietyCall
 }
 
-export interface Type_118_Staking {
+export interface Type_113_Staking {
     __kind: 'Staking'
     value: StakingCall
 }
 
-export interface Type_118_System {
+export interface Type_113_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_118_TechnicalCommittee {
+export interface Type_113_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
     value: TechnicalCommitteeCall
 }
 
-export interface Type_118_TechnicalMembership {
+export interface Type_113_TechnicalMembership {
     __kind: 'TechnicalMembership'
     value: TechnicalMembershipCall
 }
 
-export interface Type_118_Timestamp {
+export interface Type_113_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_118_Treasury {
+export interface Type_113_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_118_Utility {
+export interface Type_113_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_118_Vesting {
+export interface Type_113_Vesting {
     __kind: 'Vesting'
     value: VestingCall
 }
@@ -576,6 +545,8 @@ export interface Timepoint {
     height: BlockNumber
     index: number
 }
+
+export type AccountId = Bytes
 
 export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_close_tip | TreasuryCall_propose_spend | TreasuryCall_reject_proposal | TreasuryCall_report_awesome | TreasuryCall_retract_tip | TreasuryCall_tip | TreasuryCall_tip_new
 
@@ -1386,7 +1357,6 @@ export interface StakingCall_withdraw_unbonded {
 
 export interface ValidatorPrefs {
     commission: number
-    blocked: boolean
 }
 
 export type EraIndex = number
@@ -1955,7 +1925,7 @@ export interface SessionCall_set_keys {
     proof: Bytes
 }
 
-export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId]
+export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId]
 
 export type RegistrarCall = RegistrarCall_deregister_para | RegistrarCall_deregister_parathread | RegistrarCall_register_para | RegistrarCall_register_parathread | RegistrarCall_select_parathread | RegistrarCall_set_thread_count | RegistrarCall_swap
 
@@ -2080,7 +2050,7 @@ export type RecoveryCall = RecoveryCall_as_recovered | RecoveryCall_cancel_recov
 export interface RecoveryCall_as_recovered {
     __kind: 'as_recovered'
     account: AccountId
-    call: Type_118
+    call: Type_113
 }
 
 /**
@@ -2484,7 +2454,6 @@ export interface Heartbeat {
     networkState: OpaqueNetworkState
     sessionIndex: SessionIndex
     authorityIndex: AuthIndex
-    validatorsLen: number
 }
 
 export type AuthIndex = number
@@ -2951,6 +2920,8 @@ export interface Data_ShaThree256 {
     value: H256
 }
 
+export type H256 = Bytes
+
 export interface IdentityInfo {
     additional: IdentityInfoAdditional[]
     display: Data
@@ -2962,6 +2933,8 @@ export interface IdentityInfo {
     image: Data
     twitter: Data
 }
+
+export type H160 = Bytes
 
 export type IdentityInfoAdditional = [Data, Data]
 
@@ -3997,21 +3970,7 @@ export const BlockNumber = sts.number()
 
 export const Balance = sts.bigint()
 
-export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
-    return  {
-        Address20: H160,
-        Address32: H256,
-        Id: AccountId,
-        Index: sts.number(),
-        Raw: sts.bytes(),
-    }
-})
-
-export const AccountId = sts.bytes()
-
-export const H256 = sts.bytes()
-
-export const H160 = sts.bytes()
+export const LookupSource = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
@@ -4025,14 +3984,14 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
             threshold: sts.number(),
             otherSignatories: sts.array(() => AccountId),
             maybeTimepoint: sts.option(() => Timepoint),
-            call: Type_118,
+            call: Type_113,
         }),
         as_sub: sts.enumStruct({
             index: sts.number(),
-            call: Type_118,
+            call: Type_113,
         }),
         batch: sts.enumStruct({
-            calls: sts.array(() => Type_118),
+            calls: sts.array(() => Type_113),
         }),
         cancel_as_multi: sts.enumStruct({
             threshold: sts.number(),
@@ -4043,7 +4002,7 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     }
 })
 
-export const Type_118: sts.Type<Type_118> = sts.closedEnum(() => {
+export const Type_113: sts.Type<Type_113> = sts.closedEnum(() => {
     return  {
         Attestations: AttestationsCall,
         AuthorityDiscovery: AuthorityDiscoveryCall,
@@ -4083,6 +4042,8 @@ export const Timepoint: sts.Type<Timepoint> = sts.struct(() => {
         index: sts.number(),
     }
 })
+
+export const AccountId = sts.bytes()
 
 export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
     return  {
@@ -4296,7 +4257,6 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
 export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
     return  {
         commission: sts.number(),
-        blocked: sts.boolean(),
     }
 })
 
@@ -4410,7 +4370,7 @@ export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     }
 })
 
-export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId, AccountId])
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId])
 
 export const RegistrarCall: sts.Type<RegistrarCall> = sts.closedEnum(() => {
     return  {
@@ -4456,7 +4416,7 @@ export const RecoveryCall: sts.Type<RecoveryCall> = sts.closedEnum(() => {
     return  {
         as_recovered: sts.enumStruct({
             account: AccountId,
-            call: Type_118,
+            call: Type_113,
         }),
         cancel_recovered: sts.enumStruct({
             account: AccountId,
@@ -4596,7 +4556,6 @@ export const Heartbeat: sts.Type<Heartbeat> = sts.struct(() => {
         networkState: OpaqueNetworkState,
         sessionIndex: SessionIndex,
         authorityIndex: AuthIndex,
-        validatorsLen: sts.number(),
     }
 })
 
@@ -4700,6 +4659,8 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
     }
 })
 
+export const H256 = sts.bytes()
+
 export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
     return  {
         additional: sts.array(() => IdentityInfoAdditional),
@@ -4713,6 +4674,8 @@ export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
         twitter: Data,
     }
 })
+
+export const H160 = sts.bytes()
 
 export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
 

@@ -30,7 +30,17 @@ async function getStorageData(ctx: ProcessorContext<Store>, index: number, block
         const storageData = await referendumInfoOf.v1020.get(block, index)
         if (!storageData) return undefined
 
-        const { __kind: status } = storageData
+        const { proposalHash: hash, end, delay, threshold } = storageData
+        return {
+            status: 'Ongoing',
+            hash,
+            end,
+            delay,
+            threshold: threshold.__kind,
+        }
+    }else if (referendumInfoOf.v1055.is(block)) {
+        const storageData = await referendumInfoOf.v1055.get(block, index)
+        if (!storageData) return undefined
         if(storageData.__kind == "Ongoing"){
             const { proposalHash: hash, end, delay, threshold } = storageData.value
             return {
