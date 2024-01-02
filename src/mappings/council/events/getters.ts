@@ -15,8 +15,12 @@ export function getApprovedData(itemEvent: Event): string {
     if (approved.v25.is(itemEvent)) {
         return approved.v25.decode(itemEvent)
     } else if (approved.v10400.is(itemEvent)) {
-        return approved.v10400.decode(itemEvent).proposalHash
-    } else {
+        try{
+            return approved.v10400.decode(itemEvent).proposalHash
+        }
+        catch{
+            return itemEvent.args[0]
+        }    } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
@@ -25,7 +29,12 @@ export function getClosedData(itemEvent: Event): string {
     if (closed.v25.is(itemEvent)) {
         return closed.v25.decode(itemEvent)[0]
     } else if (closed.v10400.is(itemEvent)) {
-        return closed.v10400.decode(itemEvent).proposalHash
+        try{
+            return closed.v10400.decode(itemEvent).proposalHash
+        }
+        catch{
+            return itemEvent.args[0]
+        }
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -42,20 +51,24 @@ export function getDisapprovedData(itemEvent: Event): string {
 }
 
 export function getExecutedData(itemEvent: Event): string {
-    if (executed.v25.is(itemEvent)) {
-        return executed.v25.decode(itemEvent)[0]
-    } else if (executed.v2800.is(itemEvent)) {
-        return executed.v2800.decode(itemEvent)[0]
-    } else if (executed.v10400.is(itemEvent)) {
-        return executed.v10400.decode(itemEvent).proposalHash
-    } else if (executed.v10500.is(itemEvent)) {
-        return executed.v10500.decode(itemEvent).proposalHash
-    } else if (executed.v10700.is(itemEvent)) {
-        return executed.v10700.decode(itemEvent).proposalHash
-    } else if (executed.v10890.is(itemEvent)) {
-        return executed.v10890.decode(itemEvent).proposalHash
-    } else {
-        throw new UnknownVersionError(itemEvent.name)
+    try{
+        if (executed.v25.is(itemEvent)) {
+            return executed.v25.decode(itemEvent)[0]
+        } else if (executed.v2800.is(itemEvent)) {
+            return executed.v2800.decode(itemEvent)[0]
+        } else if (executed.v10400.is(itemEvent)) {
+            return executed.v10400.decode(itemEvent).proposalHash
+        } else if (executed.v10500.is(itemEvent)) {
+            return executed.v10500.decode(itemEvent).proposalHash
+        } else if (executed.v10700.is(itemEvent)) {
+            return executed.v10700.decode(itemEvent).proposalHash
+        } else if (executed.v10890.is(itemEvent)) {
+            return executed.v10890.decode(itemEvent).proposalHash
+        } else {
+            throw new UnknownVersionError(itemEvent.name)
+        }
+    } catch{
+        return itemEvent.args[0]
     }
 }
 

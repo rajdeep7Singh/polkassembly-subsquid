@@ -13,20 +13,28 @@ interface ReferendumEventData {
 }
 
 function getEventData(itemEvent: Event): ReferendumEventData {
-    if (started.v25.is(itemEvent)) {
-        const [index, threshold] = started.v25.decode(itemEvent)
-        return {
-            index,
-            threshold: threshold.__kind,
+    try{
+        if (started.v25.is(itemEvent)) {
+            const [index, threshold] = started.v25.decode(itemEvent)
+            return {
+                index,
+                threshold: threshold.__kind,
+            }
+        } else if (started.v10400.is(itemEvent)) {
+            const { refIndex: index, threshold } =started.v10400.decode(itemEvent)
+            return {
+                index,
+                threshold: threshold.__kind,
+            }
+        } else {
+            throw new UnknownVersionError(itemEvent.name)
         }
-    } else if (started.v10400.is(itemEvent)) {
-        const { refIndex: index, threshold } =started.v10400.decode(itemEvent)
+    }
+    catch{
         return {
-            index,
-            threshold: threshold.__kind,
+            index: itemEvent.args[0],
+            threshold: itemEvent.args[1].__kind,
         }
-    } else {
-        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
