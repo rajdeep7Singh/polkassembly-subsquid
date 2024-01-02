@@ -27,8 +27,8 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStorageData | undefined> {
     // const storage = new DemocracyPreimagesStorage(ctx, block)
-    if (preimages.v0.is(block)) {
-        const storageData = await preimages.v0.get(block, hash)
+    if (preimages.v25.is(block)) {
+        const storageData = await preimages.v25.get(block, hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData.value
@@ -37,10 +37,10 @@ async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block:
             data,
             provider,
             deposit,
-            block: since,
+            block: Number(since),
         }
-    }else if (preimages.v9110.is(block)) {
-        const storageData = await preimages.v9110.get(block, hash)
+    }else if (preimages.v2800.is(block)) {
+        const storageData = await preimages.v2800.get(block, hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData
@@ -49,7 +49,7 @@ async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block:
             data,
             provider,
             deposit,
-            block: since,
+            block: Number(since),
         }
     } else {
         throw new UnknownVersionError('Democracy.Preimages')
