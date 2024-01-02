@@ -662,7 +662,7 @@ export async function createActivity (
             const id = await getActivityCount(ctx)
             const act = data.activityTypeArray[i]
             res.push(new Activity({
-                id: String(id),
+                id: randomUUID(),
                 type: act.activityType,
                 proposal: data.proposal,
                 who: act.who,
@@ -675,7 +675,7 @@ export async function createActivity (
         const id = await getActivityCount(ctx)
         res.push(
             new Activity({
-                id: String(id),
+                id: randomUUID(),
                 type: data.activityType,
                 who: data.who,
                 proposal: data.proposal,
