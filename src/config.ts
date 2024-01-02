@@ -2,14 +2,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'polkadex',
+        prefix: 89,
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://rpc.polkadot.io',
+        chain: 'wss://polkadex-rpc.dwellir.com',
+        archive: 'https://v2.archive.subsquid.io/metadata/polkadex',
     },
-    typesBundle: 'polkadot',
+    typesBundle: 'polkadex',
     batchSize: 500,
     blockRange: {
         from: 0,

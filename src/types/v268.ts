@@ -1,18 +1,126 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
+export type BountyIndex = number
+
+export interface Bounty {
+    proposer: AccountId
+    value: Balance
+    fee: Balance
+    curatorDeposit: Balance
+    bond: Balance
+    status: BountyStatus
+}
+
+export type BountyStatus = BountyStatus_Active | BountyStatus_Approved | BountyStatus_CuratorProposed | BountyStatus_Funded | BountyStatus_PendingPayout | BountyStatus_Proposed
+
+export interface BountyStatus_Active {
+    __kind: 'Active'
+    value: BountyStatusActive
+}
+
+export interface BountyStatus_Approved {
+    __kind: 'Approved'
+}
+
+export interface BountyStatus_CuratorProposed {
+    __kind: 'CuratorProposed'
+    value: BountyStatusCuratorProposed
+}
+
+export interface BountyStatus_Funded {
+    __kind: 'Funded'
+}
+
+export interface BountyStatus_PendingPayout {
+    __kind: 'PendingPayout'
+    value: BountyStatusPendingPayout
+}
+
+export interface BountyStatus_Proposed {
+    __kind: 'Proposed'
+}
+
+export interface BountyStatusPendingPayout {
+    curator: AccountId
+    beneficiary: AccountId
+    unlockAt: BlockNumber
+}
+
+export type BlockNumber = number
+
+export interface BountyStatusCuratorProposed {
+    curator: AccountId
+}
+
+export interface BountyStatusActive {
+    curator: AccountId
+    updateDue: BlockNumber
+}
+
+export const Bounty: sts.Type<Bounty> = sts.struct(() => {
+    return  {
+        proposer: AccountId,
+        value: Balance,
+        fee: Balance,
+        curatorDeposit: Balance,
+        bond: Balance,
+        status: BountyStatus,
+    }
+})
+
+export const BountyStatus: sts.Type<BountyStatus> = sts.closedEnum(() => {
+    return  {
+        Active: BountyStatusActive,
+        Approved: sts.unit(),
+        CuratorProposed: BountyStatusCuratorProposed,
+        Funded: sts.unit(),
+        PendingPayout: BountyStatusPendingPayout,
+        Proposed: sts.unit(),
+    }
+})
+
+export const BountyStatusPendingPayout: sts.Type<BountyStatusPendingPayout> = sts.struct(() => {
+    return  {
+        curator: AccountId,
+        beneficiary: AccountId,
+        unlockAt: BlockNumber,
+    }
+})
+
+export const BountyStatusCuratorProposed: sts.Type<BountyStatusCuratorProposed> = sts.struct(() => {
+    return  {
+        curator: AccountId,
+    }
+})
+
+export const BountyStatusActive: sts.Type<BountyStatusActive> = sts.struct(() => {
+    return  {
+        curator: AccountId,
+        updateDue: BlockNumber,
+    }
+})
+
+export type ProposalIndex = number
+
+export interface TreasuryProposal {
+    proposer: AccountId
+    value: Balance
+    beneficiary: AccountId
+    bond: Balance
+}
+
+export const TreasuryProposal: sts.Type<TreasuryProposal> = sts.struct(() => {
+    return  {
+        proposer: AccountId,
+        value: Balance,
+        beneficiary: AccountId,
+        bond: Balance,
+    }
+})
+
 export type Hash = Bytes
 
-export type Proposal = Proposal_Attestations | Proposal_AuthorityDiscovery | Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Claims | Proposal_Council | Proposal_Democracy | Proposal_ElectionsPhragmen | Proposal_FinalityTracker | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_Multisig | Proposal_Offences | Proposal_Parachains | Proposal_Proxy | Proposal_Registrar | Proposal_Scheduler | Proposal_Session | Proposal_Slots | Proposal_Staking | Proposal_Sudo | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalMembership | Proposal_Timestamp | Proposal_Treasury | Proposal_Utility | Proposal_Vesting
-
-export interface Proposal_Attestations {
-    __kind: 'Attestations'
-    value: AttestationsCall
-}
-
-export interface Proposal_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
+export type Proposal = Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Bounties | Proposal_Council | Proposal_ElectionProviderMultiPhase | Proposal_Elections | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_Multisig | Proposal_OrmlVesting | Proposal_PDEXMigration | Proposal_Proxy | Proposal_Recovery | Proposal_Scheduler | Proposal_Session | Proposal_Staking | Proposal_Sudo | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalMembership | Proposal_Timestamp | Proposal_Treasury | Proposal_Utility
 
 export interface Proposal_Authorship {
     __kind: 'Authorship'
@@ -29,9 +137,9 @@ export interface Proposal_Balances {
     value: BalancesCall
 }
 
-export interface Proposal_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
+export interface Proposal_Bounties {
+    __kind: 'Bounties'
+    value: BountiesCall
 }
 
 export interface Proposal_Council {
@@ -39,19 +147,14 @@ export interface Proposal_Council {
     value: CouncilCall
 }
 
-export interface Proposal_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
+export interface Proposal_ElectionProviderMultiPhase {
+    __kind: 'ElectionProviderMultiPhase'
+    value: ElectionProviderMultiPhaseCall
 }
 
-export interface Proposal_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
-}
-
-export interface Proposal_FinalityTracker {
-    __kind: 'FinalityTracker'
-    value: FinalityTrackerCall
+export interface Proposal_Elections {
+    __kind: 'Elections'
+    value: ElectionsCall
 }
 
 export interface Proposal_Grandpa {
@@ -79,14 +182,14 @@ export interface Proposal_Multisig {
     value: MultisigCall
 }
 
-export interface Proposal_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
+export interface Proposal_OrmlVesting {
+    __kind: 'OrmlVesting'
+    value: OrmlVestingCall
 }
 
-export interface Proposal_Parachains {
-    __kind: 'Parachains'
-    value: ParachainsCall
+export interface Proposal_PDEXMigration {
+    __kind: 'PDEXMigration'
+    value: PDEXMigrationCall
 }
 
 export interface Proposal_Proxy {
@@ -94,9 +197,9 @@ export interface Proposal_Proxy {
     value: ProxyCall
 }
 
-export interface Proposal_Registrar {
-    __kind: 'Registrar'
-    value: RegistrarCall
+export interface Proposal_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
 }
 
 export interface Proposal_Scheduler {
@@ -107,11 +210,6 @@ export interface Proposal_Scheduler {
 export interface Proposal_Session {
     __kind: 'Session'
     value: SessionCall
-}
-
-export interface Proposal_Slots {
-    __kind: 'Slots'
-    value: SlotsCall
 }
 
 export interface Proposal_Staking {
@@ -154,129 +252,7 @@ export interface Proposal_Utility {
     value: UtilityCall
 }
 
-export interface Proposal_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export type VestingCall = VestingCall_force_vested_transfer | VestingCall_vest | VestingCall_vest_other | VestingCall_vested_transfer
-
-/**
- *  Force a vested transfer.
- * 
- *  The dispatch origin for this call must be _Root_.
- * 
- *  - `source`: The account whose funds should be transferred.
- *  - `target`: The account that should be transferred the vested funds.
- *  - `amount`: The amount of funds to transfer and will be vested.
- *  - `schedule`: The vesting schedule attached to the transfer.
- * 
- *  Emits `VestingCreated`.
- * 
- *  # <weight>
- *  - `O(1)`.
- *  - DbWeight: 4 Reads, 4 Writes
- *      - Reads: Vesting Storage, Balances Locks, Target Account, Source Account
- *      - Writes: Vesting Storage, Balances Locks, Target Account, Source Account
- *  - Benchmark: 100.3 + .365 * l µs (min square analysis)
- *  - Using 100 µs fixed. Assuming less than 50 locks on any user, else we may want factor in number of locks.
- *  # </weight>
- */
-export interface VestingCall_force_vested_transfer {
-    __kind: 'force_vested_transfer'
-    source: LookupSource
-    target: LookupSource
-    schedule: VestingInfo
-}
-
-/**
- *  Unlock any vested funds of the sender account.
- * 
- *  The dispatch origin for this call must be _Signed_ and the sender must have funds still
- *  locked under this module.
- * 
- *  Emits either `VestingCompleted` or `VestingUpdated`.
- * 
- *  # <weight>
- *  - `O(1)`.
- *  - DbWeight: 2 Reads, 2 Writes
- *      - Reads: Vesting Storage, Balances Locks, [Sender Account]
- *      - Writes: Vesting Storage, Balances Locks, [Sender Account]
- *  - Benchmark:
- *      - Unlocked: 48.76 + .048 * l µs (min square analysis)
- *      - Locked: 44.43 + .284 * l µs (min square analysis)
- *  - Using 50 µs fixed. Assuming less than 50 locks on any user, else we may want factor in number of locks.
- *  # </weight>
- */
-export interface VestingCall_vest {
-    __kind: 'vest'
-}
-
-/**
- *  Unlock any vested funds of a `target` account.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  - `target`: The account whose vested funds should be unlocked. Must have funds still
- *  locked under this module.
- * 
- *  Emits either `VestingCompleted` or `VestingUpdated`.
- * 
- *  # <weight>
- *  - `O(1)`.
- *  - DbWeight: 3 Reads, 3 Writes
- *      - Reads: Vesting Storage, Balances Locks, Target Account
- *      - Writes: Vesting Storage, Balances Locks, Target Account
- *  - Benchmark:
- *      - Unlocked: 44.3 + .294 * l µs (min square analysis)
- *      - Locked: 48.16 + .103 * l µs (min square analysis)
- *  - Using 50 µs fixed. Assuming less than 50 locks on any user, else we may want factor in number of locks.
- *  # </weight>
- */
-export interface VestingCall_vest_other {
-    __kind: 'vest_other'
-    target: LookupSource
-}
-
-/**
- *  Create a vested transfer.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  - `target`: The account that should be transferred the vested funds.
- *  - `amount`: The amount of funds to transfer and will be vested.
- *  - `schedule`: The vesting schedule attached to the transfer.
- * 
- *  Emits `VestingCreated`.
- * 
- *  # <weight>
- *  - `O(1)`.
- *  - DbWeight: 3 Reads, 3 Writes
- *      - Reads: Vesting Storage, Balances Locks, Target Account, [Sender Account]
- *      - Writes: Vesting Storage, Balances Locks, Target Account, [Sender Account]
- *  - Benchmark: 100.3 + .365 * l µs (min square analysis)
- *  - Using 100 µs fixed. Assuming less than 50 locks on any user, else we may want factor in number of locks.
- *  # </weight>
- */
-export interface VestingCall_vested_transfer {
-    __kind: 'vested_transfer'
-    target: LookupSource
-    schedule: VestingInfo
-}
-
-export interface VestingInfo {
-    locked: Balance
-    perBlock: Balance
-    startingBlock: BlockNumber
-}
-
-export type BlockNumber = number
-
-export type Balance = bigint
-
-export type LookupSource = Bytes
-
-export type UtilityCall = UtilityCall_as_limited_sub | UtilityCall_as_sub | UtilityCall_batch
+export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch | UtilityCall_batch_all
 
 /**
  *  Send a call through an indexed pseudonym of the sender.
@@ -286,39 +262,17 @@ export type UtilityCall = UtilityCall_as_limited_sub | UtilityCall_as_sub | Util
  * 
  *  NOTE: If you need to ensure that any account-based filtering is not honored (i.e.
  *  because you expect `proxy` to have been used prior in the call stack and you do not want
- *  the call restrictions to apply to any sub-accounts), then use `as_sub` instead.
+ *  the call restrictions to apply to any sub-accounts), then use `as_multi_threshold_1`
+ *  in the Multisig pallet instead.
+ * 
+ *  NOTE: Prior to version *12, this was called `as_limited_sub`.
  * 
  *  The dispatch origin for this call must be _Signed_.
- * 
- *  # <weight>
- *  - Base weight: 2.861 µs
- *  - Plus the weight of the `call`
- *  # </weight>
  */
-export interface UtilityCall_as_limited_sub {
-    __kind: 'as_limited_sub'
+export interface UtilityCall_as_derivative {
+    __kind: 'as_derivative'
     index: number
-    call: Type_44
-}
-
-/**
- *  Send a call through an indexed pseudonym of the sender.
- * 
- *  NOTE: If you need to ensure that any account-based filtering is honored (i.e. because
- *  you expect `proxy` to have been used prior in the call stack and you want it to apply to
- *  any sub-accounts), then use `as_limited_sub` instead.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  # <weight>
- *  - Base weight: 2.861 µs
- *  - Plus the weight of the `call`
- *  # </weight>
- */
-export interface UtilityCall_as_sub {
-    __kind: 'as_sub'
-    index: number
-    call: Type_44
+    call: Type_47
 }
 
 /**
@@ -326,15 +280,14 @@ export interface UtilityCall_as_sub {
  * 
  *  May be called from any origin.
  * 
- *  - `calls`: The calls to be dispatched from the same origin.
+ *  - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *    exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
  *  If origin is root then call are dispatch without checking origin filter. (This includes
- *  bypassing `frame_system::Trait::BaseCallFilter`).
+ *  bypassing `frame_system::Config::BaseCallFilter`).
  * 
  *  # <weight>
- *  - Base weight: 14.39 + .987 * c µs
- *  - Plus the sum of the weights of the `calls`.
- *  - Plus one additional event. (repeat read/write)
+ *  - Complexity: O(C) where C is the number of calls to be batched.
  *  # </weight>
  * 
  *  This will return `Ok` in all circumstances. To determine the success of the batch, an
@@ -345,171 +298,169 @@ export interface UtilityCall_as_sub {
  */
 export interface UtilityCall_batch {
     __kind: 'batch'
-    calls: Type_44[]
+    calls: Type_47[]
 }
 
-export type Type_44 = Type_44_Attestations | Type_44_AuthorityDiscovery | Type_44_Authorship | Type_44_Babe | Type_44_Balances | Type_44_Claims | Type_44_Council | Type_44_Democracy | Type_44_ElectionsPhragmen | Type_44_FinalityTracker | Type_44_Grandpa | Type_44_Identity | Type_44_ImOnline | Type_44_Indices | Type_44_Multisig | Type_44_Offences | Type_44_Parachains | Type_44_Proxy | Type_44_Registrar | Type_44_Scheduler | Type_44_Session | Type_44_Slots | Type_44_Staking | Type_44_Sudo | Type_44_System | Type_44_TechnicalCommittee | Type_44_TechnicalMembership | Type_44_Timestamp | Type_44_Treasury | Type_44_Utility | Type_44_Vesting
-
-export interface Type_44_Attestations {
-    __kind: 'Attestations'
-    value: AttestationsCall
+/**
+ *  Send a batch of dispatch calls and atomically execute them.
+ *  The whole transaction will rollback and fail if any of the calls failed.
+ * 
+ *  May be called from any origin.
+ * 
+ *  - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *    exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ *  If origin is root then call are dispatch without checking origin filter. (This includes
+ *  bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ *  # <weight>
+ *  - Complexity: O(C) where C is the number of calls to be batched.
+ *  # </weight>
+ */
+export interface UtilityCall_batch_all {
+    __kind: 'batch_all'
+    calls: Type_47[]
 }
 
-export interface Type_44_AuthorityDiscovery {
-    __kind: 'AuthorityDiscovery'
-    value: AuthorityDiscoveryCall
-}
+export type Type_47 = Type_47_Authorship | Type_47_Babe | Type_47_Balances | Type_47_Bounties | Type_47_Council | Type_47_ElectionProviderMultiPhase | Type_47_Elections | Type_47_Grandpa | Type_47_Identity | Type_47_ImOnline | Type_47_Indices | Type_47_Multisig | Type_47_OrmlVesting | Type_47_PDEXMigration | Type_47_Proxy | Type_47_Recovery | Type_47_Scheduler | Type_47_Session | Type_47_Staking | Type_47_Sudo | Type_47_System | Type_47_TechnicalCommittee | Type_47_TechnicalMembership | Type_47_Timestamp | Type_47_Treasury | Type_47_Utility
 
-export interface Type_44_Authorship {
+export interface Type_47_Authorship {
     __kind: 'Authorship'
     value: AuthorshipCall
 }
 
-export interface Type_44_Babe {
+export interface Type_47_Babe {
     __kind: 'Babe'
     value: BabeCall
 }
 
-export interface Type_44_Balances {
+export interface Type_47_Balances {
     __kind: 'Balances'
     value: BalancesCall
 }
 
-export interface Type_44_Claims {
-    __kind: 'Claims'
-    value: ClaimsCall
+export interface Type_47_Bounties {
+    __kind: 'Bounties'
+    value: BountiesCall
 }
 
-export interface Type_44_Council {
+export interface Type_47_Council {
     __kind: 'Council'
     value: CouncilCall
 }
 
-export interface Type_44_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
+export interface Type_47_ElectionProviderMultiPhase {
+    __kind: 'ElectionProviderMultiPhase'
+    value: ElectionProviderMultiPhaseCall
 }
 
-export interface Type_44_ElectionsPhragmen {
-    __kind: 'ElectionsPhragmen'
-    value: ElectionsPhragmenCall
+export interface Type_47_Elections {
+    __kind: 'Elections'
+    value: ElectionsCall
 }
 
-export interface Type_44_FinalityTracker {
-    __kind: 'FinalityTracker'
-    value: FinalityTrackerCall
-}
-
-export interface Type_44_Grandpa {
+export interface Type_47_Grandpa {
     __kind: 'Grandpa'
     value: GrandpaCall
 }
 
-export interface Type_44_Identity {
+export interface Type_47_Identity {
     __kind: 'Identity'
     value: IdentityCall
 }
 
-export interface Type_44_ImOnline {
+export interface Type_47_ImOnline {
     __kind: 'ImOnline'
     value: ImOnlineCall
 }
 
-export interface Type_44_Indices {
+export interface Type_47_Indices {
     __kind: 'Indices'
     value: IndicesCall
 }
 
-export interface Type_44_Multisig {
+export interface Type_47_Multisig {
     __kind: 'Multisig'
     value: MultisigCall
 }
 
-export interface Type_44_Offences {
-    __kind: 'Offences'
-    value: OffencesCall
+export interface Type_47_OrmlVesting {
+    __kind: 'OrmlVesting'
+    value: OrmlVestingCall
 }
 
-export interface Type_44_Parachains {
-    __kind: 'Parachains'
-    value: ParachainsCall
+export interface Type_47_PDEXMigration {
+    __kind: 'PDEXMigration'
+    value: PDEXMigrationCall
 }
 
-export interface Type_44_Proxy {
+export interface Type_47_Proxy {
     __kind: 'Proxy'
     value: ProxyCall
 }
 
-export interface Type_44_Registrar {
-    __kind: 'Registrar'
-    value: RegistrarCall
+export interface Type_47_Recovery {
+    __kind: 'Recovery'
+    value: RecoveryCall
 }
 
-export interface Type_44_Scheduler {
+export interface Type_47_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
 }
 
-export interface Type_44_Session {
+export interface Type_47_Session {
     __kind: 'Session'
     value: SessionCall
 }
 
-export interface Type_44_Slots {
-    __kind: 'Slots'
-    value: SlotsCall
-}
-
-export interface Type_44_Staking {
+export interface Type_47_Staking {
     __kind: 'Staking'
     value: StakingCall
 }
 
-export interface Type_44_Sudo {
+export interface Type_47_Sudo {
     __kind: 'Sudo'
     value: SudoCall
 }
 
-export interface Type_44_System {
+export interface Type_47_System {
     __kind: 'System'
     value: SystemCall
 }
 
-export interface Type_44_TechnicalCommittee {
+export interface Type_47_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
     value: TechnicalCommitteeCall
 }
 
-export interface Type_44_TechnicalMembership {
+export interface Type_47_TechnicalMembership {
     __kind: 'TechnicalMembership'
     value: TechnicalMembershipCall
 }
 
-export interface Type_44_Timestamp {
+export interface Type_47_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
 }
 
-export interface Type_44_Treasury {
+export interface Type_47_Treasury {
     __kind: 'Treasury'
     value: TreasuryCall
 }
 
-export interface Type_44_Utility {
+export interface Type_47_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
 
-export interface Type_44_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_close_tip | TreasuryCall_propose_spend | TreasuryCall_reject_proposal | TreasuryCall_report_awesome | TreasuryCall_retract_tip | TreasuryCall_tip | TreasuryCall_tip_new
+export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_propose_spend | TreasuryCall_reject_proposal
 
 /**
  *  Approve a proposal. At a later time, the proposal will be allocated to the beneficiary
  *  and the original deposit will be returned.
+ * 
+ *  May only be called from `T::ApproveOrigin`.
  * 
  *  # <weight>
  *  - Complexity: O(1).
@@ -520,30 +471,6 @@ export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_close_ti
 export interface TreasuryCall_approve_proposal {
     __kind: 'approve_proposal'
     proposalId: number
-}
-
-/**
- *  Close and payout a tip.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  The tip identified by `hash` must have finished its countdown period.
- * 
- *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
- *    as the hash of the tuple of the original tip `reason` and the beneficiary account ID.
- * 
- *  # <weight>
- *  - Complexity: `O(T)` where `T` is the number of tippers.
- *    decoding `Tipper` vec of length `T`.
- *    `T` is charged as upper bound given by `ContainsLengthBound`.
- *    The actual cost depends on the implementation of `T::Tippers`.
- *  - DbReads: `Tips`, `Tippers`, `tip finder`
- *  - DbWrites: `Reasons`, `Tips`, `Tippers`, `tip finder`
- *  # </weight>
- */
-export interface TreasuryCall_close_tip {
-    __kind: 'close_tip'
-    hash: Hash
 }
 
 /**
@@ -566,6 +493,8 @@ export interface TreasuryCall_propose_spend {
 /**
  *  Reject a proposed spend. The original deposit will be slashed.
  * 
+ *  May only be called from `T::RejectOrigin`.
+ * 
  *  # <weight>
  *  - Complexity: O(1)
  *  - DbReads: `Proposals`, `rejected proposer account`
@@ -577,126 +506,36 @@ export interface TreasuryCall_reject_proposal {
     proposalId: number
 }
 
-/**
- *  Report something `reason` that deserves a tip and claim any eventual the finder's fee.
- * 
- *  The dispatch origin for this call must be _Signed_.
- * 
- *  Payment: `TipReportDepositBase` will be reserved from the origin account, as well as
- *  `TipReportDepositPerByte` for each byte in `reason`.
- * 
- *  - `reason`: The reason for, or the thing that deserves, the tip; generally this will be
- *    a UTF-8-encoded URL.
- *  - `who`: The account which should be credited for the tip.
- * 
- *  Emits `NewTip` if successful.
- * 
- *  # <weight>
- *  - Complexity: `O(R)` where `R` length of `reason`.
- *    - encoding and hashing of 'reason'
- *  - DbReads: `Reasons`, `Tips`, `who account data`
- *  - DbWrites: `Tips`, `who account data`
- *  # </weight>
- */
-export interface TreasuryCall_report_awesome {
-    __kind: 'report_awesome'
-    reason: Bytes
-    who: AccountId
+export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
+
+export interface LookupSource_Address20 {
+    __kind: 'Address20'
+    value: H160
 }
 
-/**
- *  Retract a prior tip-report from `report_awesome`, and cancel the process of tipping.
- * 
- *  If successful, the original deposit will be unreserved.
- * 
- *  The dispatch origin for this call must be _Signed_ and the tip identified by `hash`
- *  must have been reported by the signing account through `report_awesome` (and not
- *  through `tip_new`).
- * 
- *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
- *    as the hash of the tuple of the original tip `reason` and the beneficiary account ID.
- * 
- *  Emits `TipRetracted` if successful.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`
- *    - Depends on the length of `T::Hash` which is fixed.
- *  - DbReads: `Tips`, `origin account`
- *  - DbWrites: `Reasons`, `Tips`, `origin account`
- *  # </weight>
- */
-export interface TreasuryCall_retract_tip {
-    __kind: 'retract_tip'
-    hash: Hash
+export interface LookupSource_Address32 {
+    __kind: 'Address32'
+    value: H256
 }
 
-/**
- *  Declare a tip value for an already-open tip.
- * 
- *  The dispatch origin for this call must be _Signed_ and the signing account must be a
- *  member of the `Tippers` set.
- * 
- *  - `hash`: The identity of the open tip for which a tip value is declared. This is formed
- *    as the hash of the tuple of the hash of the original tip `reason` and the beneficiary
- *    account ID.
- *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
- *    value of active tippers will be given to the `who`.
- * 
- *  Emits `TipClosing` if the threshold of tippers has been reached and the countdown period
- *  has started.
- * 
- *  # <weight>
- *  - Complexity: `O(T)` where `T` is the number of tippers.
- *    decoding `Tipper` vec of length `T`, insert tip and check closing,
- *    `T` is charged as upper bound given by `ContainsLengthBound`.
- *    The actual cost depends on the implementation of `T::Tippers`.
- * 
- *    Actually weight could be lower as it depends on how many tips are in `OpenTip` but it
- *    is weighted as if almost full i.e of length `T-1`.
- *  - DbReads: `Tippers`, `Tips`
- *  - DbWrites: `Tips`
- *  # </weight>
- */
-export interface TreasuryCall_tip {
-    __kind: 'tip'
-    hash: Hash
-    tipValue: BalanceOf
+export interface LookupSource_Id {
+    __kind: 'Id'
+    value: AccountId
 }
 
-/**
- *  Give a tip for something new; no finder's fee will be taken.
- * 
- *  The dispatch origin for this call must be _Signed_ and the signing account must be a
- *  member of the `Tippers` set.
- * 
- *  - `reason`: The reason for, or the thing that deserves, the tip; generally this will be
- *    a UTF-8-encoded URL.
- *  - `who`: The account which should be credited for the tip.
- *  - `tip_value`: The amount of tip that the sender would like to give. The median tip
- *    value of active tippers will be given to the `who`.
- * 
- *  Emits `NewTip` if successful.
- * 
- *  # <weight>
- *  - Complexity: `O(R + T)` where `R` length of `reason`, `T` is the number of tippers.
- *    - `O(T)`: decoding `Tipper` vec of length `T`
- *      `T` is charged as upper bound given by `ContainsLengthBound`.
- *      The actual cost depends on the implementation of `T::Tippers`.
- *    - `O(R)`: hashing and encoding of reason of length `R`
- *  - DbReads: `Tippers`, `Reasons`
- *  - DbWrites: `Reasons`, `Tips`
- *  # </weight>
- */
-export interface TreasuryCall_tip_new {
-    __kind: 'tip_new'
-    reason: Bytes
-    who: AccountId
-    tipValue: BalanceOf
+export interface LookupSource_Index {
+    __kind: 'Index'
+    value: number
 }
 
-export type BalanceOf = bigint
+export interface LookupSource_Raw {
+    __kind: 'Raw'
+    value: Bytes
+}
 
-export type AccountId = Bytes
+export type H256 = Bytes
+
+export type H160 = Bytes
 
 export type TimestampCall = TimestampCall_set
 
@@ -712,12 +551,10 @@ export type TimestampCall = TimestampCall_set
  *  The dispatch origin for this call must be `Inherent`.
  * 
  *  # <weight>
- *  - `O(T)` where `T` complexity of `on_timestamp_set`
- *  - 1 storage read and 1 storage mutation (codec `O(1)`). (because of `DidUpdate::take` in `on_finalize`)
- *  - 1 event handler `on_timestamp_set` `O(T)`.
- *  - Benchmark: 7.678 (min squares analysis)
- *    - NOTE: This benchmark was done for a runtime with insignificant `on_timestamp_set` handlers.
- *      New benchmarking is needed when adding new handlers.
+ *  - `O(1)` (Note that implementations of `OnTimestampSet` must also be `O(1)`)
+ *  - 1 storage read and 1 storage mutation (codec `O(1)`). (because of `DidUpdate::take` in
+ *    `on_finalize`)
+ *  - 1 event handler `on_timestamp_set`. Must be `O(1)`.
  *  # </weight>
  */
 export interface TimestampCall_set {
@@ -730,7 +567,7 @@ export type TechnicalMembershipCall = TechnicalMembershipCall_add_member | Techn
 /**
  *  Add a member `who` to the set.
  * 
- *  May only be called from `AddOrigin` or root.
+ *  May only be called from `T::AddOrigin`.
  */
 export interface TechnicalMembershipCall_add_member {
     __kind: 'add_member'
@@ -751,6 +588,8 @@ export interface TechnicalMembershipCall_change_key {
 
 /**
  *  Remove the prime member if it exists.
+ * 
+ *  May only be called from `T::PrimeOrigin`.
  */
 export interface TechnicalMembershipCall_clear_prime {
     __kind: 'clear_prime'
@@ -759,7 +598,7 @@ export interface TechnicalMembershipCall_clear_prime {
 /**
  *  Remove a member `who` from the set.
  * 
- *  May only be called from `RemoveOrigin` or root.
+ *  May only be called from `T::RemoveOrigin`.
  */
 export interface TechnicalMembershipCall_remove_member {
     __kind: 'remove_member'
@@ -770,7 +609,7 @@ export interface TechnicalMembershipCall_remove_member {
  *  Change the membership to a new set, disregarding the existing membership. Be nice and
  *  pass `members` pre-sorted.
  * 
- *  May only be called from `ResetOrigin` or root.
+ *  May only be called from `T::ResetOrigin`.
  */
 export interface TechnicalMembershipCall_reset_members {
     __kind: 'reset_members'
@@ -779,6 +618,8 @@ export interface TechnicalMembershipCall_reset_members {
 
 /**
  *  Set the prime member. Must be a current member.
+ * 
+ *  May only be called from `T::PrimeOrigin`.
  */
 export interface TechnicalMembershipCall_set_prime {
     __kind: 'set_prime'
@@ -788,7 +629,7 @@ export interface TechnicalMembershipCall_set_prime {
 /**
  *  Swap out one member `remove` for another `add`.
  * 
- *  May only be called from `SwapOrigin` or root.
+ *  May only be called from `T::SwapOrigin`.
  * 
  *  Prime membership is *not* passed from `remove` to `add`, if extant.
  */
@@ -810,6 +651,9 @@ export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCom
  * 
  *  If called after the end of the voting period abstentions are counted as rejections
  *  unless there is a prime member set and the prime member cast an approval.
+ * 
+ *  If the close operation completes successfully with disapproval, the transaction fee will
+ *  be waived. Otherwise execution of the approved operation will be charged to the caller.
  * 
  *  + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed proposal.
  *  + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
@@ -847,7 +691,6 @@ export interface TechnicalCommitteeCall_close {
  * 
  *  # <weight>
  *  Complexity: O(P) where P is the number of max proposals
- *  Base Weight: .49 * P
  *  DB Weight:
  *  * Reads: Proposals
  *  * Writes: Voting, Proposals, ProposalOf
@@ -922,7 +765,7 @@ export interface TechnicalCommitteeCall_propose {
  * 
  *  Requires root origin.
  * 
- *  NOTE: Does not enforce the expected `MAX_MEMBERS` limit on the amount of members, but
+ *  NOTE: Does not enforce the expected `MaxMembers` limit on the amount of members, but
  *        the weight estimations rely on it to estimate dispatchable weight.
  * 
  *  # <weight>
@@ -950,6 +793,8 @@ export interface TechnicalCommitteeCall_set_members {
  * 
  *  Requires the sender to be a member.
  * 
+ *  Transaction fees will be waived if the member is voting on any particular proposal
+ *  for the first time and the call is successful. Subsequent vote changes will charge a fee.
  *  # <weight>
  *  ## Weight
  *  - `O(M)` where `M` is members-count (code- and governance-bounded)
@@ -968,7 +813,7 @@ export interface TechnicalCommitteeCall_vote {
 
 export type MemberCount = number
 
-export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_set_changes_trie_config | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage | SystemCall_suicide
+export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_changes_trie_config | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
 
 /**
  *  A dispatch that will fill the block weight up to the given ratio.
@@ -1017,12 +862,23 @@ export interface SystemCall_kill_storage {
  * 
  *  # <weight>
  *  - `O(1)`
- *  - Base Weight: 0.665 µs, independent of remark length.
- *  - No DB operations.
  *  # </weight>
  */
 export interface SystemCall_remark {
     __kind: 'remark'
+    remark: Bytes
+}
+
+/**
+ *  Make some on-chain remark and emit event.
+ * 
+ *  # <weight>
+ *  - `O(b)` where b is the length of the remark.
+ *  - 1 event.
+ *  # </weight>
+ */
+export interface SystemCall_remark_with_event {
+    __kind: 'remark_with_event'
     remark: Bytes
 }
 
@@ -1049,10 +905,11 @@ export interface SystemCall_set_changes_trie_config {
  *  # <weight>
  *  - `O(C + S)` where `C` length of `code` and `S` complexity of `can_set_code`
  *  - 1 storage write (codec `O(C)`).
- *  - 1 call to `can_set_code`: `O(S)` (calls `sp_io::misc::runtime_version` which is expensive).
+ *  - 1 call to `can_set_code`: `O(S)` (calls `sp_io::misc::runtime_version` which is
+ *    expensive).
  *  - 1 event.
- *  The weight of this function is dependent on the runtime, but generally this is very expensive.
- *  We will treat this as a full block.
+ *  The weight of this function is dependent on the runtime, but generally this is very
+ *  expensive. We will treat this as a full block.
  *  # </weight>
  */
 export interface SystemCall_set_code {
@@ -1067,8 +924,8 @@ export interface SystemCall_set_code {
  *  - `O(C)` where `C` length of `code`
  *  - 1 storage write (codec `O(C)`).
  *  - 1 event.
- *  The weight of this function is dependent on the runtime. We will treat this as a full block.
- *  # </weight>
+ *  The weight of this function is dependent on the runtime. We will treat this as a full
+ *  block. # </weight>
  */
 export interface SystemCall_set_code_without_checks {
     __kind: 'set_code_without_checks'
@@ -1105,22 +962,6 @@ export interface SystemCall_set_storage {
     items: KeyValue[]
 }
 
-/**
- *  Kill the sending account, assuming there are no references outstanding and the composite
- *  data is equal to its default value.
- * 
- *  # <weight>
- *  - `O(1)`
- *  - 1 storage read and deletion.
- *  --------------------
- *  Base Weight: 8.626 µs
- *  No DB Read or Write operations because caller is already in overlay
- *  # </weight>
- */
-export interface SystemCall_suicide {
-    __kind: 'suicide'
-}
-
 export type KeyValue = [StorageKey, StorageData]
 
 export type StorageData = Bytes
@@ -1139,7 +980,8 @@ export type Perbill = number
 export type SudoCall = SudoCall_set_key | SudoCall_sudo | SudoCall_sudo_as | SudoCall_sudo_unchecked_weight
 
 /**
- *  Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo key.
+ *  Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo
+ *  key.
  * 
  *  The dispatch origin for this call must be _Signed_.
  * 
@@ -1168,7 +1010,7 @@ export interface SudoCall_set_key {
  */
 export interface SudoCall_sudo {
     __kind: 'sudo'
-    call: Type_44
+    call: Type_47
 }
 
 /**
@@ -1187,7 +1029,7 @@ export interface SudoCall_sudo {
 export interface SudoCall_sudo_as {
     __kind: 'sudo_as'
     who: LookupSource
-    call: Type_44
+    call: Type_47
 }
 
 /**
@@ -1204,13 +1046,13 @@ export interface SudoCall_sudo_as {
  */
 export interface SudoCall_sudo_unchecked_weight {
     __kind: 'sudo_unchecked_weight'
-    call: Type_44
+    call: Type_47
     weight: Weight
 }
 
 export type Weight = bigint
 
-export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_cancel_deferred_slash | StakingCall_chill | StakingCall_force_new_era | StakingCall_force_new_era_always | StakingCall_force_no_eras | StakingCall_force_unstake | StakingCall_nominate | StakingCall_payout_stakers | StakingCall_reap_stash | StakingCall_rebond | StakingCall_set_controller | StakingCall_set_history_depth | StakingCall_set_invulnerables | StakingCall_set_payee | StakingCall_set_validator_count | StakingCall_submit_election_solution | StakingCall_submit_election_solution_unsigned | StakingCall_unbond | StakingCall_validate | StakingCall_withdraw_unbonded
+export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_cancel_deferred_slash | StakingCall_chill | StakingCall_chill_other | StakingCall_force_new_era | StakingCall_force_new_era_always | StakingCall_force_no_eras | StakingCall_force_unstake | StakingCall_increase_validator_count | StakingCall_kick | StakingCall_nominate | StakingCall_payout_stakers | StakingCall_reap_stash | StakingCall_rebond | StakingCall_scale_validator_count | StakingCall_set_controller | StakingCall_set_history_depth | StakingCall_set_invulnerables | StakingCall_set_payee | StakingCall_set_staking_limits | StakingCall_set_validator_count | StakingCall_unbond | StakingCall_validate | StakingCall_withdraw_unbonded
 
 /**
  *  Take the origin account as a stash and lock up `value` of its balance. `controller` will
@@ -1221,7 +1063,6 @@ export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCal
  *  The dispatch origin for this call must be _Signed_ by the stash account.
  * 
  *  Emits `Bonded`.
- * 
  *  # <weight>
  *  - Independent of the arguments. Moderate complexity.
  *  - O(1).
@@ -1230,10 +1071,6 @@ export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCal
  *  NOTE: Two of the storage writes (`Self::bonded`, `Self::payee`) are _never_ cleaned
  *  unless the `origin` falls below _existential deposit_ and gets removed as dust.
  *  ------------------
- *  Base Weight: 67.87 µs
- *  DB Weight:
- *  - Read: Bonded, Ledger, [Origin Account], Current Era, History Depth, Locks
- *  - Write: Bonded, Payee, [Origin Account], Locks, Ledger
  *  # </weight>
  */
 export interface StakingCall_bond {
@@ -1247,24 +1084,17 @@ export interface StakingCall_bond {
  *  Add some extra amount that have appeared in the stash `free_balance` into the balance up
  *  for staking.
  * 
- *  Use this if there are additional funds in your stash account that you wish to bond.
- *  Unlike [`bond`] or [`unbond`] this function does not impose any limitation on the amount
- *  that can be added.
+ *  The dispatch origin for this call must be _Signed_ by the stash, not the controller.
  * 
- *  The dispatch origin for this call must be _Signed_ by the stash, not the controller and
- *  it can be only called when [`EraElectionStatus`] is `Closed`.
+ *  Use this if there are additional funds in your stash account that you wish to bond.
+ *  Unlike [`bond`](Self::bond) or [`unbond`](Self::unbond) this function does not impose
+ *  any limitation on the amount that can be added.
  * 
  *  Emits `Bonded`.
  * 
  *  # <weight>
  *  - Independent of the arguments. Insignificant complexity.
  *  - O(1).
- *  - One DB entry.
- *  ------------
- *  Base Weight: 54.88 µs
- *  DB Weight:
- *  - Read: Era Election Status, Bonded, Ledger, [Origin Account], Locks
- *  - Write: [Origin Account], Locks, Ledger
  *  # </weight>
  */
 export interface StakingCall_bond_extra {
@@ -1275,7 +1105,7 @@ export interface StakingCall_bond_extra {
 /**
  *  Cancel enactment of a deferred slash.
  * 
- *  Can be called by either the root origin or the `T::SlashCancelOrigin`.
+ *  Can be called by the `T::SlashCancelOrigin`.
  * 
  *  Parameters: era and indices of the slashes for that era to kill.
  * 
@@ -1283,7 +1113,6 @@ export interface StakingCall_bond_extra {
  *  Complexity: O(U + S)
  *  with U unapplied slashes weighted with U=1000
  *  and S is the number of slash indices to be canceled.
- *  - Base: 5870 + 34.61 * S µs
  *  - Read: Unapplied Slashes
  *  - Write: Unapplied Slashes
  *  # </weight>
@@ -1300,21 +1129,43 @@ export interface StakingCall_cancel_deferred_slash {
  *  Effects will be felt at the beginning of the next era.
  * 
  *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- *  And, it can be only called when [`EraElectionStatus`] is `Closed`.
  * 
  *  # <weight>
  *  - Independent of the arguments. Insignificant complexity.
  *  - Contains one read.
  *  - Writes are limited to the `origin` account key.
- *  --------
- *  Base Weight: 16.53 µs
- *  DB Weight:
- *  - Read: EraElectionStatus, Ledger
- *  - Write: Validators, Nominators
  *  # </weight>
  */
 export interface StakingCall_chill {
     __kind: 'chill'
+}
+
+/**
+ *  Declare a `controller` to stop participating as either a validator or nominator.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_, but can be called by anyone.
+ * 
+ *  If the caller is the same as the controller being targeted, then no further checks are
+ *  enforced, and this function behaves just like `chill`.
+ * 
+ *  If the caller is different than the controller being targeted, the following conditions
+ *  must be met:
+ *  * A `ChillThreshold` must be set and checked which defines how close to the max
+ *    nominators or validators we must reach before users can start chilling one-another.
+ *  * A `MaxNominatorCount` and `MaxValidatorCount` must be set which is used to determine
+ *    how close we are to the threshold.
+ *  * A `MinNominatorBond` and `MinValidatorBond` must be set and checked, which determines
+ *    if this is a person that should be chilled because they have not met the threshold
+ *    bond required.
+ * 
+ *  This can be helpful if bond requirements are updated, and we need to remove old users
+ *  who do not satisfy these requirements.
+ */
+export interface StakingCall_chill_other {
+    __kind: 'chill_other'
+    controller: AccountId
 }
 
 /**
@@ -1323,9 +1174,15 @@ export interface StakingCall_chill {
  * 
  *  The dispatch origin must be Root.
  * 
+ *  # Warning
+ * 
+ *  The election process starts multiple blocks before the end of the era.
+ *  If this is called just before a new era is triggered, the election process may not
+ *  have enough blocks to get a result.
+ * 
  *  # <weight>
  *  - No arguments.
- *  - Base Weight: 1.959 µs
+ *  - Weight: O(1)
  *  - Write ForceEra
  *  # </weight>
  */
@@ -1338,8 +1195,14 @@ export interface StakingCall_force_new_era {
  * 
  *  The dispatch origin must be Root.
  * 
+ *  # Warning
+ * 
+ *  The election process starts multiple blocks before the end of the era.
+ *  If this is called just before a new era is triggered, the election process may not
+ *  have enough blocks to get a result.
+ * 
  *  # <weight>
- *  - Base Weight: 2.05 µs
+ *  - Weight: O(1)
  *  - Write: ForceEra
  *  # </weight>
  */
@@ -1352,9 +1215,15 @@ export interface StakingCall_force_new_era_always {
  * 
  *  The dispatch origin must be Root.
  * 
+ *  # Warning
+ * 
+ *  The election process starts multiple blocks before the end of the era.
+ *  Thus the election process may be ongoing when this is called. In this case the
+ *  election will continue until the next era is triggered.
+ * 
  *  # <weight>
  *  - No arguments.
- *  - Base Weight: 1.857 µs
+ *  - Weight: O(1)
  *  - Write: ForceEra
  *  # </weight>
  */
@@ -1369,10 +1238,9 @@ export interface StakingCall_force_no_eras {
  * 
  *  # <weight>
  *  O(S) where S is the number of slashing spans to be removed
- *  Base Weight: 53.07 + 2.365 * S µs
  *  Reads: Bonded, Slashing Spans, Account, Locks
- *  Writes: Bonded, Slashing Spans (if S > 0), Ledger, Payee, Validators, Nominators, Account, Locks
- *  Writes Each: SpanSlash * S
+ *  Writes: Bonded, Slashing Spans (if S > 0), Ledger, Payee, Validators, Nominators,
+ *  Account, Locks Writes Each: SpanSlash * S
  *  # </weight>
  */
 export interface StakingCall_force_unstake {
@@ -1382,24 +1250,48 @@ export interface StakingCall_force_unstake {
 }
 
 /**
- *  Declare the desire to nominate `targets` for the origin controller.
+ *  Increments the ideal number of validators.
  * 
- *  Effects will be felt at the beginning of the next era. This can only be called when
- *  [`EraElectionStatus`] is `Closed`.
+ *  The dispatch origin must be Root.
+ * 
+ *  # <weight>
+ *  Same as [`Self::set_validator_count`].
+ *  # </weight>
+ */
+export interface StakingCall_increase_validator_count {
+    __kind: 'increase_validator_count'
+    additional: number
+}
+
+/**
+ *  Remove the given nominations from the calling validator.
+ * 
+ *  Effects will be felt at the beginning of the next era.
  * 
  *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- *  And, it can be only called when [`EraElectionStatus`] is `Closed`.
+ * 
+ *  - `who`: A list of nominator stash accounts who are nominating this validator which
+ *    should no longer be nominating this validator.
+ * 
+ *  Note: Making this call only makes sense if you first set the validator preferences to
+ *  block any further nominations.
+ */
+export interface StakingCall_kick {
+    __kind: 'kick'
+    who: LookupSource[]
+}
+
+/**
+ *  Declare the desire to nominate `targets` for the origin controller.
+ * 
+ *  Effects will be felt at the beginning of the next era.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
  * 
  *  # <weight>
  *  - The transaction's complexity is proportional to the size of `targets` (N)
  *  which is capped at CompactAssignments::LIMIT (MAX_NOMINATIONS).
  *  - Both the reads and writes follow a similar pattern.
- *  ---------
- *  Base Weight: 22.34 + .36 * N µs
- *  where N is the number of targets
- *  DB Weight:
- *  - Reads: Era Election Status, Ledger, Current Era
- *  - Writes: Validators, Nominators
  *  # </weight>
  */
 export interface StakingCall_nominate {
@@ -1417,19 +1309,17 @@ export interface StakingCall_nominate {
  *  The origin of this call must be _Signed_. Any account can call this function, even if
  *  it is not one of the stakers.
  * 
- *  This can only be called when [`EraElectionStatus`] is `Closed`.
- * 
  *  # <weight>
  *  - Time complexity: at most O(MaxNominatorRewardedPerValidator).
  *  - Contains a limited number of reads and writes.
  *  -----------
  *  N is the Number of payouts for the validator (including the validator)
- *  Base Weight: 110 + 54.2 * N µs (Median Slopes)
- *  DB Weight:
- *  - Read: EraElectionStatus, CurrentEra, HistoryDepth, ErasValidatorReward,
- *          ErasStakersClipped, ErasRewardPoints, ErasValidatorPrefs (8 items)
- *  - Read Each: Bonded, Ledger, Payee, Locks, System Account (5 items)
- *  - Write Each: System Account, Locks, Ledger (3 items)
+ *  Weight:
+ *  - Reward Destination Staked: O(N)
+ *  - Reward Destination Controller (Creating): O(N)
+ * 
+ *    NOTE: weights are assuming that payouts are made to alive stash account (Staked).
+ *    Paying even a dead controller is cheaper weight-wise. We don't do any refunds here.
  *  # </weight>
  */
 export interface StakingCall_payout_stakers {
@@ -1439,9 +1329,9 @@ export interface StakingCall_payout_stakers {
 }
 
 /**
- *  Remove all data structure concerning a staker/stash once its balance is zero.
+ *  Remove all data structure concerning a staker/stash once its balance is at the minimum.
  *  This is essentially equivalent to `withdraw_unbonded` except it can be called by anyone
- *  and the target `stash` must have no funds left.
+ *  and the target `stash` must have no funds left beyond the ED.
  * 
  *  This can be called from any origin.
  * 
@@ -1449,10 +1339,10 @@ export interface StakingCall_payout_stakers {
  * 
  *  # <weight>
  *  Complexity: O(S) where S is the number of slashing spans on the account.
- *  Base Weight: 75.94 + 2.396 * S µs
  *  DB Weight:
  *  - Reads: Stash Account, Bonded, Slashing Spans, Locks
- *  - Writes: Bonded, Slashing Spans (if S > 0), Ledger, Payee, Validators, Nominators, Stash Account, Locks
+ *  - Writes: Bonded, Slashing Spans (if S > 0), Ledger, Payee, Validators, Nominators,
+ *    Stash Account, Locks
  *  - Writes Each: SpanSlash * S
  *  # </weight>
  */
@@ -1465,23 +1355,31 @@ export interface StakingCall_reap_stash {
 /**
  *  Rebond a portion of the stash scheduled to be unlocked.
  * 
- *  The dispatch origin must be signed by the controller, and it can be only called when
- *  [`EraElectionStatus`] is `Closed`.
+ *  The dispatch origin must be signed by the controller.
  * 
  *  # <weight>
  *  - Time complexity: O(L), where L is unlocking chunks
  *  - Bounded by `MAX_UNLOCKING_CHUNKS`.
  *  - Storage changes: Can't increase storage, only decrease it.
- *  ---------------
- *  - Base Weight: 34.51 µs * .048 L µs
- *  - DB Weight:
- *      - Reads: EraElectionStatus, Ledger, Locks, [Origin Account]
- *      - Writes: [Origin Account], Locks, Ledger
  *  # </weight>
  */
 export interface StakingCall_rebond {
     __kind: 'rebond'
     value: bigint
+}
+
+/**
+ *  Scale up the ideal number of validators by a factor.
+ * 
+ *  The dispatch origin must be Root.
+ * 
+ *  # <weight>
+ *  Same as [`Self::set_validator_count`].
+ *  # </weight>
+ */
+export interface StakingCall_scale_validator_count {
+    __kind: 'scale_validator_count'
+    factor: Percent
 }
 
 /**
@@ -1496,7 +1394,7 @@ export interface StakingCall_rebond {
  *  - Contains a limited number of reads.
  *  - Writes are limited to the `origin` account key.
  *  ----------
- *  Base Weight: 25.22 µs
+ *  Weight: O(1)
  *  DB Weight:
  *  - Read: Bonded, Ledger New Controller, Ledger Old Controller
  *  - Write: Bonded, Ledger New Controller, Ledger Old Controller
@@ -1513,21 +1411,22 @@ export interface StakingCall_set_controller {
  * 
  *  Parameters:
  *  - `new_history_depth`: The new history depth you would like to set.
- *  - `era_items_deleted`: The number of items that will be deleted by this dispatch.
- *     This should report all the storage items that will be deleted by clearing old
- *     era history. Needed to report an accurate weight for the dispatch. Trusted by
- *     `Root` to report an accurate number.
+ *  - `era_items_deleted`: The number of items that will be deleted by this dispatch. This
+ *    should report all the storage items that will be deleted by clearing old era history.
+ *    Needed to report an accurate weight for the dispatch. Trusted by `Root` to report an
+ *    accurate number.
  * 
  *  Origin must be root.
  * 
  *  # <weight>
  *  - E: Number of history depths removed, i.e. 10 -> 7 = 3
- *  - Base Weight: 29.13 * E µs
+ *  - Weight: O(E)
  *  - DB Weight:
  *      - Reads: Current Era, History Depth
  *      - Writes: History Depth
  *      - Clear Prefix Each: Era Stakers, EraStakersClipped, ErasValidatorPrefs
- *      - Writes Each: ErasValidatorReward, ErasRewardPoints, ErasTotalStake, ErasStartSessionIndex
+ *      - Writes Each: ErasValidatorReward, ErasRewardPoints, ErasTotalStake,
+ *        ErasStartSessionIndex
  *  # </weight>
  */
 export interface StakingCall_set_history_depth {
@@ -1543,13 +1442,12 @@ export interface StakingCall_set_history_depth {
  * 
  *  # <weight>
  *  - O(V)
- *  - Base Weight: 2.208 + .006 * V µs
  *  - Write: Invulnerables
  *  # </weight>
  */
 export interface StakingCall_set_invulnerables {
     __kind: 'set_invulnerables'
-    validators: AccountId[]
+    invulnerables: AccountId[]
 }
 
 /**
@@ -1564,7 +1462,7 @@ export interface StakingCall_set_invulnerables {
  *  - Contains a limited number of reads.
  *  - Writes are limited to the `origin` account key.
  *  ---------
- *  - Base Weight: 11.33 µs
+ *  - Weight: O(1)
  *  - DB Weight:
  *      - Read: Ledger
  *      - Write: Payee
@@ -1576,12 +1474,36 @@ export interface StakingCall_set_payee {
 }
 
 /**
+ *  Update the various staking limits this pallet.
+ * 
+ *  * `min_nominator_bond`: The minimum active bond needed to be a nominator.
+ *  * `min_validator_bond`: The minimum active bond needed to be a validator.
+ *  * `max_nominator_count`: The max number of users who can be a nominator at once. When
+ *    set to `None`, no limit is enforced.
+ *  * `max_validator_count`: The max number of users who can be a validator at once. When
+ *    set to `None`, no limit is enforced.
+ * 
+ *  Origin must be Root to call this function.
+ * 
+ *  NOTE: Existing nominators and validators will not be affected by this update.
+ *  to kick people under the new limits, `chill_other` should be called.
+ */
+export interface StakingCall_set_staking_limits {
+    __kind: 'set_staking_limits'
+    minNominatorBond: BalanceOf
+    minValidatorBond: BalanceOf
+    maxNominatorCount?: (number | undefined)
+    maxValidatorCount?: (number | undefined)
+    threshold?: (Percent | undefined)
+}
+
+/**
  *  Sets the ideal number of validators.
  * 
  *  The dispatch origin must be Root.
  * 
  *  # <weight>
- *  Base Weight: 1.717 µs
+ *  Weight: O(1)
  *  Write: Validator Count
  *  # </weight>
  */
@@ -1591,87 +1513,11 @@ export interface StakingCall_set_validator_count {
 }
 
 /**
- *  Submit an election result to the chain. If the solution:
- * 
- *  1. is valid.
- *  2. has a better score than a potentially existing solution on chain.
- * 
- *  then, it will be _put_ on chain.
- * 
- *  A solution consists of two pieces of data:
- * 
- *  1. `winners`: a flat vector of all the winners of the round.
- *  2. `assignments`: the compact version of an assignment vector that encodes the edge
- *     weights.
- * 
- *  Both of which may be computed using _phragmen_, or any other algorithm.
- * 
- *  Additionally, the submitter must provide:
- * 
- *  - The `score` that they claim their solution has.
- * 
- *  Both validators and nominators will be represented by indices in the solution. The
- *  indices should respect the corresponding types ([`ValidatorIndex`] and
- *  [`NominatorIndex`]). Moreover, they should be valid when used to index into
- *  [`SnapshotValidators`] and [`SnapshotNominators`]. Any invalid index will cause the
- *  solution to be rejected. These two storage items are set during the election window and
- *  may be used to determine the indices.
- * 
- *  A solution is valid if:
- * 
- *  0. It is submitted when [`EraElectionStatus`] is `Open`.
- *  1. Its claimed score is equal to the score computed on-chain.
- *  2. Presents the correct number of winners.
- *  3. All indexes must be value according to the snapshot vectors. All edge values must
- *     also be correct and should not overflow the granularity of the ratio type (i.e. 256
- *     or billion).
- *  4. For each edge, all targets are actually nominated by the voter.
- *  5. Has correct self-votes.
- * 
- *  A solutions score is consisted of 3 parameters:
- * 
- *  1. `min { support.total }` for each support of a winner. This value should be maximized.
- *  2. `sum { support.total }` for each support of a winner. This value should be minimized.
- *  3. `sum { support.total^2 }` for each support of a winner. This value should be
- *     minimized (to ensure less variance)
- * 
- *  # <weight>
- *  See `crate::weight` module.
- *  # </weight>
- */
-export interface StakingCall_submit_election_solution {
-    __kind: 'submit_election_solution'
-    winners: ValidatorIndex[]
-    compact: CompactAssignments
-    score: ElectionScore
-    era: EraIndex
-    size: ElectionSize
-}
-
-/**
- *  Unsigned version of `submit_election_solution`.
- * 
- *  Note that this must pass the [`ValidateUnsigned`] check which only allows transactions
- *  from the local node to be included. In other words, only the block author can include a
- *  transaction in the block.
- * 
- *  # <weight>
- *  See `crate::weight` module.
- *  # </weight>
- */
-export interface StakingCall_submit_election_solution_unsigned {
-    __kind: 'submit_election_solution_unsigned'
-    winners: ValidatorIndex[]
-    compact: CompactAssignments
-    score: ElectionScore
-    era: EraIndex
-    size: ElectionSize
-}
-
-/**
  *  Schedule a portion of the stash to be unlocked ready for transfer out after the bond
  *  period ends. If this leaves an amount actively bonded less than
  *  T::Currency::minimum_balance(), then it is increased to the full amount.
+ * 
+ *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
  * 
  *  Once the unlock period is done, you can call `withdraw_unbonded` to actually move
  *  the funds out of management ready for transfer.
@@ -1680,27 +1526,12 @@ export interface StakingCall_submit_election_solution_unsigned {
  *  can co-exists at the same time. In that case, [`Call::withdraw_unbonded`] need
  *  to be called first to remove some of the chunks (if possible).
  * 
- *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- *  And, it can be only called when [`EraElectionStatus`] is `Closed`.
+ *  If a user encounters the `InsufficientBond` error when calling this extrinsic,
+ *  they should call `chill` first in order to free up their bonded funds.
  * 
  *  Emits `Unbonded`.
  * 
  *  See also [`Call::withdraw_unbonded`].
- * 
- *  # <weight>
- *  - Independent of the arguments. Limited but potentially exploitable complexity.
- *  - Contains a limited number of reads.
- *  - Each call (requires the remainder of the bonded balance to be above `minimum_balance`)
- *    will cause a new entry to be inserted into a vector (`Ledger.unlocking`) kept in storage.
- *    The only way to clean the aforementioned storage item is also user-controlled via
- *    `withdraw_unbonded`.
- *  - One DB entry.
- *  ----------
- *  Base Weight: 50.34 µs
- *  DB Weight:
- *  - Read: Era Election Status, Ledger, Current Era, Locks, [Origin Account]
- *  - Write: [Origin Account], Locks, Ledger
- *  </weight>
  */
 export interface StakingCall_unbond {
     __kind: 'unbond'
@@ -1713,18 +1544,6 @@ export interface StakingCall_unbond {
  *  Effects will be felt at the beginning of the next era.
  * 
  *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- *  And, it can be only called when [`EraElectionStatus`] is `Closed`.
- * 
- *  # <weight>
- *  - Independent of the arguments. Insignificant complexity.
- *  - Contains a limited number of reads.
- *  - Writes are limited to the `origin` account key.
- *  -----------
- *  Base Weight: 17.13 µs
- *  DB Weight:
- *  - Read: Era Election Status, Ledger
- *  - Write: Nominators, Validators
- *  # </weight>
  */
 export interface StakingCall_validate {
     __kind: 'validate'
@@ -1737,29 +1556,14 @@ export interface StakingCall_validate {
  *  This essentially frees up that balance to be used by the stash account to do
  *  whatever it wants.
  * 
- *  The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- *  And, it can be only called when [`EraElectionStatus`] is `Closed`.
+ *  The dispatch origin for this call must be _Signed_ by the controller.
  * 
  *  Emits `Withdrawn`.
  * 
  *  See also [`Call::unbond`].
  * 
  *  # <weight>
- *  - Could be dependent on the `origin` argument and how much `unlocking` chunks exist.
- *   It implies `consolidate_unlocked` which loops over `Ledger.unlocking`, which is
- *   indirectly user-controlled. See [`unbond`] for more detail.
- *  - Contains a limited number of reads, yet the size of which could be large based on `ledger`.
- *  - Writes are limited to the `origin` account key.
- *  ---------------
  *  Complexity O(S) where S is the number of slashing spans to remove
- *  Base Weight:
- *  Update: 50.52 + .028 * S µs
- *  - Reads: EraElectionStatus, Ledger, Current Era, Locks, [Origin Account]
- *  - Writes: [Origin Account], Locks, Ledger
- *  Kill: 79.41 + 2.366 * S µs
- *  - Reads: EraElectionStatus, Ledger, Current Era, Bonded, Slashing Spans, [Origin Account], Locks
- *  - Writes: Bonded, Slashing Spans (if S > 0), Ledger, Payee, Validators, Nominators, [Origin Account], Locks
- *  - Writes Each: SpanSlash * S
  *  NOTE: Weight annotation is the kill scenario, we refund otherwise.
  *  # </weight>
  */
@@ -1770,41 +1574,12 @@ export interface StakingCall_withdraw_unbonded {
 
 export interface ValidatorPrefs {
     commission: number
+    blocked: boolean
 }
 
-export interface ElectionSize {
-    validators: number
-    nominators: number
-}
+export type BalanceOf = bigint
 
-export type ElectionScore = bigint[]
-
-export interface CompactAssignments {
-    votes1: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes2: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes3: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes4: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes5: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes6: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes7: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes8: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes9: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes10: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes11: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes12: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes13: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes14: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes15: [NominatorIndex, CompactScore[], ValidatorIndex][]
-    votes16: [NominatorIndex, CompactScore[], ValidatorIndex][]
-}
-
-export type CompactScore = [ValidatorIndex, OffchainAccuracy]
-
-export type OffchainAccuracy = number
-
-export type NominatorIndex = number
-
-export type ValidatorIndex = number
+export type Percent = number
 
 export type EraIndex = number
 
@@ -1831,127 +1606,6 @@ export interface RewardDestination_Stash {
     __kind: 'Stash'
 }
 
-export type SlotsCall = SlotsCall_bid | SlotsCall_bid_renew | SlotsCall_elaborate_deploy_data | SlotsCall_fix_deploy_data | SlotsCall_new_auction | SlotsCall_set_offboarding
-
-/**
- *  Make a new bid from an account (including a parachain account) for deploying a new
- *  parachain.
- * 
- *  Multiple simultaneous bids from the same bidder are allowed only as long as all active
- *  bids overlap each other (i.e. are mutually exclusive). Bids cannot be redacted.
- * 
- *  - `sub` is the sub-bidder ID, allowing for multiple competing bids to be made by (and
- *  funded by) the same account.
- *  - `auction_index` is the index of the auction to bid on. Should just be the present
- *  value of `AuctionCounter`.
- *  - `first_slot` is the first lease period index of the range to bid on. This is the
- *  absolute lease period index value, not an auction-specific offset.
- *  - `last_slot` is the last lease period index of the range to bid on. This is the
- *  absolute lease period index value, not an auction-specific offset.
- *  - `amount` is the amount to bid to be held as deposit for the parachain should the
- *  bid win. This amount is held throughout the range.
- */
-export interface SlotsCall_bid {
-    __kind: 'bid'
-    sub: number
-    auctionIndex: number
-    firstSlot: number
-    lastSlot: number
-    amount: bigint
-}
-
-/**
- *  Make a new bid from a parachain account for renewing that (pre-existing) parachain.
- * 
- *  The origin *must* be a parachain account.
- * 
- *  Multiple simultaneous bids from the same bidder are allowed only as long as all active
- *  bids overlap each other (i.e. are mutually exclusive). Bids cannot be redacted.
- * 
- *  - `auction_index` is the index of the auction to bid on. Should just be the present
- *  value of `AuctionCounter`.
- *  - `first_slot` is the first lease period index of the range to bid on. This is the
- *  absolute lease period index value, not an auction-specific offset.
- *  - `last_slot` is the last lease period index of the range to bid on. This is the
- *  absolute lease period index value, not an auction-specific offset.
- *  - `amount` is the amount to bid to be held as deposit for the parachain should the
- *  bid win. This amount is held throughout the range.
- */
-export interface SlotsCall_bid_renew {
-    __kind: 'bid_renew'
-    auctionIndex: number
-    firstSlot: number
-    lastSlot: number
-    amount: bigint
-}
-
-/**
- *  Note a new parachain's code.
- * 
- *  This must be called after `fix_deploy_data` and `code` must be the preimage of the
- *  `code_hash` passed there for the same `para_id`.
- * 
- *  This may be called before or after the beginning of the parachain's first lease period.
- *  If called before then the parachain will become active at the first block of its
- *  starting lease period. If after, then it will become active immediately after this call.
- * 
- *  - `_origin` is irrelevant.
- *  - `para_id` is the parachain ID whose code will be elaborated.
- *  - `code` is the preimage of the registered `code_hash` of `para_id`.
- */
-export interface SlotsCall_elaborate_deploy_data {
-    __kind: 'elaborate_deploy_data'
-    paraId: number
-    code: ValidationCode
-}
-
-/**
- *  Set the deploy information for a successful bid to deploy a new parachain.
- * 
- *  - `origin` must be the successful bidder account.
- *  - `sub` is the sub-bidder ID of the bidder.
- *  - `para_id` is the parachain ID allotted to the winning bidder.
- *  - `code_hash` is the hash of the parachain's Wasm validation function.
- *  - `initial_head_data` is the parachain's initial head data.
- */
-export interface SlotsCall_fix_deploy_data {
-    __kind: 'fix_deploy_data'
-    sub: number
-    paraId: number
-    codeHash: Hash
-    codeSize: number
-    initialHeadData: HeadData
-}
-
-/**
- *  Create a new auction.
- * 
- *  This can only happen when there isn't already an auction in progress and may only be
- *  called by the root origin. Accepts the `duration` of this auction and the
- *  `lease_period_index` of the initial lease period of the four that are to be auctioned.
- */
-export interface SlotsCall_new_auction {
-    __kind: 'new_auction'
-    duration: number
-    leasePeriodIndex: number
-}
-
-/**
- *  Set the off-boarding information for a parachain.
- * 
- *  The origin *must* be a parachain account.
- * 
- *  - `dest` is the destination account to receive the parachain's deposit.
- */
-export interface SlotsCall_set_offboarding {
-    __kind: 'set_offboarding'
-    dest: LookupSource
-}
-
-export type HeadData = Bytes
-
-export type ValidationCode = Bytes
-
 export type SessionCall = SessionCall_purge_keys | SessionCall_set_keys
 
 /**
@@ -1965,7 +1619,7 @@ export type SessionCall = SessionCall_purge_keys | SessionCall_set_keys
  *    Actual cost depends on the number of length of `T::Keys::key_ids()` which is fixed.
  *  - DbReads: `T::ValidatorIdOf`, `NextKeys`, `origin account`
  *  - DbWrites: `NextKeys`, `origin account`
- *  - DbWrites per key id: `KeyOwnder`
+ *  - DbWrites per key id: `KeyOwner`
  *  # </weight>
  */
 export interface SessionCall_purge_keys {
@@ -1994,9 +1648,9 @@ export interface SessionCall_set_keys {
     proof: Bytes
 }
 
-export type Keys = [AccountId, AccountId, AccountId, AccountId, AccountId]
+export type Keys = [AccountId, AccountId, AccountId, AccountId]
 
-export type SchedulerCall = SchedulerCall_cancel | SchedulerCall_cancel_named | SchedulerCall_schedule | SchedulerCall_schedule_named
+export type SchedulerCall = SchedulerCall_cancel | SchedulerCall_cancel_named | SchedulerCall_schedule | SchedulerCall_schedule_after | SchedulerCall_schedule_named | SchedulerCall_schedule_named_after
 
 /**
  *  Cancel an anonymously scheduled task.
@@ -2050,7 +1704,22 @@ export interface SchedulerCall_schedule {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_44
+    call: Type_47
+}
+
+/**
+ *  Anonymously schedule a task after a delay.
+ * 
+ *  # <weight>
+ *  Same as [`schedule`].
+ *  # </weight>
+ */
+export interface SchedulerCall_schedule_after {
+    __kind: 'schedule_after'
+    after: BlockNumber
+    maybePeriodic?: (Period | undefined)
+    priority: Priority
+    call: Type_47
 }
 
 /**
@@ -2071,117 +1740,270 @@ export interface SchedulerCall_schedule_named {
     when: BlockNumber
     maybePeriodic?: (Period | undefined)
     priority: Priority
-    call: Type_44
+    call: Type_47
+}
+
+/**
+ *  Schedule a named task after a delay.
+ * 
+ *  # <weight>
+ *  Same as [`schedule_named`](Self::schedule_named).
+ *  # </weight>
+ */
+export interface SchedulerCall_schedule_named_after {
+    __kind: 'schedule_named_after'
+    id: Bytes
+    after: BlockNumber
+    maybePeriodic?: (Period | undefined)
+    priority: Priority
+    call: Type_47
 }
 
 export type Priority = number
 
 export type Period = [BlockNumber, number]
 
-export type RegistrarCall = RegistrarCall_deregister_para | RegistrarCall_deregister_parathread | RegistrarCall_register_para | RegistrarCall_register_parathread | RegistrarCall_select_parathread | RegistrarCall_set_thread_count | RegistrarCall_swap
+export type RecoveryCall = RecoveryCall_as_recovered | RecoveryCall_cancel_recovered | RecoveryCall_claim_recovery | RecoveryCall_close_recovery | RecoveryCall_create_recovery | RecoveryCall_initiate_recovery | RecoveryCall_remove_recovery | RecoveryCall_set_recovered | RecoveryCall_vouch_recovery
 
 /**
- *  Deregister a parachain with given id
- */
-export interface RegistrarCall_deregister_para {
-    __kind: 'deregister_para'
-    id: number
-}
-
-/**
- *  Deregister a parathread and retrieve the deposit.
+ *  Send a call through a recovered account.
  * 
- *  Must be sent from a `Parachain` origin which is currently a parathread.
+ *  The dispatch origin for this call must be _Signed_ and registered to
+ *  be able to make calls on behalf of the recovered account.
  * 
- *  Ensure that before calling this that any funds you want emptied from the parathread's
- *  account is moved out; after this it will be impossible to retrieve them (without
- *  governance intervention).
- */
-export interface RegistrarCall_deregister_parathread {
-    __kind: 'deregister_parathread'
-}
-
-/**
- *  Register a parachain with given code. Must be called by root.
- *  Fails if given ID is already used.
+ *  Parameters:
+ *  - `account`: The recovered account you want to make a call on-behalf-of.
+ *  - `call`: The call you want to make with the recovered account.
  * 
- *  Unlike the `Registrar` trait function of the same name, this
- *  checks the code and head data against size limits.
+ *  # <weight>
+ *  - The weight of the `call` + 10,000.
+ *  - One storage lookup to check account is recovered by `who`. O(1)
+ *  # </weight>
  */
-export interface RegistrarCall_register_para {
-    __kind: 'register_para'
-    id: number
-    info: ParaInfo
-    code: ValidationCode
-    initialHeadData: HeadData
+export interface RecoveryCall_as_recovered {
+    __kind: 'as_recovered'
+    account: AccountId
+    call: Type_47
 }
 
 /**
- *  Register a parathread for immediate use.
+ *  Cancel the ability to use `as_recovered` for `account`.
  * 
- *  Must be sent from a Signed origin that is able to have ParathreadDeposit reserved.
- *  `code` and `initial_head_data` are used to initialize the parathread's state.
+ *  The dispatch origin for this call must be _Signed_ and registered to
+ *  be able to make calls on behalf of the recovered account.
  * 
- *  Unlike `register_para`, this function does check that the maximum code size
- *  and head data size are respected, as parathread registration is an atomic
- *  action.
+ *  Parameters:
+ *  - `account`: The recovered account you are able to call on-behalf-of.
+ * 
+ *  # <weight>
+ *  - One storage mutation to check account is recovered by `who`. O(1)
+ *  # </weight>
  */
-export interface RegistrarCall_register_parathread {
-    __kind: 'register_parathread'
-    code: ValidationCode
-    initialHeadData: HeadData
+export interface RecoveryCall_cancel_recovered {
+    __kind: 'cancel_recovered'
+    account: AccountId
 }
 
 /**
- *  Place a bid for a parathread to be progressed in the next block.
+ *  Allow a successful rescuer to claim their recovered account.
  * 
- *  This is a kind of special transaction that should be heavily prioritized in the
- *  transaction pool according to the `value`; only `ThreadCount` of them may be presented
- *  in any single block.
+ *  The dispatch origin for this call must be _Signed_ and must be a "rescuer"
+ *  who has successfully completed the account recovery process: collected
+ *  `threshold` or more vouches, waited `delay_period` blocks since initiation.
+ * 
+ *  Parameters:
+ *  - `account`: The lost account that you want to claim has been successfully recovered by
+ *    you.
+ * 
+ *  # <weight>
+ *  Key: F (len of friends in config), V (len of vouching friends)
+ *  - One storage read to get the recovery configuration. O(1), Codec O(F)
+ *  - One storage read to get the active recovery process. O(1), Codec O(V)
+ *  - One storage read to get the current block number. O(1)
+ *  - One storage write. O(1), Codec O(V).
+ *  - One event.
+ * 
+ *  Total Complexity: O(F + V)
+ *  # </weight>
  */
-export interface RegistrarCall_select_parathread {
-    __kind: 'select_parathread'
-    id: number
-    collator: CollatorId
-    headHash: Hash
+export interface RecoveryCall_claim_recovery {
+    __kind: 'claim_recovery'
+    account: AccountId
 }
 
 /**
- *  Reset the number of parathreads that can pay to be scheduled in a single block.
+ *  As the controller of a recoverable account, close an active recovery
+ *  process for your account.
  * 
- *  - `count`: The number of parathreads.
+ *  Payment: By calling this function, the recoverable account will receive
+ *  the recovery deposit `RecoveryDeposit` placed by the rescuer.
  * 
- *  Must be called from Root origin.
+ *  The dispatch origin for this call must be _Signed_ and must be a
+ *  recoverable account with an active recovery process for it.
+ * 
+ *  Parameters:
+ *  - `rescuer`: The account trying to rescue this recoverable account.
+ * 
+ *  # <weight>
+ *  Key: V (len of vouching friends)
+ *  - One storage read/remove to get the active recovery process. O(1), Codec O(V)
+ *  - One balance call to repatriate reserved. O(X)
+ *  - One event.
+ * 
+ *  Total Complexity: O(V + X)
+ *  # </weight>
  */
-export interface RegistrarCall_set_thread_count {
-    __kind: 'set_thread_count'
-    count: number
+export interface RecoveryCall_close_recovery {
+    __kind: 'close_recovery'
+    rescuer: AccountId
 }
 
 /**
- *  Swap a parachain with another parachain or parathread. The origin must be a `Parachain`.
- *  The swap will happen only if there is already an opposite swap pending. If there is not,
- *  the swap will be stored in the pending swaps map, ready for a later confirmatory swap.
+ *  Create a recovery configuration for your account. This makes your account recoverable.
  * 
- *  The `ParaId`s remain mapped to the same head data and code so external code can rely on
- *  `ParaId` to be a long-term identifier of a notional "parachain". However, their
- *  scheduling info (i.e. whether they're a parathread or parachain), auction information
- *  and the auction deposit are switched.
+ *  Payment: `ConfigDepositBase` + `FriendDepositFactor` * #_of_friends balance
+ *  will be reserved for storing the recovery configuration. This deposit is returned
+ *  in full when the user calls `remove_recovery`.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `friends`: A list of friends you trust to vouch for recovery attempts. Should be
+ *    ordered and contain no duplicate values.
+ *  - `threshold`: The number of friends that must vouch for a recovery attempt before the
+ *    account can be recovered. Should be less than or equal to the length of the list of
+ *    friends.
+ *  - `delay_period`: The number of blocks after a recovery attempt is initialized that
+ *    needs to pass before the account can be recovered.
+ * 
+ *  # <weight>
+ *  - Key: F (len of friends)
+ *  - One storage read to check that account is not already recoverable. O(1).
+ *  - A check that the friends list is sorted and unique. O(F)
+ *  - One currency reserve operation. O(X)
+ *  - One storage write. O(1). Codec O(F).
+ *  - One event.
+ * 
+ *  Total Complexity: O(F + X)
+ *  # </weight>
  */
-export interface RegistrarCall_swap {
-    __kind: 'swap'
-    other: number
+export interface RecoveryCall_create_recovery {
+    __kind: 'create_recovery'
+    friends: AccountId[]
+    threshold: number
+    delayPeriod: BlockNumber
 }
 
-export type CollatorId = Bytes
-
-export interface ParaInfo {
-    manager: AccountId
-    deposit: Balance
-    locked: boolean
+/**
+ *  Initiate the process for recovering a recoverable account.
+ * 
+ *  Payment: `RecoveryDeposit` balance will be reserved for initiating the
+ *  recovery process. This deposit will always be repatriated to the account
+ *  trying to be recovered. See `close_recovery`.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `account`: The lost account that you want to recover. This account needs to be
+ *    recoverable (i.e. have a recovery configuration).
+ * 
+ *  # <weight>
+ *  - One storage read to check that account is recoverable. O(F)
+ *  - One storage read to check that this recovery process hasn't already started. O(1)
+ *  - One currency reserve operation. O(X)
+ *  - One storage read to get the current block number. O(1)
+ *  - One storage write. O(1).
+ *  - One event.
+ * 
+ *  Total Complexity: O(F + X)
+ *  # </weight>
+ */
+export interface RecoveryCall_initiate_recovery {
+    __kind: 'initiate_recovery'
+    account: AccountId
 }
 
-export type ProxyCall = ProxyCall_add_proxy | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_proxy | ProxyCall_remove_proxies | ProxyCall_remove_proxy
+/**
+ *  Remove the recovery process for your account. Recovered accounts are still accessible.
+ * 
+ *  NOTE: The user must make sure to call `close_recovery` on all active
+ *  recovery attempts before calling this function else it will fail.
+ * 
+ *  Payment: By calling this function the recoverable account will unreserve
+ *  their recovery configuration deposit.
+ *  (`ConfigDepositBase` + `FriendDepositFactor` * #_of_friends)
+ * 
+ *  The dispatch origin for this call must be _Signed_ and must be a
+ *  recoverable account (i.e. has a recovery configuration).
+ * 
+ *  # <weight>
+ *  Key: F (len of friends)
+ *  - One storage read to get the prefix iterator for active recoveries. O(1)
+ *  - One storage read/remove to get the recovery configuration. O(1), Codec O(F)
+ *  - One balance call to unreserved. O(X)
+ *  - One event.
+ * 
+ *  Total Complexity: O(F + X)
+ *  # </weight>
+ */
+export interface RecoveryCall_remove_recovery {
+    __kind: 'remove_recovery'
+}
+
+/**
+ *  Allow ROOT to bypass the recovery process and set an a rescuer account
+ *  for a lost account directly.
+ * 
+ *  The dispatch origin for this call must be _ROOT_.
+ * 
+ *  Parameters:
+ *  - `lost`: The "lost account" to be recovered.
+ *  - `rescuer`: The "rescuer account" which can call as the lost account.
+ * 
+ *  # <weight>
+ *  - One storage write O(1)
+ *  - One event
+ *  # </weight>
+ */
+export interface RecoveryCall_set_recovered {
+    __kind: 'set_recovered'
+    lost: AccountId
+    rescuer: AccountId
+}
+
+/**
+ *  Allow a "friend" of a recoverable account to vouch for an active recovery
+ *  process for that account.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and must be a "friend"
+ *  for the recoverable account.
+ * 
+ *  Parameters:
+ *  - `lost`: The lost account that you want to recover.
+ *  - `rescuer`: The account trying to rescue the lost account that you want to vouch for.
+ * 
+ *  The combination of these two parameters must point to an active recovery
+ *  process.
+ * 
+ *  # <weight>
+ *  Key: F (len of friends in config), V (len of vouching friends)
+ *  - One storage read to get the recovery configuration. O(1), Codec O(F)
+ *  - One storage read to get the active recovery process. O(1), Codec O(V)
+ *  - One binary search to confirm caller is a friend. O(logF)
+ *  - One binary search to confirm caller has not already vouched. O(logV)
+ *  - One storage write. O(1), Codec O(V).
+ *  - One event.
+ * 
+ *  Total Complexity: O(F + logF + V + logV)
+ *  # </weight>
+ */
+export interface RecoveryCall_vouch_recovery {
+    __kind: 'vouch_recovery'
+    lost: AccountId
+    rescuer: AccountId
+}
+
+export type ProxyCall = ProxyCall_add_proxy | ProxyCall_announce | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_proxy | ProxyCall_proxy_announced | ProxyCall_reject_announcement | ProxyCall_remove_announcement | ProxyCall_remove_proxies | ProxyCall_remove_proxy
 
 /**
  *  Register a proxy account for the sender that is able to make calls on its behalf.
@@ -2191,17 +2013,47 @@ export type ProxyCall = ProxyCall_add_proxy | ProxyCall_anonymous | ProxyCall_ki
  *  Parameters:
  *  - `proxy`: The account that the `caller` would like to make a proxy.
  *  - `proxy_type`: The permissions allowed for this proxy account.
+ *  - `delay`: The announcement period required of the initial proxy. Will generally be
+ *  zero.
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 17.48 + .176 * P µs
- *  - DB weight: 1 storage read and write.
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
  */
 export interface ProxyCall_add_proxy {
     __kind: 'add_proxy'
-    proxy: AccountId
+    delegate: AccountId
     proxyType: ProxyType
+    delay: BlockNumber
+}
+
+/**
+ *  Publish the hash of a proxy-call that will be made in the future.
+ * 
+ *  This must be called some number of blocks before the corresponding `proxy` is attempted
+ *  if the delay associated with the proxy relationship is greater than zero.
+ * 
+ *  No more than `MaxPending` announcements may be made at any one time.
+ * 
+ *  This will take a deposit of `AnnouncementDepositFactor` as well as
+ *  `AnnouncementDepositBase` if there are no other pending announcements.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and a proxy of `real`.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_announce {
+    __kind: 'announce'
+    real: AccountId
+    callHash: CallHashOf
 }
 
 /**
@@ -2216,6 +2068,8 @@ export interface ProxyCall_add_proxy {
  *  - `index`: A disambiguation index, in case this is called multiple times in the same
  *  transaction (e.g. with `utility::batch`). Unless you're using `batch` you probably just
  *  want to use `0`.
+ *  - `delay`: The announcement period required of the initial proxy. Will generally be
+ *  zero.
  * 
  *  Fails with `Duplicate` if this has already been called in this transaction, from the
  *  same sender, with the same parameters.
@@ -2223,14 +2077,14 @@ export interface ProxyCall_add_proxy {
  *  Fails if there are insufficient funds to pay for deposit.
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 36.48 + .039 * P µs
- *  - DB weight: 1 storage read and write.
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
+ *  TODO: Might be over counting 1 read
  */
 export interface ProxyCall_anonymous {
     __kind: 'anonymous'
     proxyType: ProxyType
+    delay: BlockNumber
     index: number
 }
 
@@ -2253,9 +2107,7 @@ export interface ProxyCall_anonymous {
  *  account whose `anonymous` call has corresponding parameters.
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 15.65 + .137 * P µs
- *  - DB weight: 1 storage read and write.
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
  */
 export interface ProxyCall_kill_anonymous {
@@ -2271,6 +2123,8 @@ export interface ProxyCall_kill_anonymous {
  *  Dispatch the given `call` from an account that the sender is authorised for through
  *  `add_proxy`.
  * 
+ *  Removes any corresponding announcement(s).
+ * 
  *  The dispatch origin for this call must be _Signed_.
  * 
  *  Parameters:
@@ -2279,17 +2133,89 @@ export interface ProxyCall_kill_anonymous {
  *  - `call`: The call to be made by the `real` account.
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 19.87 + .141 * P µs
- *  - DB weight: 1 storage read.
- *  - Plus the weight of the `call`
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
  */
 export interface ProxyCall_proxy {
     __kind: 'proxy'
     real: AccountId
     forceProxyType?: (ProxyType | undefined)
-    call: Type_44
+    call: Type_47
+}
+
+/**
+ *  Dispatch the given `call` from an account that the sender is authorized for through
+ *  `add_proxy`.
+ * 
+ *  Removes any corresponding announcement(s).
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
+ *  - `call`: The call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_proxy_announced {
+    __kind: 'proxy_announced'
+    delegate: AccountId
+    real: AccountId
+    forceProxyType?: (ProxyType | undefined)
+    call: Type_47
+}
+
+/**
+ *  Remove the given announcement of a delegate.
+ * 
+ *  May be called by a target (proxied) account to remove a call that one of their delegates
+ *  (`delegate`) has announced they want to execute. The deposit is returned.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `delegate`: The account that previously announced the call.
+ *  - `call_hash`: The hash of the call to be made.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_reject_announcement {
+    __kind: 'reject_announcement'
+    delegate: AccountId
+    callHash: CallHashOf
+}
+
+/**
+ *  Remove a given announcement.
+ * 
+ *  May be called by a proxy account to remove a call they previously announced and return
+ *  the deposit.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Parameters:
+ *  - `real`: The account that the proxy will make a call on behalf of.
+ *  - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ *  # <weight>
+ *  Weight is a function of:
+ *  - A: the number of announcements made.
+ *  - P: the number of proxies the user has.
+ *  # </weight>
+ */
+export interface ProxyCall_remove_announcement {
+    __kind: 'remove_announcement'
+    real: AccountId
+    callHash: CallHashOf
 }
 
 /**
@@ -2301,9 +2227,7 @@ export interface ProxyCall_proxy {
  *  the unreserved fees will be inaccessible. **All access to this account will be lost.**
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 13.73 + .129 * P µs
- *  - DB weight: 1 storage read and write.
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
  */
 export interface ProxyCall_remove_proxies {
@@ -2320,37 +2244,26 @@ export interface ProxyCall_remove_proxies {
  *  - `proxy_type`: The permissions currently enabled for the removed proxy account.
  * 
  *  # <weight>
- *  P is the number of proxies the user has
- *  - Base weight: 14.37 + .164 * P µs
- *  - DB weight: 1 storage read and write.
+ *  Weight is a function of the number of proxies the user has (P).
  *  # </weight>
  */
 export interface ProxyCall_remove_proxy {
     __kind: 'remove_proxy'
-    proxy: AccountId
+    delegate: AccountId
     proxyType: ProxyType
+    delay: BlockNumber
 }
 
-export type ProxyType = ProxyType_Any | ProxyType_Auction | ProxyType_CancelProxy | ProxyType_Governance | ProxyType_IdentityJudgement | ProxyType_NonTransfer | ProxyType_Staking | ProxyType_UnusedSudoBalances
+export type CallHashOf = Bytes
+
+export type ProxyType = ProxyType_Any | ProxyType_Governance | ProxyType_NonTransfer | ProxyType_Staking
 
 export interface ProxyType_Any {
     __kind: 'Any'
 }
 
-export interface ProxyType_Auction {
-    __kind: 'Auction'
-}
-
-export interface ProxyType_CancelProxy {
-    __kind: 'CancelProxy'
-}
-
 export interface ProxyType_Governance {
     __kind: 'Governance'
-}
-
-export interface ProxyType_IdentityJudgement {
-    __kind: 'IdentityJudgement'
 }
 
 export interface ProxyType_NonTransfer {
@@ -2361,132 +2274,64 @@ export interface ProxyType_Staking {
     __kind: 'Staking'
 }
 
-export interface ProxyType_UnusedSudoBalances {
-    __kind: 'UnusedSudoBalances'
+export type PDEXMigrationCall = PDEXMigrationCall_mint | PDEXMigrationCall_remove_minted_tokens | PDEXMigrationCall_set_migration_operational_status | PDEXMigrationCall_set_relayer_status | PDEXMigrationCall_unlock
+
+export interface PDEXMigrationCall_mint {
+    __kind: 'mint'
+    beneficiary: AccountId
+    amount: Balance
+    ethTx: Hash
 }
 
-export type ParachainsCall = ParachainsCall_report_double_vote | ParachainsCall_set_heads
-
-/**
- *  Provide a proof that some validator has commited a double-vote.
- * 
- *  The weight is 0; in order to avoid DoS a `SignedExtension` validation
- *  is implemented.
- */
-export interface ParachainsCall_report_double_vote {
-    __kind: 'report_double_vote'
-    report: DoubleVoteReport
+export interface PDEXMigrationCall_remove_minted_tokens {
+    __kind: 'remove_minted_tokens'
+    beneficiary: AccountId
 }
 
-/**
- *  Provide candidate receipts for parachains, in ascending order by id.
- */
-export interface ParachainsCall_set_heads {
-    __kind: 'set_heads'
-    heads: AttestedCandidate[]
+export interface PDEXMigrationCall_set_migration_operational_status {
+    __kind: 'set_migration_operational_status'
+    status: boolean
 }
 
-export interface AttestedCandidate {
-    candidate: AbridgedCandidateReceipt
-    validityVotes: ValidityAttestation[]
-    validatorIndices: BitSequence
+export interface PDEXMigrationCall_set_relayer_status {
+    __kind: 'set_relayer_status'
+    relayer: AccountId
+    status: boolean
 }
 
-export type ValidityAttestation = ValidityAttestation_Explicit | ValidityAttestation_Implicit | ValidityAttestation_Never
-
-export interface ValidityAttestation_Explicit {
-    __kind: 'Explicit'
-    value: ValidatorSignature
+export interface PDEXMigrationCall_unlock {
+    __kind: 'unlock'
 }
 
-export interface ValidityAttestation_Implicit {
-    __kind: 'Implicit'
-    value: ValidatorSignature
+export type OrmlVestingCall = OrmlVestingCall_claim | OrmlVestingCall_claim_for | OrmlVestingCall_update_vesting_schedules | OrmlVestingCall_vested_transfer
+
+export interface OrmlVestingCall_claim {
+    __kind: 'claim'
 }
 
-export interface ValidityAttestation_Never {
-    __kind: 'Never'
+export interface OrmlVestingCall_claim_for {
+    __kind: 'claim_for'
+    dest: LookupSource
 }
 
-export type ValidatorSignature = Bytes
-
-export interface AbridgedCandidateReceipt {
-    parachainIndex: ParaId
-    relayParent: Hash
-    headData: HeadData
-    collator: CollatorId
-    signature: CollatorSignature
-    povBlockHash: Hash
-    commitments: CandidateCommitments
+export interface OrmlVestingCall_update_vesting_schedules {
+    __kind: 'update_vesting_schedules'
+    who: LookupSource
+    vestingSchedules: VestingScheduleOf[]
 }
 
-export interface CandidateCommitments {
-    upwardMessages: UpwardMessage[]
-    horizontalMessages: OutboundHrmpMessage[]
-    newValidationCode?: (ValidationCode | undefined)
-    headData: HeadData
-    processedDownwardMessages: number
-    hrmpWatermark: BlockNumber
+export interface OrmlVestingCall_vested_transfer {
+    __kind: 'vested_transfer'
+    dest: LookupSource
+    schedule: VestingScheduleOf
 }
 
-export interface OutboundHrmpMessage {
-    recipient: number
-    data: Bytes
+export interface VestingScheduleOf {
+    start: BlockNumber
+    period: BlockNumber
+    periodCount: number
+    perPeriod: bigint
 }
-
-export type UpwardMessage = Bytes
-
-export type CollatorSignature = Bytes
-
-export type ParaId = number
-
-export interface DoubleVoteReport {
-    identity: ValidatorId
-    first: [Statement, ValidatorSignature]
-    second: [Statement, ValidatorSignature]
-    proof: MembershipProof
-    signingContext: SigningContext
-}
-
-export interface SigningContext {
-    sessionIndex: SessionIndex
-    parentHash: Hash
-}
-
-export type SessionIndex = number
-
-export interface MembershipProof {
-    session: SessionIndex
-    trieNodes: Bytes[]
-    validatorCount: ValidatorCount
-}
-
-export type ValidatorCount = number
-
-export type Statement = Statement_Candidate | Statement_Invalid | Statement_Never | Statement_Valid
-
-export interface Statement_Candidate {
-    __kind: 'Candidate'
-    value: Hash
-}
-
-export interface Statement_Invalid {
-    __kind: 'Invalid'
-    value: Hash
-}
-
-export interface Statement_Never {
-    __kind: 'Never'
-}
-
-export interface Statement_Valid {
-    __kind: 'Valid'
-    value: Hash
-}
-
-export type ValidatorId = Bytes
-
-export type OffencesCall = never
 
 export type MultisigCall = MultisigCall_approve_as_multi | MultisigCall_as_multi | MultisigCall_as_multi_threshold_1 | MultisigCall_cancel_as_multi
 
@@ -2519,13 +2364,9 @@ export type MultisigCall = MultisigCall_approve_as_multi | MultisigCall_as_multi
  *  - Up to one binary search and insert (`O(logS + S)`).
  *  - I/O: 1 read `O(S)`, up to 1 mutate `O(S)`. Up to one remove.
  *  - One event.
- *  - Storage: inserts one item, value size bounded by `MaxSignatories`, with a
- *    deposit taken for its lifetime of
- *    `DepositBase + threshold * DepositFactor`.
+ *  - Storage: inserts one item, value size bounded by `MaxSignatories`, with a deposit
+ *    taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  *  ----------------------------------
- *  - Base Weight:
- *      - Create: 44.71 + 0.088 * S
- *      - Approve: 31.48 + 0.116 * S
  *  - DB Weight:
  *      - Read: Multisig Storage, [Caller Account]
  *      - Write: Multisig Storage, [Caller Account]
@@ -2578,15 +2419,9 @@ export interface MultisigCall_approve_as_multi {
  *  - I/O: 1 read `O(S)`, up to 1 mutate `O(S)`. Up to one remove.
  *  - One event.
  *  - The weight of the `call`.
- *  - Storage: inserts one item, value size bounded by `MaxSignatories`, with a
- *    deposit taken for its lifetime of
- *    `DepositBase + threshold * DepositFactor`.
+ *  - Storage: inserts one item, value size bounded by `MaxSignatories`, with a deposit
+ *    taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  *  -------------------------------
- *  - Base Weight:
- *      - Create:          41.89 + 0.118 * S + .002 * Z µs
- *      - Create w/ Store: 53.57 + 0.119 * S + .003 * Z µs
- *      - Approve:         31.39 + 0.136 * S + .002 * Z µs
- *      - Complete:        39.94 + 0.26  * S + .002 * Z µs
  *  - DB Weight:
  *      - Reads: Multisig Storage, [Caller Account], Calls (if `store_call`)
  *      - Writes: Multisig Storage, [Caller Account], Calls (if `store_call`)
@@ -2598,7 +2433,7 @@ export interface MultisigCall_as_multi {
     threshold: number
     otherSignatories: AccountId[]
     maybeTimepoint?: (Timepoint | undefined)
-    call: Bytes
+    call: OpaqueCall
     storeCall: boolean
     maxWeight: Weight
 }
@@ -2617,7 +2452,6 @@ export interface MultisigCall_as_multi {
  *  # <weight>
  *  O(Z + C) where Z is the length of the call and C its execution weight.
  *  -------------------------------
- *  - Base Weight: 33.72 + 0.002 * Z µs
  *  - DB Weight: None
  *  - Plus Call Weight
  *  # </weight>
@@ -2625,7 +2459,7 @@ export interface MultisigCall_as_multi {
 export interface MultisigCall_as_multi_threshold_1 {
     __kind: 'as_multi_threshold_1'
     otherSignatories: AccountId[]
-    call: Type_44
+    call: Type_47
 }
 
 /**
@@ -2651,7 +2485,6 @@ export interface MultisigCall_as_multi_threshold_1 {
  *  - I/O: 1 read `O(S)`, one remove.
  *  - Storage: removes one item.
  *  ----------------------------------
- *  - Base Weight: 36.07 + 0.124 * S
  *  - DB Weight:
  *      - Read: Multisig Storage, [Caller Account], Refund Account, Calls
  *      - Write: Multisig Storage, [Caller Account], Refund Account, Calls
@@ -2664,6 +2497,8 @@ export interface MultisigCall_cancel_as_multi {
     timepoint: Timepoint
     callHash: Bytes
 }
+
+export type OpaqueCall = Bytes
 
 export interface Timepoint {
     height: BlockNumber
@@ -2689,7 +2524,6 @@ export type IndicesCall = IndicesCall_claim | IndicesCall_force_transfer | Indic
  *  - One reserve operation.
  *  - One event.
  *  -------------------
- *  - Base Weight: 28.69 µs
  *  - DB Weight: 1 Read/Write (Accounts)
  *  # </weight>
  */
@@ -2716,7 +2550,6 @@ export interface IndicesCall_claim {
  *  - Up to one reserve operation.
  *  - One event.
  *  -------------------
- *  - Base Weight: 26.83 µs
  *  - DB Weight:
  *     - Reads: Indices Accounts, System Account (original owner)
  *     - Writes: Indices Accounts, System Account (original owner)
@@ -2746,7 +2579,6 @@ export interface IndicesCall_force_transfer {
  *  - One reserve operation.
  *  - One event.
  *  -------------------
- *  - Base Weight: 25.53 µs
  *  - DB Weight: 1 Read/Write (Accounts)
  *  # </weight>
  */
@@ -2756,7 +2588,8 @@ export interface IndicesCall_free {
 }
 
 /**
- *  Freeze an index so it will always point to the sender account. This consumes the deposit.
+ *  Freeze an index so it will always point to the sender account. This consumes the
+ *  deposit.
  * 
  *  The dispatch origin for this call must be _Signed_ and the signing account must have a
  *  non-frozen account `index`.
@@ -2771,7 +2604,6 @@ export interface IndicesCall_free {
  *  - Up to one slash operation.
  *  - One event.
  *  -------------------
- *  - Base Weight: 30.86 µs
  *  - DB Weight: 1 Read/Write (Accounts)
  *  # </weight>
  */
@@ -2797,7 +2629,6 @@ export interface IndicesCall_freeze {
  *  - One transfer operation.
  *  - One event.
  *  -------------------
- *  - Base Weight: 33.74 µs
  *  - DB Weight:
  *     - Reads: Indices Accounts, System Account (recipient)
  *     - Writes: Indices Accounts, System Account (recipient)
@@ -2815,9 +2646,8 @@ export type ImOnlineCall = ImOnlineCall_heartbeat
 
 /**
  *  # <weight>
- *  - Complexity: `O(K + E)` where K is length of `Keys` and E is length of
- *    `Heartbeat.network_state.external_address`
- * 
+ *  - Complexity: `O(K + E)` where K is length of `Keys` (heartbeat.validators_len) and E is
+ *    length of `heartbeat.network_state.external_address`
  *    - `O(K)`: decoding of length `K`
  *    - `O(E)`: decoding/encoding of length `E`
  *  - DbReads: pallet_session `Validators`, pallet_session `CurrentIndex`, `Keys`,
@@ -2843,6 +2673,8 @@ export interface Heartbeat {
 
 export type AuthIndex = number
 
+export type SessionIndex = number
+
 export interface OpaqueNetworkState {
     peerId: OpaquePeerId
     externalAddresses: OpaqueMultiaddr[]
@@ -2852,12 +2684,12 @@ export type OpaqueMultiaddr = Bytes
 
 export type OpaquePeerId = Bytes
 
-export type IdentityCall = IdentityCall_add_registrar | IdentityCall_cancel_request | IdentityCall_clear_identity | IdentityCall_kill_identity | IdentityCall_provide_judgement | IdentityCall_request_judgement | IdentityCall_set_account_id | IdentityCall_set_fee | IdentityCall_set_fields | IdentityCall_set_identity | IdentityCall_set_subs
+export type IdentityCall = IdentityCall_add_registrar | IdentityCall_add_sub | IdentityCall_cancel_request | IdentityCall_clear_identity | IdentityCall_kill_identity | IdentityCall_provide_judgement | IdentityCall_quit_sub | IdentityCall_remove_sub | IdentityCall_rename_sub | IdentityCall_request_judgement | IdentityCall_set_account_id | IdentityCall_set_fee | IdentityCall_set_fields | IdentityCall_set_identity | IdentityCall_set_subs
 
 /**
  *  Add a registrar to the system.
  * 
- *  The dispatch origin for this call must be `RegistrarOrigin` or `Root`.
+ *  The dispatch origin for this call must be `T::RegistrarOrigin`.
  * 
  *  - `account`: the account of the registrar.
  * 
@@ -2872,6 +2704,21 @@ export type IdentityCall = IdentityCall_add_registrar | IdentityCall_cancel_requ
 export interface IdentityCall_add_registrar {
     __kind: 'add_registrar'
     account: AccountId
+}
+
+/**
+ *  Add the given account to the sender's subs.
+ * 
+ *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
+ *  to the sender.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  sub identity of `sub`.
+ */
+export interface IdentityCall_add_sub {
+    __kind: 'add_sub'
+    sub: LookupSource
+    data: Data
 }
 
 /**
@@ -2929,7 +2776,7 @@ export interface IdentityCall_clear_identity {
  *  `Slash`. Verification request deposits are not returned; they should be cancelled
  *  manually using `cancel_request`.
  * 
- *  The dispatch origin for this call must be _Root_ or match `T::ForceOrigin`.
+ *  The dispatch origin for this call must match `T::ForceOrigin`.
  * 
  *  - `target`: the account whose identity the judgement is upon. This must be an account
  *    with a registered identity.
@@ -2974,6 +2821,48 @@ export interface IdentityCall_provide_judgement {
     regIndex: number
     target: LookupSource
     judgement: IdentityJudgement
+}
+
+/**
+ *  Remove the sender as a sub-account.
+ * 
+ *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
+ *  to the sender (*not* the original depositor).
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  super-identity.
+ * 
+ *  NOTE: This should not normally be used, but is provided in the case that the non-
+ *  controller of an account is maliciously registered as a sub-account.
+ */
+export interface IdentityCall_quit_sub {
+    __kind: 'quit_sub'
+}
+
+/**
+ *  Remove the given account from the sender's subs.
+ * 
+ *  Payment: Balance reserved by a previous `set_subs` call for one sub will be repatriated
+ *  to the sender.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  sub identity of `sub`.
+ */
+export interface IdentityCall_remove_sub {
+    __kind: 'remove_sub'
+    sub: LookupSource
+}
+
+/**
+ *  Alter the associated name of the given sub-account.
+ * 
+ *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+ *  sub identity of `sub`.
+ */
+export interface IdentityCall_rename_sub {
+    __kind: 'rename_sub'
+    sub: LookupSource
+    data: Data
 }
 
 /**
@@ -3123,6 +3012,53 @@ export interface IdentityCall_set_subs {
     __kind: 'set_subs'
     subs: [AccountId, Data][]
 }
+
+export interface IdentityInfo {
+    additional: IdentityInfoAdditional[]
+    display: Data
+    legal: Data
+    web: Data
+    riot: Data
+    email: Data
+    pgpFingerprint?: (H160 | undefined)
+    image: Data
+    twitter: Data
+}
+
+export type IdentityInfoAdditional = [Data, Data]
+
+export type IdentityJudgement = IdentityJudgement_Erroneous | IdentityJudgement_FeePaid | IdentityJudgement_KnownGood | IdentityJudgement_LowQuality | IdentityJudgement_OutOfDate | IdentityJudgement_Reasonable | IdentityJudgement_Unknown
+
+export interface IdentityJudgement_Erroneous {
+    __kind: 'Erroneous'
+}
+
+export interface IdentityJudgement_FeePaid {
+    __kind: 'FeePaid'
+    value: Balance
+}
+
+export interface IdentityJudgement_KnownGood {
+    __kind: 'KnownGood'
+}
+
+export interface IdentityJudgement_LowQuality {
+    __kind: 'LowQuality'
+}
+
+export interface IdentityJudgement_OutOfDate {
+    __kind: 'OutOfDate'
+}
+
+export interface IdentityJudgement_Reasonable {
+    __kind: 'Reasonable'
+}
+
+export interface IdentityJudgement_Unknown {
+    __kind: 'Unknown'
+}
+
+export type RegistrarIndex = number
 
 export type Data = Data_BlakeTwo256 | Data_Keccak256 | Data_None | Data_Raw0 | Data_Raw1 | Data_Raw10 | Data_Raw11 | Data_Raw12 | Data_Raw13 | Data_Raw14 | Data_Raw15 | Data_Raw16 | Data_Raw17 | Data_Raw18 | Data_Raw19 | Data_Raw2 | Data_Raw20 | Data_Raw21 | Data_Raw22 | Data_Raw23 | Data_Raw24 | Data_Raw25 | Data_Raw26 | Data_Raw27 | Data_Raw28 | Data_Raw29 | Data_Raw3 | Data_Raw30 | Data_Raw31 | Data_Raw32 | Data_Raw4 | Data_Raw5 | Data_Raw6 | Data_Raw7 | Data_Raw8 | Data_Raw9 | Data_Sha256 | Data_ShaThree256
 
@@ -3315,58 +3251,34 @@ export interface Data_ShaThree256 {
     value: H256
 }
 
-export type H256 = Bytes
+export type GrandpaCall = GrandpaCall_note_stalled | GrandpaCall_report_equivocation | GrandpaCall_report_equivocation_unsigned
 
-export interface IdentityInfo {
-    additional: IdentityInfoAdditional[]
-    display: Data
-    legal: Data
-    web: Data
-    riot: Data
-    email: Data
-    pgpFingerprint?: (H160 | undefined)
-    image: Data
-    twitter: Data
+/**
+ *  Note that the current authority set of the GRANDPA finality gadget has
+ *  stalled. This will trigger a forced authority set change at the beginning
+ *  of the next session, to be enacted `delay` blocks after that. The delay
+ *  should be high enough to safely assume that the block signalling the
+ *  forced change will not be re-orged (e.g. 1000 blocks). The GRANDPA voters
+ *  will start the new authority set using the given finalized block as base.
+ *  Only callable by root.
+ */
+export interface GrandpaCall_note_stalled {
+    __kind: 'note_stalled'
+    delay: BlockNumber
+    bestFinalizedBlockNumber: BlockNumber
 }
 
-export type H160 = Bytes
-
-export type IdentityInfoAdditional = [Data, Data]
-
-export type IdentityJudgement = IdentityJudgement_Erroneous | IdentityJudgement_FeePaid | IdentityJudgement_KnownGood | IdentityJudgement_LowQuality | IdentityJudgement_OutOfDate | IdentityJudgement_Reasonable | IdentityJudgement_Unknown
-
-export interface IdentityJudgement_Erroneous {
-    __kind: 'Erroneous'
+/**
+ *  Report voter equivocation/misbehavior. This method will verify the
+ *  equivocation proof and validate the given key ownership proof
+ *  against the extracted offender. If both are valid, the offence
+ *  will be reported.
+ */
+export interface GrandpaCall_report_equivocation {
+    __kind: 'report_equivocation'
+    equivocationProof: GrandpaEquivocationProof
+    keyOwnerProof: KeyOwnerProof
 }
-
-export interface IdentityJudgement_FeePaid {
-    __kind: 'FeePaid'
-    value: Balance
-}
-
-export interface IdentityJudgement_KnownGood {
-    __kind: 'KnownGood'
-}
-
-export interface IdentityJudgement_LowQuality {
-    __kind: 'LowQuality'
-}
-
-export interface IdentityJudgement_OutOfDate {
-    __kind: 'OutOfDate'
-}
-
-export interface IdentityJudgement_Reasonable {
-    __kind: 'Reasonable'
-}
-
-export interface IdentityJudgement_Unknown {
-    __kind: 'Unknown'
-}
-
-export type RegistrarIndex = number
-
-export type GrandpaCall = GrandpaCall_report_equivocation
 
 /**
  *  Report voter equivocation/misbehavior. This method will verify the
@@ -3374,12 +3286,13 @@ export type GrandpaCall = GrandpaCall_report_equivocation
  *  against the extracted offender. If both are valid, the offence
  *  will be reported.
  * 
- *  Since the weight of the extrinsic is 0, in order to avoid DoS by
- *  submission of invalid equivocation reports, a mandatory pre-validation of
- *  the extrinsic is implemented in a `SignedExtension`.
+ *  This extrinsic must be called unsigned and it is expected that only
+ *  block authors will call it (validated in `ValidateUnsigned`), as such
+ *  if the block author is defined it will be defined as the equivocation
+ *  reporter.
  */
-export interface GrandpaCall_report_equivocation {
-    __kind: 'report_equivocation'
+export interface GrandpaCall_report_equivocation_unsigned {
+    __kind: 'report_equivocation_unsigned'
     equivocationProof: GrandpaEquivocationProof
     keyOwnerProof: KeyOwnerProof
 }
@@ -3389,6 +3302,8 @@ export interface KeyOwnerProof {
     trieNodes: Bytes[]
     validatorCount: ValidatorCount
 }
+
+export type ValidatorCount = number
 
 export interface GrandpaEquivocationProof {
     setId: SetId
@@ -3425,18 +3340,25 @@ export type AuthorityId = Bytes
 
 export type SetId = bigint
 
-export type FinalityTrackerCall = FinalityTrackerCall_final_hint
+export type ElectionsCall = ElectionsCall_clean_defunct_voters | ElectionsCall_remove_member | ElectionsCall_remove_voter | ElectionsCall_renounce_candidacy | ElectionsCall_submit_candidacy | ElectionsCall_vote
 
 /**
- *  Hint that the author of this block thinks the best finalized
- *  block is the given number.
+ *  Clean all voters who are defunct (i.e. they do not serve any purpose at all). The
+ *  deposit of the removed voters are returned.
+ * 
+ *  This is an root function to be used only for cleaning the state.
+ * 
+ *  The dispatch origin of this call must be root.
+ * 
+ *  # <weight>
+ *  The total number of voters and those that are defunct must be provided as witness data.
+ *  # </weight>
  */
-export interface FinalityTrackerCall_final_hint {
-    __kind: 'final_hint'
-    hint: number
+export interface ElectionsCall_clean_defunct_voters {
+    __kind: 'clean_defunct_voters'
+    numVoters: number
+    numDefunct: number
 }
-
-export type ElectionsPhragmenCall = ElectionsPhragmenCall_remove_member | ElectionsPhragmenCall_remove_voter | ElectionsPhragmenCall_renounce_candidacy | ElectionsPhragmenCall_report_defunct_voter | ElectionsPhragmenCall_submit_candidacy | ElectionsPhragmenCall_vote
 
 /**
  *  Remove a particular member from the set. This is effective immediately and the bond of
@@ -3445,147 +3367,75 @@ export type ElectionsPhragmenCall = ElectionsPhragmenCall_remove_member | Electi
  *  If a runner-up is available, then the best runner-up will be removed and replaces the
  *  outgoing member. Otherwise, a new phragmen election is started.
  * 
+ *  The dispatch origin of this call must be root.
+ * 
  *  Note that this does not affect the designated block number of the next election.
  * 
  *  # <weight>
- *  If we have a replacement:
- *  	- Base weight: 50.93 µs
- *  	- State reads:
- *  		- RunnersUp.len()
- *  		- Members, RunnersUp (remove_and_replace_member)
- *  	- State writes:
- *  		- Members, RunnersUp (remove_and_replace_member)
- *  Else, since this is a root call and will go into phragmen, we assume full block for now.
+ *  If we have a replacement, we use a small weight. Else, since this is a root call and
+ *  will go into phragmen, we assume full block for now.
  *  # </weight>
  */
-export interface ElectionsPhragmenCall_remove_member {
+export interface ElectionsCall_remove_member {
     __kind: 'remove_member'
     who: LookupSource
     hasReplacement: boolean
 }
 
 /**
- *  Remove `origin` as a voter. This removes the lock and returns the bond.
+ *  Remove `origin` as a voter.
  * 
- *  # <weight>
- *  Base weight: 36.8 µs
- *  All state access is from do_remove_voter.
- *  State reads:
- *  	- Voting
- *  	- [AccountData(who)]
- *  State writes:
- *  	- Voting
- *  	- Locks
- *  	- [AccountData(who)]
- *  # </weight>
+ *  This removes the lock and returns the deposit.
+ * 
+ *  The dispatch origin of this call must be signed and be a voter.
  */
-export interface ElectionsPhragmenCall_remove_voter {
+export interface ElectionsCall_remove_voter {
     __kind: 'remove_voter'
 }
 
 /**
  *  Renounce one's intention to be a candidate for the next election round. 3 potential
  *  outcomes exist:
- *  - `origin` is a candidate and not elected in any set. In this case, the bond is
- *    unreserved, returned and origin is removed as a candidate.
- *  - `origin` is a current runner-up. In this case, the bond is unreserved, returned and
- *    origin is removed as a runner-up.
- *  - `origin` is a current member. In this case, the bond is unreserved and origin is
- *    removed as a member, consequently not being a candidate for the next round anymore.
- *    Similar to [`remove_voter`], if replacement runners exists, they are immediately used.
- *  <weight>
- *  If a candidate is renouncing:
- *  	Base weight: 17.28 µs
- *  	Complexity of candidate_count: 0.235 µs
- *  	State reads:
- *  		- Candidates
- *  		- [AccountBalance(who) (unreserve)]
- *  	State writes:
- *  		- Candidates
- *  		- [AccountBalance(who) (unreserve)]
- *  If member is renouncing:
- *  	Base weight: 46.25 µs
- *  	State reads:
- *  		- Members, RunnersUp (remove_and_replace_member),
- *  		- [AccountData(who) (unreserve)]
- *  	State writes:
- *  		- Members, RunnersUp (remove_and_replace_member),
- *  		- [AccountData(who) (unreserve)]
- *  If runner is renouncing:
- *  	Base weight: 46.25 µs
- *  	State reads:
- *  		- RunnersUp (remove_and_replace_member),
- *  		- [AccountData(who) (unreserve)]
- *  	State writes:
- *  		- RunnersUp (remove_and_replace_member),
- *  		- [AccountData(who) (unreserve)]
  * 
- *  Weight note: The call into changeMembers need to be accounted for.
- *  </weight>
+ *  - `origin` is a candidate and not elected in any set. In this case, the deposit is
+ *    unreserved, returned and origin is removed as a candidate.
+ *  - `origin` is a current runner-up. In this case, the deposit is unreserved, returned and
+ *    origin is removed as a runner-up.
+ *  - `origin` is a current member. In this case, the deposit is unreserved and origin is
+ *    removed as a member, consequently not being a candidate for the next round anymore.
+ *    Similar to [`remove_member`](Self::remove_member), if replacement runners exists, they
+ *    are immediately used. If the prime is renouncing, then no prime will exist until the
+ *    next round.
+ * 
+ *  The dispatch origin of this call must be signed, and have one of the above roles.
+ * 
+ *  # <weight>
+ *  The type of renouncing must be provided as witness data.
+ *  # </weight>
  */
-export interface ElectionsPhragmenCall_renounce_candidacy {
+export interface ElectionsCall_renounce_candidacy {
     __kind: 'renounce_candidacy'
     renouncing: Renouncing
 }
 
 /**
- *  Report `target` for being an defunct voter. In case of a valid report, the reporter is
- *  rewarded by the bond amount of `target`. Otherwise, the reporter itself is removed and
- *  their bond is slashed.
+ *  Submit oneself for candidacy. A fixed amount of deposit is recorded.
  * 
- *  A defunct voter is defined to be:
- *    - a voter whose current submitted votes are all invalid. i.e. all of them are no
- *      longer a candidate nor an active member or a runner-up.
+ *  All candidates are wiped at the end of the term. They either become a member/runner-up,
+ *  or leave the system while their deposit is slashed.
  * 
+ *  The dispatch origin of this call must be signed.
  * 
- *  The origin must provide the number of current candidates and votes of the reported target
- *  for the purpose of accurate weight calculation.
+ *  ### Warning
  * 
- *  # <weight>
- *  No Base weight based on min square analysis.
- *  Complexity of candidate_count: 1.755 µs
- *  Complexity of vote_count: 18.51 µs
- *  State reads:
- *   	- Voting(reporter)
- *   	- Candidate.len()
- *   	- Voting(Target)
- *   	- Candidates, Members, RunnersUp (is_defunct_voter)
- *  State writes:
- *  	- Lock(reporter || target)
- *  	- [AccountBalance(reporter)] + AccountBalance(target)
- *  	- Voting(reporter || target)
- *  Note: the db access is worse with respect to db, which is when the report is correct.
- *  # </weight>
- */
-export interface ElectionsPhragmenCall_report_defunct_voter {
-    __kind: 'report_defunct_voter'
-    defunct: DefunctVoter
-}
-
-/**
- *  Submit oneself for candidacy.
- * 
- *  A candidate will either:
- *    - Lose at the end of the term and forfeit their deposit.
- *    - Win and become a member. Members will eventually get their stash back.
- *    - Become a runner-up. Runners-ups are reserved members in case one gets forcefully
- *      removed.
+ *  Even if a candidate ends up being a member, they must call [`Call::renounce_candidacy`]
+ *  to get their deposit back. Losing the spot in an election will always lead to a slash.
  * 
  *  # <weight>
- *  Base weight = 33.33 µs
- *  Complexity of candidate_count: 0.375 µs
- *  State reads:
- *  	- Candidates.len()
- *  	- Candidates
- *  	- Members
- *  	- RunnersUp
- *  	- [AccountBalance(who)]
- *  State writes:
- *  	- [AccountBalance(who)]
- *  	- Candidates
+ *  The number of current candidates must be provided as witness data.
  *  # </weight>
  */
-export interface ElectionsPhragmenCall_submit_candidacy {
+export interface ElectionsCall_submit_candidacy {
     __kind: 'submit_candidacy'
     candidateCount: number
 }
@@ -3594,39 +3444,31 @@ export interface ElectionsPhragmenCall_submit_candidacy {
  *  Vote for a set of candidates for the upcoming round of election. This can be called to
  *  set the initial votes, or update already existing votes.
  * 
- *  Upon initial voting, `value` units of `who`'s balance is locked and a bond amount is
- *  reserved.
+ *  Upon initial voting, `value` units of `who`'s balance is locked and a deposit amount is
+ *  reserved. The deposit is based on the number of votes and can be updated over time.
  * 
  *  The `votes` should:
  *    - not be empty.
  *    - be less than the number of possible candidates. Note that all current members and
  *      runners-up are also automatically candidates for the next round.
  * 
- *  It is the responsibility of the caller to not place all of their balance into the lock
- *  and keep some for further transactions.
+ *  If `value` is more than `who`'s total balance, then the maximum of the two is used.
+ * 
+ *  The dispatch origin of this call must be signed.
+ * 
+ *  ### Warning
+ * 
+ *  It is the responsibility of the caller to **NOT** place all of their balance into the
+ *  lock and keep some for further operations.
  * 
  *  # <weight>
- *  Base weight: 47.93 µs
- *  State reads:
- *  	- Candidates.len() + Members.len() + RunnersUp.len()
- *  	- Voting (is_voter)
- *  	- [AccountBalance(who) (unreserve + total_balance)]
- *  State writes:
- *  	- Voting
- *  	- Lock
- *  	- [AccountBalance(who) (unreserve -- only when creating a new voter)]
+ *  We assume the maximum weight among all 3 cases: vote_equal, vote_more and vote_less.
  *  # </weight>
  */
-export interface ElectionsPhragmenCall_vote {
+export interface ElectionsCall_vote {
     __kind: 'vote'
     votes: AccountId[]
     value: bigint
-}
-
-export interface DefunctVoter {
-    who: AccountId
-    voteCount: number
-    candidateCount: number
 }
 
 export type Renouncing = Renouncing_Candidate | Renouncing_Member | Renouncing_RunnerUp
@@ -3644,567 +3486,124 @@ export interface Renouncing_RunnerUp {
     __kind: 'RunnerUp'
 }
 
-export type DemocracyCall = DemocracyCall_cancel_queued | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_enact_proposal | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_propose | DemocracyCall_reap_preimage | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
+export type ElectionProviderMultiPhaseCall = ElectionProviderMultiPhaseCall_set_emergency_election_result | ElectionProviderMultiPhaseCall_set_minimum_untrusted_score | ElectionProviderMultiPhaseCall_submit | ElectionProviderMultiPhaseCall_submit_unsigned
 
 /**
- *  Cancel a proposal queued for enactment.
+ *  Set a solution in the queue, to be handed out to the client of this pallet in the next
+ *  call to `ElectionProvider::elect`.
  * 
- *  The dispatch origin of this call must be _Root_.
+ *  This can only be set by `T::ForceOrigin`, and only when the phase is `Emergency`.
  * 
- *  - `which`: The index of the referendum to cancel.
+ *  The solution is not checked for any feasibility and is assumed to be trustworthy, as any
+ *  feasibility check itself can in principle cause the election process to fail (due to
+ *  memory/weight constrains).
+ */
+export interface ElectionProviderMultiPhaseCall_set_emergency_election_result {
+    __kind: 'set_emergency_election_result'
+    supports: [AccountId, SolutionSupport][]
+}
+
+/**
+ *  Set a new value for `MinimumUntrustedScore`.
+ * 
+ *  Dispatch origin must be aligned with `T::ForceOrigin`.
+ * 
+ *  This check can be turned off by setting the value to `None`.
+ */
+export interface ElectionProviderMultiPhaseCall_set_minimum_untrusted_score {
+    __kind: 'set_minimum_untrusted_score'
+    maybeNextScore?: (ElectionScore | undefined)
+}
+
+/**
+ *  Submit a solution for the signed phase.
+ * 
+ *  The dispatch origin fo this call must be __signed__.
+ * 
+ *  The solution is potentially queued, based on the claimed score and processed at the end
+ *  of the signed phase.
+ * 
+ *  A deposit is reserved and recorded for the solution. Based on the outcome, the solution
+ *  might be rewarded, slashed, or get all or a part of the deposit back.
  * 
  *  # <weight>
- *  - `O(D)` where `D` is the items in the dispatch queue. Weighted as `D = 10`.
- *  - Db reads: `scheduler lookup`, scheduler agenda`
- *  - Db writes: `scheduler lookup`, scheduler agenda`
- *  - Base Weight: 36.78 + 3.277 * D µs
+ *  Queue size must be provided as witness data.
  *  # </weight>
  */
-export interface DemocracyCall_cancel_queued {
-    __kind: 'cancel_queued'
-    which: ReferendumIndex
+export interface ElectionProviderMultiPhaseCall_submit {
+    __kind: 'submit'
+    rawSolution: RawSolution
+    numSignedSubmissions: number
 }
 
 /**
- *  Remove a referendum.
+ *  Submit a solution for the unsigned phase.
  * 
- *  The dispatch origin of this call must be _Root_.
+ *  The dispatch origin fo this call must be __none__.
  * 
- *  - `ref_index`: The index of the referendum to cancel.
+ *  This submission is checked on the fly. Moreover, this unsigned solution is only
+ *  validated when submitted to the pool from the **local** node. Effectively, this means
+ *  that only active validators can submit this transaction when authoring a block (similar
+ *  to an inherent).
  * 
- *  # <weight>
- *  - Complexity: `O(1)`.
- *  - Db writes: `ReferendumInfoOf`
- *  - Base Weight: 21.57 µs
- *  # </weight>
+ *  To prevent any incorrect solution (and thus wasted time/weight), this transaction will
+ *  panic if the solution submitted by the validator is invalid in any way, effectively
+ *  putting their authoring reward at risk.
+ * 
+ *  No deposit or reward is associated with this submission.
  */
-export interface DemocracyCall_cancel_referendum {
-    __kind: 'cancel_referendum'
-    refIndex: number
+export interface ElectionProviderMultiPhaseCall_submit_unsigned {
+    __kind: 'submit_unsigned'
+    rawSolution: RawSolution
+    witness: SolutionOrSnapshotSize
 }
 
-/**
- *  Clears all public proposals.
- * 
- *  The dispatch origin of this call must be _Root_.
- * 
- *  # <weight>
- *  - `O(1)`.
- *  - Db writes: `PublicProps`
- *  - Base Weight: 2.505 µs
- *  # </weight>
- */
-export interface DemocracyCall_clear_public_proposals {
-    __kind: 'clear_public_proposals'
+export interface SolutionOrSnapshotSize {
+    voters: number
+    targets: number
 }
 
-/**
- *  Delegate the voting power (with some given conviction) of the sending account.
- * 
- *  The balance delegated is locked for as long as it's delegated, and thereafter for the
- *  time appropriate for the conviction's lock period.
- * 
- *  The dispatch origin of this call must be _Signed_, and the signing account must either:
- *    - be delegating already; or
- *    - have no voting activity (if there is, then it will need to be removed/consolidated
- *      through `reap_vote` or `unvote`).
- * 
- *  - `to`: The account whose voting the `target` account's voting power will follow.
- *  - `conviction`: The conviction that will be attached to the delegated votes. When the
- *    account is undelegated, the funds will be locked for the corresponding period.
- *  - `balance`: The amount of the account's balance to be used in delegating. This must
- *    not be more than the account's current balance.
- * 
- *  Emits `Delegated`.
- * 
- *  # <weight>
- *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
- *    voted on. Weight is charged as if maximum votes.
- *  - Db reads: 2*`VotingOf`, `balances locks`
- *  - Db writes: 2*`VotingOf`, `balances locks`
- *  - Db reads per votes: `ReferendumInfoOf`
- *  - Db writes per votes: `ReferendumInfoOf`
- *  - Base Weight: 65.78 + 8.229 * R µs
- *  # </weight>
- */
-export interface DemocracyCall_delegate {
-    __kind: 'delegate'
-    to: AccountId
-    conviction: Conviction
-    balance: BalanceOf
+export interface RawSolution {
+    compact: CompactAssignmentsWith16
+    score: ElectionScore
+    round: number
 }
 
-/**
- *  Schedule an emergency cancellation of a referendum. Cannot happen twice to the same
- *  referendum.
- * 
- *  The dispatch origin of this call must be `CancellationOrigin`.
- * 
- *  -`ref_index`: The index of the referendum to cancel.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`.
- *  - Db reads: `ReferendumInfoOf`, `Cancellations`
- *  - Db writes: `ReferendumInfoOf`, `Cancellations`
- *  -------------
- *  - Base Weight: 34.25 µs
- *  # </weight>
- */
-export interface DemocracyCall_emergency_cancel {
-    __kind: 'emergency_cancel'
-    refIndex: ReferendumIndex
+export interface CompactAssignmentsWith16 {
+    votes1: [NominatorIndexCompact, ValidatorIndexCompact][]
+    votes2: [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact][]
+    votes3: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes4: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes5: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes6: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes7: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes8: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes9: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes10: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes11: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes12: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes13: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes14: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes15: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
+    votes16: [NominatorIndexCompact, CompactScoreCompact[], ValidatorIndexCompact][]
 }
 
-/**
- *  Enact a proposal from a referendum. For now we just make the weight be the maximum.
- */
-export interface DemocracyCall_enact_proposal {
-    __kind: 'enact_proposal'
-    proposalHash: Hash
-    index: ReferendumIndex
+export type CompactScoreCompact = [ValidatorIndexCompact, OffchainAccuracyCompact]
+
+export type OffchainAccuracyCompact = number
+
+export type ValidatorIndexCompact = number
+
+export type NominatorIndexCompact = number
+
+export type ElectionScore = bigint[]
+
+export interface SolutionSupport {
+    total: ExtendedBalance
+    voters: [AccountId, ExtendedBalance][]
 }
 
-/**
- *  Schedule a referendum to be tabled once it is legal to schedule an external
- *  referendum.
- * 
- *  The dispatch origin of this call must be `ExternalOrigin`.
- * 
- *  - `proposal_hash`: The preimage hash of the proposal.
- * 
- *  # <weight>
- *  - Complexity `O(V)` with V number of vetoers in the blacklist of proposal.
- *    Decoding vec of length V. Charged as maximum
- *  - Db reads: `NextExternal`, `Blacklist`
- *  - Db writes: `NextExternal`
- *  - Base Weight: 13.8 + .106 * V µs
- *  # </weight>
- */
-export interface DemocracyCall_external_propose {
-    __kind: 'external_propose'
-    proposalHash: Hash
-}
-
-/**
- *  Schedule a negative-turnout-bias referendum to be tabled next once it is legal to
- *  schedule an external referendum.
- * 
- *  The dispatch of this call must be `ExternalDefaultOrigin`.
- * 
- *  - `proposal_hash`: The preimage hash of the proposal.
- * 
- *  Unlike `external_propose`, blacklisting has no effect on this and it may replace a
- *  pre-scheduled `external_propose` call.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`
- *  - Db write: `NextExternal`
- *  - Base Weight: 3.087 µs
- *  # </weight>
- */
-export interface DemocracyCall_external_propose_default {
-    __kind: 'external_propose_default'
-    proposalHash: Hash
-}
-
-/**
- *  Schedule a majority-carries referendum to be tabled next once it is legal to schedule
- *  an external referendum.
- * 
- *  The dispatch of this call must be `ExternalMajorityOrigin`.
- * 
- *  - `proposal_hash`: The preimage hash of the proposal.
- * 
- *  Unlike `external_propose`, blacklisting has no effect on this and it may replace a
- *  pre-scheduled `external_propose` call.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`
- *  - Db write: `NextExternal`
- *  - Base Weight: 3.065 µs
- *  # </weight>
- */
-export interface DemocracyCall_external_propose_majority {
-    __kind: 'external_propose_majority'
-    proposalHash: Hash
-}
-
-/**
- *  Schedule the currently externally-proposed majority-carries referendum to be tabled
- *  immediately. If there is no externally-proposed referendum currently, or if there is one
- *  but it is not a majority-carries referendum then it fails.
- * 
- *  The dispatch of this call must be `FastTrackOrigin`.
- * 
- *  - `proposal_hash`: The hash of the current external proposal.
- *  - `voting_period`: The period that is allowed for voting on this proposal. Increased to
- *    `FastTrackVotingPeriod` if too low.
- *  - `delay`: The number of block after voting has ended in approval and this should be
- *    enacted. This doesn't have a minimum amount.
- * 
- *  Emits `Started`.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`
- *  - Db reads: `NextExternal`, `ReferendumCount`
- *  - Db writes: `NextExternal`, `ReferendumCount`, `ReferendumInfoOf`
- *  - Base Weight: 30.1 µs
- *  # </weight>
- */
-export interface DemocracyCall_fast_track {
-    __kind: 'fast_track'
-    proposalHash: Hash
-    votingPeriod: BlockNumber
-    delay: BlockNumber
-}
-
-/**
- *  Register the preimage for an upcoming proposal. This requires the proposal to be
- *  in the dispatch queue. No deposit is needed.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `encoded_proposal`: The preimage of a proposal.
- * 
- *  Emits `PreimageNoted`.
- * 
- *  # <weight>
- *  see `weight_for::note_preimage`
- *  # </weight>
- */
-export interface DemocracyCall_note_imminent_preimage {
-    __kind: 'note_imminent_preimage'
-    encodedProposal: Bytes
-}
-
-/**
- *  Same as `note_imminent_preimage` but origin is `OperationalPreimageOrigin`.
- */
-export interface DemocracyCall_note_imminent_preimage_operational {
-    __kind: 'note_imminent_preimage_operational'
-    encodedProposal: Bytes
-}
-
-/**
- *  Register the preimage for an upcoming proposal. This doesn't require the proposal to be
- *  in the dispatch queue but does require a deposit, returned once enacted.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `encoded_proposal`: The preimage of a proposal.
- * 
- *  Emits `PreimageNoted`.
- * 
- *  # <weight>
- *  see `weight_for::note_preimage`
- *  # </weight>
- */
-export interface DemocracyCall_note_preimage {
-    __kind: 'note_preimage'
-    encodedProposal: Bytes
-}
-
-/**
- *  Same as `note_preimage` but origin is `OperationalPreimageOrigin`.
- */
-export interface DemocracyCall_note_preimage_operational {
-    __kind: 'note_preimage_operational'
-    encodedProposal: Bytes
-}
-
-/**
- *  Propose a sensitive action to be taken.
- * 
- *  The dispatch origin of this call must be _Signed_ and the sender must
- *  have funds to cover the deposit.
- * 
- *  - `proposal_hash`: The hash of the proposal preimage.
- *  - `value`: The amount of deposit (must be at least `MinimumDeposit`).
- * 
- *  Emits `Proposed`.
- * 
- *  # <weight>
- *  - Complexity: `O(1)`
- *  - Db reads: `PublicPropCount`, `PublicProps`
- *  - Db writes: `PublicPropCount`, `PublicProps`, `DepositOf`
- *  -------------------
- *  Base Weight: 42.58 + .127 * P µs with `P` the number of proposals `PublicProps`
- *  # </weight>
- */
-export interface DemocracyCall_propose {
-    __kind: 'propose'
-    proposalHash: Hash
-    value: bigint
-}
-
-/**
- *  Remove an expired proposal preimage and collect the deposit.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `proposal_hash`: The preimage hash of a proposal.
- *  - `proposal_length_upper_bound`: an upper bound on length of the proposal.
- *    Extrinsic is weighted according to this value with no refund.
- * 
- *  This will only work after `VotingPeriod` blocks from the time that the preimage was
- *  noted, if it's the same account doing it. If it's a different account, then it'll only
- *  work an additional `EnactmentPeriod` later.
- * 
- *  Emits `PreimageReaped`.
- * 
- *  # <weight>
- *  - Complexity: `O(D)` where D is length of proposal.
- *  - Db reads: `Preimages`
- *  - Db writes: `Preimages`
- *  - Base Weight: 39.31 + .003 * b µs
- *  # </weight>
- */
-export interface DemocracyCall_reap_preimage {
-    __kind: 'reap_preimage'
-    proposalHash: Hash
-    proposalLenUpperBound: number
-}
-
-/**
- *  Remove a vote for a referendum.
- * 
- *  If the `target` is equal to the signer, then this function is exactly equivalent to
- *  `remove_vote`. If not equal to the signer, then the vote must have expired,
- *  either because the referendum was cancelled, because the voter lost the referendum or
- *  because the conviction period is over.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `target`: The account of the vote to be removed; this account must have voted for
- *    referendum `index`.
- *  - `index`: The index of referendum of the vote to be removed.
- * 
- *  # <weight>
- *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
- *    Weight is calculated for the maximum number of vote.
- *  - Db reads: `ReferendumInfoOf`, `VotingOf`
- *  - Db writes: `ReferendumInfoOf`, `VotingOf`
- *  - Base Weight: 19.15 + .372 * R
- *  # </weight>
- */
-export interface DemocracyCall_remove_other_vote {
-    __kind: 'remove_other_vote'
-    target: AccountId
-    index: ReferendumIndex
-}
-
-/**
- *  Remove a vote for a referendum.
- * 
- *  If:
- *  - the referendum was cancelled, or
- *  - the referendum is ongoing, or
- *  - the referendum has ended such that
- *    - the vote of the account was in opposition to the result; or
- *    - there was no conviction to the account's vote; or
- *    - the account made a split vote
- *  ...then the vote is removed cleanly and a following call to `unlock` may result in more
- *  funds being available.
- * 
- *  If, however, the referendum has ended and:
- *  - it finished corresponding to the vote of the account, and
- *  - the account made a standard vote with conviction, and
- *  - the lock period of the conviction is not over
- *  ...then the lock will be aggregated into the overall account's lock, which may involve
- *  *overlocking* (where the two locks are combined into a single lock that is the maximum
- *  of both the amount locked and the time is it locked for).
- * 
- *  The dispatch origin of this call must be _Signed_, and the signer must have a vote
- *  registered for referendum `index`.
- * 
- *  - `index`: The index of referendum of the vote to be removed.
- * 
- *  # <weight>
- *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
- *    Weight is calculated for the maximum number of vote.
- *  - Db reads: `ReferendumInfoOf`, `VotingOf`
- *  - Db writes: `ReferendumInfoOf`, `VotingOf`
- *  - Base Weight: 21.03 + .359 * R
- *  # </weight>
- */
-export interface DemocracyCall_remove_vote {
-    __kind: 'remove_vote'
-    index: ReferendumIndex
-}
-
-/**
- *  Signals agreement with a particular proposal.
- * 
- *  The dispatch origin of this call must be _Signed_ and the sender
- *  must have funds to cover the deposit, equal to the original deposit.
- * 
- *  - `proposal`: The index of the proposal to second.
- *  - `seconds_upper_bound`: an upper bound on the current number of seconds on this
- *    proposal. Extrinsic is weighted according to this value with no refund.
- * 
- *  # <weight>
- *  - Complexity: `O(S)` where S is the number of seconds a proposal already has.
- *  - Db reads: `DepositOf`
- *  - Db writes: `DepositOf`
- *  ---------
- *  - Base Weight: 22.28 + .229 * S µs
- *  # </weight>
- */
-export interface DemocracyCall_second {
-    __kind: 'second'
-    proposal: number
-    secondsUpperBound: number
-}
-
-/**
- *  Undelegate the voting power of the sending account.
- * 
- *  Tokens may be unlocked following once an amount of time consistent with the lock period
- *  of the conviction with which the delegation was issued.
- * 
- *  The dispatch origin of this call must be _Signed_ and the signing account must be
- *  currently delegating.
- * 
- *  Emits `Undelegated`.
- * 
- *  # <weight>
- *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
- *    voted on. Weight is charged as if maximum votes.
- *  - Db reads: 2*`VotingOf`
- *  - Db writes: 2*`VotingOf`
- *  - Db reads per votes: `ReferendumInfoOf`
- *  - Db writes per votes: `ReferendumInfoOf`
- *  - Base Weight: 33.29 + 8.104 * R µs
- *  # </weight>
- */
-export interface DemocracyCall_undelegate {
-    __kind: 'undelegate'
-}
-
-/**
- *  Unlock tokens that have an expired lock.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `target`: The account to remove the lock on.
- * 
- *  # <weight>
- *  - Complexity `O(R)` with R number of vote of target.
- *  - Db reads: `VotingOf`, `balances locks`, `target account`
- *  - Db writes: `VotingOf`, `balances locks`, `target account`
- *  - Base Weight:
- *      - Unlock Remove: 42.96 + .048 * R
- *      - Unlock Set: 37.63 + .327 * R
- *  # </weight>
- */
-export interface DemocracyCall_unlock {
-    __kind: 'unlock'
-    target: AccountId
-}
-
-/**
- *  Veto and blacklist the external proposal hash.
- * 
- *  The dispatch origin of this call must be `VetoOrigin`.
- * 
- *  - `proposal_hash`: The preimage hash of the proposal to veto and blacklist.
- * 
- *  Emits `Vetoed`.
- * 
- *  # <weight>
- *  - Complexity: `O(V + log(V))` where V is number of `existing vetoers`
- *    Performs a binary search on `existing_vetoers` which should not be very large.
- *  - Db reads: `NextExternal`, `Blacklist`
- *  - Db writes: `NextExternal`, `Blacklist`
- *  - Base Weight: 29.87 + .188 * V µs
- *  # </weight>
- */
-export interface DemocracyCall_veto_external {
-    __kind: 'veto_external'
-    proposalHash: Hash
-}
-
-/**
- *  Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
- *  otherwise it is a vote to keep the status quo.
- * 
- *  The dispatch origin of this call must be _Signed_.
- * 
- *  - `ref_index`: The index of the referendum to vote for.
- *  - `vote`: The vote configuration.
- * 
- *  # <weight>
- *  - Complexity: `O(R)` where R is the number of referendums the voter has voted on.
- *    weight is charged as if maximum votes.
- *  - Db reads: `ReferendumInfoOf`, `VotingOf`, `balances locks`
- *  - Db writes: `ReferendumInfoOf`, `VotingOf`, `balances locks`
- *  --------------------
- *  - Base Weight:
- *      - Vote New: 49.24 + .333 * R µs
- *      - Vote Existing: 49.94 + .343 * R µs
- *  # </weight>
- */
-export interface DemocracyCall_vote {
-    __kind: 'vote'
-    refIndex: number
-    vote: AccountVote
-}
-
-export type AccountVote = AccountVote_Split | AccountVote_Standard
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    value: AccountVoteSplit
-}
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    value: AccountVoteStandard
-}
-
-export interface AccountVoteStandard {
-    vote: Vote
-    balance: Balance
-}
-
-export type Vote = number
-
-export interface AccountVoteSplit {
-    aye: Balance
-    nay: Balance
-}
-
-export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
-
-export interface Conviction_Locked1x {
-    __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-    __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-    __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-    __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-    __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-    __kind: 'Locked6x'
-}
-
-export interface Conviction_None {
-    __kind: 'None'
-}
-
-export type ReferendumIndex = number
+export type ExtendedBalance = bigint
 
 export type CouncilCall = CouncilCall_close | CouncilCall_disapprove_proposal | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
 
@@ -4218,6 +3617,9 @@ export type CouncilCall = CouncilCall_close | CouncilCall_disapprove_proposal | 
  * 
  *  If called after the end of the voting period abstentions are counted as rejections
  *  unless there is a prime member set and the prime member cast an approval.
+ * 
+ *  If the close operation completes successfully with disapproval, the transaction fee will
+ *  be waived. Otherwise execution of the approved operation will be charged to the caller.
  * 
  *  + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed proposal.
  *  + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
@@ -4255,7 +3657,6 @@ export interface CouncilCall_close {
  * 
  *  # <weight>
  *  Complexity: O(P) where P is the number of max proposals
- *  Base Weight: .49 * P
  *  DB Weight:
  *  * Reads: Proposals
  *  * Writes: Voting, Proposals, ProposalOf
@@ -4330,7 +3731,7 @@ export interface CouncilCall_propose {
  * 
  *  Requires root origin.
  * 
- *  NOTE: Does not enforce the expected `MAX_MEMBERS` limit on the amount of members, but
+ *  NOTE: Does not enforce the expected `MaxMembers` limit on the amount of members, but
  *        the weight estimations rely on it to estimate dispatchable weight.
  * 
  *  # <weight>
@@ -4358,6 +3759,8 @@ export interface CouncilCall_set_members {
  * 
  *  Requires the sender to be a member.
  * 
+ *  Transaction fees will be waived if the member is voting on any particular proposal
+ *  for the first time and the call is successful. Subsequent vote changes will charge a fee.
  *  # <weight>
  *  ## Weight
  *  - `O(M)` where `M` is members-count (code- and governance-bounded)
@@ -4374,193 +3777,176 @@ export interface CouncilCall_vote {
     approve: boolean
 }
 
-export type ClaimsCall = ClaimsCall_attest | ClaimsCall_claim | ClaimsCall_claim_attest | ClaimsCall_mint_claim | ClaimsCall_move_claim
+export type BountiesCall = BountiesCall_accept_curator | BountiesCall_approve_bounty | BountiesCall_award_bounty | BountiesCall_claim_bounty | BountiesCall_close_bounty | BountiesCall_extend_bounty_expiry | BountiesCall_propose_bounty | BountiesCall_propose_curator | BountiesCall_unassign_curator
 
 /**
- *  Attest to a statement, needed to finalize the claims process.
+ *  Accept the curator role for a bounty.
+ *  A deposit will be reserved from curator and refund upon successful payout.
  * 
- *  WARNING: Insecure unless your chain includes `PrevalidateAttests` as a `SignedExtension`.
+ *  May only be called from the curator.
  * 
- *  Unsigned Validation:
- *  A call to attest is deemed valid if the sender has a `Preclaim` registered
- *  and provides a `statement` which is expected for the account.
- * 
- *  Parameters:
- *  - `statement`: The identity of the statement which is being attested to in the signature.
- * 
- *  <weight>
- *  Total Complexity: O(1)
- *  ----------------------------
- *  Base Weight: 93.3 µs
- *  DB Weight:
- *  - Read: Preclaims, Signing, Claims, Total, Claims Vesting, Vesting Vesting, Balance Lock, Account
- *  - Write: Vesting Vesting, Account, Balance Lock, Total, Claim, Claims Vesting, Signing, Preclaims
- *  Validate PreValidateAttests: +8.631 µs
- *  </weight>
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
  */
-export interface ClaimsCall_attest {
-    __kind: 'attest'
-    statement: Bytes
+export interface BountiesCall_accept_curator {
+    __kind: 'accept_curator'
+    bountyId: number
 }
 
 /**
- *  Make a claim to collect your DOTs.
+ *  Approve a bounty proposal. At a later time, the bounty will be funded and become active
+ *  and the original deposit will be returned.
  * 
- *  The dispatch origin for this call must be _None_.
+ *  May only be called from `T::ApproveOrigin`.
  * 
- *  Unsigned Validation:
- *  A call to claim is deemed valid if the signature provided matches
- *  the expected signed message of:
- * 
- *  > Ethereum Signed Message:
- *  > (configured prefix string)(address)
- * 
- *  and `address` matches the `dest` account.
- * 
- *  Parameters:
- *  - `dest`: The destination account to payout the claim.
- *  - `ethereum_signature`: The signature of an ethereum signed message
- *     matching the format described above.
- * 
- *  <weight>
- *  The weight of this call is invariant over the input parameters.
- *  - One `eth_recover` operation which involves a keccak hash and a
- *    ecdsa recover.
- *  - Three storage reads to check if a claim exists for the user, to
- *    get the current pot size, to see if there exists a vesting schedule.
- *  - Up to one storage write for adding a new vesting schedule.
- *  - One `deposit_creating` Currency call.
- *  - One storage write to update the total.
- *  - Two storage removals for vesting and claims information.
- *  - One deposit event.
- * 
- *  Total Complexity: O(1)
- *  ----------------------------
- *  Base Weight: 269.7 µs
- *  DB Weight:
- *  - Read: Signing, Claims, Total, Claims Vesting, Vesting Vesting, Balance Lock, Account
- *  - Write: Vesting Vesting, Account, Balance Lock, Total, Claim, Claims Vesting, Signing
- *  Validate Unsigned: +188.7 µs
- *  </weight>
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
  */
-export interface ClaimsCall_claim {
-    __kind: 'claim'
-    dest: AccountId
-    ethereumSignature: EcdsaSignature
+export interface BountiesCall_approve_bounty {
+    __kind: 'approve_bounty'
+    bountyId: number
 }
 
 /**
- *  Make a claim to collect your DOTs by signing a statement.
+ *  Award bounty to a beneficiary account. The beneficiary will be able to claim the funds after a delay.
  * 
- *  The dispatch origin for this call must be _None_.
+ *  The dispatch origin for this call must be the curator of this bounty.
  * 
- *  Unsigned Validation:
- *  A call to `claim_attest` is deemed valid if the signature provided matches
- *  the expected signed message of:
+ *  - `bounty_id`: Bounty ID to award.
+ *  - `beneficiary`: The beneficiary account whom will receive the payout.
  * 
- *  > Ethereum Signed Message:
- *  > (configured prefix string)(address)(statement)
- * 
- *  and `address` matches the `dest` account; the `statement` must match that which is
- *  expected according to your purchase arrangement.
- * 
- *  Parameters:
- *  - `dest`: The destination account to payout the claim.
- *  - `ethereum_signature`: The signature of an ethereum signed message
- *     matching the format described above.
- *  - `statement`: The identity of the statement which is being attested to in the signature.
- * 
- *  <weight>
- *  The weight of this call is invariant over the input parameters.
- *  - One `eth_recover` operation which involves a keccak hash and a
- *    ecdsa recover.
- *  - Four storage reads to check if a claim exists for the user, to
- *    get the current pot size, to see if there exists a vesting schedule, to get the
- *    required statement.
- *  - Up to one storage write for adding a new vesting schedule.
- *  - One `deposit_creating` Currency call.
- *  - One storage write to update the total.
- *  - Two storage removals for vesting and claims information.
- *  - One deposit event.
- * 
- *  Total Complexity: O(1)
- *  ----------------------------
- *  Base Weight: 270.2 µs
- *  DB Weight:
- *  - Read: Signing, Claims, Total, Claims Vesting, Vesting Vesting, Balance Lock, Account
- *  - Write: Vesting Vesting, Account, Balance Lock, Total, Claim, Claims Vesting, Signing
- *  Validate Unsigned: +190.1 µs
- *  </weight>
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
  */
-export interface ClaimsCall_claim_attest {
-    __kind: 'claim_attest'
-    dest: AccountId
-    ethereumSignature: EcdsaSignature
-    statement: Bytes
+export interface BountiesCall_award_bounty {
+    __kind: 'award_bounty'
+    bountyId: number
+    beneficiary: LookupSource
 }
 
 /**
- *  Mint a new claim to collect DOTs.
+ *  Claim the payout from an awarded bounty after payout delay.
  * 
- *  The dispatch origin for this call must be _Root_.
+ *  The dispatch origin for this call must be the beneficiary of this bounty.
  * 
- *  Parameters:
- *  - `who`: The Ethereum address allowed to collect this claim.
- *  - `value`: The number of DOTs that will be claimed.
- *  - `vesting_schedule`: An optional vesting schedule for these DOTs.
+ *  - `bounty_id`: Bounty ID to claim.
  * 
- *  <weight>
- *  The weight of this call is invariant over the input parameters.
- *  - One storage mutate to increase the total claims available.
- *  - One storage write to add a new claim.
- *  - Up to one storage write to add a new vesting schedule.
- * 
- *  Total Complexity: O(1)
- *  ---------------------
- *  Base Weight: 10.46 µs
- *  DB Weight:
- *  - Reads: Total
- *  - Writes: Total, Claims
- *  - Maybe Write: Vesting, Statement
- *  </weight>
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
  */
-export interface ClaimsCall_mint_claim {
-    __kind: 'mint_claim'
-    who: EthereumAddress
-    value: BalanceOf
-    vestingSchedule?: ([BalanceOf, BalanceOf, BlockNumber] | undefined)
-    statement?: (StatementKind | undefined)
+export interface BountiesCall_claim_bounty {
+    __kind: 'claim_bounty'
+    bountyId: number
 }
 
-export interface ClaimsCall_move_claim {
-    __kind: 'move_claim'
-    old: EthereumAddress
-    new: EthereumAddress
-    maybePreclaim?: (AccountId | undefined)
+/**
+ *  Cancel a proposed or active bounty. All the funds will be sent to treasury and
+ *  the curator deposit will be unreserved if possible.
+ * 
+ *  Only `T::RejectOrigin` is able to cancel a bounty.
+ * 
+ *  - `bounty_id`: Bounty ID to cancel.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
+ */
+export interface BountiesCall_close_bounty {
+    __kind: 'close_bounty'
+    bountyId: number
 }
 
-export type StatementKind = StatementKind_Regular | StatementKind_Saft
-
-export interface StatementKind_Regular {
-    __kind: 'Regular'
+/**
+ *  Extend the expiry time of an active bounty.
+ * 
+ *  The dispatch origin for this call must be the curator of this bounty.
+ * 
+ *  - `bounty_id`: Bounty ID to extend.
+ *  - `remark`: additional information.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
+ */
+export interface BountiesCall_extend_bounty_expiry {
+    __kind: 'extend_bounty_expiry'
+    bountyId: number
+    remark: Bytes
 }
 
-export interface StatementKind_Saft {
-    __kind: 'Saft'
+/**
+ *  Propose a new bounty.
+ * 
+ *  The dispatch origin for this call must be _Signed_.
+ * 
+ *  Payment: `TipReportDepositBase` will be reserved from the origin account, as well as
+ *  `DataDepositPerByte` for each byte in `reason`. It will be unreserved upon approval,
+ *  or slashed when rejected.
+ * 
+ *  - `curator`: The curator account whom will manage this bounty.
+ *  - `fee`: The curator fee.
+ *  - `value`: The total payment amount of this bounty, curator fee included.
+ *  - `description`: The description of this bounty.
+ */
+export interface BountiesCall_propose_bounty {
+    __kind: 'propose_bounty'
+    value: bigint
+    description: Bytes
 }
 
-export type EthereumAddress = Bytes
+/**
+ *  Assign a curator to a funded bounty.
+ * 
+ *  May only be called from `T::ApproveOrigin`.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
+ */
+export interface BountiesCall_propose_curator {
+    __kind: 'propose_curator'
+    bountyId: number
+    curator: LookupSource
+    fee: bigint
+}
 
-export type EcdsaSignature = Bytes
+/**
+ *  Unassign curator from a bounty.
+ * 
+ *  This function can only be called by the `RejectOrigin` a signed origin.
+ * 
+ *  If this function is called by the `RejectOrigin`, we assume that the curator is malicious
+ *  or inactive. As a result, we will slash the curator when possible.
+ * 
+ *  If the origin is the curator, we take this as a sign they are unable to do their job and
+ *  they willingly give up. We could slash them, but for now we allow them to recover their
+ *  deposit and exit without issue. (We may want to change this if it is abused.)
+ * 
+ *  Finally, the origin can be anyone if and only if the curator is "inactive". This allows
+ *  anyone in the community to call out that a curator is not doing their due diligence, and
+ *  we should pick a new curator. In this case the curator should also be slashed.
+ * 
+ *  # <weight>
+ *  - O(1).
+ *  # </weight>
+ */
+export interface BountiesCall_unassign_curator {
+    __kind: 'unassign_curator'
+    bountyId: number
+}
 
-export type BalancesCall = BalancesCall_force_transfer | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_keep_alive
+export type BalancesCall = BalancesCall_force_transfer | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_all | BalancesCall_transfer_keep_alive
 
 /**
  *  Exactly as `transfer`, except the origin must be root and the source account may be
  *  specified.
  *  # <weight>
- *  - Same as transfer, but additional read and write because the source account is
- *    not assumed to be in the overlay.
+ *  - Same as transfer, but additional read and write because the source account is not
+ *    assumed to be in the overlay.
  *  # </weight>
  */
 export interface BalancesCall_force_transfer {
@@ -4608,18 +3994,19 @@ export interface BalancesCall_set_balance {
  *  The dispatch origin for this call must be `Signed` by the transactor.
  * 
  *  # <weight>
- *  - Dependent on arguments but not critical, given proper implementations for
- *    input config types. See related functions below.
- *  - It contains a limited number of reads and writes internally and no complex computation.
+ *  - Dependent on arguments but not critical, given proper implementations for input config
+ *    types. See related functions below.
+ *  - It contains a limited number of reads and writes internally and no complex
+ *    computation.
  * 
  *  Related functions:
  * 
  *    - `ensure_can_withdraw` is always called internally but has a bounded complexity.
  *    - Transferring balances to accounts that did not exist before will cause
- *       `T::OnNewAccount::on_new_account` to be called.
+ *      `T::OnNewAccount::on_new_account` to be called.
  *    - Removing enough funds from an account will trigger `T::DustRemoval::on_unbalanced`.
- *    - `transfer_keep_alive` works the same way as `transfer`, but has an additional
- *      check that the transfer will not kill the origin account.
+ *    - `transfer_keep_alive` works the same way as `transfer`, but has an additional check
+ *      that the transfer will not kill the origin account.
  *  ---------------------------------
  *  - Base Weight: 73.64 µs, worst case scenario (account created, account removed)
  *  - DB Weight: 1 Read and 1 Write to destination account
@@ -4633,12 +4020,37 @@ export interface BalancesCall_transfer {
 }
 
 /**
+ *  Transfer the entire transferable balance from the caller account.
+ * 
+ *  NOTE: This function only attempts to transfer _transferable_ balances. This means that
+ *  any locked, reserved, or existential deposits (when `keep_alive` is `true`), will not be
+ *  transferred by this function. To ensure that this function results in a killed account,
+ *  you might need to prepare the account by removing any reference counters, storage
+ *  deposits, etc...
+ * 
+ *  The dispatch origin of this call must be Signed.
+ * 
+ *  - `dest`: The recipient of the transfer.
+ *  - `keep_alive`: A boolean to determine if the `transfer_all` operation should send all
+ *    of the funds the account has, causing the sender account to be killed (false), or
+ *    transfer everything except at least the existential deposit, which will guarantee to
+ *    keep the sender account alive (true). # <weight>
+ *  - O(1). Just like transfer, but reading the user's transferable balance first.
+ *    #</weight>
+ */
+export interface BalancesCall_transfer_all {
+    __kind: 'transfer_all'
+    dest: LookupSource
+    keepAlive: boolean
+}
+
+/**
  *  Same as the [`transfer`] call, but with a check that the transfer will not kill the
  *  origin account.
  * 
  *  99% of the time you want [`transfer`] instead.
  * 
- *  [`transfer`]: struct.Module.html#method.transfer
+ *  [`transfer`]: struct.Pallet.html#method.transfer
  *  # <weight>
  *  - Cheaper than transfer because account cannot be killed.
  *  - Base Weight: 51.4 µs
@@ -4651,16 +4063,52 @@ export interface BalancesCall_transfer_keep_alive {
     value: bigint
 }
 
-export type BabeCall = never
-
-export type AuthorshipCall = AuthorshipCall_set_uncles
+export type BabeCall = BabeCall_plan_config_change | BabeCall_report_equivocation | BabeCall_report_equivocation_unsigned
 
 /**
- *  Provide a set of uncles.
+ *  Plan an epoch config change. The epoch config change is recorded and will be enacted on
+ *  the next call to `enact_epoch_change`. The config will be activated one epoch after.
+ *  Multiple calls to this method will replace any existing planned config change that had
+ *  not been enacted yet.
  */
-export interface AuthorshipCall_set_uncles {
-    __kind: 'set_uncles'
-    newUncles: Header[]
+export interface BabeCall_plan_config_change {
+    __kind: 'plan_config_change'
+    config: NextConfigDescriptor
+}
+
+/**
+ *  Report authority equivocation/misbehavior. This method will verify
+ *  the equivocation proof and validate the given key ownership proof
+ *  against the extracted offender. If both are valid, the offence will
+ *  be reported.
+ */
+export interface BabeCall_report_equivocation {
+    __kind: 'report_equivocation'
+    equivocationProof: BabeEquivocationProof
+    keyOwnerProof: KeyOwnerProof
+}
+
+/**
+ *  Report authority equivocation/misbehavior. This method will verify
+ *  the equivocation proof and validate the given key ownership proof
+ *  against the extracted offender. If both are valid, the offence will
+ *  be reported.
+ *  This extrinsic must be called unsigned and it is expected that only
+ *  block authors will call it (validated in `ValidateUnsigned`), as such
+ *  if the block author is defined it will be defined as the equivocation
+ *  reporter.
+ */
+export interface BabeCall_report_equivocation_unsigned {
+    __kind: 'report_equivocation_unsigned'
+    equivocationProof: BabeEquivocationProof
+    keyOwnerProof: KeyOwnerProof
+}
+
+export interface BabeEquivocationProof {
+    offender: AuthorityId
+    slotNumber: SlotNumber
+    firstHeader: Header
+    secondHeader: Header
 }
 
 export interface Header {
@@ -4738,41 +4186,68 @@ export interface ChangesTrieSignal_NewConfiguration {
     value?: (ChangesTrieConfiguration | undefined)
 }
 
-export type AuthorityDiscoveryCall = never
+export type SlotNumber = bigint
 
-export type AttestationsCall = AttestationsCall_more_attestations
+export type NextConfigDescriptor = NextConfigDescriptor_V0 | NextConfigDescriptor_V1
+
+export interface NextConfigDescriptor_V0 {
+    __kind: 'V0'
+}
+
+export interface NextConfigDescriptor_V1 {
+    __kind: 'V1'
+    value: NextConfigDescriptorV1
+}
+
+export interface NextConfigDescriptorV1 {
+    c: [bigint, bigint]
+    allowedSlots: AllowedSlots
+}
+
+export type AllowedSlots = AllowedSlots_PrimaryAndSecondaryPlainSlots | AllowedSlots_PrimaryAndSecondaryVRFSlots | AllowedSlots_PrimarySlots
+
+export interface AllowedSlots_PrimaryAndSecondaryPlainSlots {
+    __kind: 'PrimaryAndSecondaryPlainSlots'
+}
+
+export interface AllowedSlots_PrimaryAndSecondaryVRFSlots {
+    __kind: 'PrimaryAndSecondaryVRFSlots'
+}
+
+export interface AllowedSlots_PrimarySlots {
+    __kind: 'PrimarySlots'
+}
+
+export type AuthorshipCall = AuthorshipCall_set_uncles
 
 /**
- *  Provide candidate receipts for parachains, in ascending order by id.
+ *  Provide a set of uncles.
  */
-export interface AttestationsCall_more_attestations {
-    __kind: 'more_attestations'
+export interface AuthorshipCall_set_uncles {
+    __kind: 'set_uncles'
+    newUncles: Header[]
 }
 
 export const Proposal: sts.Type<Proposal> = sts.closedEnum(() => {
     return  {
-        Attestations: AttestationsCall,
-        AuthorityDiscovery: AuthorityDiscoveryCall,
         Authorship: AuthorshipCall,
         Babe: BabeCall,
         Balances: BalancesCall,
-        Claims: ClaimsCall,
+        Bounties: BountiesCall,
         Council: CouncilCall,
-        Democracy: DemocracyCall,
-        ElectionsPhragmen: ElectionsPhragmenCall,
-        FinalityTracker: FinalityTrackerCall,
+        ElectionProviderMultiPhase: ElectionProviderMultiPhaseCall,
+        Elections: ElectionsCall,
         Grandpa: GrandpaCall,
         Identity: IdentityCall,
         ImOnline: ImOnlineCall,
         Indices: IndicesCall,
         Multisig: MultisigCall,
-        Offences: OffencesCall,
-        Parachains: ParachainsCall,
+        OrmlVesting: OrmlVestingCall,
+        PDEXMigration: PDEXMigrationCall,
         Proxy: ProxyCall,
-        Registrar: RegistrarCall,
+        Recovery: RecoveryCall,
         Scheduler: SchedulerCall,
         Session: SessionCall,
-        Slots: SlotsCall,
         Staking: StakingCall,
         Sudo: SudoCall,
         System: SystemCall,
@@ -4781,82 +4256,44 @@ export const Proposal: sts.Type<Proposal> = sts.closedEnum(() => {
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         Utility: UtilityCall,
-        Vesting: VestingCall,
     }
 })
-
-export const VestingCall: sts.Type<VestingCall> = sts.closedEnum(() => {
-    return  {
-        force_vested_transfer: sts.enumStruct({
-            source: LookupSource,
-            target: LookupSource,
-            schedule: VestingInfo,
-        }),
-        vest: sts.unit(),
-        vest_other: sts.enumStruct({
-            target: LookupSource,
-        }),
-        vested_transfer: sts.enumStruct({
-            target: LookupSource,
-            schedule: VestingInfo,
-        }),
-    }
-})
-
-export const VestingInfo: sts.Type<VestingInfo> = sts.struct(() => {
-    return  {
-        locked: Balance,
-        perBlock: Balance,
-        startingBlock: BlockNumber,
-    }
-})
-
-export const BlockNumber = sts.number()
-
-export const Balance = sts.bigint()
-
-export const LookupSource = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
-        as_limited_sub: sts.enumStruct({
+        as_derivative: sts.enumStruct({
             index: sts.number(),
-            call: Type_44,
-        }),
-        as_sub: sts.enumStruct({
-            index: sts.number(),
-            call: Type_44,
+            call: Type_47,
         }),
         batch: sts.enumStruct({
-            calls: sts.array(() => Type_44),
+            calls: sts.array(() => Type_47),
+        }),
+        batch_all: sts.enumStruct({
+            calls: sts.array(() => Type_47),
         }),
     }
 })
 
-export const Type_44: sts.Type<Type_44> = sts.closedEnum(() => {
+export const Type_47: sts.Type<Type_47> = sts.closedEnum(() => {
     return  {
-        Attestations: AttestationsCall,
-        AuthorityDiscovery: AuthorityDiscoveryCall,
         Authorship: AuthorshipCall,
         Babe: BabeCall,
         Balances: BalancesCall,
-        Claims: ClaimsCall,
+        Bounties: BountiesCall,
         Council: CouncilCall,
-        Democracy: DemocracyCall,
-        ElectionsPhragmen: ElectionsPhragmenCall,
-        FinalityTracker: FinalityTrackerCall,
+        ElectionProviderMultiPhase: ElectionProviderMultiPhaseCall,
+        Elections: ElectionsCall,
         Grandpa: GrandpaCall,
         Identity: IdentityCall,
         ImOnline: ImOnlineCall,
         Indices: IndicesCall,
         Multisig: MultisigCall,
-        Offences: OffencesCall,
-        Parachains: ParachainsCall,
+        OrmlVesting: OrmlVestingCall,
+        PDEXMigration: PDEXMigrationCall,
         Proxy: ProxyCall,
-        Registrar: RegistrarCall,
+        Recovery: RecoveryCall,
         Scheduler: SchedulerCall,
         Session: SessionCall,
-        Slots: SlotsCall,
         Staking: StakingCall,
         Sudo: SudoCall,
         System: SystemCall,
@@ -4865,7 +4302,6 @@ export const Type_44: sts.Type<Type_44> = sts.closedEnum(() => {
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         Utility: UtilityCall,
-        Vesting: VestingCall,
     }
 })
 
@@ -4874,9 +4310,6 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
         approve_proposal: sts.enumStruct({
             proposalId: sts.number(),
         }),
-        close_tip: sts.enumStruct({
-            hash: Hash,
-        }),
         propose_spend: sts.enumStruct({
             value: sts.bigint(),
             beneficiary: LookupSource,
@@ -4884,28 +4317,8 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
         reject_proposal: sts.enumStruct({
             proposalId: sts.number(),
         }),
-        report_awesome: sts.enumStruct({
-            reason: sts.bytes(),
-            who: AccountId,
-        }),
-        retract_tip: sts.enumStruct({
-            hash: Hash,
-        }),
-        tip: sts.enumStruct({
-            hash: Hash,
-            tipValue: BalanceOf,
-        }),
-        tip_new: sts.enumStruct({
-            reason: sts.bytes(),
-            who: AccountId,
-            tipValue: BalanceOf,
-        }),
     }
 })
-
-export const BalanceOf = sts.bigint()
-
-export const AccountId = sts.bytes()
 
 export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
     return  {
@@ -4973,8 +4386,6 @@ export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.clos
     }
 })
 
-export const MemberCount = sts.number()
-
 export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     return  {
         fill_block: sts.enumStruct({
@@ -4988,6 +4399,9 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
             keys: sts.array(() => Key),
         }),
         remark: sts.enumStruct({
+            remark: sts.bytes(),
+        }),
+        remark_with_event: sts.enumStruct({
             remark: sts.bytes(),
         }),
         set_changes_trie_config: sts.enumStruct({
@@ -5005,7 +4419,6 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
         set_storage: sts.enumStruct({
             items: sts.array(() => KeyValue),
         }),
-        suicide: sts.unit(),
     }
 })
 
@@ -5032,14 +4445,14 @@ export const SudoCall: sts.Type<SudoCall> = sts.closedEnum(() => {
             new: LookupSource,
         }),
         sudo: sts.enumStruct({
-            call: Type_44,
+            call: Type_47,
         }),
         sudo_as: sts.enumStruct({
             who: LookupSource,
-            call: Type_44,
+            call: Type_47,
         }),
         sudo_unchecked_weight: sts.enumStruct({
-            call: Type_44,
+            call: Type_47,
             weight: Weight,
         }),
     }
@@ -5062,12 +4475,21 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
             slashIndices: sts.array(() => sts.number()),
         }),
         chill: sts.unit(),
+        chill_other: sts.enumStruct({
+            controller: AccountId,
+        }),
         force_new_era: sts.unit(),
         force_new_era_always: sts.unit(),
         force_no_eras: sts.unit(),
         force_unstake: sts.enumStruct({
             stash: AccountId,
             numSlashingSpans: sts.number(),
+        }),
+        increase_validator_count: sts.enumStruct({
+            additional: sts.number(),
+        }),
+        kick: sts.enumStruct({
+            who: sts.array(() => LookupSource),
         }),
         nominate: sts.enumStruct({
             targets: sts.array(() => LookupSource),
@@ -5083,6 +4505,9 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
         rebond: sts.enumStruct({
             value: sts.bigint(),
         }),
+        scale_validator_count: sts.enumStruct({
+            factor: Percent,
+        }),
         set_controller: sts.enumStruct({
             controller: LookupSource,
         }),
@@ -5091,27 +4516,20 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
             eraItemsDeleted: sts.number(),
         }),
         set_invulnerables: sts.enumStruct({
-            validators: sts.array(() => AccountId),
+            invulnerables: sts.array(() => AccountId),
         }),
         set_payee: sts.enumStruct({
             payee: RewardDestination,
         }),
+        set_staking_limits: sts.enumStruct({
+            minNominatorBond: BalanceOf,
+            minValidatorBond: BalanceOf,
+            maxNominatorCount: sts.option(() => sts.number()),
+            maxValidatorCount: sts.option(() => sts.number()),
+            threshold: sts.option(() => Percent),
+        }),
         set_validator_count: sts.enumStruct({
             new: sts.number(),
-        }),
-        submit_election_solution: sts.enumStruct({
-            winners: sts.array(() => ValidatorIndex),
-            compact: CompactAssignments,
-            score: ElectionScore,
-            era: EraIndex,
-            size: ElectionSize,
-        }),
-        submit_election_solution_unsigned: sts.enumStruct({
-            winners: sts.array(() => ValidatorIndex),
-            compact: CompactAssignments,
-            score: ElectionScore,
-            era: EraIndex,
-            size: ElectionSize,
         }),
         unbond: sts.enumStruct({
             value: sts.bigint(),
@@ -5128,46 +4546,13 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
 export const ValidatorPrefs: sts.Type<ValidatorPrefs> = sts.struct(() => {
     return  {
         commission: sts.number(),
+        blocked: sts.boolean(),
     }
 })
 
-export const ElectionSize: sts.Type<ElectionSize> = sts.struct(() => {
-    return  {
-        validators: sts.number(),
-        nominators: sts.number(),
-    }
-})
+export const BalanceOf = sts.bigint()
 
-export const ElectionScore = sts.array(() => sts.bigint())
-
-export const CompactAssignments: sts.Type<CompactAssignments> = sts.struct(() => {
-    return  {
-        votes1: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes2: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes3: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes4: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes5: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes6: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes7: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes8: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes9: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes10: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes11: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes12: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes13: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes14: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes15: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-        votes16: sts.array(() => sts.tuple(() => [NominatorIndex, sts.array(() => CompactScore), ValidatorIndex])),
-    }
-})
-
-export const CompactScore = sts.tuple(() => [ValidatorIndex, OffchainAccuracy])
-
-export const OffchainAccuracy = sts.number()
-
-export const NominatorIndex = sts.number()
-
-export const ValidatorIndex = sts.number()
+export const Percent = sts.number()
 
 export const EraIndex = sts.number()
 
@@ -5181,46 +4566,6 @@ export const RewardDestination: sts.Type<RewardDestination> = sts.closedEnum(() 
     }
 })
 
-export const SlotsCall: sts.Type<SlotsCall> = sts.closedEnum(() => {
-    return  {
-        bid: sts.enumStruct({
-            sub: sts.number(),
-            auctionIndex: sts.number(),
-            firstSlot: sts.number(),
-            lastSlot: sts.number(),
-            amount: sts.bigint(),
-        }),
-        bid_renew: sts.enumStruct({
-            auctionIndex: sts.number(),
-            firstSlot: sts.number(),
-            lastSlot: sts.number(),
-            amount: sts.bigint(),
-        }),
-        elaborate_deploy_data: sts.enumStruct({
-            paraId: sts.number(),
-            code: ValidationCode,
-        }),
-        fix_deploy_data: sts.enumStruct({
-            sub: sts.number(),
-            paraId: sts.number(),
-            codeHash: Hash,
-            codeSize: sts.number(),
-            initialHeadData: HeadData,
-        }),
-        new_auction: sts.enumStruct({
-            duration: sts.number(),
-            leasePeriodIndex: sts.number(),
-        }),
-        set_offboarding: sts.enumStruct({
-            dest: LookupSource,
-        }),
-    }
-})
-
-export const HeadData = sts.bytes()
-
-export const ValidationCode = sts.bytes()
-
 export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     return  {
         purge_keys: sts.unit(),
@@ -5231,7 +4576,7 @@ export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     }
 })
 
-export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId, AccountId])
+export const Keys = sts.tuple(() => [AccountId, AccountId, AccountId, AccountId])
 
 export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
     return  {
@@ -5246,14 +4591,27 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_44,
+            call: Type_47,
+        }),
+        schedule_after: sts.enumStruct({
+            after: BlockNumber,
+            maybePeriodic: sts.option(() => Period),
+            priority: Priority,
+            call: Type_47,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: BlockNumber,
             maybePeriodic: sts.option(() => Period),
             priority: Priority,
-            call: Type_44,
+            call: Type_47,
+        }),
+        schedule_named_after: sts.enumStruct({
+            id: sts.bytes(),
+            after: BlockNumber,
+            maybePeriodic: sts.option(() => Period),
+            priority: Priority,
+            call: Type_47,
         }),
     }
 })
@@ -5262,54 +4620,55 @@ export const Priority = sts.number()
 
 export const Period = sts.tuple(() => [BlockNumber, sts.number()])
 
-export const RegistrarCall: sts.Type<RegistrarCall> = sts.closedEnum(() => {
+export const RecoveryCall: sts.Type<RecoveryCall> = sts.closedEnum(() => {
     return  {
-        deregister_para: sts.enumStruct({
-            id: sts.number(),
+        as_recovered: sts.enumStruct({
+            account: AccountId,
+            call: Type_47,
         }),
-        deregister_parathread: sts.unit(),
-        register_para: sts.enumStruct({
-            id: sts.number(),
-            info: ParaInfo,
-            code: ValidationCode,
-            initialHeadData: HeadData,
+        cancel_recovered: sts.enumStruct({
+            account: AccountId,
         }),
-        register_parathread: sts.enumStruct({
-            code: ValidationCode,
-            initialHeadData: HeadData,
+        claim_recovery: sts.enumStruct({
+            account: AccountId,
         }),
-        select_parathread: sts.enumStruct({
-            id: sts.number(),
-            collator: CollatorId,
-            headHash: Hash,
+        close_recovery: sts.enumStruct({
+            rescuer: AccountId,
         }),
-        set_thread_count: sts.enumStruct({
-            count: sts.number(),
+        create_recovery: sts.enumStruct({
+            friends: sts.array(() => AccountId),
+            threshold: sts.number(),
+            delayPeriod: BlockNumber,
         }),
-        swap: sts.enumStruct({
-            other: sts.number(),
+        initiate_recovery: sts.enumStruct({
+            account: AccountId,
         }),
-    }
-})
-
-export const CollatorId = sts.bytes()
-
-export const ParaInfo: sts.Type<ParaInfo> = sts.struct(() => {
-    return  {
-        manager: AccountId,
-        deposit: Balance,
-        locked: sts.boolean(),
+        remove_recovery: sts.unit(),
+        set_recovered: sts.enumStruct({
+            lost: AccountId,
+            rescuer: AccountId,
+        }),
+        vouch_recovery: sts.enumStruct({
+            lost: AccountId,
+            rescuer: AccountId,
+        }),
     }
 })
 
 export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
     return  {
         add_proxy: sts.enumStruct({
-            proxy: AccountId,
+            delegate: AccountId,
             proxyType: ProxyType,
+            delay: BlockNumber,
+        }),
+        announce: sts.enumStruct({
+            real: AccountId,
+            callHash: CallHashOf,
         }),
         anonymous: sts.enumStruct({
             proxyType: ProxyType,
+            delay: BlockNumber,
             index: sts.number(),
         }),
         kill_anonymous: sts.enumStruct({
@@ -5322,136 +4681,86 @@ export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
         proxy: sts.enumStruct({
             real: AccountId,
             forceProxyType: sts.option(() => ProxyType),
-            call: Type_44,
+            call: Type_47,
+        }),
+        proxy_announced: sts.enumStruct({
+            delegate: AccountId,
+            real: AccountId,
+            forceProxyType: sts.option(() => ProxyType),
+            call: Type_47,
+        }),
+        reject_announcement: sts.enumStruct({
+            delegate: AccountId,
+            callHash: CallHashOf,
+        }),
+        remove_announcement: sts.enumStruct({
+            real: AccountId,
+            callHash: CallHashOf,
         }),
         remove_proxies: sts.unit(),
         remove_proxy: sts.enumStruct({
-            proxy: AccountId,
+            delegate: AccountId,
             proxyType: ProxyType,
+            delay: BlockNumber,
         }),
     }
 })
+
+export const CallHashOf = sts.bytes()
 
 export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
     return  {
         Any: sts.unit(),
-        Auction: sts.unit(),
-        CancelProxy: sts.unit(),
         Governance: sts.unit(),
-        IdentityJudgement: sts.unit(),
         NonTransfer: sts.unit(),
         Staking: sts.unit(),
-        UnusedSudoBalances: sts.unit(),
     }
 })
 
-export const ParachainsCall: sts.Type<ParachainsCall> = sts.closedEnum(() => {
+export const PDEXMigrationCall: sts.Type<PDEXMigrationCall> = sts.closedEnum(() => {
     return  {
-        report_double_vote: sts.enumStruct({
-            report: DoubleVoteReport,
+        mint: sts.enumStruct({
+            beneficiary: AccountId,
+            amount: Balance,
+            ethTx: Hash,
         }),
-        set_heads: sts.enumStruct({
-            heads: sts.array(() => AttestedCandidate),
+        remove_minted_tokens: sts.enumStruct({
+            beneficiary: AccountId,
+        }),
+        set_migration_operational_status: sts.enumStruct({
+            status: sts.boolean(),
+        }),
+        set_relayer_status: sts.enumStruct({
+            relayer: AccountId,
+            status: sts.boolean(),
+        }),
+        unlock: sts.unit(),
+    }
+})
+
+export const OrmlVestingCall: sts.Type<OrmlVestingCall> = sts.closedEnum(() => {
+    return  {
+        claim: sts.unit(),
+        claim_for: sts.enumStruct({
+            dest: LookupSource,
+        }),
+        update_vesting_schedules: sts.enumStruct({
+            who: LookupSource,
+            vestingSchedules: sts.array(() => VestingScheduleOf),
+        }),
+        vested_transfer: sts.enumStruct({
+            dest: LookupSource,
+            schedule: VestingScheduleOf,
         }),
     }
 })
 
-export const AttestedCandidate: sts.Type<AttestedCandidate> = sts.struct(() => {
+export const VestingScheduleOf: sts.Type<VestingScheduleOf> = sts.struct(() => {
     return  {
-        candidate: AbridgedCandidateReceipt,
-        validityVotes: sts.array(() => ValidityAttestation),
-        validatorIndices: sts.bitseq(),
-    }
-})
-
-export const ValidityAttestation: sts.Type<ValidityAttestation> = sts.closedEnum(() => {
-    return  {
-        Explicit: ValidatorSignature,
-        Implicit: ValidatorSignature,
-        Never: sts.unit(),
-    }
-})
-
-export const ValidatorSignature = sts.bytes()
-
-export const AbridgedCandidateReceipt: sts.Type<AbridgedCandidateReceipt> = sts.struct(() => {
-    return  {
-        parachainIndex: ParaId,
-        relayParent: Hash,
-        headData: HeadData,
-        collator: CollatorId,
-        signature: CollatorSignature,
-        povBlockHash: Hash,
-        commitments: CandidateCommitments,
-    }
-})
-
-export const CandidateCommitments: sts.Type<CandidateCommitments> = sts.struct(() => {
-    return  {
-        upwardMessages: sts.array(() => UpwardMessage),
-        horizontalMessages: sts.array(() => OutboundHrmpMessage),
-        newValidationCode: sts.option(() => ValidationCode),
-        headData: HeadData,
-        processedDownwardMessages: sts.number(),
-        hrmpWatermark: BlockNumber,
-    }
-})
-
-export const OutboundHrmpMessage: sts.Type<OutboundHrmpMessage> = sts.struct(() => {
-    return  {
-        recipient: sts.number(),
-        data: sts.bytes(),
-    }
-})
-
-export const UpwardMessage = sts.bytes()
-
-export const CollatorSignature = sts.bytes()
-
-export const ParaId = sts.number()
-
-export const DoubleVoteReport: sts.Type<DoubleVoteReport> = sts.struct(() => {
-    return  {
-        identity: ValidatorId,
-        first: sts.tuple(() => [Statement, ValidatorSignature]),
-        second: sts.tuple(() => [Statement, ValidatorSignature]),
-        proof: MembershipProof,
-        signingContext: SigningContext,
-    }
-})
-
-export const SigningContext: sts.Type<SigningContext> = sts.struct(() => {
-    return  {
-        sessionIndex: SessionIndex,
-        parentHash: Hash,
-    }
-})
-
-export const SessionIndex = sts.number()
-
-export const MembershipProof: sts.Type<MembershipProof> = sts.struct(() => {
-    return  {
-        session: SessionIndex,
-        trieNodes: sts.array(() => sts.bytes()),
-        validatorCount: ValidatorCount,
-    }
-})
-
-export const ValidatorCount = sts.number()
-
-export const Statement: sts.Type<Statement> = sts.closedEnum(() => {
-    return  {
-        Candidate: Hash,
-        Invalid: Hash,
-        Never: sts.unit(),
-        Valid: Hash,
-    }
-})
-
-export const ValidatorId = sts.bytes()
-
-export const OffencesCall: sts.Type<OffencesCall> = sts.closedEnum(() => {
-    return  {
+        start: BlockNumber,
+        period: BlockNumber,
+        periodCount: sts.number(),
+        perPeriod: sts.bigint(),
     }
 })
 
@@ -5468,13 +4777,13 @@ export const MultisigCall: sts.Type<MultisigCall> = sts.closedEnum(() => {
             threshold: sts.number(),
             otherSignatories: sts.array(() => AccountId),
             maybeTimepoint: sts.option(() => Timepoint),
-            call: sts.bytes(),
+            call: OpaqueCall,
             storeCall: sts.boolean(),
             maxWeight: Weight,
         }),
         as_multi_threshold_1: sts.enumStruct({
             otherSignatories: sts.array(() => AccountId),
-            call: Type_44,
+            call: Type_47,
         }),
         cancel_as_multi: sts.enumStruct({
             threshold: sts.number(),
@@ -5484,6 +4793,8 @@ export const MultisigCall: sts.Type<MultisigCall> = sts.closedEnum(() => {
         }),
     }
 })
+
+export const OpaqueCall = sts.bytes()
 
 export const Timepoint: sts.Type<Timepoint> = sts.struct(() => {
     return  {
@@ -5540,6 +4851,8 @@ export const Heartbeat: sts.Type<Heartbeat> = sts.struct(() => {
 
 export const AuthIndex = sts.number()
 
+export const SessionIndex = sts.number()
+
 export const OpaqueNetworkState: sts.Type<OpaqueNetworkState> = sts.struct(() => {
     return  {
         peerId: OpaquePeerId,
@@ -5556,6 +4869,10 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
         add_registrar: sts.enumStruct({
             account: AccountId,
         }),
+        add_sub: sts.enumStruct({
+            sub: LookupSource,
+            data: Data,
+        }),
         cancel_request: sts.enumStruct({
             regIndex: RegistrarIndex,
         }),
@@ -5567,6 +4884,14 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
             regIndex: sts.number(),
             target: LookupSource,
             judgement: IdentityJudgement,
+        }),
+        quit_sub: sts.unit(),
+        remove_sub: sts.enumStruct({
+            sub: LookupSource,
+        }),
+        rename_sub: sts.enumStruct({
+            sub: LookupSource,
+            data: Data,
         }),
         request_judgement: sts.enumStruct({
             regIndex: sts.number(),
@@ -5592,6 +4917,38 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
         }),
     }
 })
+
+export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
+    return  {
+        additional: sts.array(() => IdentityInfoAdditional),
+        display: Data,
+        legal: Data,
+        web: Data,
+        riot: Data,
+        email: Data,
+        pgpFingerprint: sts.option(() => H160),
+        image: Data,
+        twitter: Data,
+    }
+})
+
+export const H160 = sts.bytes()
+
+export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
+
+export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() => {
+    return  {
+        Erroneous: sts.unit(),
+        FeePaid: Balance,
+        KnownGood: sts.unit(),
+        LowQuality: sts.unit(),
+        OutOfDate: sts.unit(),
+        Reasonable: sts.unit(),
+        Unknown: sts.unit(),
+    }
+})
+
+export const RegistrarIndex = sts.number()
 
 export const Data: sts.Type<Data> = sts.closedEnum(() => {
     return  {
@@ -5638,41 +4995,17 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
 
 export const H256 = sts.bytes()
 
-export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
-    return  {
-        additional: sts.array(() => IdentityInfoAdditional),
-        display: Data,
-        legal: Data,
-        web: Data,
-        riot: Data,
-        email: Data,
-        pgpFingerprint: sts.option(() => H160),
-        image: Data,
-        twitter: Data,
-    }
-})
-
-export const H160 = sts.bytes()
-
-export const IdentityInfoAdditional = sts.tuple(() => [Data, Data])
-
-export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() => {
-    return  {
-        Erroneous: sts.unit(),
-        FeePaid: Balance,
-        KnownGood: sts.unit(),
-        LowQuality: sts.unit(),
-        OutOfDate: sts.unit(),
-        Reasonable: sts.unit(),
-        Unknown: sts.unit(),
-    }
-})
-
-export const RegistrarIndex = sts.number()
-
 export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
     return  {
+        note_stalled: sts.enumStruct({
+            delay: BlockNumber,
+            bestFinalizedBlockNumber: BlockNumber,
+        }),
         report_equivocation: sts.enumStruct({
+            equivocationProof: GrandpaEquivocationProof,
+            keyOwnerProof: KeyOwnerProof,
+        }),
+        report_equivocation_unsigned: sts.enumStruct({
             equivocationProof: GrandpaEquivocationProof,
             keyOwnerProof: KeyOwnerProof,
         }),
@@ -5686,6 +5019,8 @@ export const KeyOwnerProof: sts.Type<KeyOwnerProof> = sts.struct(() => {
         validatorCount: ValidatorCount,
     }
 })
+
+export const ValidatorCount = sts.number()
 
 export const GrandpaEquivocationProof: sts.Type<GrandpaEquivocationProof> = sts.struct(() => {
     return  {
@@ -5723,16 +5058,12 @@ export const AuthorityId = sts.bytes()
 
 export const SetId = sts.bigint()
 
-export const FinalityTrackerCall: sts.Type<FinalityTrackerCall> = sts.closedEnum(() => {
+export const ElectionsCall: sts.Type<ElectionsCall> = sts.closedEnum(() => {
     return  {
-        final_hint: sts.enumStruct({
-            hint: sts.number(),
+        clean_defunct_voters: sts.enumStruct({
+            numVoters: sts.number(),
+            numDefunct: sts.number(),
         }),
-    }
-})
-
-export const ElectionsPhragmenCall: sts.Type<ElectionsPhragmenCall> = sts.closedEnum(() => {
-    return  {
         remove_member: sts.enumStruct({
             who: LookupSource,
             hasReplacement: sts.boolean(),
@@ -5740,9 +5071,6 @@ export const ElectionsPhragmenCall: sts.Type<ElectionsPhragmenCall> = sts.closed
         remove_voter: sts.unit(),
         renounce_candidacy: sts.enumStruct({
             renouncing: Renouncing,
-        }),
-        report_defunct_voter: sts.enumStruct({
-            defunct: DefunctVoter,
         }),
         submit_candidacy: sts.enumStruct({
             candidateCount: sts.number(),
@@ -5754,14 +5082,6 @@ export const ElectionsPhragmenCall: sts.Type<ElectionsPhragmenCall> = sts.closed
     }
 })
 
-export const DefunctVoter: sts.Type<DefunctVoter> = sts.struct(() => {
-    return  {
-        who: AccountId,
-        voteCount: sts.number(),
-        candidateCount: sts.number(),
-    }
-})
-
 export const Renouncing: sts.Type<Renouncing> = sts.closedEnum(() => {
     return  {
         Candidate: sts.number(),
@@ -5770,122 +5090,79 @@ export const Renouncing: sts.Type<Renouncing> = sts.closedEnum(() => {
     }
 })
 
-export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
+export const ElectionProviderMultiPhaseCall: sts.Type<ElectionProviderMultiPhaseCall> = sts.closedEnum(() => {
     return  {
-        cancel_queued: sts.enumStruct({
-            which: ReferendumIndex,
+        set_emergency_election_result: sts.enumStruct({
+            supports: sts.array(() => sts.tuple(() => [AccountId, SolutionSupport])),
         }),
-        cancel_referendum: sts.enumStruct({
-            refIndex: sts.number(),
+        set_minimum_untrusted_score: sts.enumStruct({
+            maybeNextScore: sts.option(() => ElectionScore),
         }),
-        clear_public_proposals: sts.unit(),
-        delegate: sts.enumStruct({
-            to: AccountId,
-            conviction: Conviction,
-            balance: BalanceOf,
+        submit: sts.enumStruct({
+            rawSolution: RawSolution,
+            numSignedSubmissions: sts.number(),
         }),
-        emergency_cancel: sts.enumStruct({
-            refIndex: ReferendumIndex,
-        }),
-        enact_proposal: sts.enumStruct({
-            proposalHash: Hash,
-            index: ReferendumIndex,
-        }),
-        external_propose: sts.enumStruct({
-            proposalHash: Hash,
-        }),
-        external_propose_default: sts.enumStruct({
-            proposalHash: Hash,
-        }),
-        external_propose_majority: sts.enumStruct({
-            proposalHash: Hash,
-        }),
-        fast_track: sts.enumStruct({
-            proposalHash: Hash,
-            votingPeriod: BlockNumber,
-            delay: BlockNumber,
-        }),
-        note_imminent_preimage: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_imminent_preimage_operational: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_preimage: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_preimage_operational: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        propose: sts.enumStruct({
-            proposalHash: Hash,
-            value: sts.bigint(),
-        }),
-        reap_preimage: sts.enumStruct({
-            proposalHash: Hash,
-            proposalLenUpperBound: sts.number(),
-        }),
-        remove_other_vote: sts.enumStruct({
-            target: AccountId,
-            index: ReferendumIndex,
-        }),
-        remove_vote: sts.enumStruct({
-            index: ReferendumIndex,
-        }),
-        second: sts.enumStruct({
-            proposal: sts.number(),
-            secondsUpperBound: sts.number(),
-        }),
-        undelegate: sts.unit(),
-        unlock: sts.enumStruct({
-            target: AccountId,
-        }),
-        veto_external: sts.enumStruct({
-            proposalHash: Hash,
-        }),
-        vote: sts.enumStruct({
-            refIndex: sts.number(),
-            vote: AccountVote,
+        submit_unsigned: sts.enumStruct({
+            rawSolution: RawSolution,
+            witness: SolutionOrSnapshotSize,
         }),
     }
 })
 
-export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
+export const SolutionOrSnapshotSize: sts.Type<SolutionOrSnapshotSize> = sts.struct(() => {
     return  {
-        Split: AccountVoteSplit,
-        Standard: AccountVoteStandard,
+        voters: sts.number(),
+        targets: sts.number(),
     }
 })
 
-export const AccountVoteStandard: sts.Type<AccountVoteStandard> = sts.struct(() => {
+export const RawSolution: sts.Type<RawSolution> = sts.struct(() => {
     return  {
-        vote: Vote,
-        balance: Balance,
+        compact: CompactAssignmentsWith16,
+        score: ElectionScore,
+        round: sts.number(),
     }
 })
 
-export const Vote = sts.number()
-
-export const AccountVoteSplit: sts.Type<AccountVoteSplit> = sts.struct(() => {
+export const CompactAssignmentsWith16: sts.Type<CompactAssignmentsWith16> = sts.struct(() => {
     return  {
-        aye: Balance,
-        nay: Balance,
+        votes1: sts.array(() => sts.tuple(() => [NominatorIndexCompact, ValidatorIndexCompact])),
+        votes2: sts.array(() => sts.tuple(() => [NominatorIndexCompact, CompactScoreCompact, ValidatorIndexCompact])),
+        votes3: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes4: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes5: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes6: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes7: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes8: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes9: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes10: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes11: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes12: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes13: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes14: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes15: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
+        votes16: sts.array(() => sts.tuple(() => [NominatorIndexCompact, sts.array(() => CompactScoreCompact), ValidatorIndexCompact])),
     }
 })
 
-export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
+export const CompactScoreCompact = sts.tuple(() => [ValidatorIndexCompact, OffchainAccuracyCompact])
+
+export const OffchainAccuracyCompact = sts.number()
+
+export const ValidatorIndexCompact = sts.number()
+
+export const NominatorIndexCompact = sts.number()
+
+export const ElectionScore = sts.array(() => sts.bigint())
+
+export const SolutionSupport: sts.Type<SolutionSupport> = sts.struct(() => {
     return  {
-        Locked1x: sts.unit(),
-        Locked2x: sts.unit(),
-        Locked3x: sts.unit(),
-        Locked4x: sts.unit(),
-        Locked5x: sts.unit(),
-        Locked6x: sts.unit(),
-        None: sts.unit(),
+        total: ExtendedBalance,
+        voters: sts.array(() => sts.tuple(() => [AccountId, ExtendedBalance])),
     }
 })
 
-export const ReferendumIndex = sts.number()
+export const ExtendedBalance = sts.bigint()
 
 export const CouncilCall: sts.Type<CouncilCall> = sts.closedEnum(() => {
     return  {
@@ -5920,44 +5197,42 @@ export const CouncilCall: sts.Type<CouncilCall> = sts.closedEnum(() => {
     }
 })
 
-export const ClaimsCall: sts.Type<ClaimsCall> = sts.closedEnum(() => {
+export const BountiesCall: sts.Type<BountiesCall> = sts.closedEnum(() => {
     return  {
-        attest: sts.enumStruct({
-            statement: sts.bytes(),
+        accept_curator: sts.enumStruct({
+            bountyId: sts.number(),
         }),
-        claim: sts.enumStruct({
-            dest: AccountId,
-            ethereumSignature: EcdsaSignature,
+        approve_bounty: sts.enumStruct({
+            bountyId: sts.number(),
         }),
-        claim_attest: sts.enumStruct({
-            dest: AccountId,
-            ethereumSignature: EcdsaSignature,
-            statement: sts.bytes(),
+        award_bounty: sts.enumStruct({
+            bountyId: sts.number(),
+            beneficiary: LookupSource,
         }),
-        mint_claim: sts.enumStruct({
-            who: EthereumAddress,
-            value: BalanceOf,
-            vestingSchedule: sts.option(() => sts.tuple(() => [BalanceOf, BalanceOf, BlockNumber])),
-            statement: sts.option(() => StatementKind),
+        claim_bounty: sts.enumStruct({
+            bountyId: sts.number(),
         }),
-        move_claim: sts.enumStruct({
-            old: EthereumAddress,
-            new: EthereumAddress,
-            maybePreclaim: sts.option(() => AccountId),
+        close_bounty: sts.enumStruct({
+            bountyId: sts.number(),
+        }),
+        extend_bounty_expiry: sts.enumStruct({
+            bountyId: sts.number(),
+            remark: sts.bytes(),
+        }),
+        propose_bounty: sts.enumStruct({
+            value: sts.bigint(),
+            description: sts.bytes(),
+        }),
+        propose_curator: sts.enumStruct({
+            bountyId: sts.number(),
+            curator: LookupSource,
+            fee: sts.bigint(),
+        }),
+        unassign_curator: sts.enumStruct({
+            bountyId: sts.number(),
         }),
     }
 })
-
-export const StatementKind: sts.Type<StatementKind> = sts.closedEnum(() => {
-    return  {
-        Regular: sts.unit(),
-        Saft: sts.unit(),
-    }
-})
-
-export const EthereumAddress = sts.bytes()
-
-export const EcdsaSignature = sts.bytes()
 
 export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
     return  {
@@ -5975,6 +5250,10 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
             dest: LookupSource,
             value: sts.bigint(),
         }),
+        transfer_all: sts.enumStruct({
+            dest: LookupSource,
+            keepAlive: sts.boolean(),
+        }),
         transfer_keep_alive: sts.enumStruct({
             dest: LookupSource,
             value: sts.bigint(),
@@ -5984,14 +5263,26 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
 
 export const BabeCall: sts.Type<BabeCall> = sts.closedEnum(() => {
     return  {
+        plan_config_change: sts.enumStruct({
+            config: NextConfigDescriptor,
+        }),
+        report_equivocation: sts.enumStruct({
+            equivocationProof: BabeEquivocationProof,
+            keyOwnerProof: KeyOwnerProof,
+        }),
+        report_equivocation_unsigned: sts.enumStruct({
+            equivocationProof: BabeEquivocationProof,
+            keyOwnerProof: KeyOwnerProof,
+        }),
     }
 })
 
-export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
+export const BabeEquivocationProof: sts.Type<BabeEquivocationProof> = sts.struct(() => {
     return  {
-        set_uncles: sts.enumStruct({
-            newUncles: sts.array(() => Header),
-        }),
+        offender: AuthorityId,
+        slotNumber: SlotNumber,
+        firstHeader: Header,
+        secondHeader: Header,
     }
 })
 
@@ -6041,15 +5332,213 @@ export const ChangesTrieSignal: sts.Type<ChangesTrieSignal> = sts.closedEnum(() 
     }
 })
 
-export const AuthorityDiscoveryCall: sts.Type<AuthorityDiscoveryCall> = sts.closedEnum(() => {
+export const SlotNumber = sts.bigint()
+
+export const NextConfigDescriptor: sts.Type<NextConfigDescriptor> = sts.closedEnum(() => {
     return  {
+        V0: sts.unit(),
+        V1: NextConfigDescriptorV1,
     }
 })
 
-export const AttestationsCall: sts.Type<AttestationsCall> = sts.closedEnum(() => {
+export const NextConfigDescriptorV1: sts.Type<NextConfigDescriptorV1> = sts.struct(() => {
     return  {
-        more_attestations: sts.unit(),
+        c: sts.tuple(() => [sts.bigint(), sts.bigint()]),
+        allowedSlots: AllowedSlots,
     }
 })
+
+export const AllowedSlots: sts.Type<AllowedSlots> = sts.closedEnum(() => {
+    return  {
+        PrimaryAndSecondaryPlainSlots: sts.unit(),
+        PrimaryAndSecondaryVRFSlots: sts.unit(),
+        PrimarySlots: sts.unit(),
+    }
+})
+
+export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
+    return  {
+        set_uncles: sts.enumStruct({
+            newUncles: sts.array(() => Header),
+        }),
+    }
+})
+
+export type AccountId = Bytes
+
+export interface AccountData {
+    free: Balance
+    reserved: Balance
+    miscFrozen: Balance
+    feeFrozen: Balance
+}
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
+    return  {
+        free: Balance,
+        reserved: Balance,
+        miscFrozen: Balance,
+        feeFrozen: Balance,
+    }
+})
+
+export type Balance = bigint
+
+export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
+    return  {
+        Address20: H160,
+        Address32: H256,
+        Id: AccountId,
+        Index: sts.number(),
+        Raw: sts.bytes(),
+    }
+})
+
+export const BountyIndex = sts.number()
+
+export const TaskAddress = sts.tuple(() => [BlockNumber, sts.number()])
+
+export const BlockNumber = sts.number()
+
+export const Balance = sts.bigint()
+
+export const DispatchResult = sts.result(() => sts.unit(), () => DispatchError)
+
+export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
+    return  {
+        Arithmetic: ArithmeticError,
+        BadOrigin: sts.unit(),
+        CannotLookup: sts.unit(),
+        ConsumerRemaining: sts.unit(),
+        Module: DispatchErrorModule,
+        NoProviders: sts.unit(),
+        Other: sts.unit(),
+        Token: TokenError,
+    }
+})
+
+export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
+    return  {
+        BelowMinimum: sts.unit(),
+        CannotCreate: sts.unit(),
+        Frozen: sts.unit(),
+        NoFunds: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+        UnknownAsset: sts.unit(),
+        WouldDie: sts.unit(),
+    }
+})
+
+export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_Frozen | TokenError_NoFunds | TokenError_Overflow | TokenError_Underflow | TokenError_UnknownAsset | TokenError_WouldDie
+
+export interface TokenError_BelowMinimum {
+    __kind: 'BelowMinimum'
+}
+
+export interface TokenError_CannotCreate {
+    __kind: 'CannotCreate'
+}
+
+export interface TokenError_Frozen {
+    __kind: 'Frozen'
+}
+
+export interface TokenError_NoFunds {
+    __kind: 'NoFunds'
+}
+
+export interface TokenError_Overflow {
+    __kind: 'Overflow'
+}
+
+export interface TokenError_Underflow {
+    __kind: 'Underflow'
+}
+
+export interface TokenError_UnknownAsset {
+    __kind: 'UnknownAsset'
+}
+
+export interface TokenError_WouldDie {
+    __kind: 'WouldDie'
+}
+
+export const DispatchErrorModule: sts.Type<DispatchErrorModule> = sts.struct(() => {
+    return  {
+        index: sts.number(),
+        error: sts.number(),
+    }
+})
+
+export interface DispatchErrorModule {
+    index: number
+    error: number
+}
+
+export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
+    return  {
+        DivisionByZero: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+    }
+})
+
+export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
+
+export interface ArithmeticError_DivisionByZero {
+    __kind: 'DivisionByZero'
+}
+
+export interface ArithmeticError_Overflow {
+    __kind: 'Overflow'
+}
+
+export interface ArithmeticError_Underflow {
+    __kind: 'Underflow'
+}
+
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token
+
+export interface DispatchError_Arithmetic {
+    __kind: 'Arithmetic'
+    value: ArithmeticError
+}
+
+export interface DispatchError_BadOrigin {
+    __kind: 'BadOrigin'
+}
+
+export interface DispatchError_CannotLookup {
+    __kind: 'CannotLookup'
+}
+
+export interface DispatchError_ConsumerRemaining {
+    __kind: 'ConsumerRemaining'
+}
+
+export interface DispatchError_Module {
+    __kind: 'Module'
+    value: DispatchErrorModule
+}
+
+export interface DispatchError_NoProviders {
+    __kind: 'NoProviders'
+}
+
+export interface DispatchError_Other {
+    __kind: 'Other'
+}
+
+export interface DispatchError_Token {
+    __kind: 'Token'
+    value: TokenError
+}
+
+export const MemberCount = sts.number()
 
 export const Hash = sts.bytes()
+
+export const ProposalIndex = sts.number()
+
+export const AccountId = sts.bytes()

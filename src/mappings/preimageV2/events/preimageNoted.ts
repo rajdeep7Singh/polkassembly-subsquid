@@ -27,27 +27,14 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.v9170.is(block)) {
-        const storageData = await preimageFor.v9170.get(block, hash)
+    if(preimageFor.v274.is(block)) {
+        const storageData = await preimageFor.v274.get(block, hash)
         if (!storageData) return undefined
         return {
             data: storageData,
             ...preimageStatus
         }
-    }else if(preimageFor.v9340.is(block)) {
-        if(preimageStatus && preimageStatus.len){
-            const storageData = await preimageFor.v9340.get(block, [hash, preimageStatus.len])
-            if (!storageData) return undefined
-            return {
-                data: storageData,
-                ...preimageStatus
-            }
-        }
-        else {
-            throw new UnknownVersionError('preimage.PreimageFor')
-        }
-    }
-    else {
+    } else {
         throw new UnknownVersionError('preimage.PreimageFor')
     }
 }
@@ -59,24 +46,15 @@ interface PreimageStatusStorageData{
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(statusFor.v9170.is(block)) {
-        const storageData = await statusFor.v9170.get(block, hash)
+    if(statusFor.v274.is(block)) {
+        const storageData = await statusFor.v274.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
         }
-    }else if(statusFor.v9340.is(block)) {
-        const storageData = await statusFor.v9340.get(block, hash)
-        if (!storageData) return undefined
-        return {
-            status: storageData.__kind,
-            value: storageData.deposit,
-            len: storageData.len
-        }
-    }
-    else {
+    } else {
         throw new UnknownVersionError('preimage.StatusFor')
     }
 }

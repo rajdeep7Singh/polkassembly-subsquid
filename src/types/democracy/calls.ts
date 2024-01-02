@@ -1,7 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v9110 from '../v9110'
-import * as v9291 from '../v9291'
+import * as v273 from '../v273'
+import * as v274 from '../v274'
 
 export const vote =  {
     name: 'Democracy.vote',
@@ -14,22 +13,13 @@ export const vote =  {
      *  - `ref_index`: The index of the referendum to vote for.
      *  - `vote`: The vote configuration.
      * 
-     *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter has voted on.
-     *    weight is charged as if maximum votes.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`, `balances locks`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`, `balances locks`
-     *  --------------------
-     *  - Base Weight:
-     *      - Vote New: 49.24 + .333 * R µs
-     *      - Vote Existing: 49.94 + .343 * R µs
-     *  # </weight>
+     *  Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    v0: new CallType(
+    v273: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v0.AccountVote,
+            vote: v273.AccountVote,
         })
     ),
     /**
@@ -43,11 +33,11 @@ export const vote =  {
      * 
      * Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    v9110: new CallType(
+    v274: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v9110.AccountVote,
+            vote: v274.AccountVote,
         })
     ),
 }
@@ -68,57 +58,20 @@ export const delegate =  {
      *  - `to`: The account whose voting the `target` account's voting power will follow.
      *  - `conviction`: The conviction that will be attached to the delegated votes. When the
      *    account is undelegated, the funds will be locked for the corresponding period.
-     *  - `balance`: The amount of the account's balance to be used in delegating. This must
-     *    not be more than the account's current balance.
+     *  - `balance`: The amount of the account's balance to be used in delegating. This must not
+     *    be more than the account's current balance.
      * 
      *  Emits `Delegated`.
      * 
-     *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
-     *  - Db reads: 2*`VotingOf`, `balances locks`
-     *  - Db writes: 2*`VotingOf`, `balances locks`
-     *  - Db reads per votes: `ReferendumInfoOf`
-     *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 65.78 + 8.229 * R µs
-     *  # </weight>
      */
-    v0: new CallType(
+    v273: new CallType(
         'Democracy.delegate',
         sts.struct({
-            to: v0.AccountId,
-            conviction: v0.Conviction,
-            balance: v0.BalanceOf,
-        })
-    ),
-    /**
-     * Delegate the voting power (with some given conviction) of the sending account.
-     * 
-     * The balance delegated is locked for as long as it's delegated, and thereafter for the
-     * time appropriate for the conviction's lock period.
-     * 
-     * The dispatch origin of this call must be _Signed_, and the signing account must either:
-     *   - be delegating already; or
-     *   - have no voting activity (if there is, then it will need to be removed/consolidated
-     *     through `reap_vote` or `unvote`).
-     * 
-     * - `to`: The account whose voting the `target` account's voting power will follow.
-     * - `conviction`: The conviction that will be attached to the delegated votes. When the
-     *   account is undelegated, the funds will be locked for the corresponding period.
-     * - `balance`: The amount of the account's balance to be used in delegating. This must not
-     *   be more than the account's current balance.
-     * 
-     * Emits `Delegated`.
-     * 
-     * Weight: `O(R)` where R is the number of referendums the voter delegating to has
-     *   voted on. Weight is charged as if maximum votes.
-     */
-    v9291: new CallType(
-        'Democracy.delegate',
-        sts.struct({
-            to: v9291.MultiAddress,
-            conviction: v9291.Conviction,
-            balance: sts.bigint(),
+            to: v273.AccountId,
+            conviction: v273.Conviction,
+            balance: v273.BalanceOf,
         })
     ),
 }
@@ -136,17 +89,10 @@ export const undelegate =  {
      * 
      *  Emits `Undelegated`.
      * 
-     *  # <weight>
-     *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
+     *  Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
-     *  - Db reads: 2*`VotingOf`
-     *  - Db writes: 2*`VotingOf`
-     *  - Db reads per votes: `ReferendumInfoOf`
-     *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 33.29 + 8.104 * R µs
-     *  # </weight>
      */
-    v0: new CallType(
+    v273: new CallType(
         'Democracy.undelegate',
         sts.unit()
     ),
@@ -180,18 +126,13 @@ export const removeVote =  {
      * 
      *  - `index`: The index of referendum of the vote to be removed.
      * 
-     *  # <weight>
-     *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 21.03 + .359 * R
-     *  # </weight>
      */
-    v0: new CallType(
+    v273: new CallType(
         'Democracy.remove_vote',
         sts.struct({
-            index: v0.ReferendumIndex,
+            index: v273.ReferendumIndex,
         })
     ),
 }
@@ -212,43 +153,14 @@ export const removeOtherVote =  {
      *    referendum `index`.
      *  - `index`: The index of referendum of the vote to be removed.
      * 
-     *  # <weight>
-     *  - `O(R + log R)` where R is the number of referenda that `target` has voted on.
+     *  Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *    Weight is calculated for the maximum number of vote.
-     *  - Db reads: `ReferendumInfoOf`, `VotingOf`
-     *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 19.15 + .372 * R
-     *  # </weight>
      */
-    v0: new CallType(
+    v273: new CallType(
         'Democracy.remove_other_vote',
         sts.struct({
-            target: v0.AccountId,
-            index: v0.ReferendumIndex,
-        })
-    ),
-    /**
-     * Remove a vote for a referendum.
-     * 
-     * If the `target` is equal to the signer, then this function is exactly equivalent to
-     * `remove_vote`. If not equal to the signer, then the vote must have expired,
-     * either because the referendum was cancelled, because the voter lost the referendum or
-     * because the conviction period is over.
-     * 
-     * The dispatch origin of this call must be _Signed_.
-     * 
-     * - `target`: The account of the vote to be removed; this account must have voted for
-     *   referendum `index`.
-     * - `index`: The index of referendum of the vote to be removed.
-     * 
-     * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
-     *   Weight is calculated for the maximum number of vote.
-     */
-    v9291: new CallType(
-        'Democracy.remove_other_vote',
-        sts.struct({
-            target: v9291.MultiAddress,
-            index: sts.number(),
+            target: v273.AccountId,
+            index: v273.ReferendumIndex,
         })
     ),
 }

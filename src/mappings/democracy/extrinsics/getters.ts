@@ -21,8 +21,8 @@ interface DemocracyVoteCallData {
 }
 
 export function getVoteData(itemCall: any): DemocracyVoteCallData {
-    if (vote.v0.is(itemCall)) {
-        const { refIndex, vote: voteData } = vote.v0.decode(itemCall)
+    if (vote.v273.is(itemCall)) {
+        const { refIndex, vote: voteData } = vote.v273.decode(itemCall)
         if (voteData.__kind === 'Standard') {
             return {
                 index: refIndex,
@@ -42,8 +42,8 @@ export function getVoteData(itemCall: any): DemocracyVoteCallData {
                 },
             }
         }
-    } else if (vote.v9110.is(itemCall)) {
-        const { refIndex, vote: voteData } = vote.v9110.decode(itemCall)
+    } else if (vote.v274.is(itemCall)) {
+        const { refIndex, vote: voteData } = vote.v274.decode(itemCall)
         if (voteData.__kind === 'Standard') {
             return {
                 index: refIndex,
@@ -76,17 +76,10 @@ export interface ConvictionVoteDelegateCallData {
 }
 
 export function getDelegateData(itemCall: any): ConvictionVoteDelegateCallData {
-    if (delegate.v0.is(itemCall)) {
-        const { to, conviction, balance } = delegate.v0.decode(itemCall)
+    if (delegate.v273.is(itemCall)) {
+        const { to, conviction, balance } = delegate.v273.decode(itemCall)
         return {
             to: to,
-            lockPeriod: convictionToLockPeriod(conviction.__kind),
-            balance
-        }
-    } else if (delegate.v9291.is(itemCall)) {
-        const { to, conviction, balance } = delegate.v9291.decode(itemCall)
-        return {
-            to: to.__kind != "Index" ? to.value : null,
             lockPeriod: convictionToLockPeriod(conviction.__kind),
             balance
         }
@@ -103,8 +96,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 }
 
 export function getRemoveVoteData(itemCall: any): ConvictionVotingRemoveVoteCallData {
-    if (removeVote.v0.is(itemCall)) {
-        const eventData = removeVote.v0.decode(itemCall)
+    if (removeVote.v273.is(itemCall)) {
+        const eventData = removeVote.v273.decode(itemCall)
         return {
             index: eventData.index,
         }
@@ -119,19 +112,13 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 }
 
 export function getRemoveOtherVoteData(itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
-    if (removeOtherVote.v0.is(itemCall)) {
-        const { target, index } = removeOtherVote.v0.decode(itemCall)
+    if (removeOtherVote.v273.is(itemCall)) {
+        const { target, index } = removeOtherVote.v273.decode(itemCall)
         return {
             target,
             index
         }
-    } else if (removeOtherVote.v9291.is(itemCall)) {
-        const { target, index } = removeOtherVote.v9291.decode(itemCall)
-        return {
-            target:target.__kind != "Index" ? target.value : null,
-            index
-        }
-    }else {
+    } else {
         throw new UnknownVersionError(itemCall.name)
     }
 }

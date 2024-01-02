@@ -12,28 +12,21 @@ interface TabledEventData {
 }
 
 function getEventData(itemEvent: Event): TabledEventData {
-    if (tabled.v0.is(itemEvent)) {
-        const [index, deposit, depositors] = tabled.v0.decode(itemEvent)
+    if (tabled.v273.is(itemEvent)) {
+        const [index, deposit, depositors] = tabled.v273.decode(itemEvent)
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (tabled.v9140.is(itemEvent)) {
-        const { proposalIndex: index, deposit, depositors } = tabled.v9140.decode(itemEvent)
+    } else if (tabled.v274.is(itemEvent)) {
+        const { proposalIndex: index, deposit, depositors } = tabled.v274.decode(itemEvent)
         return {
             index,
             deposit,
             depositors,
         }
-    } else if (tabled.v9340.is(itemEvent)) {
-        const { proposalIndex: index, deposit } = tabled.v9340.decode(itemEvent)
-        return {
-            index,
-            deposit,
-        }
-    }
-     else {
+    } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
