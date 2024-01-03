@@ -14,8 +14,8 @@ interface ChildBountyAwardedData {
 }
 
 export function getChildBountyAwardedData(itemEvent: any): ChildBountyAwardedData {
-    if (awarded.v9190.is(itemEvent)) {
-        const { index, childIndex, beneficiary } = awarded.v9190.decode(itemEvent)
+    if (awarded.v3.is(itemEvent)) {
+        const { index, childIndex, beneficiary } = awarded.v3.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
@@ -32,8 +32,8 @@ interface ChildBountyCancelledData {
 }
 
 export function getChildBountyCancelledData(itemEvent: any): ChildBountyCancelledData {
-    if (canceled.v9190.is(itemEvent)) {
-        const { index, childIndex } = canceled.v9190.decode(itemEvent)
+    if (canceled.v3.is(itemEvent)) {
+        const { index, childIndex } = canceled.v3.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex
@@ -51,8 +51,8 @@ interface ChildBountyClaimedData {
 }
 
 export function getChildBountyClaimedData(itemEvent: any): ChildBountyClaimedData {
-    if (claimed.v9190.is(itemEvent)) {
-        const { index, childIndex, payout, beneficiary } = claimed.v9190.decode(itemEvent)
+    if (claimed.v3.is(itemEvent)) {
+        const { index, childIndex, payout, beneficiary } = claimed.v3.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
@@ -70,8 +70,8 @@ interface ChildBountyAddedData {
 }
 
 export function getChildBountyAddedData(itemEvent: any): ChildBountyAddedData {
-    if (added.v9190.is(itemEvent)) {
-        const { index, childIndex } = added.v9190.decode(itemEvent)
+    if (added.v3.is(itemEvent)) {
+        const { index, childIndex } = added.v3.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex

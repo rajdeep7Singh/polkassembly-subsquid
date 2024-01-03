@@ -10,8 +10,6 @@ import {
     preimages
 } from '../../../types/democracy/storage'
 import { Block, ProcessorContext, Event} from '../../../processor'
-import { BlockNumber } from '../../../types/v1020'
-
 type ProposalCall = any
 
 interface PreimageStorageData {
@@ -28,32 +26,8 @@ function decodeProposal(chain: Chain, data: Uint8Array): ProposalCall {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStorageData | undefined> {
     // const storage = new DemocracyPreimagesStorage(ctx, block)
-    if (preimages.v1022.is(block)) {
-        const storageData = await preimages.v1022.get(block, hash)
-        if (!storageData) return undefined
-
-        const [data, provider, deposit, blockNumber ] = storageData
-
-        return {
-            data,
-            provider,
-            deposit,
-            block: blockNumber,
-        }
-    } else if (preimages.v1058.is(block)) {
-        const storageData = await preimages.v1058.get(block, hash)
-        if (!storageData || storageData.__kind === 'Missing') return undefined
-
-        const { provider, deposit, since, data } = storageData.value
-
-        return {
-            data,
-            provider,
-            deposit,
-            block: since,
-        }
-    }else if (preimages.v9111.is(block)) {
-        const storageData = await preimages.v9111.get(block, hash)
+    if (preimages.v1.is(block)) {
+        const storageData = await preimages.v1.get(block, hash)
         if (!storageData || storageData.__kind === 'Missing') return undefined
 
         const { provider, deposit, since, data } = storageData

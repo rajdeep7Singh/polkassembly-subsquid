@@ -21,38 +21,8 @@ interface DemocracyVoteCallData {
 }
 
 export function getVoteData(itemCall: any): DemocracyVoteCallData {
-    if (vote.v1020.is(itemCall)) {
-        const { refIndex, vote: voteData } = vote.v1020.decode(itemCall)
-        return {
-            index: refIndex,
-            vote: {
-                type: 'Standard',
-                value: voteData,
-            },
-        }
-    } else if (vote.v1055.is(itemCall)) {
-        const { refIndex, vote: voteData } = vote.v1055.decode(itemCall)
-        if (voteData.__kind === 'Standard') {
-            return {
-                index: refIndex,
-                vote: {
-                    type: 'Standard',
-                    value: voteData.value.vote,
-                    balance: voteData.value.balance,
-                },
-            }
-        } else {
-            return {
-                index: refIndex,
-                vote: {
-                    type: 'Split',
-                    aye: voteData.value.aye,
-                    nay: voteData.value.nay,
-                },
-            }
-        }
-    } else if (vote.v9111.is(itemCall)) {
-        const { refIndex, vote: voteData } = vote.v9111.decode(itemCall)
+    if (vote.v1.is(itemCall)) {
+        const { refIndex, vote: voteData } = vote.v1.decode(itemCall)
         if (voteData.__kind === 'Standard') {
             return {
                 index: refIndex,
@@ -85,21 +55,15 @@ export interface ConvictionVoteDelegateCallData {
 }
 
 export function getDelegateData(itemCall: any): ConvictionVoteDelegateCallData {
-    if (delegate.v1020.is(itemCall)) {
-        const { to, conviction } = delegate.v1020.decode(itemCall)
-        return {
-            to,
-            lockPeriod: convictionToLockPeriod(conviction.__kind)
-        }
-    }else if (delegate.v1055.is(itemCall)) {
-        const { to, conviction, balance } = delegate.v1055.decode(itemCall)
+    if (delegate.v1.is(itemCall)) {
+        const { to, conviction, balance } = delegate.v1.decode(itemCall)
         return {
             to: to,
             lockPeriod: convictionToLockPeriod(conviction.__kind),
             balance
         }
-    } else if (delegate.v9291.is(itemCall)) {
-        const { to, conviction, balance } = delegate.v9291.decode(itemCall)
+    } else if (delegate.v3.is(itemCall)) {
+        const { to, conviction, balance } = delegate.v3.decode(itemCall)
         return {
             to: to.__kind != "Index" ? to.value : null,
             lockPeriod: convictionToLockPeriod(conviction.__kind),
@@ -118,8 +82,8 @@ export interface ConvictionVotingRemoveVoteCallData {
 }
 
 export function getRemoveVoteData(itemCall: any): ConvictionVotingRemoveVoteCallData {
-    if (removeVote.v1055.is(itemCall)) {
-        const eventData = removeVote.v1055.decode(itemCall)
+    if (removeVote.v1.is(itemCall)) {
+        const eventData = removeVote.v1.decode(itemCall)
         return {
             index: eventData.index,
         }
@@ -134,14 +98,14 @@ export interface ConvictionVotingRemoveOtherVoteCallData {
 }
 
 export function getRemoveOtherVoteData(itemCall: any): ConvictionVotingRemoveOtherVoteCallData {
-    if (removeOtherVote.v1055.is(itemCall)) {
-        const { target, index } = removeOtherVote.v1055.decode(itemCall)
+    if (removeOtherVote.v1.is(itemCall)) {
+        const { target, index } = removeOtherVote.v1.decode(itemCall)
         return {
             target,
             index
         }
-    } else if (removeOtherVote.v9291.is(itemCall)) {
-        const { target, index } = removeOtherVote.v9291.decode(itemCall)
+    } else if (removeOtherVote.v3.is(itemCall)) {
+        const { target, index } = removeOtherVote.v3.decode(itemCall)
         return {
             target:target.__kind != "Index" ? target.value : null,
             index

@@ -14,14 +14,8 @@ interface DemocracyProposalEventData {
 }
 
 function getEventData(itemEvent: Event): DemocracyProposalEventData {
-    if (proposed.v1020.is(itemEvent)) {
-        const [index, deposit] = proposed.v1020.decode(itemEvent)
-        return {
-            index,
-            deposit,
-        }
-    } else if (proposed.v9130.is(itemEvent)) {
-        const { proposalIndex: index, deposit } = proposed.v9130.decode(itemEvent)
+    if (proposed.v1.is(itemEvent)) {
+        const { proposalIndex: index, deposit } = proposed.v1.decode(itemEvent)
         return {
             index,
             deposit,

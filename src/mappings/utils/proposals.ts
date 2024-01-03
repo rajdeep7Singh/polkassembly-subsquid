@@ -43,8 +43,6 @@ import {
     TallyData,
 } from '../types/data'
 import { randomUUID } from 'crypto'
-import config from '../../config'
-import referendumV2 from '../referendumV2'
 import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
