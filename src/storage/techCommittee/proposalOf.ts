@@ -1,8 +1,7 @@
 import { ProcessorContext } from '../../processor'
-import { Call } from '../../types/v9170'
 import { Store } from '@subsquid/typeorm-store'
 
-type TechnicalCommitteeProposalStorageData = Call
+type TechnicalCommitteeProposalStorageData = any
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getInstanceStorageData(
