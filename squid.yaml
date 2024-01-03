@@ -1,33 +1,30 @@
 manifestVersion: subsquid.io/v0.1
-name: polkadot-polkassembly
-version: 1
+name: pendulum-polkassembly
+version: 2
 description: |-
-  Polkadot's governance proposals
+  Pendulum's governance proposals
 
 build:
 
 deploy:
   addons:
     postgres:
-        config:
-          statement_timeout: 100000
-          max_pred_locks_per_transaction: 128
-          max_locks_per_transaction: 128
   secrets:
     - NOTIFICATION_API_KEY
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
-    cmd: [ "npx", "squid-graphql-server", "--subscriptions", "--sql-statement-timeout", "3000" ]
+    cmd: [ "npx", "squid-graphql-server" ]
+
 
 scale:
   dedicated: true
   addons:
      postgres:
-         storage: 20Gi
-         profile: medium
+         storage: 10Gi
+         profile: small
   processor:
-     profile: medium
+     profile: small
   api:
-     profile: medium
+     profile: small
      replicas: 1

@@ -1,45 +1,45 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v9190 from '../v9190'
+import * as v1 from '../v1'
 
 export const childBounties =  {
     /**
-     *  Child-bounties that have been added.
+     *  Child bounties that have been added.
      */
-    v9190: new StorageType('ChildBounties.ChildBounties', 'Optional', [sts.number(), sts.number()], v9190.ChildBounty) as ChildBountiesV9190,
+    v1: new StorageType('ChildBounties.ChildBounties', 'Optional', [sts.number(), sts.number()], v1.ChildBounty) as ChildBountiesV1,
 }
 
 /**
- *  Child-bounties that have been added.
+ *  Child bounties that have been added.
  */
-export interface ChildBountiesV9190  {
+export interface ChildBountiesV1  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key1: number, key2: number): Promise<(v9190.ChildBounty | undefined)>
-    getMany(block: Block, keys: [number, number][]): Promise<(v9190.ChildBounty | undefined)[]>
+    get(block: Block, key1: number, key2: number): Promise<(v1.ChildBounty | undefined)>
+    getMany(block: Block, keys: [number, number][]): Promise<(v1.ChildBounty | undefined)[]>
     getKeys(block: Block): Promise<[number, number][]>
     getKeys(block: Block, key1: number): Promise<[number, number][]>
     getKeys(block: Block, key1: number, key2: number): Promise<[number, number][]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<[number, number][]>
     getKeysPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[number, number][]>
     getKeysPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[number, number][]>
-    getPairs(block: Block): Promise<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
-    getPairs(block: Block, key1: number): Promise<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
-    getPairs(block: Block, key1: number, key2: number): Promise<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[k: [number, number], v: (v9190.ChildBounty | undefined)][]>
+    getPairs(block: Block): Promise<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
+    getPairs(block: Block, key1: number): Promise<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
+    getPairs(block: Block, key1: number, key2: number): Promise<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[k: [number, number], v: (v1.ChildBounty | undefined)][]>
 }
 
 export const childBountyDescriptions =  {
     /**
      *  The description of each child-bounty.
      */
-    v9190: new StorageType('ChildBounties.ChildBountyDescriptions', 'Optional', [sts.number()], sts.bytes()) as ChildBountyDescriptionsV9190,
+    v1: new StorageType('ChildBounties.ChildBountyDescriptions', 'Optional', [sts.number()], sts.bytes()) as ChildBountyDescriptionsV1,
 }
 
 /**
  *  The description of each child-bounty.
  */
-export interface ChildBountyDescriptionsV9190  {
+export interface ChildBountyDescriptionsV1  {
     is(block: RuntimeCtx): boolean
     get(block: Block, key: number): Promise<(Bytes | undefined)>
     getMany(block: Block, keys: number[]): Promise<(Bytes | undefined)[]>
