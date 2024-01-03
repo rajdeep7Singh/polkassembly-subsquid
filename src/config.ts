@@ -2,14 +2,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'frequency',
+        prefix: 90,
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://rpc.polkadot.io',
+        chain: 'wss://0.rpc.frequency.xyz',
+        archive: lookupArchive('frequency',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
-    typesBundle: 'polkadot',
+    typesBundle: 'frequency',
     batchSize: 500,
     blockRange: {
         from: 0,

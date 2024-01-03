@@ -2,16 +2,16 @@ import {sts, Result, Option, Bytes, BitSequence} from './support'
 
 export type H256 = Bytes
 
-export type Call = Call_Authorship | Call_Balances | Call_CollatorSelection | Call_Council | Call_Democracy | Call_Messages | Call_Msa | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_Scheduler | Call_Schemas | Call_Session | Call_System | Call_TechnicalCommittee | Call_TimeRelease | Call_Timestamp | Call_Treasury | Call_Utility
-
-export interface Call_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
-}
+export type Call = Call_Balances | Call_Capacity | Call_CollatorSelection | Call_Council | Call_Democracy | Call_FrequencyTxPayment | Call_Handles | Call_Messages | Call_Msa | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_Scheduler | Call_Schemas | Call_Session | Call_StatefulStorage | Call_System | Call_TechnicalCommittee | Call_TimeRelease | Call_Timestamp | Call_Treasury | Call_Utility
 
 export interface Call_Balances {
     __kind: 'Balances'
     value: BalancesCall
+}
+
+export interface Call_Capacity {
+    __kind: 'Capacity'
+    value: CapacityCall
 }
 
 export interface Call_CollatorSelection {
@@ -27,6 +27,16 @@ export interface Call_Council {
 export interface Call_Democracy {
     __kind: 'Democracy'
     value: DemocracyCall
+}
+
+export interface Call_FrequencyTxPayment {
+    __kind: 'FrequencyTxPayment'
+    value: FrequencyTxPaymentCall
+}
+
+export interface Call_Handles {
+    __kind: 'Handles'
+    value: HandlesCall
 }
 
 export interface Call_Messages {
@@ -67,6 +77,11 @@ export interface Call_Schemas {
 export interface Call_Session {
     __kind: 'Session'
     value: SessionCall
+}
+
+export interface Call_StatefulStorage {
+    __kind: 'StatefulStorage'
+    value: StatefulStorageCall
 }
 
 export interface Call_System {
@@ -143,12 +158,12 @@ export type OriginCaller = OriginCaller_Council | OriginCaller_TechnicalCommitte
 
 export interface OriginCaller_Council {
     __kind: 'Council'
-    value: Type_138
+    value: Type_145
 }
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_139
+    value: Type_146
 }
 
 export interface OriginCaller_Void {
@@ -176,39 +191,37 @@ export interface RawOrigin_Signed {
     value: AccountId32
 }
 
-export type AccountId32 = Bytes
-
 export type Void = never
 
-export type Type_139 = Type_139_Member | Type_139_Members | Type_139__Phantom
+export type Type_146 = Type_146_Member | Type_146_Members | Type_146__Phantom
 
-export interface Type_139_Member {
+export interface Type_146_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_139_Members {
+export interface Type_146_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_139__Phantom {
+export interface Type_146__Phantom {
     __kind: '_Phantom'
 }
 
-export type Type_138 = Type_138_Member | Type_138_Members | Type_138__Phantom
+export type Type_145 = Type_145_Member | Type_145_Members | Type_145__Phantom
 
-export interface Type_138_Member {
+export interface Type_145_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_138_Members {
+export interface Type_145_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_138__Phantom {
+export interface Type_145__Phantom {
     __kind: '_Phantom'
 }
 
@@ -304,21 +317,13 @@ export interface ReleaseSchedule {
     perPeriod: bigint
 }
 
-export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCommitteeCall_close_old_weight | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
+export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
 
 export interface TechnicalCommitteeCall_close {
     __kind: 'close'
     proposalHash: H256
     index: number
     proposalWeightBound: Weight
-    lengthBound: number
-}
-
-export interface TechnicalCommitteeCall_close_old_weight {
-    __kind: 'close_old_weight'
-    proposalHash: H256
-    index: number
-    proposalWeightBound: bigint
     lengthBound: number
 }
 
@@ -397,6 +402,110 @@ export interface SystemCall_set_storage {
     items: [Bytes, Bytes][]
 }
 
+export type StatefulStorageCall = StatefulStorageCall_apply_item_actions | StatefulStorageCall_apply_item_actions_with_signature | StatefulStorageCall_delete_page | StatefulStorageCall_delete_page_with_signature | StatefulStorageCall_upsert_page | StatefulStorageCall_upsert_page_with_signature
+
+export interface StatefulStorageCall_apply_item_actions {
+    __kind: 'apply_item_actions'
+    stateOwnerMsaId: bigint
+    schemaId: number
+    targetHash: number
+    actions: ItemAction[]
+}
+
+export interface StatefulStorageCall_apply_item_actions_with_signature {
+    __kind: 'apply_item_actions_with_signature'
+    delegatorKey: AccountId32
+    proof: MultiSignature
+    payload: ItemizedSignaturePayload
+}
+
+export interface StatefulStorageCall_delete_page {
+    __kind: 'delete_page'
+    stateOwnerMsaId: bigint
+    schemaId: number
+    pageId: number
+    targetHash: number
+}
+
+export interface StatefulStorageCall_delete_page_with_signature {
+    __kind: 'delete_page_with_signature'
+    delegatorKey: AccountId32
+    proof: MultiSignature
+    payload: PaginatedDeleteSignaturePayload
+}
+
+export interface StatefulStorageCall_upsert_page {
+    __kind: 'upsert_page'
+    stateOwnerMsaId: bigint
+    schemaId: number
+    pageId: number
+    targetHash: number
+    payload: Bytes
+}
+
+export interface StatefulStorageCall_upsert_page_with_signature {
+    __kind: 'upsert_page_with_signature'
+    delegatorKey: AccountId32
+    proof: MultiSignature
+    payload: PaginatedUpsertSignaturePayload
+}
+
+export interface PaginatedUpsertSignaturePayload {
+    msaId: bigint
+    schemaId: number
+    pageId: number
+    targetHash: number
+    expiration: number
+    payload: Bytes
+}
+
+export interface PaginatedDeleteSignaturePayload {
+    msaId: bigint
+    schemaId: number
+    pageId: number
+    targetHash: number
+    expiration: number
+}
+
+export interface ItemizedSignaturePayload {
+    msaId: bigint
+    schemaId: number
+    targetHash: number
+    expiration: number
+    actions: ItemAction[]
+}
+
+export type MultiSignature = MultiSignature_Ecdsa | MultiSignature_Ed25519 | MultiSignature_Sr25519
+
+export interface MultiSignature_Ecdsa {
+    __kind: 'Ecdsa'
+    value: Bytes
+}
+
+export interface MultiSignature_Ed25519 {
+    __kind: 'Ed25519'
+    value: Signature
+}
+
+export interface MultiSignature_Sr25519 {
+    __kind: 'Sr25519'
+    value: Bytes
+}
+
+export type Signature = Bytes
+
+export type ItemAction = ItemAction_Add | ItemAction_Delete
+
+export interface ItemAction_Add {
+    __kind: 'Add'
+    data: Bytes
+}
+
+export interface ItemAction_Delete {
+    __kind: 'Delete'
+    index: number
+}
+
 export type SessionCall = SessionCall_purge_keys | SessionCall_set_keys
 
 export interface SessionCall_purge_keys {
@@ -430,6 +539,7 @@ export interface SchemasCall_create_schema_via_governance {
     model: Bytes
     modelType: ModelType
     payloadLocation: PayloadLocation
+    settings: SchemaSetting[]
 }
 
 export interface SchemasCall_propose_to_create_schema {
@@ -437,6 +547,7 @@ export interface SchemasCall_propose_to_create_schema {
     model: Bytes
     modelType: ModelType
     payloadLocation: PayloadLocation
+    settings: SchemaSetting[]
 }
 
 export interface SchemasCall_set_max_schema_model_bytes {
@@ -444,14 +555,32 @@ export interface SchemasCall_set_max_schema_model_bytes {
     maxSize: number
 }
 
-export type PayloadLocation = PayloadLocation_IPFS | PayloadLocation_OnChain
+export type SchemaSetting = SchemaSetting_AppendOnly | SchemaSetting_SignatureRequired
+
+export interface SchemaSetting_AppendOnly {
+    __kind: 'AppendOnly'
+}
+
+export interface SchemaSetting_SignatureRequired {
+    __kind: 'SignatureRequired'
+}
+
+export type PayloadLocation = PayloadLocation_IPFS | PayloadLocation_Itemized | PayloadLocation_OnChain | PayloadLocation_Paginated
 
 export interface PayloadLocation_IPFS {
     __kind: 'IPFS'
 }
 
+export interface PayloadLocation_Itemized {
+    __kind: 'Itemized'
+}
+
 export interface PayloadLocation_OnChain {
     __kind: 'OnChain'
+}
+
+export interface PayloadLocation_Paginated {
+    __kind: 'Paginated'
 }
 
 export type ModelType = ModelType_AvroBinary | ModelType_Parquet
@@ -538,6 +667,7 @@ export type ParachainSystemCall = ParachainSystemCall_authorize_upgrade | Parach
 export interface ParachainSystemCall_authorize_upgrade {
     __kind: 'authorize_upgrade'
     codeHash: H256
+    checkVersion: boolean
 }
 
 export interface ParachainSystemCall_enact_authorized_upgrade {
@@ -556,7 +686,7 @@ export interface ParachainSystemCall_sudo_send_upward_message {
 }
 
 export interface ParachainInherentData {
-    validationData: V2PersistedValidationData
+    validationData: V4PersistedValidationData
     relayChainState: StorageProof
     downwardMessages: InboundDownwardMessage[]
     horizontalMessages: [Id, InboundHrmpMessage[]][]
@@ -578,7 +708,7 @@ export interface StorageProof {
     trieNodes: Bytes[]
 }
 
-export interface V2PersistedValidationData {
+export interface V4PersistedValidationData {
     parentHead: HeadData
     relayParentNumber: number
     relayParentStorageRoot: H256
@@ -707,25 +837,6 @@ export interface AddKeyData {
     newPublicKey: AccountId32
 }
 
-export type MultiSignature = MultiSignature_Ecdsa | MultiSignature_Ed25519 | MultiSignature_Sr25519
-
-export interface MultiSignature_Ecdsa {
-    __kind: 'Ecdsa'
-    value: Bytes
-}
-
-export interface MultiSignature_Ed25519 {
-    __kind: 'Ed25519'
-    value: Signature
-}
-
-export interface MultiSignature_Sr25519 {
-    __kind: 'Sr25519'
-    value: Bytes
-}
-
-export type Signature = Bytes
-
 export type MessagesCall = MessagesCall_add_ipfs_message | MessagesCall_add_onchain_message
 
 export interface MessagesCall_add_ipfs_message {
@@ -742,7 +853,37 @@ export interface MessagesCall_add_onchain_message {
     payload: Bytes
 }
 
-export type DemocracyCall = DemocracyCall_blacklist | DemocracyCall_cancel_proposal | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_propose | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
+export type HandlesCall = HandlesCall_claim_handle | HandlesCall_retire_handle
+
+export interface HandlesCall_claim_handle {
+    __kind: 'claim_handle'
+    msaOwnerKey: AccountId32
+    proof: MultiSignature
+    payload: ClaimHandlePayload
+}
+
+export interface HandlesCall_retire_handle {
+    __kind: 'retire_handle'
+}
+
+export interface ClaimHandlePayload {
+    baseHandle: Bytes
+    expiration: number
+}
+
+export type FrequencyTxPaymentCall = FrequencyTxPaymentCall_pay_with_capacity | FrequencyTxPaymentCall_pay_with_capacity_batch_all
+
+export interface FrequencyTxPaymentCall_pay_with_capacity {
+    __kind: 'pay_with_capacity'
+    call: Call
+}
+
+export interface FrequencyTxPaymentCall_pay_with_capacity_batch_all {
+    __kind: 'pay_with_capacity_batch_all'
+    calls: Call[]
+}
+
+export type DemocracyCall = DemocracyCall_blacklist | DemocracyCall_cancel_proposal | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_propose | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_set_metadata | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
 
 export interface DemocracyCall_blacklist {
     __kind: 'blacklist'
@@ -820,6 +961,12 @@ export interface DemocracyCall_second {
     proposal: number
 }
 
+export interface DemocracyCall_set_metadata {
+    __kind: 'set_metadata'
+    owner: MetadataOwner
+    maybeHash?: (H256 | undefined)
+}
+
 export interface DemocracyCall_undelegate {
     __kind: 'undelegate'
 }
@@ -855,6 +1002,22 @@ export interface AccountVote_Standard {
 }
 
 export type Vote = number
+
+export type MetadataOwner = MetadataOwner_External | MetadataOwner_Proposal | MetadataOwner_Referendum
+
+export interface MetadataOwner_External {
+    __kind: 'External'
+}
+
+export interface MetadataOwner_Proposal {
+    __kind: 'Proposal'
+    value: number
+}
+
+export interface MetadataOwner_Referendum {
+    __kind: 'Referendum'
+    value: number
+}
 
 export type Bounded = Bounded_Inline | Bounded_Legacy | Bounded_Lookup
 
@@ -904,21 +1067,13 @@ export interface Conviction_None {
     __kind: 'None'
 }
 
-export type CouncilCall = CouncilCall_close | CouncilCall_close_old_weight | CouncilCall_disapprove_proposal | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
+export type CouncilCall = CouncilCall_close | CouncilCall_disapprove_proposal | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
 
 export interface CouncilCall_close {
     __kind: 'close'
     proposalHash: H256
     index: number
     proposalWeightBound: Weight
-    lengthBound: number
-}
-
-export interface CouncilCall_close_old_weight {
-    __kind: 'close_old_weight'
-    proposalHash: H256
-    index: number
-    proposalWeightBound: bigint
     lengthBound: number
 }
 
@@ -979,7 +1134,36 @@ export interface CollatorSelectionCall_set_invulnerables {
     new: AccountId32[]
 }
 
-export type BalancesCall = BalancesCall_force_transfer | BalancesCall_force_unreserve | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_all | BalancesCall_transfer_keep_alive
+export type CapacityCall = CapacityCall_set_epoch_length | CapacityCall_stake | CapacityCall_unstake | CapacityCall_withdraw_unstaked
+
+export interface CapacityCall_set_epoch_length {
+    __kind: 'set_epoch_length'
+    length: number
+}
+
+export interface CapacityCall_stake {
+    __kind: 'stake'
+    target: bigint
+    amount: bigint
+}
+
+export interface CapacityCall_unstake {
+    __kind: 'unstake'
+    target: bigint
+    requestedAmount: bigint
+}
+
+export interface CapacityCall_withdraw_unstaked {
+    __kind: 'withdraw_unstaked'
+}
+
+export type BalancesCall = BalancesCall_force_set_balance | BalancesCall_force_transfer | BalancesCall_force_unreserve | BalancesCall_set_balance_deprecated | BalancesCall_transfer | BalancesCall_transfer_all | BalancesCall_transfer_allow_death | BalancesCall_transfer_keep_alive | BalancesCall_upgrade_accounts
+
+export interface BalancesCall_force_set_balance {
+    __kind: 'force_set_balance'
+    who: MultiAddress
+    newFree: bigint
+}
 
 export interface BalancesCall_force_transfer {
     __kind: 'force_transfer'
@@ -994,11 +1178,11 @@ export interface BalancesCall_force_unreserve {
     amount: bigint
 }
 
-export interface BalancesCall_set_balance {
-    __kind: 'set_balance'
+export interface BalancesCall_set_balance_deprecated {
+    __kind: 'set_balance_deprecated'
     who: MultiAddress
     newFree: bigint
-    newReserved: bigint
+    oldReserved: bigint
 }
 
 export interface BalancesCall_transfer {
@@ -1013,64 +1197,32 @@ export interface BalancesCall_transfer_all {
     keepAlive: boolean
 }
 
+export interface BalancesCall_transfer_allow_death {
+    __kind: 'transfer_allow_death'
+    dest: MultiAddress
+    value: bigint
+}
+
 export interface BalancesCall_transfer_keep_alive {
     __kind: 'transfer_keep_alive'
     dest: MultiAddress
     value: bigint
 }
 
-export type AuthorshipCall = AuthorshipCall_set_uncles
-
-export interface AuthorshipCall_set_uncles {
-    __kind: 'set_uncles'
-    newUncles: Header[]
-}
-
-export interface Header {
-    parentHash: H256
-    number: number
-    stateRoot: H256
-    extrinsicsRoot: H256
-    digest: Digest
-}
-
-export interface Digest {
-    logs: DigestItem[]
-}
-
-export type DigestItem = DigestItem_Consensus | DigestItem_Other | DigestItem_PreRuntime | DigestItem_RuntimeEnvironmentUpdated | DigestItem_Seal
-
-export interface DigestItem_Consensus {
-    __kind: 'Consensus'
-    value: [Bytes, Bytes]
-}
-
-export interface DigestItem_Other {
-    __kind: 'Other'
-    value: Bytes
-}
-
-export interface DigestItem_PreRuntime {
-    __kind: 'PreRuntime'
-    value: [Bytes, Bytes]
-}
-
-export interface DigestItem_RuntimeEnvironmentUpdated {
-    __kind: 'RuntimeEnvironmentUpdated'
-}
-
-export interface DigestItem_Seal {
-    __kind: 'Seal'
-    value: [Bytes, Bytes]
+export interface BalancesCall_upgrade_accounts {
+    __kind: 'upgrade_accounts'
+    who: AccountId32[]
 }
 
 export const Call: sts.Type<Call> = sts.closedEnum(() => {
     return  {
-        Authorship: AuthorshipCall,
         Balances: BalancesCall,
+        Capacity: CapacityCall,
         CollatorSelection: CollatorSelectionCall,
         Council: CouncilCall,
         Democracy: DemocracyCall,
+        FrequencyTxPayment: FrequencyTxPaymentCall,
+        Handles: HandlesCall,
         Messages: MessagesCall,
         Msa: MsaCall,
         Multisig: MultisigCall,
@@ -1079,6 +1231,7 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Scheduler: SchedulerCall,
         Schemas: SchemasCall,
         Session: SessionCall,
+        StatefulStorage: StatefulStorageCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TimeRelease: TimeReleaseCall,
@@ -1123,8 +1276,8 @@ export const Weight: sts.Type<Weight> = sts.struct(() => {
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        Council: Type_138,
-        TechnicalCommittee: Type_139,
+        Council: Type_145,
+        TechnicalCommittee: Type_146,
         Void: Void,
         system: RawOrigin,
     }
@@ -1138,14 +1291,12 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
     }
 })
 
-export const Type_139: sts.Type<Type_139> = sts.closedEnum(() => {
+export const Type_146: sts.Type<Type_146> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -1153,7 +1304,7 @@ export const Type_139: sts.Type<Type_139> = sts.closedEnum(() => {
     }
 })
 
-export const Type_138: sts.Type<Type_138> = sts.closedEnum(() => {
+export const Type_145: sts.Type<Type_145> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -1235,12 +1386,6 @@ export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.clos
             proposalWeightBound: Weight,
             lengthBound: sts.number(),
         }),
-        close_old_weight: sts.enumStruct({
-            proposalHash: H256,
-            index: sts.number(),
-            proposalWeightBound: sts.bigint(),
-            lengthBound: sts.number(),
-        }),
         disapprove_proposal: sts.enumStruct({
             proposalHash: H256,
         }),
@@ -1296,6 +1441,97 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     }
 })
 
+export const StatefulStorageCall: sts.Type<StatefulStorageCall> = sts.closedEnum(() => {
+    return  {
+        apply_item_actions: sts.enumStruct({
+            stateOwnerMsaId: sts.bigint(),
+            schemaId: sts.number(),
+            targetHash: sts.number(),
+            actions: sts.array(() => ItemAction),
+        }),
+        apply_item_actions_with_signature: sts.enumStruct({
+            delegatorKey: AccountId32,
+            proof: MultiSignature,
+            payload: ItemizedSignaturePayload,
+        }),
+        delete_page: sts.enumStruct({
+            stateOwnerMsaId: sts.bigint(),
+            schemaId: sts.number(),
+            pageId: sts.number(),
+            targetHash: sts.number(),
+        }),
+        delete_page_with_signature: sts.enumStruct({
+            delegatorKey: AccountId32,
+            proof: MultiSignature,
+            payload: PaginatedDeleteSignaturePayload,
+        }),
+        upsert_page: sts.enumStruct({
+            stateOwnerMsaId: sts.bigint(),
+            schemaId: sts.number(),
+            pageId: sts.number(),
+            targetHash: sts.number(),
+            payload: sts.bytes(),
+        }),
+        upsert_page_with_signature: sts.enumStruct({
+            delegatorKey: AccountId32,
+            proof: MultiSignature,
+            payload: PaginatedUpsertSignaturePayload,
+        }),
+    }
+})
+
+export const PaginatedUpsertSignaturePayload: sts.Type<PaginatedUpsertSignaturePayload> = sts.struct(() => {
+    return  {
+        msaId: sts.bigint(),
+        schemaId: sts.number(),
+        pageId: sts.number(),
+        targetHash: sts.number(),
+        expiration: sts.number(),
+        payload: sts.bytes(),
+    }
+})
+
+export const PaginatedDeleteSignaturePayload: sts.Type<PaginatedDeleteSignaturePayload> = sts.struct(() => {
+    return  {
+        msaId: sts.bigint(),
+        schemaId: sts.number(),
+        pageId: sts.number(),
+        targetHash: sts.number(),
+        expiration: sts.number(),
+    }
+})
+
+export const ItemizedSignaturePayload: sts.Type<ItemizedSignaturePayload> = sts.struct(() => {
+    return  {
+        msaId: sts.bigint(),
+        schemaId: sts.number(),
+        targetHash: sts.number(),
+        expiration: sts.number(),
+        actions: sts.array(() => ItemAction),
+    }
+})
+
+export const MultiSignature: sts.Type<MultiSignature> = sts.closedEnum(() => {
+    return  {
+        Ecdsa: sts.bytes(),
+        Ed25519: Signature,
+        Sr25519: sts.bytes(),
+    }
+})
+
+export const Signature = sts.bytes()
+
+export const ItemAction: sts.Type<ItemAction> = sts.closedEnum(() => {
+    return  {
+        Add: sts.enumStruct({
+            data: sts.bytes(),
+        }),
+        Delete: sts.enumStruct({
+            index: sts.number(),
+        }),
+    }
+})
+
 export const SessionCall: sts.Type<SessionCall> = sts.closedEnum(() => {
     return  {
         purge_keys: sts.unit(),
@@ -1326,11 +1562,13 @@ export const SchemasCall: sts.Type<SchemasCall> = sts.closedEnum(() => {
             model: sts.bytes(),
             modelType: ModelType,
             payloadLocation: PayloadLocation,
+            settings: sts.array(() => SchemaSetting),
         }),
         propose_to_create_schema: sts.enumStruct({
             model: sts.bytes(),
             modelType: ModelType,
             payloadLocation: PayloadLocation,
+            settings: sts.array(() => SchemaSetting),
         }),
         set_max_schema_model_bytes: sts.enumStruct({
             maxSize: sts.number(),
@@ -1338,10 +1576,19 @@ export const SchemasCall: sts.Type<SchemasCall> = sts.closedEnum(() => {
     }
 })
 
+export const SchemaSetting: sts.Type<SchemaSetting> = sts.closedEnum(() => {
+    return  {
+        AppendOnly: sts.unit(),
+        SignatureRequired: sts.unit(),
+    }
+})
+
 export const PayloadLocation: sts.Type<PayloadLocation> = sts.closedEnum(() => {
     return  {
         IPFS: sts.unit(),
+        Itemized: sts.unit(),
         OnChain: sts.unit(),
+        Paginated: sts.unit(),
     }
 })
 
@@ -1411,6 +1658,7 @@ export const ParachainSystemCall: sts.Type<ParachainSystemCall> = sts.closedEnum
     return  {
         authorize_upgrade: sts.enumStruct({
             codeHash: H256,
+            checkVersion: sts.boolean(),
         }),
         enact_authorized_upgrade: sts.enumStruct({
             code: sts.bytes(),
@@ -1426,7 +1674,7 @@ export const ParachainSystemCall: sts.Type<ParachainSystemCall> = sts.closedEnum
 
 export const ParachainInherentData: sts.Type<ParachainInherentData> = sts.struct(() => {
     return  {
-        validationData: V2PersistedValidationData,
+        validationData: V4PersistedValidationData,
         relayChainState: StorageProof,
         downwardMessages: sts.array(() => InboundDownwardMessage),
         horizontalMessages: sts.array(() => sts.tuple(() => [Id, sts.array(() => InboundHrmpMessage)])),
@@ -1455,7 +1703,7 @@ export const StorageProof: sts.Type<StorageProof> = sts.struct(() => {
     }
 })
 
-export const V2PersistedValidationData: sts.Type<V2PersistedValidationData> = sts.struct(() => {
+export const V4PersistedValidationData: sts.Type<V4PersistedValidationData> = sts.struct(() => {
     return  {
         parentHead: HeadData,
         relayParentNumber: sts.number(),
@@ -1564,16 +1812,6 @@ export const AddKeyData: sts.Type<AddKeyData> = sts.struct(() => {
     }
 })
 
-export const MultiSignature: sts.Type<MultiSignature> = sts.closedEnum(() => {
-    return  {
-        Ecdsa: sts.bytes(),
-        Ed25519: Signature,
-        Sr25519: sts.bytes(),
-    }
-})
-
-export const Signature = sts.bytes()
-
 export const MessagesCall: sts.Type<MessagesCall> = sts.closedEnum(() => {
     return  {
         add_ipfs_message: sts.enumStruct({
@@ -1585,6 +1823,35 @@ export const MessagesCall: sts.Type<MessagesCall> = sts.closedEnum(() => {
             onBehalfOf: sts.option(() => sts.bigint()),
             schemaId: sts.number(),
             payload: sts.bytes(),
+        }),
+    }
+})
+
+export const HandlesCall: sts.Type<HandlesCall> = sts.closedEnum(() => {
+    return  {
+        claim_handle: sts.enumStruct({
+            msaOwnerKey: AccountId32,
+            proof: MultiSignature,
+            payload: ClaimHandlePayload,
+        }),
+        retire_handle: sts.unit(),
+    }
+})
+
+export const ClaimHandlePayload: sts.Type<ClaimHandlePayload> = sts.struct(() => {
+    return  {
+        baseHandle: sts.bytes(),
+        expiration: sts.number(),
+    }
+})
+
+export const FrequencyTxPaymentCall: sts.Type<FrequencyTxPaymentCall> = sts.closedEnum(() => {
+    return  {
+        pay_with_capacity: sts.enumStruct({
+            call: Call,
+        }),
+        pay_with_capacity_batch_all: sts.enumStruct({
+            calls: sts.array(() => Call),
         }),
     }
 })
@@ -1638,6 +1905,10 @@ export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
         second: sts.enumStruct({
             proposal: sts.number(),
         }),
+        set_metadata: sts.enumStruct({
+            owner: MetadataOwner,
+            maybeHash: sts.option(() => H256),
+        }),
         undelegate: sts.unit(),
         unlock: sts.enumStruct({
             target: MultiAddress,
@@ -1666,6 +1937,14 @@ export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
 })
 
 export const Vote = sts.number()
+
+export const MetadataOwner: sts.Type<MetadataOwner> = sts.closedEnum(() => {
+    return  {
+        External: sts.unit(),
+        Proposal: sts.number(),
+        Referendum: sts.number(),
+    }
+})
 
 export const Bounded: sts.Type<Bounded> = sts.closedEnum(() => {
     return  {
@@ -1698,12 +1977,6 @@ export const CouncilCall: sts.Type<CouncilCall> = sts.closedEnum(() => {
             proposalHash: H256,
             index: sts.number(),
             proposalWeightBound: Weight,
-            lengthBound: sts.number(),
-        }),
-        close_old_weight: sts.enumStruct({
-            proposalHash: H256,
-            index: sts.number(),
-            proposalWeightBound: sts.bigint(),
             lengthBound: sts.number(),
         }),
         disapprove_proposal: sts.enumStruct({
@@ -1747,8 +2020,29 @@ export const CollatorSelectionCall: sts.Type<CollatorSelectionCall> = sts.closed
     }
 })
 
+export const CapacityCall: sts.Type<CapacityCall> = sts.closedEnum(() => {
+    return  {
+        set_epoch_length: sts.enumStruct({
+            length: sts.number(),
+        }),
+        stake: sts.enumStruct({
+            target: sts.bigint(),
+            amount: sts.bigint(),
+        }),
+        unstake: sts.enumStruct({
+            target: sts.bigint(),
+            requestedAmount: sts.bigint(),
+        }),
+        withdraw_unstaked: sts.unit(),
+    }
+})
+
 export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
     return  {
+        force_set_balance: sts.enumStruct({
+            who: MultiAddress,
+            newFree: sts.bigint(),
+        }),
         force_transfer: sts.enumStruct({
             source: MultiAddress,
             dest: MultiAddress,
@@ -1758,10 +2052,10 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
             who: MultiAddress,
             amount: sts.bigint(),
         }),
-        set_balance: sts.enumStruct({
+        set_balance_deprecated: sts.enumStruct({
             who: MultiAddress,
             newFree: sts.bigint(),
-            newReserved: sts.bigint(),
+            oldReserved: sts.bigint(),
         }),
         transfer: sts.enumStruct({
             dest: MultiAddress,
@@ -1771,45 +2065,221 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
             dest: MultiAddress,
             keepAlive: sts.boolean(),
         }),
+        transfer_allow_death: sts.enumStruct({
+            dest: MultiAddress,
+            value: sts.bigint(),
+        }),
         transfer_keep_alive: sts.enumStruct({
             dest: MultiAddress,
             value: sts.bigint(),
         }),
-    }
-})
-
-export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
-    return  {
-        set_uncles: sts.enumStruct({
-            newUncles: sts.array(() => Header),
+        upgrade_accounts: sts.enumStruct({
+            who: sts.array(() => AccountId32),
         }),
     }
 })
 
-export const Header: sts.Type<Header> = sts.struct(() => {
+export type AccountId32 = Bytes
+
+export interface AccountData {
+    free: bigint
+    reserved: bigint
+    frozen: bigint
+    flags: ExtraFlags
+}
+
+export type ExtraFlags = bigint
+
+export const AccountData: sts.Type<AccountData> = sts.struct(() => {
     return  {
-        parentHash: H256,
-        number: sts.number(),
-        stateRoot: H256,
-        extrinsicsRoot: H256,
-        digest: Digest,
+        free: sts.bigint(),
+        reserved: sts.bigint(),
+        frozen: sts.bigint(),
+        flags: ExtraFlags,
     }
 })
 
-export const Digest: sts.Type<Digest> = sts.struct(() => {
-    return  {
-        logs: sts.array(() => DigestItem),
-    }
-})
+export const ExtraFlags = sts.bigint()
 
-export const DigestItem: sts.Type<DigestItem> = sts.closedEnum(() => {
-    return  {
-        Consensus: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-        Other: sts.bytes(),
-        PreRuntime: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-        RuntimeEnvironmentUpdated: sts.unit(),
-        Seal: sts.tuple(() => [sts.bytes(), sts.bytes()]),
-    }
-})
+export const AccountId32 = sts.bytes()
 
 export const H256 = sts.bytes()
+
+export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
+    return  {
+        Arithmetic: ArithmeticError,
+        BadOrigin: sts.unit(),
+        CannotLookup: sts.unit(),
+        ConsumerRemaining: sts.unit(),
+        Corruption: sts.unit(),
+        Exhausted: sts.unit(),
+        Module: ModuleError,
+        NoProviders: sts.unit(),
+        Other: sts.unit(),
+        Token: TokenError,
+        TooManyConsumers: sts.unit(),
+        Transactional: TransactionalError,
+        Unavailable: sts.unit(),
+    }
+})
+
+export const TransactionalError: sts.Type<TransactionalError> = sts.closedEnum(() => {
+    return  {
+        LimitReached: sts.unit(),
+        NoLayer: sts.unit(),
+    }
+})
+
+export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
+
+export interface TransactionalError_LimitReached {
+    __kind: 'LimitReached'
+}
+
+export interface TransactionalError_NoLayer {
+    __kind: 'NoLayer'
+}
+
+export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
+    return  {
+        BelowMinimum: sts.unit(),
+        CannotCreate: sts.unit(),
+        CannotCreateHold: sts.unit(),
+        Frozen: sts.unit(),
+        FundsUnavailable: sts.unit(),
+        NotExpendable: sts.unit(),
+        OnlyProvider: sts.unit(),
+        UnknownAsset: sts.unit(),
+        Unsupported: sts.unit(),
+    }
+})
+
+export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_CannotCreateHold | TokenError_Frozen | TokenError_FundsUnavailable | TokenError_NotExpendable | TokenError_OnlyProvider | TokenError_UnknownAsset | TokenError_Unsupported
+
+export interface TokenError_BelowMinimum {
+    __kind: 'BelowMinimum'
+}
+
+export interface TokenError_CannotCreate {
+    __kind: 'CannotCreate'
+}
+
+export interface TokenError_CannotCreateHold {
+    __kind: 'CannotCreateHold'
+}
+
+export interface TokenError_Frozen {
+    __kind: 'Frozen'
+}
+
+export interface TokenError_FundsUnavailable {
+    __kind: 'FundsUnavailable'
+}
+
+export interface TokenError_NotExpendable {
+    __kind: 'NotExpendable'
+}
+
+export interface TokenError_OnlyProvider {
+    __kind: 'OnlyProvider'
+}
+
+export interface TokenError_UnknownAsset {
+    __kind: 'UnknownAsset'
+}
+
+export interface TokenError_Unsupported {
+    __kind: 'Unsupported'
+}
+
+export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
+    return  {
+        index: sts.number(),
+        error: sts.bytes(),
+    }
+})
+
+export interface ModuleError {
+    index: number
+    error: Bytes
+}
+
+export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
+    return  {
+        DivisionByZero: sts.unit(),
+        Overflow: sts.unit(),
+        Underflow: sts.unit(),
+    }
+})
+
+export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
+
+export interface ArithmeticError_DivisionByZero {
+    __kind: 'DivisionByZero'
+}
+
+export interface ArithmeticError_Overflow {
+    __kind: 'Overflow'
+}
+
+export interface ArithmeticError_Underflow {
+    __kind: 'Underflow'
+}
+
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Corruption | DispatchError_Exhausted | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers | DispatchError_Transactional | DispatchError_Unavailable
+
+export interface DispatchError_Arithmetic {
+    __kind: 'Arithmetic'
+    value: ArithmeticError
+}
+
+export interface DispatchError_BadOrigin {
+    __kind: 'BadOrigin'
+}
+
+export interface DispatchError_CannotLookup {
+    __kind: 'CannotLookup'
+}
+
+export interface DispatchError_ConsumerRemaining {
+    __kind: 'ConsumerRemaining'
+}
+
+export interface DispatchError_Corruption {
+    __kind: 'Corruption'
+}
+
+export interface DispatchError_Exhausted {
+    __kind: 'Exhausted'
+}
+
+export interface DispatchError_Module {
+    __kind: 'Module'
+    value: ModuleError
+}
+
+export interface DispatchError_NoProviders {
+    __kind: 'NoProviders'
+}
+
+export interface DispatchError_Other {
+    __kind: 'Other'
+}
+
+export interface DispatchError_Token {
+    __kind: 'Token'
+    value: TokenError
+}
+
+export interface DispatchError_TooManyConsumers {
+    __kind: 'TooManyConsumers'
+}
+
+export interface DispatchError_Transactional {
+    __kind: 'Transactional'
+    value: TransactionalError
+}
+
+export interface DispatchError_Unavailable {
+    __kind: 'Unavailable'
+}

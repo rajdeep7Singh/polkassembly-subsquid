@@ -2,7 +2,7 @@ import {sts, Result, Option, Bytes, BitSequence} from './support'
 
 export type H256 = Bytes
 
-export type Call = Call_Authorship | Call_Balances | Call_CollatorSelection | Call_Council | Call_Democracy | Call_Messages | Call_Msa | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_Scheduler | Call_Schemas | Call_Session | Call_System | Call_TechnicalCommittee | Call_TimeRelease | Call_Timestamp | Call_Treasury | Call_Utility
+export type Call = Call_Authorship | Call_Balances | Call_CollatorSelection | Call_Council | Call_Democracy | Call_Messages | Call_Msa | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_Scheduler | Call_Schemas | Call_Session | Call_System | Call_TechnicalCommittee | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting
 
 export interface Call_Authorship {
     __kind: 'Authorship'
@@ -79,11 +79,6 @@ export interface Call_TechnicalCommittee {
     value: TechnicalCommitteeCall
 }
 
-export interface Call_TimeRelease {
-    __kind: 'TimeRelease'
-    value: TimeReleaseCall
-}
-
 export interface Call_Timestamp {
     __kind: 'Timestamp'
     value: TimestampCall
@@ -98,6 +93,69 @@ export interface Call_Utility {
     __kind: 'Utility'
     value: UtilityCall
 }
+
+export interface Call_Vesting {
+    __kind: 'Vesting'
+    value: VestingCall
+}
+
+export type VestingCall = VestingCall_claim | VestingCall_claim_for | VestingCall_update_vesting_schedules | VestingCall_vested_transfer
+
+export interface VestingCall_claim {
+    __kind: 'claim'
+}
+
+export interface VestingCall_claim_for {
+    __kind: 'claim_for'
+    dest: MultiAddress
+}
+
+export interface VestingCall_update_vesting_schedules {
+    __kind: 'update_vesting_schedules'
+    who: MultiAddress
+    vestingSchedules: VestingSchedule[]
+}
+
+export interface VestingCall_vested_transfer {
+    __kind: 'vested_transfer'
+    dest: MultiAddress
+    schedule: VestingSchedule
+}
+
+export interface VestingSchedule {
+    start: number
+    period: number
+    periodCount: number
+    perPeriod: bigint
+}
+
+export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
+
+export interface MultiAddress_Address20 {
+    __kind: 'Address20'
+    value: Bytes
+}
+
+export interface MultiAddress_Address32 {
+    __kind: 'Address32'
+    value: Bytes
+}
+
+export interface MultiAddress_Id {
+    __kind: 'Id'
+    value: AccountId32
+}
+
+export interface MultiAddress_Index {
+    __kind: 'Index'
+}
+
+export interface MultiAddress_Raw {
+    __kind: 'Raw'
+    value: Bytes
+}
+
+export type AccountId32 = Bytes
 
 export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
 
@@ -176,8 +234,6 @@ export interface RawOrigin_Signed {
     value: AccountId32
 }
 
-export type AccountId32 = Bytes
-
 export type Void = never
 
 export type Type_139 = Type_139_Member | Type_139_Members | Type_139__Phantom
@@ -241,67 +297,11 @@ export interface TreasuryCall_spend {
     beneficiary: MultiAddress
 }
 
-export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
-
-export interface MultiAddress_Address20 {
-    __kind: 'Address20'
-    value: Bytes
-}
-
-export interface MultiAddress_Address32 {
-    __kind: 'Address32'
-    value: Bytes
-}
-
-export interface MultiAddress_Id {
-    __kind: 'Id'
-    value: AccountId32
-}
-
-export interface MultiAddress_Index {
-    __kind: 'Index'
-}
-
-export interface MultiAddress_Raw {
-    __kind: 'Raw'
-    value: Bytes
-}
-
 export type TimestampCall = TimestampCall_set
 
 export interface TimestampCall_set {
     __kind: 'set'
     now: bigint
-}
-
-export type TimeReleaseCall = TimeReleaseCall_claim | TimeReleaseCall_claim_for | TimeReleaseCall_transfer | TimeReleaseCall_update_release_schedules
-
-export interface TimeReleaseCall_claim {
-    __kind: 'claim'
-}
-
-export interface TimeReleaseCall_claim_for {
-    __kind: 'claim_for'
-    dest: MultiAddress
-}
-
-export interface TimeReleaseCall_transfer {
-    __kind: 'transfer'
-    dest: MultiAddress
-    schedule: ReleaseSchedule
-}
-
-export interface TimeReleaseCall_update_release_schedules {
-    __kind: 'update_release_schedules'
-    who: MultiAddress
-    releaseSchedules: ReleaseSchedule[]
-}
-
-export interface ReleaseSchedule {
-    start: number
-    period: number
-    periodCount: number
-    perPeriod: bigint
 }
 
 export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCommitteeCall_close_old_weight | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
@@ -1081,12 +1081,50 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Session: SessionCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
-        TimeRelease: TimeReleaseCall,
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         Utility: UtilityCall,
+        Vesting: VestingCall,
     }
 })
+
+export const VestingCall: sts.Type<VestingCall> = sts.closedEnum(() => {
+    return  {
+        claim: sts.unit(),
+        claim_for: sts.enumStruct({
+            dest: MultiAddress,
+        }),
+        update_vesting_schedules: sts.enumStruct({
+            who: MultiAddress,
+            vestingSchedules: sts.array(() => VestingSchedule),
+        }),
+        vested_transfer: sts.enumStruct({
+            dest: MultiAddress,
+            schedule: VestingSchedule,
+        }),
+    }
+})
+
+export const VestingSchedule: sts.Type<VestingSchedule> = sts.struct(() => {
+    return  {
+        start: sts.number(),
+        period: sts.number(),
+        periodCount: sts.number(),
+        perPeriod: sts.bigint(),
+    }
+})
+
+export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
+    return  {
+        Address20: sts.bytes(),
+        Address32: sts.bytes(),
+        Id: AccountId32,
+        Index: sts.unit(),
+        Raw: sts.bytes(),
+    }
+})
+
+export const AccountId32 = sts.bytes()
 
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
@@ -1138,8 +1176,6 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
-
 export const Void: sts.Type<Void> = sts.closedEnum(() => {
     return  {
     }
@@ -1183,47 +1219,11 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
     }
 })
 
-export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
-    return  {
-        Address20: sts.bytes(),
-        Address32: sts.bytes(),
-        Id: AccountId32,
-        Index: sts.unit(),
-        Raw: sts.bytes(),
-    }
-})
-
 export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
     return  {
         set: sts.enumStruct({
             now: sts.bigint(),
         }),
-    }
-})
-
-export const TimeReleaseCall: sts.Type<TimeReleaseCall> = sts.closedEnum(() => {
-    return  {
-        claim: sts.unit(),
-        claim_for: sts.enumStruct({
-            dest: MultiAddress,
-        }),
-        transfer: sts.enumStruct({
-            dest: MultiAddress,
-            schedule: ReleaseSchedule,
-        }),
-        update_release_schedules: sts.enumStruct({
-            who: MultiAddress,
-            releaseSchedules: sts.array(() => ReleaseSchedule),
-        }),
-    }
-})
-
-export const ReleaseSchedule: sts.Type<ReleaseSchedule> = sts.struct(() => {
-    return  {
-        start: sts.number(),
-        period: sts.number(),
-        periodCount: sts.number(),
-        perPeriod: sts.bigint(),
     }
 })
 

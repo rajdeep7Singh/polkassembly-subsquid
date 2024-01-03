@@ -27,16 +27,16 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.v9170.is(block)) {
-        const storageData = await preimageFor.v9170.get(block, hash)
+    if(preimageFor.v1.is(block)) {
+        const storageData = await preimageFor.v1.get(block, hash)
         if (!storageData) return undefined
         return {
             data: storageData,
             ...preimageStatus
         }
-    }else if(preimageFor.v9340.is(block)) {
+    }else if(preimageFor.v11.is(block)) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await preimageFor.v9340.get(block, [hash, preimageStatus.len])
+            const storageData = await preimageFor.v11.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -59,16 +59,16 @@ interface PreimageStatusStorageData{
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(statusFor.v9170.is(block)) {
-        const storageData = await statusFor.v9170.get(block, hash)
+    if(statusFor.v1.is(block)) {
+        const storageData = await statusFor.v1.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
         }
-    }else if(statusFor.v9340.is(block)) {
-        const storageData = await statusFor.v9340.get(block, hash)
+    }else if(statusFor.v11.is(block)) {
+        const storageData = await statusFor.v11.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
