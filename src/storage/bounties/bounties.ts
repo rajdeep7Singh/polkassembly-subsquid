@@ -2,7 +2,7 @@
 import { UnknownVersionError } from '../../common/errors'
 import { ProcessorContext } from '../../processor'
 import { bounties, bountyDescriptions } from '../../types/bounties/storage'
-import { bounties as TreasuryBountiesStorage, bountyDescriptions as  TreasuryBountyDescriptionsStorage} from '../../types/bounties/storage'
+import { bounties as TreasuryBountiesStorage, bountyDescriptions as  TreasuryBountyDescriptionsStorage} from '../../types/treasury/storage'
 
 import { Store } from '@subsquid/typeorm-store'
 
@@ -27,10 +27,8 @@ async function getBountyStorageData(ctx: ProcessorContext<Store>, index: number,
 
 async function getTreasuryStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<BountyStorageData | undefined> {
 
-    if (TreasuryBountiesStorage.v28.is(block)) {
-        return await bounties.v28.get(block, index)
-    }else if (TreasuryBountiesStorage.v9110.is(block)) {
-        return await bounties.v9110.get(block, index)
+    if (TreasuryBountiesStorage.v25.is(block)) {
+        return await TreasuryBountiesStorage.v25.get(block, index)
     }else {
         throw new UnknownVersionError("Bounty.Bountie")
     }
@@ -60,8 +58,8 @@ async function getBountyDescriptionStorageData(ctx: ProcessorContext<Store>, ind
 }
 
 async function getTreasuryDescriptionStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<string | undefined> {
-    if (TreasuryBountyDescriptionsStorage.v28.is(block)) {
-        return await TreasuryBountyDescriptionsStorage.v28.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (TreasuryBountyDescriptionsStorage.v25.is(block)) {
+        return await TreasuryBountyDescriptionsStorage.v25.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Bounties.descriptions")
     }
