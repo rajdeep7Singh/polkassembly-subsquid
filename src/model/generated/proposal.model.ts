@@ -145,6 +145,9 @@ export class Proposal {
     @ManyToOne_(() => ProposalGroup, {nullable: true})
     group!: ProposalGroup | undefined | null
 
+    @Column_("text", {nullable: true})
+    proposalHashBlock!: string | undefined | null
+
     @Index_()
     @Column_("int4", {nullable: false})
     createdAtBlock!: number

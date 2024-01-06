@@ -30,6 +30,23 @@ const processor = new SubstrateBatchProcessor()
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
     for (let block of ctx.blocks) {
+        let advisoryCall = null
+        let advisoryEvent = null
+        for (let item of block.calls){
+            if (item.name == 'AdvisoryCommittee.propose'){
+                advisoryCall = item
+            }
+        }
+        for (let item of block.events){
+            if (item.name == 'AdvisoryCommittee.Proposed'){
+                advisoryEvent = item
+            }
+        }
+        if(advisoryEvent){
+            await modules.advisoryCommittee.events.handleProposed(ctx, advisoryEvent, block.header)
+        }else if(advisoryCall){
+            await modules.advisoryCommittee.extrinsics.handleProposed(ctx, advisoryCall, block.header)
+        }
         for (let item of block.calls) {
             if (item.name == 'Democracy.vote') {
                 await modules.democracy.extrinsics.handleVote(ctx, item, block.header)
@@ -54,9 +71,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Bounties.propose_curator'){
                 await modules.bounties.extrinsic.handleProposeCurator(ctx, item, block.header)
-            }            
-            if (item.name == 'AdvisoryCommittee.propose' && block.header.height >= 4182565){
-                await modules.advisoryCommittee.extrinsics.handleProposed(ctx, item, block.header)
             }
         }
         for (let item of block.events) {
@@ -119,9 +133,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'AdvisoryCommittee.Voted'){
                 await modules.advisoryCommittee.events.handleVoted(ctx, item, block.header)
-            }
-            if (item.name == 'AdvisoryCommittee.Proposed' && block.header.height < 4182565){
-                await modules.advisoryCommittee.events.handleProposed(ctx, item, block.header)
             }
             if (item.name == 'AdvisoryCommittee.Closed'){
                 await modules.advisoryCommittee.events.handleClosed(ctx, item, block.header)

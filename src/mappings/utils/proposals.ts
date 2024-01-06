@@ -177,7 +177,7 @@ export async function updateProposalStatus(
                       type,
                   },
         order: {
-            id: 'DESC',
+            createdAtBlock: 'DESC',
         },
     })
 
@@ -745,6 +745,7 @@ export async function createAdvisoryCommitteeMotion( ctx:  ProcessorContext<Stor
         proposalArguments: createProposedCall(call),
         thresholdNumber: threshold,
         marketMetadata,
+        proposalHashBlock: `${header.height}_${hash}`,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
