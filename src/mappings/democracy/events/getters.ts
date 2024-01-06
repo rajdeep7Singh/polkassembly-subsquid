@@ -12,6 +12,8 @@ import {
     seconded,
 } from '../../../types/democracy/events'
 import { Event } from '../../../processor'
+import { ss58codec } from '../../../common/tools'
+import { decodeHex } from '@subsquid/substrate-processor'
 
 export function getCancelledData(itemEvent: Event): number {
     if (cancelled.v0.is(itemEvent)) {
@@ -118,14 +120,14 @@ export function getPreimageNotedData(itemEvent: Event): PreimageNotedData {
         const [hash, provider, deposit] = preimageNoted.v0.decode(itemEvent)
         return {
             hash,
-            provider,
+            provider: ss58codec.encode(decodeHex(provider)),
             deposit,
         }
     } else if (preimageNoted.v9140.is(itemEvent)) {
         const { proposalHash: hash, who: provider, deposit } = preimageNoted.v9140.decode(itemEvent)
         return {
             hash,
-            provider,
+            provider: ss58codec.encode(decodeHex(provider)),
             deposit,
         }
     } else {
