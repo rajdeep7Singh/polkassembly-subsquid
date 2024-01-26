@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v9160 from '../v9160'
 import * as v9320 from '../v9320'
+import * as v1001000 from '../v1001000'
 
 export const statusFor =  {
     /**
@@ -84,4 +85,28 @@ export interface PreimageForV9320  {
     getPairs(block: Block, key: [v9320.H256, number]): Promise<[k: [v9320.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [v9320.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: [v9320.H256, number]): AsyncIterable<[k: [v9320.H256, number], v: (Bytes | undefined)][]>
+}
+
+export const requestStatusFor =  {
+    /**
+     *  The request status of a given hash.
+     */
+    v1001000: new StorageType('Preimage.RequestStatusFor', 'Optional', [v1001000.H256], v1001000.RequestStatus) as RequestStatusForV1001000,
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface RequestStatusForV1001000  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1001000.H256): Promise<(v1001000.RequestStatus | undefined)>
+    getMany(block: Block, keys: v1001000.H256[]): Promise<(v1001000.RequestStatus | undefined)[]>
+    getKeys(block: Block): Promise<v1001000.H256[]>
+    getKeys(block: Block, key: v1001000.H256): Promise<v1001000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1001000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v1001000.H256): AsyncIterable<v1001000.H256[]>
+    getPairs(block: Block): Promise<[k: v1001000.H256, v: (v1001000.RequestStatus | undefined)][]>
+    getPairs(block: Block, key: v1001000.H256): Promise<[k: v1001000.H256, v: (v1001000.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1001000.H256, v: (v1001000.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v1001000.H256): AsyncIterable<[k: v1001000.H256, v: (v1001000.RequestStatus | undefined)][]>
 }

@@ -6,7 +6,7 @@ export const bounties =  {
     /**
      *  Bounties that have been made.
      */
-    v2028: new StorageType('Bounties.Bounties', 'Optional', [v2028.BountyIndex], v2028.Bounty) as BountiesV2028,
+    v2028: new StorageType('Treasury.Bounties', 'Optional', [v2028.BountyIndex], v2028.Bounty) as BountiesV2028,
     /**
      *  Bounties that have been made.
      */
@@ -51,7 +51,7 @@ export const bountyDescriptions =  {
     /**
      *  The description of each bounty.
      */
-    v2028: new StorageType('Bounties.BountyDescriptions', 'Optional', [v2028.BountyIndex], sts.bytes()) as BountyDescriptionsV2028,
+    v2028: new StorageType('Treasury.BountyDescriptions', 'Optional', [v2028.BountyIndex], sts.bytes()) as BountyDescriptionsV2028,
 }
 
 /**

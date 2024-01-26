@@ -7,7 +7,7 @@ export const tips =  {
      *  This has the insecure enumerable hash function since the key itself is already
      *  guaranteed to be a secure hash.
      */
-    v2028: new StorageType('Tips.Tips', 'Optional', [v2028.Hash], v2028.OpenTip) as TipsV2028,
+    v2028: new StorageType('Treasury.Tips', 'Optional', [v2028.Hash], v2028.OpenTip) as TipsV2028,
 }
 
 /**
@@ -34,7 +34,7 @@ export const reasons =  {
      *  Simple preimage lookup from the reason's hash to the original data. Again, has an
      *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
      */
-    v2028: new StorageType('Tips.Reasons', 'Optional', [v2028.Hash], sts.bytes()) as ReasonsV2028,
+    v2028: new StorageType('Treasury.Reasons', 'Optional', [v2028.Hash], sts.bytes()) as ReasonsV2028,
 }
 
 /**

@@ -3,6 +3,8 @@ import { BlockHeader, DataHandlerContext, SubstrateBatchProcessor, SubstrateBatc
 import { TypeormDatabase } from '@subsquid/typeorm-store'
 import * as modules from './mappings'
 import assert from 'assert'
+import { ProposalStatus } from './model'
+import { createPreimageV2 } from './mappings/utils/proposals'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
@@ -10,7 +12,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://kusama-rpc.dwellir.com',
         archive: lookupArchive('kusama',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
-    .setBlockRange({ from: 0})
+    .setBlockRange({ from: 21587940, to: 21587943 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
         name: [ 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
