@@ -16,3 +16,18 @@ export async function getTotalInactiveIssuanceStorageData(ctx: ProcessorContext<
         return BigInt(0)
     }
 }
+
+export async function getOpenGovTotalIssuanceStorageData(ctx: ProcessorContext<Store>, block: any): Promise<bigint> {
+    const storageData = await block._runtime.getStorage(block.hash, 'OpenGovBalances.TotalIssuance')
+    return storageData || BigInt(0)
+}
+
+export async function getOpenGovTotalInactiveIssuanceStorageData(ctx: ProcessorContext<Store>, block: any): Promise<bigint> {
+    try{
+    const storageData = await block._runtime.getStorage(block.hash, 'OpenGovBalances.InactiveIssuance')
+    return storageData || BigInt(0)
+    }
+    catch{
+        return BigInt(0)
+    }
+}

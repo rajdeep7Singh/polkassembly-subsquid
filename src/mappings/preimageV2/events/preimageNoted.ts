@@ -3,7 +3,6 @@ import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/error
 import {
     statusFor,
     preimageFor,
-    requestStatusFor
 } from '../../../types/preimage/storage'
 
 import { ProposalStatus } from '../../../model'
@@ -30,16 +29,16 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.v9160.is(block)) {
-        const storageData = await preimageFor.v9160.get(block, hash)
+    if(preimageFor.v1000.is(block)) {
+        const storageData = await preimageFor.v1000.get(block, hash)
         if (!storageData) return undefined
         return {
             data: storageData,
             ...preimageStatus
         }
-    }else if(preimageFor.v9320.is(block)) {
+    }else if(preimageFor.v10009.is(block)) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await preimageFor.v9320.get(block, [hash, preimageStatus.len])
+            const storageData = await preimageFor.v10009.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -61,40 +60,40 @@ interface PreimageStatusStorageData{
     len?: number
 }
 
-export async function getPreimageRequestStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(requestStatusFor.v1001000.is(block)) {
-        const storageData = await requestStatusFor.v1001000.get(block, hash)
-        if (!storageData) return undefined
-        if(storageData.__kind == 'Unrequested'){
-            return {
-                status: storageData.__kind,
-                value: storageData.ticket,
-                len: storageData.len
-            }
-        } else{
-            return {
-                status: storageData.__kind,
-                value: storageData.maybeTicket,
-                len: storageData.maybeLen
-            }
-        }
-    }
-    else {
-        throw new UnknownVersionError('preimage.StatusFor')
-    }
-}
+// export async function getPreimageRequestStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
+//     if(requestStatusFor.v1001000.is(block)) {
+//         const storageData = await requestStatusFor.v1001000.get(block, hash)
+//         if (!storageData) return undefined
+//         if(storageData.__kind == 'Unrequested'){
+//             return {
+//                 status: storageData.__kind,
+//                 value: storageData.ticket,
+//                 len: storageData.len
+//             }
+//         } else{
+//             return {
+//                 status: storageData.__kind,
+//                 value: storageData.maybeTicket,
+//                 len: storageData.maybeLen
+//             }
+//         }
+//     }
+//     else {
+//         throw new UnknownVersionError('preimage.StatusFor')
+//     }
+// }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(statusFor.v9160.is(block)) {
-        const storageData = await statusFor.v9160.get(block, hash)
+    if(statusFor.v1000.is(block)) {
+        const storageData = await statusFor.v1000.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
         }
-    }else if(statusFor.v9320.is(block)) {
-        const storageData = await statusFor.v9320.get(block, hash)
+    }else if(statusFor.v10009.is(block)) {
+        const storageData = await statusFor.v10009.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
@@ -118,7 +117,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     const hexHash = hash
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const storageData = await getPreimageStatusData(ctx, hash, header) || await getPreimageRequestStatusData(ctx, hash, header)
+    const storageData = await getPreimageStatusData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('PreimageV2', hexHash))
         return

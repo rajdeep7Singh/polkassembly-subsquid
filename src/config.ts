@@ -2,12 +2,12 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'kusama',
-        prefix: 'kusama',
+        name: 'picasso',
+        prefix: 49,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
-        chain: 'wss://kusama-rpc.dwellir.com',
+        chain: 'wss://picasso-rpc.composable.finance',
+        archive: lookupArchive('picasso',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'kusama',
     batchSize: 500,

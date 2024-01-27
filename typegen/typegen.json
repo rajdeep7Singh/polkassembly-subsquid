@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://v2.archive.subsquid.io/metadata/kusama",
+  "specVersions": "https://v2.archive.subsquid.io/metadata/picasso",
   "typesBundle": "kusama",
   "pallets": {
     "Democracy": {
@@ -121,6 +121,11 @@
       "calls": [],
       "storage": ["TotalIssuance", "InactiveIssuance", "Account"],
       "constants": []
+    },
+    "OpenGovBalances": {
+      "events": [],
+      "calls": [],
+      "storage": ["InactiveIssuance", "TotalIssuance"]
     },
     "ConvictionVoting": {
       "events": [],
