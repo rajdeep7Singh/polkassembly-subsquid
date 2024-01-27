@@ -7,7 +7,7 @@ const config: any = {
     },
     dataSource: {
         chain: 'wss://polkadex-rpc.dwellir.com',
-        archive: 'https://v2.archive.subsquid.io/metadata/polkadex',
+        archive: lookupArchive('polkadex',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'polkadex',
     batchSize: 500,
