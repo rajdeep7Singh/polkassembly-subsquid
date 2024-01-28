@@ -2,12 +2,12 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'integritee',
+        prefix: 13,
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://rpc.polkadot.io',
+        chain: 'wss://integritee-kusama.api.onfinality.io/public-ws',
+        archive: lookupArchive('integritee-network',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'polkadot',
     batchSize: 500,

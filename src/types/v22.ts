@@ -2,7 +2,7 @@ import {sts, Result, Option, Bytes, BitSequence} from './support'
 
 export type H256 = Bytes
 
-export type Call = Call_Balances | Call_Claims | Call_Council | Call_CumulusXcm | Call_Democracy | Call_DmpQueue | Call_Multisig | Call_OrmlXcm | Call_ParachainSystem | Call_PolkadotXcm | Call_Preimage | Call_Proxy | Call_Scheduler | Call_Sidechain | Call_System | Call_TechnicalCommittee | Call_Teeracle | Call_Teerex | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting | Call_XTokens | Call_XcmTransactor | Call_XcmpQueue
+export type Call = Call_Balances | Call_Claims | Call_Council | Call_CumulusXcm | Call_Democracy | Call_DmpQueue | Call_Multisig | Call_OrmlXcm | Call_ParachainSystem | Call_PolkadotXcm | Call_Proxy | Call_Scheduler | Call_System | Call_TechnicalCommittee | Call_Teeracle | Call_Teerex | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting | Call_XTokens | Call_XcmpQueue
 
 export interface Call_Balances {
     __kind: 'Balances'
@@ -54,11 +54,6 @@ export interface Call_PolkadotXcm {
     value: PolkadotXcmCall
 }
 
-export interface Call_Preimage {
-    __kind: 'Preimage'
-    value: PreimageCall
-}
-
 export interface Call_Proxy {
     __kind: 'Proxy'
     value: ProxyCall
@@ -67,11 +62,6 @@ export interface Call_Proxy {
 export interface Call_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
-}
-
-export interface Call_Sidechain {
-    __kind: 'Sidechain'
-    value: SidechainCall
 }
 
 export interface Call_System {
@@ -117,11 +107,6 @@ export interface Call_Vesting {
 export interface Call_XTokens {
     __kind: 'XTokens'
     value: XTokensCall
-}
-
-export interface Call_XcmTransactor {
-    __kind: 'XcmTransactor'
-    value: XcmTransactorCall
 }
 
 export interface Call_XcmpQueue {
@@ -249,44 +234,14 @@ export interface XcmpQueueCall_update_xcmp_max_individual_weight {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type XcmTransactorCall = XcmTransactorCall_send_swap_ump
-
-/**
- * Send swap instruction to the relay chain to swap the slot lease of our two parachains.
- * This needs to be done from within a pallet as the `XCM` origin must be the parachain
- * itself.
- * 
- * This function should really only be called once via governance, on each chain that
- * performs the slot swap.
- * 
- * Sane weight values:
- *  Rococo-Local as of 11.01.2022:
- * 		* xcm_weight: 10_000_000_000
- * 		* buy_execution_weight: 500_000_000
- *  Kusama: to be defined, but the weights will be higher than on Rococo-Local
- * 
- */
-export interface XcmTransactorCall_send_swap_ump {
-    __kind: 'send_swap_ump'
-    selfId: Id
-    otherId: Id
-    xcmWeight: bigint
-    buyExecutionFee: bigint
-}
-
-export type Id = number
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export type XTokensCall = XTokensCall_transfer | XTokensCall_transfer_multiasset | XTokensCall_transfer_multiasset_with_fee | XTokensCall_transfer_multiassets | XTokensCall_transfer_multicurrencies | XTokensCall_transfer_with_fee
 
 /**
  * Transfer native currencies.
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * It's a no-op if any error on local XCM execution or message sending.
@@ -300,15 +255,15 @@ export interface XTokensCall_transfer {
     currencyId: CurrencyId
     amount: bigint
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 /**
  * Transfer `MultiAsset`.
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * It's a no-op if any error on local XCM execution or message sending.
@@ -321,15 +276,15 @@ export interface XTokensCall_transfer_multiasset {
     __kind: 'transfer_multiasset'
     asset: VersionedMultiAsset
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 /**
  * Transfer `MultiAsset` specifying the fee and amount as separate.
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * `fee` is the multiasset to be spent to pay for execution in
@@ -352,15 +307,15 @@ export interface XTokensCall_transfer_multiasset_with_fee {
     asset: VersionedMultiAsset
     fee: VersionedMultiAsset
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 /**
  * Transfer several `MultiAsset` specifying the item to be used as fee
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * `fee_item` is index of the MultiAssets that we want to use for
@@ -377,15 +332,15 @@ export interface XTokensCall_transfer_multiassets {
     assets: VersionedMultiAssets
     feeItem: number
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 /**
  * Transfer several currencies specifying the item to be used as fee
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * `fee_item` is index of the currencies tuple that we want to use for
@@ -402,16 +357,16 @@ export interface XTokensCall_transfer_multicurrencies {
     currencies: [CurrencyId, bigint][]
     feeItem: number
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 /**
  * Transfer native currencies specifying the fee and amount as
  * separate.
  * 
- * `dest_weight_limit` is the weight for XCM execution on the dest
- * chain, and it would be charged from the transferred assets. If set
- * below requirements, the execution may fail and assets wouldn't be
+ * `dest_weight` is the weight for XCM execution on the dest chain, and
+ * it would be charged from the transferred assets. If set below
+ * requirements, the execution may fail and assets wouldn't be
  * received.
  * 
  * `fee` is the amount to be spent to pay for execution in destination
@@ -434,7 +389,7 @@ export interface XTokensCall_transfer_with_fee {
     amount: bigint
     fee: bigint
     dest: VersionedMultiLocation
-    destWeightLimit: V2WeightLimit
+    destWeight: bigint
 }
 
 export type VersionedMultiAssets = VersionedMultiAssets_V0 | VersionedMultiAssets_V1
@@ -592,7 +547,7 @@ export interface V1Junction_GeneralIndex {
 
 export interface V1Junction_GeneralKey {
     __kind: 'GeneralKey'
-    value: WeakBoundedVec
+    value: Bytes
 }
 
 export interface V1Junction_OnlyChild {
@@ -665,7 +620,7 @@ export interface V0BodyId_Legislative {
 
 export interface V0BodyId_Named {
     __kind: 'Named'
-    value: WeakBoundedVec
+    value: Bytes
 }
 
 export interface V0BodyId_Technical {
@@ -675,8 +630,6 @@ export interface V0BodyId_Technical {
 export interface V0BodyId_Unit {
     __kind: 'Unit'
 }
-
-export type WeakBoundedVec = Bytes
 
 export type V0NetworkId = V0NetworkId_Any | V0NetworkId_Kusama | V0NetworkId_Named | V0NetworkId_Polkadot
 
@@ -690,7 +643,7 @@ export interface V0NetworkId_Kusama {
 
 export interface V0NetworkId_Named {
     __kind: 'Named'
-    value: WeakBoundedVec
+    value: Bytes
 }
 
 export interface V0NetworkId_Polkadot {
@@ -832,7 +785,7 @@ export interface V0Junction_GeneralIndex {
 
 export interface V0Junction_GeneralKey {
     __kind: 'GeneralKey'
-    value: WeakBoundedVec
+    value: Bytes
 }
 
 export interface V0Junction_OnlyChild {
@@ -869,17 +822,6 @@ export interface VersionedMultiAsset_V0 {
 export interface VersionedMultiAsset_V1 {
     __kind: 'V1'
     value: V1MultiAsset
-}
-
-export type V2WeightLimit = V2WeightLimit_Limited | V2WeightLimit_Unlimited
-
-export interface V2WeightLimit_Limited {
-    __kind: 'Limited'
-    value: bigint
-}
-
-export interface V2WeightLimit_Unlimited {
-    __kind: 'Unlimited'
 }
 
 export type VersionedMultiLocation = VersionedMultiLocation_V0 | VersionedMultiLocation_V1
@@ -1064,7 +1006,7 @@ export type AccountId32 = Bytes
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch | UtilityCall_batch_all | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_with_weight
+export type UtilityCall = UtilityCall_as_derivative | UtilityCall_batch | UtilityCall_batch_all | UtilityCall_dispatch_as
 
 /**
  * Send a call through an indexed pseudonym of the sender.
@@ -1090,13 +1032,13 @@ export interface UtilityCall_as_derivative {
 /**
  * Send a batch of dispatch calls.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -1117,13 +1059,13 @@ export interface UtilityCall_batch {
  * Send a batch of dispatch calls and atomically execute them.
  * The whole transaction will rollback and fail if any of the calls failed.
  * 
- * May be called from any origin except `None`.
+ * May be called from any origin.
  * 
  * - `calls`: The calls to be dispatched from the same origin. The number of call must not
  *   exceed the constant: `batched_calls_limit` (available in constant metadata).
  * 
- * If origin is root then the calls are dispatched without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * If origin is root then call are dispatch without checking origin filter. (This includes
+ * bypassing `frame_system::Config::BaseCallFilter`).
  * 
  * # <weight>
  * - Complexity: O(C) where C is the number of calls to be batched.
@@ -1152,56 +1094,16 @@ export interface UtilityCall_dispatch_as {
     call: Call
 }
 
-/**
- * Send a batch of dispatch calls.
- * Unlike `batch`, it allows errors and won't interrupt.
- * 
- * May be called from any origin except `None`.
- * 
- * - `calls`: The calls to be dispatched from the same origin. The number of call must not
- *   exceed the constant: `batched_calls_limit` (available in constant metadata).
- * 
- * If origin is root then the calls are dispatch without checking origin filter. (This
- * includes bypassing `frame_system::Config::BaseCallFilter`).
- * 
- * # <weight>
- * - Complexity: O(C) where C is the number of calls to be batched.
- * # </weight>
- */
-export interface UtilityCall_force_batch {
-    __kind: 'force_batch'
-    calls: Call[]
-}
-
-/**
- * Dispatch a function call with a specified weight.
- * 
- * This function does not check the weight of the call, and instead allows the
- * Root origin to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Root_.
- */
-export interface UtilityCall_with_weight {
-    __kind: 'with_weight'
-    call: Call
-    weight: Weight
-}
-
-export interface Weight {
-    refTime: bigint
-    proofSize: bigint
-}
-
 export type OriginCaller = OriginCaller_Council | OriginCaller_CumulusXcm | OriginCaller_PolkadotXcm | OriginCaller_TechnicalCommittee | OriginCaller_Void | OriginCaller_system
 
 export interface OriginCaller_Council {
     __kind: 'Council'
-    value: Type_192
+    value: Type_181
 }
 
 export interface OriginCaller_CumulusXcm {
     __kind: 'CumulusXcm'
-    value: Type_195
+    value: Type_184
 }
 
 export interface OriginCaller_PolkadotXcm {
@@ -1211,7 +1113,7 @@ export interface OriginCaller_PolkadotXcm {
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_193
+    value: Type_182
 }
 
 export interface OriginCaller_Void {
@@ -1241,19 +1143,19 @@ export interface RawOrigin_Signed {
 
 export type Void = never
 
-export type Type_193 = Type_193_Member | Type_193_Members | Type_193__Phantom
+export type Type_182 = Type_182_Member | Type_182_Members | Type_182__Phantom
 
-export interface Type_193_Member {
+export interface Type_182_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_193_Members {
+export interface Type_182_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_193__Phantom {
+export interface Type_182__Phantom {
     __kind: '_Phantom'
 }
 
@@ -1269,37 +1171,39 @@ export interface Origin_Xcm {
     value: V1MultiLocation
 }
 
-export type Type_195 = Type_195_Relay | Type_195_SiblingParachain
+export type Type_184 = Type_184_Relay | Type_184_SiblingParachain
 
-export interface Type_195_Relay {
+export interface Type_184_Relay {
     __kind: 'Relay'
 }
 
-export interface Type_195_SiblingParachain {
+export interface Type_184_SiblingParachain {
     __kind: 'SiblingParachain'
     value: Id
 }
 
-export type Type_192 = Type_192_Member | Type_192_Members | Type_192__Phantom
+export type Id = number
 
-export interface Type_192_Member {
+export type Type_181 = Type_181_Member | Type_181_Members | Type_181__Phantom
+
+export interface Type_181_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_192_Members {
+export interface Type_181_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_192__Phantom {
+export interface Type_181__Phantom {
     __kind: '_Phantom'
 }
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_propose_spend | TreasuryCall_reject_proposal | TreasuryCall_remove_approval | TreasuryCall_spend
+export type TreasuryCall = TreasuryCall_approve_proposal | TreasuryCall_propose_spend | TreasuryCall_reject_proposal
 
 /**
  * Approve a proposal. At a later time, the proposal will be allocated to the beneficiary
@@ -1352,44 +1256,6 @@ export interface TreasuryCall_reject_proposal {
 }
 
 /**
- * Force a previously approved proposal to be removed from the approval queue.
- * The original deposit will no longer be returned.
- * 
- * May only be called from `T::RejectOrigin`.
- * - `proposal_id`: The index of a proposal
- * 
- * # <weight>
- * - Complexity: O(A) where `A` is the number of approvals
- * - Db reads and writes: `Approvals`
- * # </weight>
- * 
- * Errors:
- * - `ProposalNotApproved`: The `proposal_id` supplied was not found in the approval queue,
- * i.e., the proposal has not been approved. This could also mean the proposal does not
- * exist altogether, thus there is no way it would have been approved in the first place.
- */
-export interface TreasuryCall_remove_approval {
-    __kind: 'remove_approval'
-    proposalId: number
-}
-
-/**
- * Propose and approve a spend of treasury funds.
- * 
- * - `origin`: Must be `SpendOrigin` with the `Success` value being at least `amount`.
- * - `amount`: The amount to be transferred from the treasury to the `beneficiary`.
- * - `beneficiary`: The destination account for the transfer.
- * 
- * NOTE: For record-keeping purposes, the proposer is deemed to be equivalent to the
- * beneficiary.
- */
-export interface TreasuryCall_spend {
-    __kind: 'spend'
-    amount: bigint
-    beneficiary: MultiAddress
-}
-
-/**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
 export type TimestampCall = TimestampCall_set
@@ -1420,7 +1286,7 @@ export interface TimestampCall_set {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type TeerexCall = TeerexCall_call_worker | TeerexCall_confirm_processed_parentchain_block | TeerexCall_register_enclave | TeerexCall_shield_funds | TeerexCall_unregister_enclave | TeerexCall_unshield_funds
+export type TeerexCall = TeerexCall_call_worker | TeerexCall_confirm_processed_parentchain_block | TeerexCall_confirm_proposed_sidechain_block | TeerexCall_register_enclave | TeerexCall_shield_funds | TeerexCall_unregister_enclave | TeerexCall_unshield_funds
 
 export interface TeerexCall_call_worker {
     __kind: 'call_worker'
@@ -1433,8 +1299,16 @@ export interface TeerexCall_call_worker {
 export interface TeerexCall_confirm_processed_parentchain_block {
     __kind: 'confirm_processed_parentchain_block'
     blockHash: H256
-    blockNumber: number
     trustedCallsMerkleRoot: H256
+}
+
+/**
+ * The integritee worker calls this function for every proposed sidechain_block.
+ */
+export interface TeerexCall_confirm_proposed_sidechain_block {
+    __kind: 'confirm_proposed_sidechain_block'
+    shardId: H256
+    blockHash: H256
 }
 
 export interface TeerexCall_register_enclave {
@@ -1478,7 +1352,7 @@ export interface Request {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type TeeracleCall = TeeracleCall_add_to_whitelist | TeeracleCall_remove_from_whitelist | TeeracleCall_update_exchange_rate | TeeracleCall_update_oracle
+export type TeeracleCall = TeeracleCall_add_to_whitelist | TeeracleCall_remove_from_whitelist | TeeracleCall_update_exchange_rate
 
 export interface TeeracleCall_add_to_whitelist {
     __kind: 'add_to_whitelist'
@@ -1499,13 +1373,6 @@ export interface TeeracleCall_update_exchange_rate {
     newValue?: (FixedU64 | undefined)
 }
 
-export interface TeeracleCall_update_oracle {
-    __kind: 'update_oracle'
-    oracleName: Bytes
-    dataSource: Bytes
-    newBlob: Bytes
-}
-
 export interface FixedU64 {
     bits: bigint
 }
@@ -1513,7 +1380,7 @@ export interface FixedU64 {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCommitteeCall_close_old_weight | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
+export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCommitteeCall_disapprove_proposal | TechnicalCommitteeCall_execute | TechnicalCommitteeCall_propose | TechnicalCommitteeCall_set_members | TechnicalCommitteeCall_vote
 
 /**
  * Close a vote that is either approved, disapproved or whose voting period has ended.
@@ -1551,48 +1418,6 @@ export type TechnicalCommitteeCall = TechnicalCommitteeCall_close | TechnicalCom
  */
 export interface TechnicalCommitteeCall_close {
     __kind: 'close'
-    proposalHash: H256
-    index: number
-    proposalWeightBound: Weight
-    lengthBound: number
-}
-
-/**
- * Close a vote that is either approved, disapproved or whose voting period has ended.
- * 
- * May be called by any signed account in order to finish voting and close the proposal.
- * 
- * If called before the end of the voting period it will only close the vote if it is
- * has enough votes to be approved or disapproved.
- * 
- * If called after the end of the voting period abstentions are counted as rejections
- * unless there is a prime member set and the prime member cast an approval.
- * 
- * If the close operation completes successfully with disapproval, the transaction fee will
- * be waived. Otherwise execution of the approved operation will be charged to the caller.
- * 
- * + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed
- * proposal.
- * + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
- * `storage::read` so it is `size_of::<u32>() == 4` larger than the pure length.
- * 
- * # <weight>
- * ## Weight
- * - `O(B + M + P1 + P2)` where:
- *   - `B` is `proposal` size in bytes (length-fee-bounded)
- *   - `M` is members-count (code- and governance-bounded)
- *   - `P1` is the complexity of `proposal` preimage.
- *   - `P2` is proposal-count (code-bounded)
- * - DB:
- *  - 2 storage reads (`Members`: codec `O(M)`, `Prime`: codec `O(1)`)
- *  - 3 mutations (`Voting`: codec `O(M)`, `ProposalOf`: codec `O(B)`, `Proposals`: codec
- *    `O(P2)`)
- *  - any mutations done while executing `proposal` (`P1`)
- * - up to 3 events
- * # </weight>
- */
-export interface TechnicalCommitteeCall_close_old_weight {
-    __kind: 'close_old_weight'
     proposalHash: H256
     index: number
     proposalWeightBound: bigint
@@ -1743,7 +1568,15 @@ export interface TechnicalCommitteeCall_vote {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
+export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
+
+/**
+ * A dispatch that will fill the block weight up to the given ratio.
+ */
+export interface SystemCall_fill_block {
+    __kind: 'fill_block'
+    ratio: Perbill
+}
 
 /**
  * Kill all storage items with a key that starts with the given prefix.
@@ -1836,21 +1669,7 @@ export interface SystemCall_set_storage {
     items: [Bytes, Bytes][]
 }
 
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type SidechainCall = SidechainCall_confirm_imported_sidechain_block
-
-/**
- * The integritee worker calls this function for every imported sidechain_block.
- */
-export interface SidechainCall_confirm_imported_sidechain_block {
-    __kind: 'confirm_imported_sidechain_block'
-    shardId: H256
-    blockNumber: bigint
-    nextFinalizationCandidateBlockNumber: bigint
-    blockHeaderHash: H256
-}
+export type Perbill = number
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -1882,7 +1701,7 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -1897,7 +1716,7 @@ export interface SchedulerCall_schedule_after {
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -1909,7 +1728,7 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
 }
 
 /**
@@ -1925,13 +1744,25 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: Call
+    call: MaybeHashed
+}
+
+export type MaybeHashed = MaybeHashed_Hash | MaybeHashed_Value
+
+export interface MaybeHashed_Hash {
+    __kind: 'Hash'
+    value: H256
+}
+
+export interface MaybeHashed_Value {
+    __kind: 'Value'
+    value: Call
 }
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ProxyCall = ProxyCall_add_proxy | ProxyCall_announce | ProxyCall_create_pure | ProxyCall_kill_pure | ProxyCall_proxy | ProxyCall_proxy_announced | ProxyCall_reject_announcement | ProxyCall_remove_announcement | ProxyCall_remove_proxies | ProxyCall_remove_proxy
+export type ProxyCall = ProxyCall_add_proxy | ProxyCall_announce | ProxyCall_anonymous | ProxyCall_kill_anonymous | ProxyCall_proxy | ProxyCall_proxy_announced | ProxyCall_reject_announcement | ProxyCall_remove_announcement | ProxyCall_remove_proxies | ProxyCall_remove_proxy
 
 /**
  * Register a proxy account for the sender that is able to make calls on its behalf.
@@ -1943,10 +1774,14 @@ export type ProxyCall = ProxyCall_add_proxy | ProxyCall_announce | ProxyCall_cre
  * - `proxy_type`: The permissions allowed for this proxy account.
  * - `delay`: The announcement period required of the initial proxy. Will generally be
  * zero.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_add_proxy {
     __kind: 'add_proxy'
-    delegate: MultiAddress
+    delegate: AccountId32
     proxyType: ProxyType
     delay: number
 }
@@ -1967,10 +1802,16 @@ export interface ProxyCall_add_proxy {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_announce {
     __kind: 'announce'
-    real: MultiAddress
+    real: AccountId32
     callHash: H256
 }
 
@@ -1993,35 +1834,44 @@ export interface ProxyCall_announce {
  * same sender, with the same parameters.
  * 
  * Fails if there are insufficient funds to pay for deposit.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
+ * TODO: Might be over counting 1 read
  */
-export interface ProxyCall_create_pure {
-    __kind: 'create_pure'
+export interface ProxyCall_anonymous {
+    __kind: 'anonymous'
     proxyType: ProxyType
     delay: number
     index: number
 }
 
 /**
- * Removes a previously spawned pure proxy.
+ * Removes a previously spawned anonymous proxy.
  * 
  * WARNING: **All access to this account will be lost.** Any funds held in it will be
  * inaccessible.
  * 
  * Requires a `Signed` origin, and the sender account must have been created by a call to
- * `pure` with corresponding parameters.
+ * `anonymous` with corresponding parameters.
  * 
- * - `spawner`: The account that originally called `pure` to create this account.
- * - `index`: The disambiguation index originally passed to `pure`. Probably `0`.
- * - `proxy_type`: The proxy type originally passed to `pure`.
- * - `height`: The height of the chain when the call to `pure` was processed.
- * - `ext_index`: The extrinsic index in which the call to `pure` was processed.
+ * - `spawner`: The account that originally called `anonymous` to create this account.
+ * - `index`: The disambiguation index originally passed to `anonymous`. Probably `0`.
+ * - `proxy_type`: The proxy type originally passed to `anonymous`.
+ * - `height`: The height of the chain when the call to `anonymous` was processed.
+ * - `ext_index`: The extrinsic index in which the call to `anonymous` was processed.
  * 
- * Fails with `NoPermission` in case the caller is not a previously created pure
- * account whose `pure` call has corresponding parameters.
+ * Fails with `NoPermission` in case the caller is not a previously created anonymous
+ * account whose `anonymous` call has corresponding parameters.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
-export interface ProxyCall_kill_pure {
-    __kind: 'kill_pure'
-    spawner: MultiAddress
+export interface ProxyCall_kill_anonymous {
+    __kind: 'kill_anonymous'
+    spawner: AccountId32
     proxyType: ProxyType
     index: number
     height: number
@@ -2040,10 +1890,14 @@ export interface ProxyCall_kill_pure {
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_proxy {
     __kind: 'proxy'
-    real: MultiAddress
+    real: AccountId32
     forceProxyType?: (ProxyType | undefined)
     call: Call
 }
@@ -2060,11 +1914,17 @@ export interface ProxyCall_proxy {
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
  * - `call`: The call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_proxy_announced {
     __kind: 'proxy_announced'
-    delegate: MultiAddress
-    real: MultiAddress
+    delegate: AccountId32
+    real: AccountId32
     forceProxyType?: (ProxyType | undefined)
     call: Call
 }
@@ -2080,10 +1940,16 @@ export interface ProxyCall_proxy_announced {
  * Parameters:
  * - `delegate`: The account that previously announced the call.
  * - `call_hash`: The hash of the call to be made.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_reject_announcement {
     __kind: 'reject_announcement'
-    delegate: MultiAddress
+    delegate: AccountId32
     callHash: H256
 }
 
@@ -2098,10 +1964,16 @@ export interface ProxyCall_reject_announcement {
  * Parameters:
  * - `real`: The account that the proxy will make a call on behalf of.
  * - `call_hash`: The hash of the call to be made by the `real` account.
+ * 
+ * # <weight>
+ * Weight is a function of:
+ * - A: the number of announcements made.
+ * - P: the number of proxies the user has.
+ * # </weight>
  */
 export interface ProxyCall_remove_announcement {
     __kind: 'remove_announcement'
-    real: MultiAddress
+    real: AccountId32
     callHash: H256
 }
 
@@ -2110,8 +1982,12 @@ export interface ProxyCall_remove_announcement {
  * 
  * The dispatch origin for this call must be _Signed_.
  * 
- * WARNING: This may be called on accounts created by `pure`, however if done, then
+ * WARNING: This may be called on accounts created by `anonymous`, however if done, then
  * the unreserved fees will be inaccessible. **All access to this account will be lost.**
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxies {
     __kind: 'remove_proxies'
@@ -2125,10 +2001,14 @@ export interface ProxyCall_remove_proxies {
  * Parameters:
  * - `proxy`: The account that the `caller` would like to remove as a proxy.
  * - `proxy_type`: The permissions currently enabled for the removed proxy account.
+ * 
+ * # <weight>
+ * Weight is a function of the number of proxies the user has (P).
+ * # </weight>
  */
 export interface ProxyCall_remove_proxy {
     __kind: 'remove_proxy'
-    delegate: MultiAddress
+    delegate: AccountId32
     proxyType: ProxyType
     delay: number
 }
@@ -2154,56 +2034,6 @@ export interface ProxyType_NonTransfer {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type PreimageCall = PreimageCall_note_preimage | PreimageCall_request_preimage | PreimageCall_unnote_preimage | PreimageCall_unrequest_preimage
-
-/**
- * Register a preimage on-chain.
- * 
- * If the preimage was previously requested, no fees or deposits are taken for providing
- * the preimage. Otherwise, a deposit is taken proportional to the size of the preimage.
- */
-export interface PreimageCall_note_preimage {
-    __kind: 'note_preimage'
-    bytes: Bytes
-}
-
-/**
- * Request a preimage be uploaded to the chain without paying any fees or deposits.
- * 
- * If the preimage requests has already been provided on-chain, we unreserve any deposit
- * a user may have paid, and take the control of the preimage out of their hands.
- */
-export interface PreimageCall_request_preimage {
-    __kind: 'request_preimage'
-    hash: H256
-}
-
-/**
- * Clear an unrequested preimage from the runtime storage.
- * 
- * If `len` is provided, then it will be a much cheaper operation.
- * 
- * - `hash`: The hash of the preimage to be removed from the store.
- * - `len`: The length of the preimage of `hash`.
- */
-export interface PreimageCall_unnote_preimage {
-    __kind: 'unnote_preimage'
-    hash: H256
-}
-
-/**
- * Clear a previously made request for a preimage.
- * 
- * NOTE: THIS MUST NOT BE CALLED ON `hash` MORE TIMES THAN `request_preimage`.
- */
-export interface PreimageCall_unrequest_preimage {
-    __kind: 'unrequest_preimage'
-    hash: H256
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export type PolkadotXcmCall = PolkadotXcmCall_execute | PolkadotXcmCall_force_default_xcm_version | PolkadotXcmCall_force_subscribe_version_notify | PolkadotXcmCall_force_unsubscribe_version_notify | PolkadotXcmCall_force_xcm_version | PolkadotXcmCall_limited_reserve_transfer_assets | PolkadotXcmCall_limited_teleport_assets | PolkadotXcmCall_reserve_transfer_assets | PolkadotXcmCall_send | PolkadotXcmCall_teleport_assets
 
 /**
@@ -2221,7 +2051,7 @@ export type PolkadotXcmCall = PolkadotXcmCall_execute | PolkadotXcmCall_force_de
  */
 export interface PolkadotXcmCall_execute {
     __kind: 'execute'
-    message: Type_223
+    message: Type_211
     maxWeight: bigint
 }
 
@@ -3041,53 +2871,64 @@ export interface V0Response_Assets {
     value: V0MultiAsset[]
 }
 
-export type Type_223 = Type_223_V0 | Type_223_V1 | Type_223_V2
+export type V2WeightLimit = V2WeightLimit_Limited | V2WeightLimit_Unlimited
 
-export interface Type_223_V0 {
+export interface V2WeightLimit_Limited {
+    __kind: 'Limited'
+    value: bigint
+}
+
+export interface V2WeightLimit_Unlimited {
+    __kind: 'Unlimited'
+}
+
+export type Type_211 = Type_211_V0 | Type_211_V1 | Type_211_V2
+
+export interface Type_211_V0 {
     __kind: 'V0'
-    value: Type_224
+    value: Type_212
 }
 
-export interface Type_223_V1 {
+export interface Type_211_V1 {
     __kind: 'V1'
-    value: Type_229
+    value: Type_217
 }
 
-export interface Type_223_V2 {
+export interface Type_211_V2 {
     __kind: 'V2'
-    value: Type_235[]
+    value: Type_223[]
 }
 
-export type Type_235 = Type_235_BuyExecution | Type_235_ClaimAsset | Type_235_ClearError | Type_235_ClearOrigin | Type_235_DepositAsset | Type_235_DepositReserveAsset | Type_235_DescendOrigin | Type_235_ExchangeAsset | Type_235_HrmpChannelAccepted | Type_235_HrmpChannelClosing | Type_235_HrmpNewChannelOpenRequest | Type_235_InitiateReserveWithdraw | Type_235_InitiateTeleport | Type_235_QueryHolding | Type_235_QueryResponse | Type_235_ReceiveTeleportedAsset | Type_235_RefundSurplus | Type_235_ReportError | Type_235_ReserveAssetDeposited | Type_235_SetAppendix | Type_235_SetErrorHandler | Type_235_SubscribeVersion | Type_235_Transact | Type_235_TransferAsset | Type_235_TransferReserveAsset | Type_235_Trap | Type_235_UnsubscribeVersion | Type_235_WithdrawAsset
+export type Type_223 = Type_223_BuyExecution | Type_223_ClaimAsset | Type_223_ClearError | Type_223_ClearOrigin | Type_223_DepositAsset | Type_223_DepositReserveAsset | Type_223_DescendOrigin | Type_223_ExchangeAsset | Type_223_HrmpChannelAccepted | Type_223_HrmpChannelClosing | Type_223_HrmpNewChannelOpenRequest | Type_223_InitiateReserveWithdraw | Type_223_InitiateTeleport | Type_223_QueryHolding | Type_223_QueryResponse | Type_223_ReceiveTeleportedAsset | Type_223_RefundSurplus | Type_223_ReportError | Type_223_ReserveAssetDeposited | Type_223_SetAppendix | Type_223_SetErrorHandler | Type_223_SubscribeVersion | Type_223_Transact | Type_223_TransferAsset | Type_223_TransferReserveAsset | Type_223_Trap | Type_223_UnsubscribeVersion | Type_223_WithdrawAsset
 
-export interface Type_235_BuyExecution {
+export interface Type_223_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weightLimit: V2WeightLimit
 }
 
-export interface Type_235_ClaimAsset {
+export interface Type_223_ClaimAsset {
     __kind: 'ClaimAsset'
     assets: V1MultiAsset[]
     ticket: V1MultiLocation
 }
 
-export interface Type_235_ClearError {
+export interface Type_223_ClearError {
     __kind: 'ClearError'
 }
 
-export interface Type_235_ClearOrigin {
+export interface Type_223_ClearOrigin {
     __kind: 'ClearOrigin'
 }
 
-export interface Type_235_DepositAsset {
+export interface Type_223_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_235_DepositReserveAsset {
+export interface Type_223_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -3095,51 +2936,51 @@ export interface Type_235_DepositReserveAsset {
     xcm: V2Instruction[]
 }
 
-export interface Type_235_DescendOrigin {
+export interface Type_223_DescendOrigin {
     __kind: 'DescendOrigin'
     value: V1Junctions
 }
 
-export interface Type_235_ExchangeAsset {
+export interface Type_223_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_235_HrmpChannelAccepted {
+export interface Type_223_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_235_HrmpChannelClosing {
+export interface Type_223_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_235_HrmpNewChannelOpenRequest {
+export interface Type_223_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_235_InitiateReserveWithdraw {
+export interface Type_223_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_235_InitiateTeleport {
+export interface Type_223_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_235_QueryHolding {
+export interface Type_223_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
@@ -3147,188 +2988,188 @@ export interface Type_235_QueryHolding {
     maxResponseWeight: bigint
 }
 
-export interface Type_235_QueryResponse {
+export interface Type_223_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V2Response
     maxWeight: bigint
 }
 
-export interface Type_235_ReceiveTeleportedAsset {
+export interface Type_223_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_235_RefundSurplus {
+export interface Type_223_RefundSurplus {
     __kind: 'RefundSurplus'
 }
 
-export interface Type_235_ReportError {
+export interface Type_223_ReportError {
     __kind: 'ReportError'
     queryId: bigint
     dest: V1MultiLocation
     maxResponseWeight: bigint
 }
 
-export interface Type_235_ReserveAssetDeposited {
+export interface Type_223_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     value: V1MultiAsset[]
 }
 
-export interface Type_235_SetAppendix {
+export interface Type_223_SetAppendix {
     __kind: 'SetAppendix'
-    value: Type_235[]
+    value: Type_223[]
 }
 
-export interface Type_235_SetErrorHandler {
+export interface Type_223_SetErrorHandler {
     __kind: 'SetErrorHandler'
-    value: Type_235[]
+    value: Type_223[]
 }
 
-export interface Type_235_SubscribeVersion {
+export interface Type_223_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_235_Transact {
+export interface Type_223_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
-    call: Type_228
+    call: Type_216
 }
 
-export interface Type_235_TransferAsset {
+export interface Type_223_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_235_TransferReserveAsset {
+export interface Type_223_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     xcm: V2Instruction[]
 }
 
-export interface Type_235_Trap {
+export interface Type_223_Trap {
     __kind: 'Trap'
     value: bigint
 }
 
-export interface Type_235_UnsubscribeVersion {
+export interface Type_223_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export interface Type_235_WithdrawAsset {
+export interface Type_223_WithdrawAsset {
     __kind: 'WithdrawAsset'
     value: V1MultiAsset[]
 }
 
-export interface Type_228 {
+export interface Type_216 {
     encoded: Bytes
 }
 
-export type Type_229 = Type_229_HrmpChannelAccepted | Type_229_HrmpChannelClosing | Type_229_HrmpNewChannelOpenRequest | Type_229_QueryResponse | Type_229_ReceiveTeleportedAsset | Type_229_RelayedFrom | Type_229_ReserveAssetDeposited | Type_229_SubscribeVersion | Type_229_Transact | Type_229_TransferAsset | Type_229_TransferReserveAsset | Type_229_UnsubscribeVersion | Type_229_WithdrawAsset
+export type Type_217 = Type_217_HrmpChannelAccepted | Type_217_HrmpChannelClosing | Type_217_HrmpNewChannelOpenRequest | Type_217_QueryResponse | Type_217_ReceiveTeleportedAsset | Type_217_RelayedFrom | Type_217_ReserveAssetDeposited | Type_217_SubscribeVersion | Type_217_Transact | Type_217_TransferAsset | Type_217_TransferReserveAsset | Type_217_UnsubscribeVersion | Type_217_WithdrawAsset
 
-export interface Type_229_HrmpChannelAccepted {
+export interface Type_217_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_229_HrmpChannelClosing {
+export interface Type_217_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_229_HrmpNewChannelOpenRequest {
+export interface Type_217_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_229_QueryResponse {
+export interface Type_217_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V1Response
 }
 
-export interface Type_229_ReceiveTeleportedAsset {
+export interface Type_217_ReceiveTeleportedAsset {
     __kind: 'ReceiveTeleportedAsset'
     assets: V1MultiAsset[]
-    effects: Type_231[]
+    effects: Type_219[]
 }
 
-export interface Type_229_RelayedFrom {
+export interface Type_217_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V1Junctions
-    message: Type_229
+    message: Type_217
 }
 
-export interface Type_229_ReserveAssetDeposited {
+export interface Type_217_ReserveAssetDeposited {
     __kind: 'ReserveAssetDeposited'
     assets: V1MultiAsset[]
-    effects: Type_231[]
+    effects: Type_219[]
 }
 
-export interface Type_229_SubscribeVersion {
+export interface Type_217_SubscribeVersion {
     __kind: 'SubscribeVersion'
     queryId: bigint
     maxResponseWeight: bigint
 }
 
-export interface Type_229_Transact {
+export interface Type_217_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
-    call: Type_228
+    call: Type_216
 }
 
-export interface Type_229_TransferAsset {
+export interface Type_217_TransferAsset {
     __kind: 'TransferAsset'
     assets: V1MultiAsset[]
     beneficiary: V1MultiLocation
 }
 
-export interface Type_229_TransferReserveAsset {
+export interface Type_217_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V1MultiAsset[]
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_229_UnsubscribeVersion {
+export interface Type_217_UnsubscribeVersion {
     __kind: 'UnsubscribeVersion'
 }
 
-export interface Type_229_WithdrawAsset {
+export interface Type_217_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V1MultiAsset[]
-    effects: Type_231[]
+    effects: Type_219[]
 }
 
-export type Type_231 = Type_231_BuyExecution | Type_231_DepositAsset | Type_231_DepositReserveAsset | Type_231_ExchangeAsset | Type_231_InitiateReserveWithdraw | Type_231_InitiateTeleport | Type_231_Noop | Type_231_QueryHolding
+export type Type_219 = Type_219_BuyExecution | Type_219_DepositAsset | Type_219_DepositReserveAsset | Type_219_ExchangeAsset | Type_219_InitiateReserveWithdraw | Type_219_InitiateTeleport | Type_219_Noop | Type_219_QueryHolding
 
-export interface Type_231_BuyExecution {
+export interface Type_219_BuyExecution {
     __kind: 'BuyExecution'
     fees: V1MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    instructions: Type_229[]
+    instructions: Type_217[]
 }
 
-export interface Type_231_DepositAsset {
+export interface Type_219_DepositAsset {
     __kind: 'DepositAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
     beneficiary: V1MultiLocation
 }
 
-export interface Type_231_DepositReserveAsset {
+export interface Type_219_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V1MultiAssetFilter
     maxAssets: number
@@ -3336,157 +3177,157 @@ export interface Type_231_DepositReserveAsset {
     effects: V1Order[]
 }
 
-export interface Type_231_ExchangeAsset {
+export interface Type_219_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V1MultiAssetFilter
     receive: V1MultiAsset[]
 }
 
-export interface Type_231_InitiateReserveWithdraw {
+export interface Type_219_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V1MultiAssetFilter
     reserve: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_231_InitiateTeleport {
+export interface Type_219_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V1MultiAssetFilter
     dest: V1MultiLocation
     effects: V1Order[]
 }
 
-export interface Type_231_Noop {
+export interface Type_219_Noop {
     __kind: 'Noop'
 }
 
-export interface Type_231_QueryHolding {
+export interface Type_219_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V1MultiLocation
     assets: V1MultiAssetFilter
 }
 
-export type Type_224 = Type_224_HrmpChannelAccepted | Type_224_HrmpChannelClosing | Type_224_HrmpNewChannelOpenRequest | Type_224_QueryResponse | Type_224_RelayedFrom | Type_224_ReserveAssetDeposit | Type_224_TeleportAsset | Type_224_Transact | Type_224_TransferAsset | Type_224_TransferReserveAsset | Type_224_WithdrawAsset
+export type Type_212 = Type_212_HrmpChannelAccepted | Type_212_HrmpChannelClosing | Type_212_HrmpNewChannelOpenRequest | Type_212_QueryResponse | Type_212_RelayedFrom | Type_212_ReserveAssetDeposit | Type_212_TeleportAsset | Type_212_Transact | Type_212_TransferAsset | Type_212_TransferReserveAsset | Type_212_WithdrawAsset
 
-export interface Type_224_HrmpChannelAccepted {
+export interface Type_212_HrmpChannelAccepted {
     __kind: 'HrmpChannelAccepted'
     recipient: number
 }
 
-export interface Type_224_HrmpChannelClosing {
+export interface Type_212_HrmpChannelClosing {
     __kind: 'HrmpChannelClosing'
     initiator: number
     sender: number
     recipient: number
 }
 
-export interface Type_224_HrmpNewChannelOpenRequest {
+export interface Type_212_HrmpNewChannelOpenRequest {
     __kind: 'HrmpNewChannelOpenRequest'
     sender: number
     maxMessageSize: number
     maxCapacity: number
 }
 
-export interface Type_224_QueryResponse {
+export interface Type_212_QueryResponse {
     __kind: 'QueryResponse'
     queryId: bigint
     response: V0Response
 }
 
-export interface Type_224_RelayedFrom {
+export interface Type_212_RelayedFrom {
     __kind: 'RelayedFrom'
     who: V0MultiLocation
-    message: Type_224
+    message: Type_212
 }
 
-export interface Type_224_ReserveAssetDeposit {
+export interface Type_212_ReserveAssetDeposit {
     __kind: 'ReserveAssetDeposit'
     assets: V0MultiAsset[]
-    effects: Type_226[]
+    effects: Type_214[]
 }
 
-export interface Type_224_TeleportAsset {
+export interface Type_212_TeleportAsset {
     __kind: 'TeleportAsset'
     assets: V0MultiAsset[]
-    effects: Type_226[]
+    effects: Type_214[]
 }
 
-export interface Type_224_Transact {
+export interface Type_212_Transact {
     __kind: 'Transact'
     originType: V0OriginKind
     requireWeightAtMost: bigint
-    call: Type_228
+    call: Type_216
 }
 
-export interface Type_224_TransferAsset {
+export interface Type_212_TransferAsset {
     __kind: 'TransferAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_224_TransferReserveAsset {
+export interface Type_212_TransferReserveAsset {
     __kind: 'TransferReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_224_WithdrawAsset {
+export interface Type_212_WithdrawAsset {
     __kind: 'WithdrawAsset'
     assets: V0MultiAsset[]
-    effects: Type_226[]
+    effects: Type_214[]
 }
 
-export type Type_226 = Type_226_BuyExecution | Type_226_DepositAsset | Type_226_DepositReserveAsset | Type_226_ExchangeAsset | Type_226_InitiateReserveWithdraw | Type_226_InitiateTeleport | Type_226_Null | Type_226_QueryHolding
+export type Type_214 = Type_214_BuyExecution | Type_214_DepositAsset | Type_214_DepositReserveAsset | Type_214_ExchangeAsset | Type_214_InitiateReserveWithdraw | Type_214_InitiateTeleport | Type_214_Null | Type_214_QueryHolding
 
-export interface Type_226_BuyExecution {
+export interface Type_214_BuyExecution {
     __kind: 'BuyExecution'
     fees: V0MultiAsset
     weight: bigint
     debt: bigint
     haltOnError: boolean
-    xcm: Type_224[]
+    xcm: Type_212[]
 }
 
-export interface Type_226_DepositAsset {
+export interface Type_214_DepositAsset {
     __kind: 'DepositAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
 }
 
-export interface Type_226_DepositReserveAsset {
+export interface Type_214_DepositReserveAsset {
     __kind: 'DepositReserveAsset'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_226_ExchangeAsset {
+export interface Type_214_ExchangeAsset {
     __kind: 'ExchangeAsset'
     give: V0MultiAsset[]
     receive: V0MultiAsset[]
 }
 
-export interface Type_226_InitiateReserveWithdraw {
+export interface Type_214_InitiateReserveWithdraw {
     __kind: 'InitiateReserveWithdraw'
     assets: V0MultiAsset[]
     reserve: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_226_InitiateTeleport {
+export interface Type_214_InitiateTeleport {
     __kind: 'InitiateTeleport'
     assets: V0MultiAsset[]
     dest: V0MultiLocation
     effects: V0Order[]
 }
 
-export interface Type_226_Null {
+export interface Type_214_Null {
     __kind: 'Null'
 }
 
-export interface Type_226_QueryHolding {
+export interface Type_214_QueryHolding {
     __kind: 'QueryHolding'
     queryId: bigint
     dest: V0MultiLocation
@@ -3621,7 +3462,7 @@ export interface MultisigCall_approve_as_multi {
     otherSignatories: AccountId32[]
     maybeTimepoint?: (Timepoint | undefined)
     callHash: Bytes
-    maxWeight: Weight
+    maxWeight: bigint
 }
 
 /**
@@ -3666,8 +3507,8 @@ export interface MultisigCall_approve_as_multi {
  *   taken for its lifetime of `DepositBase + threshold * DepositFactor`.
  * -------------------------------
  * - DB Weight:
- *     - Reads: Multisig Storage, [Caller Account]
- *     - Writes: Multisig Storage, [Caller Account]
+ *     - Reads: Multisig Storage, [Caller Account], Calls (if `store_call`)
+ *     - Writes: Multisig Storage, [Caller Account], Calls (if `store_call`)
  * - Plus Call Weight
  * # </weight>
  */
@@ -3676,8 +3517,9 @@ export interface MultisigCall_as_multi {
     threshold: number
     otherSignatories: AccountId32[]
     maybeTimepoint?: (Timepoint | undefined)
-    call: Call
-    maxWeight: Weight
+    call: Bytes
+    storeCall: boolean
+    maxWeight: bigint
 }
 
 /**
@@ -3728,8 +3570,8 @@ export interface MultisigCall_as_multi_threshold_1 {
  * - Storage: removes one item.
  * ----------------------------------
  * - DB Weight:
- *     - Read: Multisig Storage, [Caller Account], Refund Account
- *     - Write: Multisig Storage, [Caller Account], Refund Account
+ *     - Read: Multisig Storage, [Caller Account], Refund Account, Calls
+ *     - Write: Multisig Storage, [Caller Account], Refund Account, Calls
  * # </weight>
  */
 export interface MultisigCall_cancel_as_multi {
@@ -3773,7 +3615,7 @@ export interface DmpQueueCall_service_overweight {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type DemocracyCall = DemocracyCall_blacklist | DemocracyCall_cancel_proposal | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_propose | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
+export type DemocracyCall = DemocracyCall_blacklist | DemocracyCall_cancel_proposal | DemocracyCall_cancel_queued | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_enact_proposal | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_propose | DemocracyCall_reap_preimage | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
 
 /**
  * Permanently place a proposal into the blacklist. This prevents it from ever being
@@ -3810,6 +3652,20 @@ export interface DemocracyCall_blacklist {
 export interface DemocracyCall_cancel_proposal {
     __kind: 'cancel_proposal'
     propIndex: number
+}
+
+/**
+ * Cancel a proposal queued for enactment.
+ * 
+ * The dispatch origin of this call must be _Root_.
+ * 
+ * - `which`: The index of the referendum to cancel.
+ * 
+ * Weight: `O(D)` where `D` is the items in the dispatch queue. Weighted as `D = 10`.
+ */
+export interface DemocracyCall_cancel_queued {
+    __kind: 'cancel_queued'
+    which: number
 }
 
 /**
@@ -3861,7 +3717,7 @@ export interface DemocracyCall_clear_public_proposals {
  */
 export interface DemocracyCall_delegate {
     __kind: 'delegate'
-    to: MultiAddress
+    to: AccountId32
     conviction: Conviction
     balance: bigint
 }
@@ -3882,16 +3738,28 @@ export interface DemocracyCall_emergency_cancel {
 }
 
 /**
+ * Enact a proposal from a referendum. For now we just make the weight be the maximum.
+ */
+export interface DemocracyCall_enact_proposal {
+    __kind: 'enact_proposal'
+    proposalHash: H256
+    index: number
+}
+
+/**
  * Schedule a referendum to be tabled once it is legal to schedule an external
  * referendum.
  * 
  * The dispatch origin of this call must be `ExternalOrigin`.
  * 
  * - `proposal_hash`: The preimage hash of the proposal.
+ * 
+ * Weight: `O(V)` with V number of vetoers in the blacklist of proposal.
+ *   Decoding vec of length V. Charged as maximum
  */
 export interface DemocracyCall_external_propose {
     __kind: 'external_propose'
-    proposal: Bounded
+    proposalHash: H256
 }
 
 /**
@@ -3909,7 +3777,7 @@ export interface DemocracyCall_external_propose {
  */
 export interface DemocracyCall_external_propose_default {
     __kind: 'external_propose_default'
-    proposal: Bounded
+    proposalHash: H256
 }
 
 /**
@@ -3927,7 +3795,7 @@ export interface DemocracyCall_external_propose_default {
  */
 export interface DemocracyCall_external_propose_majority {
     __kind: 'external_propose_majority'
-    proposal: Bounded
+    proposalHash: H256
 }
 
 /**
@@ -3939,8 +3807,7 @@ export interface DemocracyCall_external_propose_majority {
  * 
  * - `proposal_hash`: The hash of the current external proposal.
  * - `voting_period`: The period that is allowed for voting on this proposal. Increased to
- * 	Must be always greater than zero.
- * 	For `FastTrackOrigin` must be equal or greater than `FastTrackVotingPeriod`.
+ *   `FastTrackVotingPeriod` if too low.
  * - `delay`: The number of block after voting has ended in approval and this should be
  *   enacted. This doesn't have a minimum amount.
  * 
@@ -3956,6 +3823,58 @@ export interface DemocracyCall_fast_track {
 }
 
 /**
+ * Register the preimage for an upcoming proposal. This requires the proposal to be
+ * in the dispatch queue. No deposit is needed. When this call is successful, i.e.
+ * the preimage has not been uploaded before and matches some imminent proposal,
+ * no fee is paid.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `encoded_proposal`: The preimage of a proposal.
+ * 
+ * Emits `PreimageNoted`.
+ * 
+ * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
+ */
+export interface DemocracyCall_note_imminent_preimage {
+    __kind: 'note_imminent_preimage'
+    encodedProposal: Bytes
+}
+
+/**
+ * Same as `note_imminent_preimage` but origin is `OperationalPreimageOrigin`.
+ */
+export interface DemocracyCall_note_imminent_preimage_operational {
+    __kind: 'note_imminent_preimage_operational'
+    encodedProposal: Bytes
+}
+
+/**
+ * Register the preimage for an upcoming proposal. This doesn't require the proposal to be
+ * in the dispatch queue but does require a deposit, returned once enacted.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `encoded_proposal`: The preimage of a proposal.
+ * 
+ * Emits `PreimageNoted`.
+ * 
+ * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
+ */
+export interface DemocracyCall_note_preimage {
+    __kind: 'note_preimage'
+    encodedProposal: Bytes
+}
+
+/**
+ * Same as `note_preimage` but origin is `OperationalPreimageOrigin`.
+ */
+export interface DemocracyCall_note_preimage_operational {
+    __kind: 'note_preimage_operational'
+    encodedProposal: Bytes
+}
+
+/**
  * Propose a sensitive action to be taken.
  * 
  * The dispatch origin of this call must be _Signed_ and the sender must
@@ -3965,11 +3884,36 @@ export interface DemocracyCall_fast_track {
  * - `value`: The amount of deposit (must be at least `MinimumDeposit`).
  * 
  * Emits `Proposed`.
+ * 
+ * Weight: `O(p)`
  */
 export interface DemocracyCall_propose {
     __kind: 'propose'
-    proposal: Bounded
+    proposalHash: H256
     value: bigint
+}
+
+/**
+ * Remove an expired proposal preimage and collect the deposit.
+ * 
+ * The dispatch origin of this call must be _Signed_.
+ * 
+ * - `proposal_hash`: The preimage hash of a proposal.
+ * - `proposal_length_upper_bound`: an upper bound on length of the proposal. Extrinsic is
+ *   weighted according to this value with no refund.
+ * 
+ * This will only work after `VotingPeriod` blocks from the time that the preimage was
+ * noted, if it's the same account doing it. If it's a different account, then it'll only
+ * work an additional `EnactmentPeriod` later.
+ * 
+ * Emits `PreimageReaped`.
+ * 
+ * Weight: `O(D)` where D is length of proposal.
+ */
+export interface DemocracyCall_reap_preimage {
+    __kind: 'reap_preimage'
+    proposalHash: H256
+    proposalLenUpperBound: number
 }
 
 /**
@@ -3991,7 +3935,7 @@ export interface DemocracyCall_propose {
  */
 export interface DemocracyCall_remove_other_vote {
     __kind: 'remove_other_vote'
-    target: MultiAddress
+    target: AccountId32
     index: number
 }
 
@@ -4036,10 +3980,15 @@ export interface DemocracyCall_remove_vote {
  * must have funds to cover the deposit, equal to the original deposit.
  * 
  * - `proposal`: The index of the proposal to second.
+ * - `seconds_upper_bound`: an upper bound on the current number of seconds on this
+ *   proposal. Extrinsic is weighted according to this value with no refund.
+ * 
+ * Weight: `O(S)` where S is the number of seconds a proposal already has.
  */
 export interface DemocracyCall_second {
     __kind: 'second'
     proposal: number
+    secondsUpperBound: number
 }
 
 /**
@@ -4071,7 +4020,7 @@ export interface DemocracyCall_undelegate {
  */
 export interface DemocracyCall_unlock {
     __kind: 'unlock'
-    target: MultiAddress
+    target: AccountId32
 }
 
 /**
@@ -4098,6 +4047,8 @@ export interface DemocracyCall_veto_external {
  * 
  * - `ref_index`: The index of the referendum to vote for.
  * - `vote`: The vote configuration.
+ * 
+ * Weight: `O(R)` where R is the number of referendums the voter has voted on.
  */
 export interface DemocracyCall_vote {
     __kind: 'vote'
@@ -4120,24 +4071,6 @@ export interface AccountVote_Standard {
 }
 
 export type Vote = number
-
-export type Bounded = Bounded_Inline | Bounded_Legacy | Bounded_Lookup
-
-export interface Bounded_Inline {
-    __kind: 'Inline'
-    value: Bytes
-}
-
-export interface Bounded_Legacy {
-    __kind: 'Legacy'
-    hash: H256
-}
-
-export interface Bounded_Lookup {
-    __kind: 'Lookup'
-    hash: H256
-    len: number
-}
 
 export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
 
@@ -4177,7 +4110,7 @@ export type CumulusXcmCall = never
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type CouncilCall = CouncilCall_close | CouncilCall_close_old_weight | CouncilCall_disapprove_proposal | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
+export type CouncilCall = CouncilCall_close | CouncilCall_disapprove_proposal | CouncilCall_execute | CouncilCall_propose | CouncilCall_set_members | CouncilCall_vote
 
 /**
  * Close a vote that is either approved, disapproved or whose voting period has ended.
@@ -4215,48 +4148,6 @@ export type CouncilCall = CouncilCall_close | CouncilCall_close_old_weight | Cou
  */
 export interface CouncilCall_close {
     __kind: 'close'
-    proposalHash: H256
-    index: number
-    proposalWeightBound: Weight
-    lengthBound: number
-}
-
-/**
- * Close a vote that is either approved, disapproved or whose voting period has ended.
- * 
- * May be called by any signed account in order to finish voting and close the proposal.
- * 
- * If called before the end of the voting period it will only close the vote if it is
- * has enough votes to be approved or disapproved.
- * 
- * If called after the end of the voting period abstentions are counted as rejections
- * unless there is a prime member set and the prime member cast an approval.
- * 
- * If the close operation completes successfully with disapproval, the transaction fee will
- * be waived. Otherwise execution of the approved operation will be charged to the caller.
- * 
- * + `proposal_weight_bound`: The maximum amount of weight consumed by executing the closed
- * proposal.
- * + `length_bound`: The upper bound for the length of the proposal in storage. Checked via
- * `storage::read` so it is `size_of::<u32>() == 4` larger than the pure length.
- * 
- * # <weight>
- * ## Weight
- * - `O(B + M + P1 + P2)` where:
- *   - `B` is `proposal` size in bytes (length-fee-bounded)
- *   - `M` is members-count (code- and governance-bounded)
- *   - `P1` is the complexity of `proposal` preimage.
- *   - `P2` is proposal-count (code-bounded)
- * - DB:
- *  - 2 storage reads (`Members`: codec `O(M)`, `Prime`: codec `O(1)`)
- *  - 3 mutations (`Voting`: codec `O(M)`, `ProposalOf`: codec `O(B)`, `Proposals`: codec
- *    `O(P2)`)
- *  - any mutations done while executing `proposal` (`P1`)
- * - up to 3 events
- * # </weight>
- */
-export interface CouncilCall_close_old_weight {
-    __kind: 'close_old_weight'
     proposalHash: H256
     index: number
     proposalWeightBound: bigint
@@ -4678,10 +4569,8 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         OrmlXcm: OrmlXcmCall,
         ParachainSystem: ParachainSystemCall,
         PolkadotXcm: PolkadotXcmCall,
-        Preimage: PreimageCall,
         Proxy: ProxyCall,
         Scheduler: SchedulerCall,
-        Sidechain: SidechainCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         Teeracle: TeeracleCall,
@@ -4691,7 +4580,6 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Utility: UtilityCall,
         Vesting: VestingCall,
         XTokens: XTokensCall,
-        XcmTransactor: XcmTransactorCall,
         XcmpQueue: XcmpQueueCall,
     }
 })
@@ -4731,59 +4619,43 @@ export const XcmpQueueCall: sts.Type<XcmpQueueCall> = sts.closedEnum(() => {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const XcmTransactorCall: sts.Type<XcmTransactorCall> = sts.closedEnum(() => {
-    return  {
-        send_swap_ump: sts.enumStruct({
-            selfId: Id,
-            otherId: Id,
-            xcmWeight: sts.bigint(),
-            buyExecutionFee: sts.bigint(),
-        }),
-    }
-})
-
-export const Id = sts.number()
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export const XTokensCall: sts.Type<XTokensCall> = sts.closedEnum(() => {
     return  {
         transfer: sts.enumStruct({
             currencyId: CurrencyId,
             amount: sts.bigint(),
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
         transfer_multiasset: sts.enumStruct({
             asset: VersionedMultiAsset,
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
         transfer_multiasset_with_fee: sts.enumStruct({
             asset: VersionedMultiAsset,
             fee: VersionedMultiAsset,
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
         transfer_multiassets: sts.enumStruct({
             assets: VersionedMultiAssets,
             feeItem: sts.number(),
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
         transfer_multicurrencies: sts.enumStruct({
             currencies: sts.array(() => sts.tuple(() => [CurrencyId, sts.bigint()])),
             feeItem: sts.number(),
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
         transfer_with_fee: sts.enumStruct({
             currencyId: CurrencyId,
             amount: sts.bigint(),
             fee: sts.bigint(),
             dest: VersionedMultiLocation,
-            destWeightLimit: V2WeightLimit,
+            destWeight: sts.bigint(),
         }),
     }
 })
@@ -4864,7 +4736,7 @@ export const V1Junction: sts.Type<V1Junction> = sts.closedEnum(() => {
             key: sts.bytes(),
         }),
         GeneralIndex: sts.bigint(),
-        GeneralKey: WeakBoundedVec,
+        GeneralKey: sts.bytes(),
         OnlyChild: sts.unit(),
         PalletInstance: sts.number(),
         Parachain: sts.number(),
@@ -4902,19 +4774,17 @@ export const V0BodyId: sts.Type<V0BodyId> = sts.closedEnum(() => {
         Index: sts.number(),
         Judicial: sts.unit(),
         Legislative: sts.unit(),
-        Named: WeakBoundedVec,
+        Named: sts.bytes(),
         Technical: sts.unit(),
         Unit: sts.unit(),
     }
 })
 
-export const WeakBoundedVec = sts.bytes()
-
 export const V0NetworkId: sts.Type<V0NetworkId> = sts.closedEnum(() => {
     return  {
         Any: sts.unit(),
         Kusama: sts.unit(),
-        Named: WeakBoundedVec,
+        Named: sts.bytes(),
         Polkadot: sts.unit(),
     }
 })
@@ -4985,7 +4855,7 @@ export const V0Junction: sts.Type<V0Junction> = sts.closedEnum(() => {
             key: sts.bytes(),
         }),
         GeneralIndex: sts.bigint(),
-        GeneralKey: WeakBoundedVec,
+        GeneralKey: sts.bytes(),
         OnlyChild: sts.unit(),
         PalletInstance: sts.number(),
         Parachain: sts.number(),
@@ -5001,13 +4871,6 @@ export const VersionedMultiAsset: sts.Type<VersionedMultiAsset> = sts.closedEnum
     return  {
         V0: V0MultiAsset,
         V1: V1MultiAsset,
-    }
-})
-
-export const V2WeightLimit: sts.Type<V2WeightLimit> = sts.closedEnum(() => {
-    return  {
-        Limited: sts.bigint(),
-        Unlimited: sts.unit(),
     }
 })
 
@@ -5088,29 +4951,15 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
             asOrigin: OriginCaller,
             call: Call,
         }),
-        force_batch: sts.enumStruct({
-            calls: sts.array(() => Call),
-        }),
-        with_weight: sts.enumStruct({
-            call: Call,
-            weight: Weight,
-        }),
-    }
-})
-
-export const Weight: sts.Type<Weight> = sts.struct(() => {
-    return  {
-        refTime: sts.bigint(),
-        proofSize: sts.bigint(),
     }
 })
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        Council: Type_192,
-        CumulusXcm: Type_195,
+        Council: Type_181,
+        CumulusXcm: Type_184,
         PolkadotXcm: Origin,
-        TechnicalCommittee: Type_193,
+        TechnicalCommittee: Type_182,
         Void: Void,
         system: RawOrigin,
     }
@@ -5129,7 +4978,7 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
-export const Type_193: sts.Type<Type_193> = sts.closedEnum(() => {
+export const Type_182: sts.Type<Type_182> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -5144,14 +4993,16 @@ export const Origin: sts.Type<Origin> = sts.closedEnum(() => {
     }
 })
 
-export const Type_195: sts.Type<Type_195> = sts.closedEnum(() => {
+export const Type_184: sts.Type<Type_184> = sts.closedEnum(() => {
     return  {
         Relay: sts.unit(),
         SiblingParachain: Id,
     }
 })
 
-export const Type_192: sts.Type<Type_192> = sts.closedEnum(() => {
+export const Id = sts.number()
+
+export const Type_181: sts.Type<Type_181> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -5173,13 +5024,6 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
         }),
         reject_proposal: sts.enumStruct({
             proposalId: sts.number(),
-        }),
-        remove_approval: sts.enumStruct({
-            proposalId: sts.number(),
-        }),
-        spend: sts.enumStruct({
-            amount: sts.bigint(),
-            beneficiary: MultiAddress,
         }),
     }
 })
@@ -5205,8 +5049,11 @@ export const TeerexCall: sts.Type<TeerexCall> = sts.closedEnum(() => {
         }),
         confirm_processed_parentchain_block: sts.enumStruct({
             blockHash: H256,
-            blockNumber: sts.number(),
             trustedCallsMerkleRoot: H256,
+        }),
+        confirm_proposed_sidechain_block: sts.enumStruct({
+            shardId: H256,
+            blockHash: H256,
         }),
         register_enclave: sts.enumStruct({
             raReport: sts.bytes(),
@@ -5252,11 +5099,6 @@ export const TeeracleCall: sts.Type<TeeracleCall> = sts.closedEnum(() => {
             tradingPair: sts.bytes(),
             newValue: sts.option(() => FixedU64),
         }),
-        update_oracle: sts.enumStruct({
-            oracleName: sts.bytes(),
-            dataSource: sts.bytes(),
-            newBlob: sts.bytes(),
-        }),
     }
 })
 
@@ -5272,12 +5114,6 @@ export const FixedU64: sts.Type<FixedU64> = sts.struct(() => {
 export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.closedEnum(() => {
     return  {
         close: sts.enumStruct({
-            proposalHash: H256,
-            index: sts.number(),
-            proposalWeightBound: Weight,
-            lengthBound: sts.number(),
-        }),
-        close_old_weight: sts.enumStruct({
             proposalHash: H256,
             index: sts.number(),
             proposalWeightBound: sts.bigint(),
@@ -5313,6 +5149,9 @@ export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.clos
  */
 export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     return  {
+        fill_block: sts.enumStruct({
+            ratio: Perbill,
+        }),
         kill_prefix: sts.enumStruct({
             prefix: sts.bytes(),
             subkeys: sts.number(),
@@ -5341,19 +5180,7 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     }
 })
 
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const SidechainCall: sts.Type<SidechainCall> = sts.closedEnum(() => {
-    return  {
-        confirm_imported_sidechain_block: sts.enumStruct({
-            shardId: H256,
-            blockNumber: sts.bigint(),
-            nextFinalizationCandidateBlockNumber: sts.bigint(),
-            blockHeaderHash: H256,
-        }),
-    }
-})
+export const Perbill = sts.number()
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -5371,28 +5198,35 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: Call,
+            call: MaybeHashed,
         }),
         schedule_after: sts.enumStruct({
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: Call,
+            call: MaybeHashed,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: Call,
+            call: MaybeHashed,
         }),
         schedule_named_after: sts.enumStruct({
             id: sts.bytes(),
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: Call,
+            call: MaybeHashed,
         }),
+    }
+})
+
+export const MaybeHashed: sts.Type<MaybeHashed> = sts.closedEnum(() => {
+    return  {
+        Hash: H256,
+        Value: Call,
     }
 })
 
@@ -5402,48 +5236,48 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
 export const ProxyCall: sts.Type<ProxyCall> = sts.closedEnum(() => {
     return  {
         add_proxy: sts.enumStruct({
-            delegate: MultiAddress,
+            delegate: AccountId32,
             proxyType: ProxyType,
             delay: sts.number(),
         }),
         announce: sts.enumStruct({
-            real: MultiAddress,
+            real: AccountId32,
             callHash: H256,
         }),
-        create_pure: sts.enumStruct({
+        anonymous: sts.enumStruct({
             proxyType: ProxyType,
             delay: sts.number(),
             index: sts.number(),
         }),
-        kill_pure: sts.enumStruct({
-            spawner: MultiAddress,
+        kill_anonymous: sts.enumStruct({
+            spawner: AccountId32,
             proxyType: ProxyType,
             index: sts.number(),
             height: sts.number(),
             extIndex: sts.number(),
         }),
         proxy: sts.enumStruct({
-            real: MultiAddress,
+            real: AccountId32,
             forceProxyType: sts.option(() => ProxyType),
             call: Call,
         }),
         proxy_announced: sts.enumStruct({
-            delegate: MultiAddress,
-            real: MultiAddress,
+            delegate: AccountId32,
+            real: AccountId32,
             forceProxyType: sts.option(() => ProxyType),
             call: Call,
         }),
         reject_announcement: sts.enumStruct({
-            delegate: MultiAddress,
+            delegate: AccountId32,
             callHash: H256,
         }),
         remove_announcement: sts.enumStruct({
-            real: MultiAddress,
+            real: AccountId32,
             callHash: H256,
         }),
         remove_proxies: sts.unit(),
         remove_proxy: sts.enumStruct({
-            delegate: MultiAddress,
+            delegate: AccountId32,
             proxyType: ProxyType,
             delay: sts.number(),
         }),
@@ -5462,30 +5296,10 @@ export const ProxyType: sts.Type<ProxyType> = sts.closedEnum(() => {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const PreimageCall: sts.Type<PreimageCall> = sts.closedEnum(() => {
-    return  {
-        note_preimage: sts.enumStruct({
-            bytes: sts.bytes(),
-        }),
-        request_preimage: sts.enumStruct({
-            hash: H256,
-        }),
-        unnote_preimage: sts.enumStruct({
-            hash: H256,
-        }),
-        unrequest_preimage: sts.enumStruct({
-            hash: H256,
-        }),
-    }
-})
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export const PolkadotXcmCall: sts.Type<PolkadotXcmCall> = sts.closedEnum(() => {
     return  {
         execute: sts.enumStruct({
-            message: Type_223,
+            message: Type_211,
             maxWeight: sts.bigint(),
         }),
         force_default_xcm_version: sts.enumStruct({
@@ -5923,15 +5737,22 @@ export const V0Response: sts.Type<V0Response> = sts.closedEnum(() => {
     }
 })
 
-export const Type_223: sts.Type<Type_223> = sts.closedEnum(() => {
+export const V2WeightLimit: sts.Type<V2WeightLimit> = sts.closedEnum(() => {
     return  {
-        V0: Type_224,
-        V1: Type_229,
-        V2: sts.array(() => Type_235),
+        Limited: sts.bigint(),
+        Unlimited: sts.unit(),
     }
 })
 
-export const Type_235: sts.Type<Type_235> = sts.closedEnum(() => {
+export const Type_211: sts.Type<Type_211> = sts.closedEnum(() => {
+    return  {
+        V0: Type_212,
+        V1: Type_217,
+        V2: sts.array(() => Type_223),
+    }
+})
+
+export const Type_223: sts.Type<Type_223> = sts.closedEnum(() => {
     return  {
         BuyExecution: sts.enumStruct({
             fees: V1MultiAsset,
@@ -6001,8 +5822,8 @@ export const Type_235: sts.Type<Type_235> = sts.closedEnum(() => {
             maxResponseWeight: sts.bigint(),
         }),
         ReserveAssetDeposited: sts.array(() => V1MultiAsset),
-        SetAppendix: sts.array(() => Type_235),
-        SetErrorHandler: sts.array(() => Type_235),
+        SetAppendix: sts.array(() => Type_223),
+        SetErrorHandler: sts.array(() => Type_223),
         SubscribeVersion: sts.enumStruct({
             queryId: sts.bigint(),
             maxResponseWeight: sts.bigint(),
@@ -6010,7 +5831,7 @@ export const Type_235: sts.Type<Type_235> = sts.closedEnum(() => {
         Transact: sts.enumStruct({
             originType: V0OriginKind,
             requireWeightAtMost: sts.bigint(),
-            call: Type_228,
+            call: Type_216,
         }),
         TransferAsset: sts.enumStruct({
             assets: sts.array(() => V1MultiAsset),
@@ -6027,13 +5848,13 @@ export const Type_235: sts.Type<Type_235> = sts.closedEnum(() => {
     }
 })
 
-export const Type_228: sts.Type<Type_228> = sts.struct(() => {
+export const Type_216: sts.Type<Type_216> = sts.struct(() => {
     return  {
         encoded: sts.bytes(),
     }
 })
 
-export const Type_229: sts.Type<Type_229> = sts.closedEnum(() => {
+export const Type_217: sts.Type<Type_217> = sts.closedEnum(() => {
     return  {
         HrmpChannelAccepted: sts.enumStruct({
             recipient: sts.number(),
@@ -6054,15 +5875,15 @@ export const Type_229: sts.Type<Type_229> = sts.closedEnum(() => {
         }),
         ReceiveTeleportedAsset: sts.enumStruct({
             assets: sts.array(() => V1MultiAsset),
-            effects: sts.array(() => Type_231),
+            effects: sts.array(() => Type_219),
         }),
         RelayedFrom: sts.enumStruct({
             who: V1Junctions,
-            message: Type_229,
+            message: Type_217,
         }),
         ReserveAssetDeposited: sts.enumStruct({
             assets: sts.array(() => V1MultiAsset),
-            effects: sts.array(() => Type_231),
+            effects: sts.array(() => Type_219),
         }),
         SubscribeVersion: sts.enumStruct({
             queryId: sts.bigint(),
@@ -6071,7 +5892,7 @@ export const Type_229: sts.Type<Type_229> = sts.closedEnum(() => {
         Transact: sts.enumStruct({
             originType: V0OriginKind,
             requireWeightAtMost: sts.bigint(),
-            call: Type_228,
+            call: Type_216,
         }),
         TransferAsset: sts.enumStruct({
             assets: sts.array(() => V1MultiAsset),
@@ -6085,19 +5906,19 @@ export const Type_229: sts.Type<Type_229> = sts.closedEnum(() => {
         UnsubscribeVersion: sts.unit(),
         WithdrawAsset: sts.enumStruct({
             assets: sts.array(() => V1MultiAsset),
-            effects: sts.array(() => Type_231),
+            effects: sts.array(() => Type_219),
         }),
     }
 })
 
-export const Type_231: sts.Type<Type_231> = sts.closedEnum(() => {
+export const Type_219: sts.Type<Type_219> = sts.closedEnum(() => {
     return  {
         BuyExecution: sts.enumStruct({
             fees: V1MultiAsset,
             weight: sts.bigint(),
             debt: sts.bigint(),
             haltOnError: sts.boolean(),
-            instructions: sts.array(() => Type_229),
+            instructions: sts.array(() => Type_217),
         }),
         DepositAsset: sts.enumStruct({
             assets: V1MultiAssetFilter,
@@ -6133,7 +5954,7 @@ export const Type_231: sts.Type<Type_231> = sts.closedEnum(() => {
     }
 })
 
-export const Type_224: sts.Type<Type_224> = sts.closedEnum(() => {
+export const Type_212: sts.Type<Type_212> = sts.closedEnum(() => {
     return  {
         HrmpChannelAccepted: sts.enumStruct({
             recipient: sts.number(),
@@ -6154,20 +5975,20 @@ export const Type_224: sts.Type<Type_224> = sts.closedEnum(() => {
         }),
         RelayedFrom: sts.enumStruct({
             who: V0MultiLocation,
-            message: Type_224,
+            message: Type_212,
         }),
         ReserveAssetDeposit: sts.enumStruct({
             assets: sts.array(() => V0MultiAsset),
-            effects: sts.array(() => Type_226),
+            effects: sts.array(() => Type_214),
         }),
         TeleportAsset: sts.enumStruct({
             assets: sts.array(() => V0MultiAsset),
-            effects: sts.array(() => Type_226),
+            effects: sts.array(() => Type_214),
         }),
         Transact: sts.enumStruct({
             originType: V0OriginKind,
             requireWeightAtMost: sts.bigint(),
-            call: Type_228,
+            call: Type_216,
         }),
         TransferAsset: sts.enumStruct({
             assets: sts.array(() => V0MultiAsset),
@@ -6180,19 +6001,19 @@ export const Type_224: sts.Type<Type_224> = sts.closedEnum(() => {
         }),
         WithdrawAsset: sts.enumStruct({
             assets: sts.array(() => V0MultiAsset),
-            effects: sts.array(() => Type_226),
+            effects: sts.array(() => Type_214),
         }),
     }
 })
 
-export const Type_226: sts.Type<Type_226> = sts.closedEnum(() => {
+export const Type_214: sts.Type<Type_214> = sts.closedEnum(() => {
     return  {
         BuyExecution: sts.enumStruct({
             fees: V0MultiAsset,
             weight: sts.bigint(),
             debt: sts.bigint(),
             haltOnError: sts.boolean(),
-            xcm: sts.array(() => Type_224),
+            xcm: sts.array(() => Type_212),
         }),
         DepositAsset: sts.enumStruct({
             assets: sts.array(() => V0MultiAsset),
@@ -6308,14 +6129,15 @@ export const MultisigCall: sts.Type<MultisigCall> = sts.closedEnum(() => {
             otherSignatories: sts.array(() => AccountId32),
             maybeTimepoint: sts.option(() => Timepoint),
             callHash: sts.bytes(),
-            maxWeight: Weight,
+            maxWeight: sts.bigint(),
         }),
         as_multi: sts.enumStruct({
             threshold: sts.number(),
             otherSignatories: sts.array(() => AccountId32),
             maybeTimepoint: sts.option(() => Timepoint),
-            call: Call,
-            maxWeight: Weight,
+            call: sts.bytes(),
+            storeCall: sts.boolean(),
+            maxWeight: sts.bigint(),
         }),
         as_multi_threshold_1: sts.enumStruct({
             otherSignatories: sts.array(() => AccountId32),
@@ -6361,38 +6183,61 @@ export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
         cancel_proposal: sts.enumStruct({
             propIndex: sts.number(),
         }),
+        cancel_queued: sts.enumStruct({
+            which: sts.number(),
+        }),
         cancel_referendum: sts.enumStruct({
             refIndex: sts.number(),
         }),
         clear_public_proposals: sts.unit(),
         delegate: sts.enumStruct({
-            to: MultiAddress,
+            to: AccountId32,
             conviction: Conviction,
             balance: sts.bigint(),
         }),
         emergency_cancel: sts.enumStruct({
             refIndex: sts.number(),
         }),
+        enact_proposal: sts.enumStruct({
+            proposalHash: H256,
+            index: sts.number(),
+        }),
         external_propose: sts.enumStruct({
-            proposal: Bounded,
+            proposalHash: H256,
         }),
         external_propose_default: sts.enumStruct({
-            proposal: Bounded,
+            proposalHash: H256,
         }),
         external_propose_majority: sts.enumStruct({
-            proposal: Bounded,
+            proposalHash: H256,
         }),
         fast_track: sts.enumStruct({
             proposalHash: H256,
             votingPeriod: sts.number(),
             delay: sts.number(),
         }),
+        note_imminent_preimage: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
+        note_imminent_preimage_operational: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
+        note_preimage: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
+        note_preimage_operational: sts.enumStruct({
+            encodedProposal: sts.bytes(),
+        }),
         propose: sts.enumStruct({
-            proposal: Bounded,
+            proposalHash: H256,
             value: sts.bigint(),
         }),
+        reap_preimage: sts.enumStruct({
+            proposalHash: H256,
+            proposalLenUpperBound: sts.number(),
+        }),
         remove_other_vote: sts.enumStruct({
-            target: MultiAddress,
+            target: AccountId32,
             index: sts.number(),
         }),
         remove_vote: sts.enumStruct({
@@ -6400,10 +6245,11 @@ export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
         }),
         second: sts.enumStruct({
             proposal: sts.number(),
+            secondsUpperBound: sts.number(),
         }),
         undelegate: sts.unit(),
         unlock: sts.enumStruct({
-            target: MultiAddress,
+            target: AccountId32,
         }),
         veto_external: sts.enumStruct({
             proposalHash: H256,
@@ -6429,19 +6275,6 @@ export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
 })
 
 export const Vote = sts.number()
-
-export const Bounded: sts.Type<Bounded> = sts.closedEnum(() => {
-    return  {
-        Inline: sts.bytes(),
-        Legacy: sts.enumStruct({
-            hash: H256,
-        }),
-        Lookup: sts.enumStruct({
-            hash: H256,
-            len: sts.number(),
-        }),
-    }
-})
 
 export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
     return  {
@@ -6469,12 +6302,6 @@ export const CumulusXcmCall: sts.Type<CumulusXcmCall> = sts.closedEnum(() => {
 export const CouncilCall: sts.Type<CouncilCall> = sts.closedEnum(() => {
     return  {
         close: sts.enumStruct({
-            proposalHash: H256,
-            index: sts.number(),
-            proposalWeightBound: Weight,
-            lengthBound: sts.number(),
-        }),
-        close_old_weight: sts.enumStruct({
             proposalHash: H256,
             index: sts.number(),
             proposalWeightBound: sts.bigint(),
