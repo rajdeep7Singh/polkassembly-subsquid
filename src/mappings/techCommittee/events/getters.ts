@@ -12,52 +12,50 @@ import {
 import { Event } from '../../../processor'
 
 export function getApprovedData(itemEvent: Event): string {
-    if (approved.v0.is(itemEvent)) {
-        return approved.v0.decode(itemEvent)
-    } else if (approved.v9140.is(itemEvent)) {
-        return approved.v9140.decode(itemEvent).proposalHash
+    if (approved.v266.is(itemEvent)) {
+        return approved.v266.decode(itemEvent)
+    } else if (approved.v297.is(itemEvent)) {
+        return approved.v297.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getClosedData(itemEvent: Event): string {
-    if (closed.v0.is(itemEvent)) {
-        return closed.v0.decode(itemEvent)[0]
-    } else if (closed.v9140.is(itemEvent)) {
-        return closed.v9140.decode(itemEvent).proposalHash
+    if (closed.v266.is(itemEvent)) {
+        return closed.v266.decode(itemEvent)[0]
+    } else if (closed.v297.is(itemEvent)) {
+        return closed.v297.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getDisapprovedData(itemEvent: Event): string {
-    if (disapproved.v0.is(itemEvent)) {
-        return disapproved.v0.decode(itemEvent)[0]
-    } else if (disapproved.v9140.is(itemEvent)) {
-        return disapproved.v9140.decode(itemEvent).proposalHash
+    if (disapproved.v266.is(itemEvent)) {
+        return disapproved.v266.decode(itemEvent)[0]
+    } else if (disapproved.v297.is(itemEvent)) {
+        return disapproved.v297.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getExecutedData(itemEvent: Event): string {
-    if (executed.v0.is(itemEvent)) {
-        return executed.v0.decode(itemEvent)[0]
-    } else if (executed.v9110.is(itemEvent)) {
-        return executed.v9110.decode(itemEvent)[0]
-    } else if (executed.v9140.is(itemEvent)) {
-        return executed.v9140.decode(itemEvent).proposalHash
-    } else if (executed.v9170.is(itemEvent)) {
-        return executed.v9170.decode(itemEvent).proposalHash
-    } else if (executed.v9190.is(itemEvent)) {
-        return executed.v9190.decode(itemEvent).proposalHash
-    }else if (executed.v9340.is(itemEvent)) {
-        return executed.v9340.decode(itemEvent).proposalHash
-    } else if (executed.v9420.is(itemEvent)) {
-        return executed.v9420.decode(itemEvent).proposalHash
-    } else if (executed.v9430.is(itemEvent)) {
-        return executed.v9430.decode(itemEvent).proposalHash
+    if (executed.v266.is(itemEvent)) {
+        return executed.v266.decode(itemEvent)[0]
+    } else if (executed.v295.is(itemEvent)) {
+        return executed.v295.decode(itemEvent)[0]
+    } else if (executed.v297.is(itemEvent)) {
+        return executed.v297.decode(itemEvent).proposalHash
+    } else if (executed.v299.is(itemEvent)) {
+        return executed.v299.decode(itemEvent).proposalHash
+    } else if (executed.v300.is(itemEvent)) {
+        return executed.v300.decode(itemEvent).proposalHash
+    }else if (executed.v302.is(itemEvent)) {
+        return executed.v302.decode(itemEvent).proposalHash
+    } else if (executed.v48300.is(itemEvent)) {
+        return executed.v48300.decode(itemEvent).proposalHash
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -71,16 +69,16 @@ export interface ProposedData {
 }
 
 export function getProposedData(itemEvent: Event): ProposedData {
-    if (proposed.v0.is(itemEvent)) {
-        const [proposer, index, hash, threshold] = proposed.v0.decode(itemEvent)
+    if (proposed.v266.is(itemEvent)) {
+        const [proposer, index, hash, threshold] = proposed.v266.decode(itemEvent)
         return {
             proposer,
             index,
             hash,
             threshold,
         }
-    } else if (proposed.v9140.is(itemEvent)) {
-        const { account, proposalIndex, proposalHash, threshold } = proposed.v9140.decode(itemEvent)
+    } else if (proposed.v297.is(itemEvent)) {
+        const { account, proposalIndex, proposalHash, threshold } = proposed.v297.decode(itemEvent)
         return {
             proposer: account,
             index: proposalIndex,
@@ -99,15 +97,15 @@ export interface VotedData {
 }
 
 export function getVotedData(itemEvent: Event): VotedData {
-    if (voted.v0.is(itemEvent)) {
-        const [voter, hash, decision] = voted.v0.decode(itemEvent)
+    if (voted.v266.is(itemEvent)) {
+        const [voter, hash, decision] = voted.v266.decode(itemEvent)
         return {
             voter,
             hash,
             decision,
         }
-    } else if (voted.v9140.is(itemEvent)) {
-        const { account, proposalHash, voted: voteData } = voted.v9140.decode(itemEvent)
+    } else if (voted.v297.is(itemEvent)) {
+        const { account, proposalHash, voted: voteData } = voted.v297.decode(itemEvent)
         return {
             voter: account,
             hash: proposalHash,

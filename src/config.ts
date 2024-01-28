@@ -2,12 +2,12 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'cere',
+        prefix: 54,
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
-        chain: 'wss://rpc.polkadot.io',
+        chain: 'wss://archive.mainnet.cere.network/ws',
+        archive: lookupArchive('cere',  {type: 'Substrate', release: 'ArrowSquid' }),
     },
     typesBundle: 'polkadot',
     batchSize: 500,

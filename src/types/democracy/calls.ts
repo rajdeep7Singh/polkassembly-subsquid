@@ -1,7 +1,7 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v9110 from '../v9110'
-import * as v9291 from '../v9291'
+import * as v266 from '../v266'
+import * as v295 from '../v295'
+import * as v47000 from '../v47000'
 
 export const vote =  {
     name: 'Democracy.vote',
@@ -19,17 +19,13 @@ export const vote =  {
      *    weight is charged as if maximum votes.
      *  - Db reads: `ReferendumInfoOf`, `VotingOf`, `balances locks`
      *  - Db writes: `ReferendumInfoOf`, `VotingOf`, `balances locks`
-     *  --------------------
-     *  - Base Weight:
-     *      - Vote New: 49.24 + .333 * R µs
-     *      - Vote Existing: 49.94 + .343 * R µs
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v0.AccountVote,
+            vote: v266.AccountVote,
         })
     ),
     /**
@@ -43,11 +39,11 @@ export const vote =  {
      * 
      * Weight: `O(R)` where R is the number of referendums the voter has voted on.
      */
-    v9110: new CallType(
+    v295: new CallType(
         'Democracy.vote',
         sts.struct({
             refIndex: sts.number(),
-            vote: v9110.AccountVote,
+            vote: v295.AccountVote,
         })
     ),
 }
@@ -76,19 +72,18 @@ export const delegate =  {
      *  # <weight>
      *  - Complexity: `O(R)` where R is the number of referendums the voter delegating to has
      *    voted on. Weight is charged as if maximum votes.
-     *  - Db reads: 2*`VotingOf`, `balances locks`
-     *  - Db writes: 2*`VotingOf`, `balances locks`
+     *  - Db reads: 3*`VotingOf`, `origin account locks`
+     *  - Db writes: 3*`VotingOf`, `origin account locks`
      *  - Db reads per votes: `ReferendumInfoOf`
      *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 65.78 + 8.229 * R µs
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Democracy.delegate',
         sts.struct({
-            to: v0.AccountId,
-            conviction: v0.Conviction,
-            balance: v0.BalanceOf,
+            to: v266.AccountId,
+            conviction: v266.Conviction,
+            balance: v266.BalanceOf,
         })
     ),
     /**
@@ -113,11 +108,11 @@ export const delegate =  {
      * Weight: `O(R)` where R is the number of referendums the voter delegating to has
      *   voted on. Weight is charged as if maximum votes.
      */
-    v9291: new CallType(
+    v47000: new CallType(
         'Democracy.delegate',
         sts.struct({
-            to: v9291.MultiAddress,
-            conviction: v9291.Conviction,
+            to: v47000.MultiAddress,
+            conviction: v47000.Conviction,
             balance: sts.bigint(),
         })
     ),
@@ -143,10 +138,9 @@ export const undelegate =  {
      *  - Db writes: 2*`VotingOf`
      *  - Db reads per votes: `ReferendumInfoOf`
      *  - Db writes per votes: `ReferendumInfoOf`
-     *  - Base Weight: 33.29 + 8.104 * R µs
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Democracy.undelegate',
         sts.unit()
     ),
@@ -185,13 +179,12 @@ export const removeVote =  {
      *    Weight is calculated for the maximum number of vote.
      *  - Db reads: `ReferendumInfoOf`, `VotingOf`
      *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 21.03 + .359 * R
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Democracy.remove_vote',
         sts.struct({
-            index: v0.ReferendumIndex,
+            index: v266.ReferendumIndex,
         })
     ),
 }
@@ -217,14 +210,13 @@ export const removeOtherVote =  {
      *    Weight is calculated for the maximum number of vote.
      *  - Db reads: `ReferendumInfoOf`, `VotingOf`
      *  - Db writes: `ReferendumInfoOf`, `VotingOf`
-     *  - Base Weight: 19.15 + .372 * R
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Democracy.remove_other_vote',
         sts.struct({
-            target: v0.AccountId,
-            index: v0.ReferendumIndex,
+            target: v266.AccountId,
+            index: v266.ReferendumIndex,
         })
     ),
     /**
@@ -244,10 +236,10 @@ export const removeOtherVote =  {
      * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
      *   Weight is calculated for the maximum number of vote.
      */
-    v9291: new CallType(
+    v47000: new CallType(
         'Democracy.remove_other_vote',
         sts.struct({
-            target: v9291.MultiAddress,
+            target: v47000.MultiAddress,
             index: sts.number(),
         })
     ),

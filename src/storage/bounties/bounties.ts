@@ -16,10 +16,10 @@ interface BountyStorageData {
 
 async function getBountyStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<BountyStorageData | undefined> {
     
-    if (bounties.v28.is(block)) {
-        return await bounties.v28.get(block, index)
-    }else if (bounties.v9110.is(block)) {
-        return await bounties.v9110.get(block, index)
+    if (bounties.v283.is(block)) {
+        return await bounties.v283.get(block, index)
+    }else if (bounties.v295.is(block)) {
+        return await bounties.v295.get(block, index)
     }else {
         throw new UnknownVersionError("Bounty.Bounties")
     }
@@ -27,8 +27,8 @@ async function getBountyStorageData(ctx: ProcessorContext<Store>, index: number,
 
 async function getTreasuryStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<BountyStorageData | undefined> {
 
-    if (TreasuryBountiesStorage.v25.is(block)) {
-        return await TreasuryBountiesStorage.v25.get(block, index)
+    if (TreasuryBountiesStorage.v266.is(block)) {
+        return await TreasuryBountiesStorage.v266.get(block, index)
     }else {
         throw new UnknownVersionError("Bounty.Bountie")
     }
@@ -50,16 +50,16 @@ export async function getBounties(ctx: ProcessorContext<Store>, index: number, b
 }
 
 async function getBountyDescriptionStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<string | undefined> {
-    if (bountyDescriptions.v28.is(block)) {
-        return await bountyDescriptions.v28.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (bountyDescriptions.v283.is(block)) {
+        return await bountyDescriptions.v283.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Bounties.descriptions")
     }
 }
 
 async function getTreasuryDescriptionStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<string | undefined> {
-    if (TreasuryBountyDescriptionsStorage.v25.is(block)) {
-        return await TreasuryBountyDescriptionsStorage.v25.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (TreasuryBountyDescriptionsStorage.v266.is(block)) {
+        return await TreasuryBountyDescriptionsStorage.v266.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Bounties.descriptions")
     }

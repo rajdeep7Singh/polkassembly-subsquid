@@ -6,41 +6,30 @@ import { ProcessorContext } from '../../processor'
 interface TipStorageData {
     who: string
     finder?: string
-    deposit?: bigint
+    deposit?: bigint | string
     reason: string
 }
 
 
 async function getTipsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<TipStorageData | undefined> {
-    if (tips.v28.is(block)) {
-        return await tips.v28.get(block, hash)
+    if (tips.v283.is(block)) {
+        return await tips.v283.get(block, hash)
     } else {
         throw new UnknownVersionError("Tips.tips")
     }
 }
 
 async function getTreasuryStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<TipStorageData | undefined> {
-    if (TreasuryTipsStorage.v0.is(block)) {
-        const storageData = await TreasuryTipsStorage.v0.get(block, hash)
-        if (!storageData) return undefined
-
-        const { who, finder, reason } = storageData
-        return {
-            who,
-            finder: finder?.[0],
-            deposit: finder?.[1],
-            reason,
-        }
-    } else if (TreasuryTipsStorage.v13.is(block)) {
-        return await TreasuryTipsStorage.v13.get(block, hash)
+    if (TreasuryTipsStorage.v266.is(block)) {
+        return await TreasuryTipsStorage.v266.get(block, hash)
     } else {
         throw new UnknownVersionError("Treasury.Tips")
     }
 }
 
 async function getTipsReasonsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<string | undefined> {
-    if (reasons.v28.is(block)) {
-        return await reasons.v28.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (reasons.v283.is(block)) {
+        return await reasons.v283.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Treasury.Tips")
     }
@@ -48,8 +37,8 @@ async function getTipsReasonsStorageData(ctx: ProcessorContext<Store>, hash: str
 
 async function getTreasuryReasonsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<string | undefined> {
 
-    if (TreasuryReasonsStorage.v0.is(block)) {
-        return TreasuryReasonsStorage.v0.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (TreasuryReasonsStorage.v266.is(block)) {
+        return TreasuryReasonsStorage.v266.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Treasury.Reasons")
     }

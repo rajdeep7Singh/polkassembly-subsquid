@@ -1,22 +1,21 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v25 from '../v25'
-import * as v9170 from '../v9170'
-import * as v9250 from '../v9250'
+import * as v266 from '../v266'
+import * as v299 from '../v299'
+import * as v43000 from '../v43000'
 
 export const proposed =  {
     name: 'Treasury.Proposed',
     /**
-     *  New proposal.
+     *  New proposal. \[proposal_index\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.Proposed',
-        v0.ProposalIndex
+        v266.ProposalIndex
     ),
     /**
      * New proposal.
      */
-    v9170: new EventType(
+    v299: new EventType(
         'Treasury.Proposed',
         sts.struct({
             proposalIndex: sts.number(),
@@ -27,21 +26,21 @@ export const proposed =  {
 export const awarded =  {
     name: 'Treasury.Awarded',
     /**
-     *  Some funds have been allocated.
+     *  Some funds have been allocated. \[proposal_index, award, beneficiary\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.Awarded',
-        sts.tuple([v0.ProposalIndex, v0.Balance, v0.AccountId])
+        sts.tuple([v266.ProposalIndex, v266.Balance, v266.AccountId])
     ),
     /**
      * Some funds have been allocated.
      */
-    v9170: new EventType(
+    v299: new EventType(
         'Treasury.Awarded',
         sts.struct({
             proposalIndex: sts.number(),
             award: sts.bigint(),
-            account: v9170.AccountId32,
+            account: v299.AccountId32,
         })
     ),
 }
@@ -49,16 +48,16 @@ export const awarded =  {
 export const rejected =  {
     name: 'Treasury.Rejected',
     /**
-     *  A proposal was rejected; funds were slashed.
+     *  A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.Rejected',
-        sts.tuple([v0.ProposalIndex, v0.Balance])
+        sts.tuple([v266.ProposalIndex, v266.Balance])
     ),
     /**
      * A proposal was rejected; funds were slashed.
      */
-    v9170: new EventType(
+    v299: new EventType(
         'Treasury.Rejected',
         sts.struct({
             proposalIndex: sts.number(),
@@ -70,33 +69,33 @@ export const rejected =  {
 export const newTip =  {
     name: 'Treasury.NewTip',
     /**
-     *  A new tip suggestion has been opened.
+     *  A new tip suggestion has been opened. \[tip_hash\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.NewTip',
-        v0.Hash
+        v266.Hash
     ),
 }
 
 export const tipClosed =  {
     name: 'Treasury.TipClosed',
     /**
-     *  A tip suggestion has been closed.
+     *  A tip suggestion has been closed. \[tip_hash, who, payout\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.TipClosed',
-        sts.tuple([v0.Hash, v0.AccountId, v0.Balance])
+        sts.tuple([v266.Hash, v266.AccountId, v266.Balance])
     ),
 }
 
 export const tipRetracted =  {
     name: 'Treasury.TipRetracted',
     /**
-     *  A tip suggestion has been retracted.
+     *  A tip suggestion has been retracted. \[tip_hash\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Treasury.TipRetracted',
-        v0.Hash
+        v266.Hash
     ),
 }
 
@@ -105,9 +104,9 @@ export const bountyProposed =  {
     /**
      *  New bounty proposal. [index]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyProposed',
-        v25.BountyIndex
+        v266.BountyIndex
     ),
 }
 
@@ -116,9 +115,9 @@ export const bountyRejected =  {
     /**
      *  A bounty proposal was rejected; funds were slashed. [index, bond]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyRejected',
-        sts.tuple([v25.BountyIndex, v25.Balance])
+        sts.tuple([v266.BountyIndex, v266.Balance])
     ),
 }
 
@@ -127,9 +126,9 @@ export const bountyBecameActive =  {
     /**
      *  A bounty proposal is funded and became active. [index]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyBecameActive',
-        v25.BountyIndex
+        v266.BountyIndex
     ),
 }
 
@@ -138,9 +137,9 @@ export const bountyAwarded =  {
     /**
      *  A bounty is awarded to a beneficiary. [index, beneficiary]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyAwarded',
-        sts.tuple([v25.BountyIndex, v25.AccountId])
+        sts.tuple([v266.BountyIndex, v266.AccountId])
     ),
 }
 
@@ -149,9 +148,9 @@ export const bountyClaimed =  {
     /**
      *  A bounty is claimed by beneficiary. [index, payout, beneficiary]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyClaimed',
-        sts.tuple([v25.BountyIndex, v25.Balance, v25.AccountId])
+        sts.tuple([v266.BountyIndex, v266.Balance, v266.AccountId])
     ),
 }
 
@@ -160,9 +159,9 @@ export const bountyCanceled =  {
     /**
      *  A bounty is cancelled. [index]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyCanceled',
-        v25.BountyIndex
+        v266.BountyIndex
     ),
 }
 
@@ -171,9 +170,9 @@ export const bountyExtended =  {
     /**
      *  A bounty expiry is extended. [index]
      */
-    v25: new EventType(
+    v266: new EventType(
         'Treasury.BountyExtended',
-        v25.BountyIndex
+        v266.BountyIndex
     ),
 }
 
@@ -182,12 +181,12 @@ export const spendApproved =  {
     /**
      * A new spend proposal has been approved.
      */
-    v9250: new EventType(
+    v43000: new EventType(
         'Treasury.SpendApproved',
         sts.struct({
             proposalIndex: sts.number(),
             amount: sts.bigint(),
-            beneficiary: v9250.AccountId32,
+            beneficiary: v43000.AccountId32,
         })
     ),
 }

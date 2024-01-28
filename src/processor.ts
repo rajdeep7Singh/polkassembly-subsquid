@@ -7,10 +7,85 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156',
-        archive: lookupArchive('polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://archive.mainnet.cere.network/ws',
+        archive: lookupArchive('cere',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})
+    .setTypesBundle({
+        "types": {},
+        "versions": [
+          {
+            "minmax": [
+              266,
+              281
+            ],
+            "types": {
+              "ChainId": "u8",
+              "DepositNonce": "u64",
+              "ResourceId": "[u8; 32]",
+              "ProposalStatus": {
+                "_enum": [
+                  "Initiated",
+                  "Approved",
+                  "Rejected"
+                ]
+              },
+              "ProposalVotes": {
+                "votes_for": "Vec<AccountId>",
+                "votes_against": "Vec<AccountId>",
+                "status": "ProposalStatus",
+                "expiry": "BlockNumber"
+              },
+              "TokenId": "u256",
+              "Erc721Token": {
+                "id": "TokenId",
+                "metadata": "Vec<u8>"
+              },
+              "Address": "IndicesLookupSource",
+              "LookupSource": "IndicesLookupSource",
+              "ValidatorPrefs": {
+                "commission": "Compact<Perbill>"
+              }
+            }
+          },
+          {
+            "minmax": [
+              282,
+              294
+            ],
+            "types": {
+              "ChainId": "u8",
+              "DepositNonce": "u64",
+              "ResourceId": "[u8; 32]",
+              "ProposalStatus": {
+                "_enum": [
+                  "Initiated",
+                  "Approved",
+                  "Rejected"
+                ]
+              },
+              "ProposalVotes": {
+                "votes_for": "Vec<AccountId>",
+                "votes_against": "Vec<AccountId>",
+                "status": "ProposalStatus",
+                "expiry": "BlockNumber"
+              },
+              "TokenId": "u256",
+              "Erc721Token": {
+                "id": "TokenId",
+                "metadata": "Vec<u8>"
+              },
+              "Address": "MultiAddress",
+              "LookupSource": "MultiAddress",
+              "AccountInfo": "AccountInfoWithDualRefCount"
+            }
+          },
+          {
+            "minmax": [295, null],
+            "types": {}
+          }
+        ]
+      })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
         name: [ 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
@@ -81,21 +156,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Democracy.undelegate') {
                 await modules.democracy.extrinsics.handleUndelegate(ctx, item, block.header)
-            }
-            if (item.name == 'ConvictionVoting.vote'){
-                await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
-            }
-            if (item.name == 'ConvictionVoting.delegate'){
-                await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
-            }
-            if (item.name == 'ConvictionVoting.undelegate'){
-                await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
-            }
-            if (item.name == 'ConvictionVoting.remove_vote'){
-                await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
-            }
-            if (item.name == 'ConvictionVoting.remove_other_vote'){
-                await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
             }
             if (item.name == 'Bounties.accept_curator'){
                 await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
@@ -299,48 +359,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Preimage.Requested'){
                 await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Submitted'){
-                await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Approved'){
-                await modules.referendumV2.events.handleApproved(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Cancelled'){
-                await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.ConfirmAborted'){
-                await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Confirmed'){
-                await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.ConfirmStarted'){
-                await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.DecisionDepositPlaced'){
-                await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.DecisionStarted'){
-                await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Killed'){
-                await modules.referendumV2.events.handleKilled(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.Rejected'){
-                await modules.referendumV2.events.handleRejected(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.TimedOut'){
-                await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.MetadataSet'){
-                await modules.referendumV2.events.handleMetadataSet(ctx, item, block.header)
-            }
-            if (item.name == 'Referenda.MetadataCleared'){
-                await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
-            }
-            if(item.name == 'Scheduler.Dispatched'){
-                await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
             }
         }
     }

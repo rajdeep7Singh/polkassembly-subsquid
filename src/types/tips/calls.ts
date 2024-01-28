@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v28 from '../v28'
+import * as v283 from '../v283'
 
 export const tip =  {
     name: 'Tips.tip',
@@ -30,10 +30,10 @@ export const tip =  {
      *  - DbWrites: `Tips`
      *  # </weight>
      */
-    v28: new CallType(
+    v283: new CallType(
         'Tips.tip',
         sts.struct({
-            hash: v28.Hash,
+            hash: v283.Hash,
             tipValue: sts.bigint(),
         })
     ),

@@ -16,48 +16,50 @@ import { ss58codec } from '../../../common/tools'
 import { decodeHex } from '@subsquid/substrate-processor'
 
 export function getCancelledData(itemEvent: Event): number {
-    if (cancelled.v0.is(itemEvent)) {
-        return cancelled.v0.decode(itemEvent)
-    } else if (cancelled.v9140.decode(itemEvent)) {
-        return cancelled.v9140.decode(itemEvent).refIndex
+    if (cancelled.v266.is(itemEvent)) {
+        return cancelled.v266.decode(itemEvent)
+    } else if (cancelled.v297.decode(itemEvent)) {
+        return cancelled.v297.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getExecutedData(itemEvent: Event): number {
-    if (executed.v0.is(itemEvent)) {
-        return executed.v0.decode(itemEvent)[0]
-    } else if (executed.v9090.is(itemEvent)) {
-        return executed.v9090.decode(itemEvent)[0]
-    } else if (executed.v9110.is(itemEvent)) {
-        return executed.v9110.decode(itemEvent)[0]
-    } else if (executed.v9140.is(itemEvent)) {
-        return executed.v9140.decode(itemEvent).refIndex
-    } else if (executed.v9170.is(itemEvent)) {
-        return executed.v9170.decode(itemEvent).refIndex
-    } else if (executed.v9190.is(itemEvent)) {
-        return executed.v9190.decode(itemEvent).refIndex
+    if (executed.v266.is(itemEvent)) {
+        return executed.v266.decode(itemEvent)[0]
+    } else if (executed.v293.is(itemEvent)) {
+        return executed.v293.decode(itemEvent)[0]
+    } else if (executed.v295.is(itemEvent)) {
+        return executed.v295.decode(itemEvent)[0]
+    } else if (executed.v297.is(itemEvent)) {
+        return executed.v297.decode(itemEvent).refIndex
+    } else if (executed.v299.is(itemEvent)) {
+        return executed.v299.decode(itemEvent).refIndex
+    } else if (executed.v300.is(itemEvent)) {
+        return executed.v300.decode(itemEvent).refIndex
+    } else if (executed.v302.is(itemEvent)) {
+        return executed.v302.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getNotPassedData(itemEvent: Event): number {
-    if (notPassed.v0.is(itemEvent)) {
-        return notPassed.v0.decode(itemEvent)
-    } else if (notPassed.v9140.is(itemEvent)) {
-        return notPassed.v9140.decode(itemEvent).refIndex
+    if (notPassed.v266.is(itemEvent)) {
+        return notPassed.v266.decode(itemEvent)
+    } else if (notPassed.v297.is(itemEvent)) {
+        return notPassed.v297.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 export function getPassedData(itemEvent: Event): number {
-    if (passed.v0.is(itemEvent)) {
-        return passed.v0.decode(itemEvent)
-    } else if (passed.v9140.is(itemEvent)) {
-        return passed.v9140.decode(itemEvent).refIndex
+    if (passed.v266.is(itemEvent)) {
+        return passed.v266.decode(itemEvent)
+    } else if (passed.v297.is(itemEvent)) {
+        return passed.v297.decode(itemEvent).refIndex
     } else {
         throw new UnknownVersionError(itemEvent.name)
     }
@@ -69,14 +71,14 @@ export interface PreimageInvalidData {
 }
 
 export function getPreimageInvalidData(itemEvent: Event): PreimageInvalidData {
-    if (preimageInvalid.v0.is(itemEvent)) {
-        const [hash, index] = preimageInvalid.v0.decode(itemEvent)
+    if (preimageInvalid.v266.is(itemEvent)) {
+        const [hash, index] = preimageInvalid.v266.decode(itemEvent)
         return {
             hash,
             index,
         }
-    } else if (preimageInvalid.v9140.is(itemEvent)) {
-        const { proposalHash: hash, refIndex: index } = preimageInvalid.v9140.decode(itemEvent)
+    } else if (preimageInvalid.v297.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageInvalid.v297.decode(itemEvent)
         return {
             hash,
             index,
@@ -92,14 +94,14 @@ export interface PreimageMissingData {
 }
 
 export function getPreimageMissingData(itemEvent: Event): PreimageMissingData {
-    if (preimageMissing.v0.is(itemEvent)) {
-        const [hash, index] = preimageMissing.v0.decode(itemEvent)
+    if (preimageMissing.v266.is(itemEvent)) {
+        const [hash, index] = preimageMissing.v266.decode(itemEvent)
         return {
             hash,
             index,
         }
-    } else if (preimageMissing.v9140.is(itemEvent)) {
-        const { proposalHash: hash, refIndex: index } = preimageMissing.v9140.decode(itemEvent)
+    } else if (preimageMissing.v297.is(itemEvent)) {
+        const { proposalHash: hash, refIndex: index } = preimageMissing.v297.decode(itemEvent)
         return {
             hash,
             index,
@@ -116,15 +118,15 @@ interface PreimageNotedData {
 }
 
 export function getPreimageNotedData(itemEvent: Event): PreimageNotedData {
-    if (preimageNoted.v0.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageNoted.v0.decode(itemEvent)
+    if (preimageNoted.v266.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageNoted.v266.decode(itemEvent)
         return {
             hash,
             provider: ss58codec.encode(decodeHex(provider)),
             deposit,
         }
-    } else if (preimageNoted.v9140.is(itemEvent)) {
-        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v9140.decode(itemEvent)
+    } else if (preimageNoted.v297.is(itemEvent)) {
+        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v297.decode(itemEvent)
         return {
             hash,
             provider: ss58codec.encode(decodeHex(provider)),
@@ -142,15 +144,15 @@ export interface PreimageReapedData {
 }
 
 export function getPreimageReapedData(itemEvent: Event): PreimageNotedData {
-    if (preimageReaped.v0.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageReaped.v0.decode(itemEvent)
+    if (preimageReaped.v266.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageReaped.v266.decode(itemEvent)
         return {
             hash,
             provider,
             deposit,
         }
-    } else if (preimageNoted.v9140.is(itemEvent)) {
-        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v9140.decode(itemEvent)
+    } else if (preimageNoted.v297.is(itemEvent)) {
+        const { proposalHash: hash, who: provider, deposit } = preimageNoted.v297.decode(itemEvent)
         return {
             hash,
             provider,
@@ -168,15 +170,15 @@ export interface PreimageUsedData {
 }
 
 export function getPreimageUsedData(itemEvent: Event): PreimageNotedData {
-    if (preimageUsed.v0.is(itemEvent)) {
-        const [hash, provider, deposit] = preimageUsed.v0.decode(itemEvent)
+    if (preimageUsed.v266.is(itemEvent)) {
+        const [hash, provider, deposit] = preimageUsed.v266.decode(itemEvent)
         return {
             hash,
             provider,
             deposit,
         }
-    } else if (preimageUsed.v9140.is(itemEvent)) {
-        const { proposalHash: hash, provider, deposit } = preimageUsed.v9140.decode(itemEvent)
+    } else if (preimageUsed.v297.is(itemEvent)) {
+        const { proposalHash: hash, provider, deposit } = preimageUsed.v297.decode(itemEvent)
         return {
             hash,
             provider,
@@ -193,8 +195,8 @@ interface DemocracySecondedData {
 }
 
 export function getDemocracySecondedData(itemEvent: Event): DemocracySecondedData {
-    if (seconded.v9170.is(itemEvent)) {
-        const {seconder, propIndex} = seconded.v9170.decode(itemEvent)
+    if (seconded.v299.is(itemEvent)) {
+        const {seconder, propIndex} = seconded.v299.decode(itemEvent)
         return {
             accountId: seconder,
             refIndex: propIndex

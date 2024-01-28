@@ -25,14 +25,14 @@ interface BountyAwardedData {
 }
 
 export function getBountyAwardedData(itemEvent: Event): BountyAwardedData {
-    if (bountyAwarded.v28.is(itemEvent)) {
-        const [index, beneficiary] = bountyAwarded.v28.decode(itemEvent)
+    if (bountyAwarded.v283.is(itemEvent)) {
+        const [index, beneficiary] = bountyAwarded.v283.decode(itemEvent)
         return {
             index,
             beneficiary,
         }
-    } else if (bountyAwarded.v9140.is(itemEvent)) {
-        const { index, beneficiary } = bountyAwarded.v9140.decode(itemEvent)
+    } else if (bountyAwarded.v297.is(itemEvent)) {
+        const { index, beneficiary } = bountyAwarded.v297.decode(itemEvent)
         return {
             index,
             beneficiary,
@@ -43,8 +43,8 @@ export function getBountyAwardedData(itemEvent: Event): BountyAwardedData {
 }
 
 export function getBountyAwardedDataOld(itemEvent: Event): BountyAwardedData {
-    if (TreasuryBountyAwardedEvent.v25.is(itemEvent)) {
-        const [index, beneficiary] = TreasuryBountyAwardedEvent.v25.decode(itemEvent)
+    if (TreasuryBountyAwardedEvent.v266.is(itemEvent)) {
+        const [index, beneficiary] = TreasuryBountyAwardedEvent.v266.decode(itemEvent)
         return {
             index,
             beneficiary,
@@ -59,8 +59,8 @@ interface BountyBacameActiveData {
 }
 
 export function getBountyBacameActiveDataOld(itemEvent: Event): BountyBacameActiveData {
-    if (TreasuryBountyBecameActiveEvent.v25.is(itemEvent)) {
-        const index = TreasuryBountyBecameActiveEvent.v25.decode(itemEvent)
+    if (TreasuryBountyBecameActiveEvent.v266.is(itemEvent)) {
+        const index = TreasuryBountyBecameActiveEvent.v266.decode(itemEvent)
         return {
             index,
         }
@@ -70,13 +70,13 @@ export function getBountyBacameActiveDataOld(itemEvent: Event): BountyBacameActi
 }
 
 export function getBountyBacameActiveData(itemEvent: Event): BountyBacameActiveData {
-    if (bountyBecameActive.v28.is(itemEvent)) {
-        const index = bountyBecameActive.v28.decode(itemEvent)
+    if (bountyBecameActive.v283.is(itemEvent)) {
+        const index = bountyBecameActive.v283.decode(itemEvent)
         return {
             index,
         }
-    } else if (bountyBecameActive.v9140.is(itemEvent)) {
-        const { index } = bountyBecameActive.v9140.decode(itemEvent)
+    } else if (bountyBecameActive.v297.is(itemEvent)) {
+        const { index } = bountyBecameActive.v297.decode(itemEvent)
         return {
             index,
         }
@@ -90,8 +90,8 @@ interface BountyCanceledData {
 }
 
 export function getBountyCanceledDataOld(itemEvent: Event): BountyCanceledData {
-    if (TreasuryBountyCanceledEvent.v25.is(itemEvent)) {
-        const index = TreasuryBountyCanceledEvent.v25.decode(itemEvent)
+    if (TreasuryBountyCanceledEvent.v266.is(itemEvent)) {
+        const index = TreasuryBountyCanceledEvent.v266.decode(itemEvent)
         return {
             index,
         }
@@ -101,13 +101,13 @@ export function getBountyCanceledDataOld(itemEvent: Event): BountyCanceledData {
 }
 
 export function getBountyCanceledData(itemEvent: Event): BountyCanceledData {
-    if (bountyCanceled.v28.is(itemEvent)) {
-        const index = bountyCanceled.v28.decode(itemEvent)
+    if (bountyCanceled.v283.is(itemEvent)) {
+        const index = bountyCanceled.v283.decode(itemEvent)
         return {
             index,
         }
-    } else if (bountyCanceled.v9140.is(itemEvent)) {
-        const { index } = bountyCanceled.v9140.decode(itemEvent)
+    } else if (bountyCanceled.v297.is(itemEvent)) {
+        const { index } = bountyCanceled.v297.decode(itemEvent)
         return {
             index,
         }
@@ -123,8 +123,8 @@ interface BountyClaimedData {
 }
 
 export function getBountyClaimedDataOld(itemEvent: Event): BountyClaimedData {
-    if (TreasuryBountyClaimedEvent.v25.is(itemEvent)) {
-        const [index, payout, beneficiary] = TreasuryBountyClaimedEvent.v25.decode(itemEvent)
+    if (TreasuryBountyClaimedEvent.v266.is(itemEvent)) {
+        const [index, payout, beneficiary] = TreasuryBountyClaimedEvent.v266.decode(itemEvent)
         return {
             index,
             beneficiary,
@@ -136,15 +136,15 @@ export function getBountyClaimedDataOld(itemEvent: Event): BountyClaimedData {
 }
 
 export function getBountyClaimedData(itemEvent: Event): BountyClaimedData {
-    if (bountyClaimed.v28.is(itemEvent)) {
-        const [index, payout, beneficiary] = bountyClaimed.v28.decode(itemEvent)
+    if (bountyClaimed.v283.is(itemEvent)) {
+        const [index, payout, beneficiary] = bountyClaimed.v283.decode(itemEvent)
         return {
             index,
             payout,
             beneficiary,
         }
-    } else if (bountyClaimed.v9140.is(itemEvent)) {
-        const { index, payout, beneficiary } = bountyClaimed.v9140.decode(itemEvent)
+    } else if (bountyClaimed.v297.is(itemEvent)) {
+        const { index, payout, beneficiary } = bountyClaimed.v297.decode(itemEvent)
         return {
             index,
             payout,
@@ -160,8 +160,8 @@ interface BountyExtendedData {
 }
 
 export function getBountyExtendedDataOld(itemEvent: Event): BountyExtendedData {
-    if (TreasuryBountyExtendedEvent.v25.is(itemEvent)) {
-        const index = TreasuryBountyExtendedEvent.v25.decode(itemEvent)
+    if (TreasuryBountyExtendedEvent.v266.is(itemEvent)) {
+        const index = TreasuryBountyExtendedEvent.v266.decode(itemEvent)
         return {
             index,
         }
@@ -171,13 +171,13 @@ export function getBountyExtendedDataOld(itemEvent: Event): BountyExtendedData {
 }
 
 export function getBountyExtendedData(itemEvent: Event): BountyExtendedData {
-    if (bountyExtended.v28.is(itemEvent)) {
-        const index = bountyExtended.v28.decode(itemEvent)
+    if (bountyExtended.v283.is(itemEvent)) {
+        const index = bountyExtended.v283.decode(itemEvent)
         return {
             index,
         }
-    } else if (bountyExtended.v9140.is(itemEvent)) {
-        const { index } = bountyExtended.v9140.decode(itemEvent)
+    } else if (bountyExtended.v297.is(itemEvent)) {
+        const { index } = bountyExtended.v297.decode(itemEvent)
         return {
             index,
         }
@@ -191,8 +191,8 @@ interface BountyProposedData {
 }
 
 export function getBountyProposedDataOld(itemEvent: Event): BountyProposedData {
-    if (TreasuryBountyProposedEvent.v25.is(itemEvent)) {
-        const index = TreasuryBountyProposedEvent.v25.decode(itemEvent)
+    if (TreasuryBountyProposedEvent.v266.is(itemEvent)) {
+        const index = TreasuryBountyProposedEvent.v266.decode(itemEvent)
         return {
             index,
         }
@@ -202,13 +202,13 @@ export function getBountyProposedDataOld(itemEvent: Event): BountyProposedData {
 }
 
 export function getBountyProposedData(itemEvent: Event): BountyProposedData {
-    if (bountyProposed.v28.is(itemEvent)) {
-        const index = bountyProposed.v28.decode(itemEvent)
+    if (bountyProposed.v283.is(itemEvent)) {
+        const index = bountyProposed.v283.decode(itemEvent)
         return {
             index,
         }
-    } else if (bountyProposed.v9140.is(itemEvent)) {
-        const { index } = bountyProposed.v9140.decode(itemEvent)
+    } else if (bountyProposed.v297.is(itemEvent)) {
+        const { index } = bountyProposed.v297.decode(itemEvent)
         return {
             index,
         }
@@ -222,8 +222,8 @@ interface BountyRejectedData {
 }
 
 export function getBountyRejectedDataOld(itemEvent: Event): BountyRejectedData {
-    if (TreasuryBountyRejectedEvent.v25.is(itemEvent)) {
-        const [index] = TreasuryBountyRejectedEvent.v25.decode(itemEvent)
+    if (TreasuryBountyRejectedEvent.v266.is(itemEvent)) {
+        const [index] = TreasuryBountyRejectedEvent.v266.decode(itemEvent)
         return {
             index,
         }
@@ -233,13 +233,13 @@ export function getBountyRejectedDataOld(itemEvent: Event): BountyRejectedData {
 }
 
 export function getBountyRejectedData(itemEvent: Event): BountyRejectedData {
-    if (bountyRejected.v28.is(itemEvent)) {
-        const [index] = bountyRejected.v28.decode(itemEvent)
+    if (bountyRejected.v283.is(itemEvent)) {
+        const [index] = bountyRejected.v283.decode(itemEvent)
         return {
             index,
         }
-    } else if (bountyRejected.v9140.is(itemEvent)) {
-        const { index } = bountyRejected.v9140.decode(itemEvent)
+    } else if (bountyRejected.v297.is(itemEvent)) {
+        const { index } = bountyRejected.v297.decode(itemEvent)
         return {
             index,
         }

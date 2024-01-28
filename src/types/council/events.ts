@@ -1,33 +1,33 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v9110 from '../v9110'
-import * as v9140 from '../v9140'
-import * as v9170 from '../v9170'
-import * as v9190 from '../v9190'
-import * as v9340 from '../v9340'
-import * as v9420 from '../v9420'
-import * as v9430 from '../v9430'
+import * as v266 from '../v266'
+import * as v295 from '../v295'
+import * as v297 from '../v297'
+import * as v299 from '../v299'
+import * as v300 from '../v300'
+import * as v302 from '../v302'
+import * as v48300 from '../v48300'
 
 export const proposed =  {
     name: 'Council.Proposed',
     /**
      *  A motion (given hash) has been proposed (by given account) with a threshold (given
      *  `MemberCount`).
+     *  \[account, proposal_index, proposal_hash, threshold\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Proposed',
-        sts.tuple([v0.AccountId, v0.ProposalIndex, v0.Hash, v0.MemberCount])
+        sts.tuple([v266.AccountId, v266.ProposalIndex, v266.Hash, v266.MemberCount])
     ),
     /**
      * A motion (given hash) has been proposed (by given account) with a threshold (given
      * `MemberCount`).
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Proposed',
         sts.struct({
-            account: v9140.AccountId32,
+            account: v297.AccountId32,
             proposalIndex: sts.number(),
-            proposalHash: v9140.H256,
+            proposalHash: v297.H256,
             threshold: sts.number(),
         })
     ),
@@ -38,20 +38,21 @@ export const voted =  {
     /**
      *  A motion (given hash) has been voted on by given account, leaving
      *  a tally (yes votes and no votes given respectively as `MemberCount`).
+     *  \[account, proposal_hash, voted, yes, no\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Voted',
-        sts.tuple([v0.AccountId, v0.Hash, sts.boolean(), v0.MemberCount, v0.MemberCount])
+        sts.tuple([v266.AccountId, v266.Hash, sts.boolean(), v266.MemberCount, v266.MemberCount])
     ),
     /**
      * A motion (given hash) has been voted on by given account, leaving
      * a tally (yes votes and no votes given respectively as `MemberCount`).
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Voted',
         sts.struct({
-            account: v9140.AccountId32,
-            proposalHash: v9140.H256,
+            account: v297.AccountId32,
+            proposalHash: v297.H256,
             voted: sts.boolean(),
             yes: sts.number(),
             no: sts.number(),
@@ -63,18 +64,19 @@ export const approved =  {
     name: 'Council.Approved',
     /**
      *  A motion was approved by the required threshold.
+     *  \[proposal_hash\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Approved',
-        v0.Hash
+        v266.Hash
     ),
     /**
      * A motion was approved by the required threshold.
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Approved',
         sts.struct({
-            proposalHash: v9140.H256,
+            proposalHash: v297.H256,
         })
     ),
 }
@@ -83,18 +85,19 @@ export const disapproved =  {
     name: 'Council.Disapproved',
     /**
      *  A motion was not approved by the required threshold.
+     *  \[proposal_hash\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Disapproved',
-        v0.Hash
+        v266.Hash
     ),
     /**
      * A motion was not approved by the required threshold.
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Disapproved',
         sts.struct({
-            proposalHash: v9140.H256,
+            proposalHash: v297.H256,
         })
     ),
 }
@@ -102,78 +105,69 @@ export const disapproved =  {
 export const executed =  {
     name: 'Council.Executed',
     /**
-     *  A motion was executed; `bool` is true if returned without error.
+     *  A motion was executed; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Executed',
-        sts.tuple([v0.Hash, v0.DispatchResult])
+        sts.tuple([v266.Hash, v266.DispatchResult])
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      * \[proposal_hash, result\]
      */
-    v9110: new EventType(
+    v295: new EventType(
         'Council.Executed',
-        sts.tuple([v9110.H256, sts.result(() => sts.unit(), () => v9110.DispatchError)])
+        sts.tuple([v295.H256, sts.result(() => sts.unit(), () => v295.DispatchError)])
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Executed',
         sts.struct({
-            proposalHash: v9140.H256,
-            result: sts.result(() => sts.unit(), () => v9140.DispatchError),
+            proposalHash: v297.H256,
+            result: sts.result(() => sts.unit(), () => v297.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    v9170: new EventType(
+    v299: new EventType(
         'Council.Executed',
         sts.struct({
-            proposalHash: v9170.H256,
-            result: sts.result(() => sts.unit(), () => v9170.DispatchError),
+            proposalHash: v299.H256,
+            result: sts.result(() => sts.unit(), () => v299.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    v9190: new EventType(
+    v300: new EventType(
         'Council.Executed',
         sts.struct({
-            proposalHash: v9190.H256,
-            result: sts.result(() => sts.unit(), () => v9190.DispatchError),
+            proposalHash: v300.H256,
+            result: sts.result(() => sts.unit(), () => v300.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    v9340: new EventType(
+    v302: new EventType(
         'Council.Executed',
         sts.struct({
-            proposalHash: v9340.H256,
-            result: sts.result(() => sts.unit(), () => v9340.DispatchError),
+            proposalHash: v302.H256,
+            result: sts.result(() => sts.unit(), () => v302.DispatchError),
         })
     ),
     /**
      * A motion was executed; result will be `Ok` if it returned without error.
      */
-    v9420: new EventType(
+    v48300: new EventType(
         'Council.Executed',
         sts.struct({
-            proposalHash: v9420.H256,
-            result: sts.result(() => sts.unit(), () => v9420.DispatchError),
-        })
-    ),
-    /**
-     * A motion was executed; result will be `Ok` if it returned without error.
-     */
-    v9430: new EventType(
-        'Council.Executed',
-        sts.struct({
-            proposalHash: v9430.H256,
-            result: sts.result(() => sts.unit(), () => v9430.DispatchError),
+            proposalHash: v48300.H256,
+            result: sts.result(() => sts.unit(), () => v48300.DispatchError),
         })
     ),
 }
@@ -181,19 +175,20 @@ export const executed =  {
 export const closed =  {
     name: 'Council.Closed',
     /**
-     *  A proposal was closed after its duration was up.
+     *  A proposal was closed because its threshold was reached or after its duration was up.
+     *  \[proposal_hash, yes, no\]
      */
-    v0: new EventType(
+    v266: new EventType(
         'Council.Closed',
-        sts.tuple([v0.Hash, v0.MemberCount, v0.MemberCount])
+        sts.tuple([v266.Hash, v266.MemberCount, v266.MemberCount])
     ),
     /**
      * A proposal was closed because its threshold was reached or after its duration was up.
      */
-    v9140: new EventType(
+    v297: new EventType(
         'Council.Closed',
         sts.struct({
-            proposalHash: v9140.H256,
+            proposalHash: v297.H256,
             yes: sts.number(),
             no: sts.number(),
         })

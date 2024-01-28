@@ -1,862 +1,642 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v5 from '../v5'
-import * as v6 from '../v6'
-import * as v7 from '../v7'
-import * as v9 from '../v9'
-import * as v10 from '../v10'
-import * as v11 from '../v11'
-import * as v13 from '../v13'
-import * as v14 from '../v14'
-import * as v15 from '../v15'
-import * as v17 from '../v17'
-import * as v18 from '../v18'
-import * as v23 from '../v23'
-import * as v24 from '../v24'
-import * as v25 from '../v25'
-import * as v26 from '../v26'
-import * as v28 from '../v28'
-import * as v29 from '../v29'
-import * as v30 from '../v30'
-import * as v9050 from '../v9050'
-import * as v9080 from '../v9080'
-import * as v9090 from '../v9090'
-import * as v9100 from '../v9100'
-import * as v9110 from '../v9110'
-import * as v9140 from '../v9140'
-import * as v9170 from '../v9170'
-import * as v9180 from '../v9180'
-import * as v9190 from '../v9190'
-import * as v9220 from '../v9220'
-import * as v9230 from '../v9230'
-import * as v9250 from '../v9250'
-import * as v9270 from '../v9270'
-import * as v9280 from '../v9280'
-import * as v9291 from '../v9291'
-import * as v9300 from '../v9300'
-import * as v9340 from '../v9340'
-import * as v9370 from '../v9370'
-import * as v9420 from '../v9420'
-import * as v9430 from '../v9430'
+import * as v266 from '../v266'
+import * as v278 from '../v278'
+import * as v280 from '../v280'
+import * as v281 from '../v281'
+import * as v282 from '../v282'
+import * as v283 from '../v283'
+import * as v284 from '../v284'
+import * as v285 from '../v285'
+import * as v288 from '../v288'
+import * as v290 from '../v290'
+import * as v291 from '../v291'
+import * as v292 from '../v292'
+import * as v293 from '../v293'
+import * as v294 from '../v294'
+import * as v295 from '../v295'
+import * as v297 from '../v297'
+import * as v299 from '../v299'
+import * as v300 from '../v300'
+import * as v301 from '../v301'
+import * as v30500 from '../v30500'
+import * as v30800 from '../v30800'
+import * as v43000 from '../v43000'
+import * as v45000 from '../v45000'
+import * as v46000 from '../v46000'
+import * as v47000 from '../v47000'
+import * as v48001 from '../v48001'
+import * as v48202 from '../v48202'
+import * as v48300 from '../v48300'
+import * as v48400 from '../v48400'
 
 export const proposalOf =  {
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v0: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v0.Hash], v0.Proposal) as ProposalOfV0,
+    v266: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v266.Hash], v266.Proposal) as ProposalOfV266,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v5: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v5.Hash], v5.Proposal) as ProposalOfV5,
+    v278: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v278.Hash], v278.Proposal) as ProposalOfV278,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v6: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v6.Hash], v6.Proposal) as ProposalOfV6,
+    v280: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v280.Hash], v280.Proposal) as ProposalOfV280,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v7: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v7.Hash], v7.Proposal) as ProposalOfV7,
+    v281: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v281.Hash], v281.Proposal) as ProposalOfV281,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9.Hash], v9.Proposal) as ProposalOfV9,
+    v282: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v282.Hash], v282.Proposal) as ProposalOfV282,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v10: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v10.Hash], v10.Proposal) as ProposalOfV10,
+    v283: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v283.Hash], v283.Proposal) as ProposalOfV283,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v11: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v11.Hash], v11.Proposal) as ProposalOfV11,
+    v284: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v284.Hash], v284.Proposal) as ProposalOfV284,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v13: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v13.Hash], v13.Proposal) as ProposalOfV13,
+    v285: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v285.Hash], v285.Proposal) as ProposalOfV285,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v14: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v14.Hash], v14.Proposal) as ProposalOfV14,
+    v288: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v288.Hash], v288.Proposal) as ProposalOfV288,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v15: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v15.Hash], v15.Proposal) as ProposalOfV15,
+    v290: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v290.Hash], v290.Proposal) as ProposalOfV290,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v17: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v17.Hash], v17.Proposal) as ProposalOfV17,
+    v291: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v291.Hash], v291.Proposal) as ProposalOfV291,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v18: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v18.Hash], v18.Proposal) as ProposalOfV18,
+    v292: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v292.Hash], v292.Proposal) as ProposalOfV292,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v23: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v23.Hash], v23.Proposal) as ProposalOfV23,
+    v293: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v293.Hash], v293.Proposal) as ProposalOfV293,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v24: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v24.Hash], v24.Proposal) as ProposalOfV24,
+    v294: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v294.Hash], v294.Proposal) as ProposalOfV294,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v25: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v25.Hash], v25.Proposal) as ProposalOfV25,
+    v295: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v295.H256], v295.Call) as ProposalOfV295,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v26: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v26.Hash], v26.Proposal) as ProposalOfV26,
+    v297: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v297.H256], v297.Call) as ProposalOfV297,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v28: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v28.Hash], v28.Proposal) as ProposalOfV28,
+    v299: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v299.H256], v299.Call) as ProposalOfV299,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v29: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v29.Hash], v29.Proposal) as ProposalOfV29,
+    v300: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v300.H256], v300.Call) as ProposalOfV300,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v30: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v30.Hash], v30.Proposal) as ProposalOfV30,
+    v301: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v301.H256], v301.Call) as ProposalOfV301,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9050: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9050.Hash], v9050.Proposal) as ProposalOfV9050,
+    v30500: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v30500.H256], v30500.Call) as ProposalOfV30500,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9080: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9080.Hash], v9080.Proposal) as ProposalOfV9080,
+    v30800: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v30800.H256], v30800.Call) as ProposalOfV30800,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9090: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9090.Hash], v9090.Proposal) as ProposalOfV9090,
+    v43000: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v43000.H256], v43000.Call) as ProposalOfV43000,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9100: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9100.Hash], v9100.Proposal) as ProposalOfV9100,
+    v45000: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v45000.H256], v45000.Call) as ProposalOfV45000,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9110: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9110.H256], v9110.Call) as ProposalOfV9110,
+    v46000: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v46000.H256], v46000.Call) as ProposalOfV46000,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9140: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9140.H256], v9140.Call) as ProposalOfV9140,
+    v47000: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v47000.H256], v47000.Call) as ProposalOfV47000,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9170: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9170.H256], v9170.Call) as ProposalOfV9170,
+    v48001: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v48001.H256], v48001.Call) as ProposalOfV48001,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9180: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9180.H256], v9180.Call) as ProposalOfV9180,
+    v48202: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v48202.H256], v48202.Call) as ProposalOfV48202,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9190: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9190.H256], v9190.Call) as ProposalOfV9190,
+    v48300: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v48300.H256], v48300.Call) as ProposalOfV48300,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9220: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9220.H256], v9220.Call) as ProposalOfV9220,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9230: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9230.H256], v9230.Call) as ProposalOfV9230,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9250: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9250.H256], v9250.Call) as ProposalOfV9250,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9270: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9270.H256], v9270.Call) as ProposalOfV9270,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9280: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9280.H256], v9280.Call) as ProposalOfV9280,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9291: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9291.H256], v9291.Call) as ProposalOfV9291,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9300: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9300.H256], v9300.Call) as ProposalOfV9300,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9340: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9340.H256], v9340.Call) as ProposalOfV9340,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9370: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9370.H256], v9370.Call) as ProposalOfV9370,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9420: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9420.H256], v9420.Call) as ProposalOfV9420,
-    /**
-     *  Actual proposal for a given hash, if it's current.
-     */
-    v9430: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9430.H256], v9430.Call) as ProposalOfV9430,
+    v48400: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v48400.H256], v48400.Call) as ProposalOfV48400,
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV0  {
+export interface ProposalOfV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v0.Hash): Promise<(v0.Proposal | undefined)>
-    getMany(block: Block, keys: v0.Hash[]): Promise<(v0.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v0.Hash[]>
-    getKeys(block: Block, key: v0.Hash): Promise<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<v0.Hash[]>
-    getPairs(block: Block): Promise<[k: v0.Hash, v: (v0.Proposal | undefined)][]>
-    getPairs(block: Block, key: v0.Hash): Promise<[k: v0.Hash, v: (v0.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v0.Hash, v: (v0.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<[k: v0.Hash, v: (v0.Proposal | undefined)][]>
+    get(block: Block, key: v266.Hash): Promise<(v266.Proposal | undefined)>
+    getMany(block: Block, keys: v266.Hash[]): Promise<(v266.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v266.Hash[]>
+    getKeys(block: Block, key: v266.Hash): Promise<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<v266.Hash[]>
+    getPairs(block: Block): Promise<[k: v266.Hash, v: (v266.Proposal | undefined)][]>
+    getPairs(block: Block, key: v266.Hash): Promise<[k: v266.Hash, v: (v266.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.Hash, v: (v266.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<[k: v266.Hash, v: (v266.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV5  {
+export interface ProposalOfV278  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v5.Hash): Promise<(v5.Proposal | undefined)>
-    getMany(block: Block, keys: v5.Hash[]): Promise<(v5.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v5.Hash[]>
-    getKeys(block: Block, key: v5.Hash): Promise<v5.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v5.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v5.Hash): AsyncIterable<v5.Hash[]>
-    getPairs(block: Block): Promise<[k: v5.Hash, v: (v5.Proposal | undefined)][]>
-    getPairs(block: Block, key: v5.Hash): Promise<[k: v5.Hash, v: (v5.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v5.Hash, v: (v5.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v5.Hash): AsyncIterable<[k: v5.Hash, v: (v5.Proposal | undefined)][]>
+    get(block: Block, key: v278.Hash): Promise<(v278.Proposal | undefined)>
+    getMany(block: Block, keys: v278.Hash[]): Promise<(v278.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v278.Hash[]>
+    getKeys(block: Block, key: v278.Hash): Promise<v278.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v278.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v278.Hash): AsyncIterable<v278.Hash[]>
+    getPairs(block: Block): Promise<[k: v278.Hash, v: (v278.Proposal | undefined)][]>
+    getPairs(block: Block, key: v278.Hash): Promise<[k: v278.Hash, v: (v278.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v278.Hash, v: (v278.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v278.Hash): AsyncIterable<[k: v278.Hash, v: (v278.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV6  {
+export interface ProposalOfV280  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v6.Hash): Promise<(v6.Proposal | undefined)>
-    getMany(block: Block, keys: v6.Hash[]): Promise<(v6.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v6.Hash[]>
-    getKeys(block: Block, key: v6.Hash): Promise<v6.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v6.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v6.Hash): AsyncIterable<v6.Hash[]>
-    getPairs(block: Block): Promise<[k: v6.Hash, v: (v6.Proposal | undefined)][]>
-    getPairs(block: Block, key: v6.Hash): Promise<[k: v6.Hash, v: (v6.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v6.Hash, v: (v6.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v6.Hash): AsyncIterable<[k: v6.Hash, v: (v6.Proposal | undefined)][]>
+    get(block: Block, key: v280.Hash): Promise<(v280.Proposal | undefined)>
+    getMany(block: Block, keys: v280.Hash[]): Promise<(v280.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v280.Hash[]>
+    getKeys(block: Block, key: v280.Hash): Promise<v280.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v280.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v280.Hash): AsyncIterable<v280.Hash[]>
+    getPairs(block: Block): Promise<[k: v280.Hash, v: (v280.Proposal | undefined)][]>
+    getPairs(block: Block, key: v280.Hash): Promise<[k: v280.Hash, v: (v280.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v280.Hash, v: (v280.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v280.Hash): AsyncIterable<[k: v280.Hash, v: (v280.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV7  {
+export interface ProposalOfV281  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v7.Hash): Promise<(v7.Proposal | undefined)>
-    getMany(block: Block, keys: v7.Hash[]): Promise<(v7.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v7.Hash[]>
-    getKeys(block: Block, key: v7.Hash): Promise<v7.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v7.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v7.Hash): AsyncIterable<v7.Hash[]>
-    getPairs(block: Block): Promise<[k: v7.Hash, v: (v7.Proposal | undefined)][]>
-    getPairs(block: Block, key: v7.Hash): Promise<[k: v7.Hash, v: (v7.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v7.Hash, v: (v7.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v7.Hash): AsyncIterable<[k: v7.Hash, v: (v7.Proposal | undefined)][]>
+    get(block: Block, key: v281.Hash): Promise<(v281.Proposal | undefined)>
+    getMany(block: Block, keys: v281.Hash[]): Promise<(v281.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v281.Hash[]>
+    getKeys(block: Block, key: v281.Hash): Promise<v281.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v281.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v281.Hash): AsyncIterable<v281.Hash[]>
+    getPairs(block: Block): Promise<[k: v281.Hash, v: (v281.Proposal | undefined)][]>
+    getPairs(block: Block, key: v281.Hash): Promise<[k: v281.Hash, v: (v281.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v281.Hash, v: (v281.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v281.Hash): AsyncIterable<[k: v281.Hash, v: (v281.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9  {
+export interface ProposalOfV282  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9.Hash): Promise<(v9.Proposal | undefined)>
-    getMany(block: Block, keys: v9.Hash[]): Promise<(v9.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v9.Hash[]>
-    getKeys(block: Block, key: v9.Hash): Promise<v9.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9.Hash): AsyncIterable<v9.Hash[]>
-    getPairs(block: Block): Promise<[k: v9.Hash, v: (v9.Proposal | undefined)][]>
-    getPairs(block: Block, key: v9.Hash): Promise<[k: v9.Hash, v: (v9.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9.Hash, v: (v9.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9.Hash): AsyncIterable<[k: v9.Hash, v: (v9.Proposal | undefined)][]>
+    get(block: Block, key: v282.Hash): Promise<(v282.Proposal | undefined)>
+    getMany(block: Block, keys: v282.Hash[]): Promise<(v282.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v282.Hash[]>
+    getKeys(block: Block, key: v282.Hash): Promise<v282.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v282.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v282.Hash): AsyncIterable<v282.Hash[]>
+    getPairs(block: Block): Promise<[k: v282.Hash, v: (v282.Proposal | undefined)][]>
+    getPairs(block: Block, key: v282.Hash): Promise<[k: v282.Hash, v: (v282.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v282.Hash, v: (v282.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v282.Hash): AsyncIterable<[k: v282.Hash, v: (v282.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV10  {
+export interface ProposalOfV283  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v10.Hash): Promise<(v10.Proposal | undefined)>
-    getMany(block: Block, keys: v10.Hash[]): Promise<(v10.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v10.Hash[]>
-    getKeys(block: Block, key: v10.Hash): Promise<v10.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v10.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v10.Hash): AsyncIterable<v10.Hash[]>
-    getPairs(block: Block): Promise<[k: v10.Hash, v: (v10.Proposal | undefined)][]>
-    getPairs(block: Block, key: v10.Hash): Promise<[k: v10.Hash, v: (v10.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v10.Hash, v: (v10.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v10.Hash): AsyncIterable<[k: v10.Hash, v: (v10.Proposal | undefined)][]>
+    get(block: Block, key: v283.Hash): Promise<(v283.Proposal | undefined)>
+    getMany(block: Block, keys: v283.Hash[]): Promise<(v283.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v283.Hash[]>
+    getKeys(block: Block, key: v283.Hash): Promise<v283.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v283.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v283.Hash): AsyncIterable<v283.Hash[]>
+    getPairs(block: Block): Promise<[k: v283.Hash, v: (v283.Proposal | undefined)][]>
+    getPairs(block: Block, key: v283.Hash): Promise<[k: v283.Hash, v: (v283.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v283.Hash, v: (v283.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v283.Hash): AsyncIterable<[k: v283.Hash, v: (v283.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV11  {
+export interface ProposalOfV284  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v11.Hash): Promise<(v11.Proposal | undefined)>
-    getMany(block: Block, keys: v11.Hash[]): Promise<(v11.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v11.Hash[]>
-    getKeys(block: Block, key: v11.Hash): Promise<v11.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v11.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v11.Hash): AsyncIterable<v11.Hash[]>
-    getPairs(block: Block): Promise<[k: v11.Hash, v: (v11.Proposal | undefined)][]>
-    getPairs(block: Block, key: v11.Hash): Promise<[k: v11.Hash, v: (v11.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v11.Hash, v: (v11.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v11.Hash): AsyncIterable<[k: v11.Hash, v: (v11.Proposal | undefined)][]>
+    get(block: Block, key: v284.Hash): Promise<(v284.Proposal | undefined)>
+    getMany(block: Block, keys: v284.Hash[]): Promise<(v284.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v284.Hash[]>
+    getKeys(block: Block, key: v284.Hash): Promise<v284.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v284.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v284.Hash): AsyncIterable<v284.Hash[]>
+    getPairs(block: Block): Promise<[k: v284.Hash, v: (v284.Proposal | undefined)][]>
+    getPairs(block: Block, key: v284.Hash): Promise<[k: v284.Hash, v: (v284.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v284.Hash, v: (v284.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v284.Hash): AsyncIterable<[k: v284.Hash, v: (v284.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV13  {
+export interface ProposalOfV285  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v13.Hash): Promise<(v13.Proposal | undefined)>
-    getMany(block: Block, keys: v13.Hash[]): Promise<(v13.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v13.Hash[]>
-    getKeys(block: Block, key: v13.Hash): Promise<v13.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v13.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v13.Hash): AsyncIterable<v13.Hash[]>
-    getPairs(block: Block): Promise<[k: v13.Hash, v: (v13.Proposal | undefined)][]>
-    getPairs(block: Block, key: v13.Hash): Promise<[k: v13.Hash, v: (v13.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v13.Hash, v: (v13.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v13.Hash): AsyncIterable<[k: v13.Hash, v: (v13.Proposal | undefined)][]>
+    get(block: Block, key: v285.Hash): Promise<(v285.Proposal | undefined)>
+    getMany(block: Block, keys: v285.Hash[]): Promise<(v285.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v285.Hash[]>
+    getKeys(block: Block, key: v285.Hash): Promise<v285.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v285.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v285.Hash): AsyncIterable<v285.Hash[]>
+    getPairs(block: Block): Promise<[k: v285.Hash, v: (v285.Proposal | undefined)][]>
+    getPairs(block: Block, key: v285.Hash): Promise<[k: v285.Hash, v: (v285.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v285.Hash, v: (v285.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v285.Hash): AsyncIterable<[k: v285.Hash, v: (v285.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV14  {
+export interface ProposalOfV288  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v14.Hash): Promise<(v14.Proposal | undefined)>
-    getMany(block: Block, keys: v14.Hash[]): Promise<(v14.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v14.Hash[]>
-    getKeys(block: Block, key: v14.Hash): Promise<v14.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v14.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v14.Hash): AsyncIterable<v14.Hash[]>
-    getPairs(block: Block): Promise<[k: v14.Hash, v: (v14.Proposal | undefined)][]>
-    getPairs(block: Block, key: v14.Hash): Promise<[k: v14.Hash, v: (v14.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v14.Hash, v: (v14.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v14.Hash): AsyncIterable<[k: v14.Hash, v: (v14.Proposal | undefined)][]>
+    get(block: Block, key: v288.Hash): Promise<(v288.Proposal | undefined)>
+    getMany(block: Block, keys: v288.Hash[]): Promise<(v288.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v288.Hash[]>
+    getKeys(block: Block, key: v288.Hash): Promise<v288.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v288.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v288.Hash): AsyncIterable<v288.Hash[]>
+    getPairs(block: Block): Promise<[k: v288.Hash, v: (v288.Proposal | undefined)][]>
+    getPairs(block: Block, key: v288.Hash): Promise<[k: v288.Hash, v: (v288.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v288.Hash, v: (v288.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v288.Hash): AsyncIterable<[k: v288.Hash, v: (v288.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV15  {
+export interface ProposalOfV290  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v15.Hash): Promise<(v15.Proposal | undefined)>
-    getMany(block: Block, keys: v15.Hash[]): Promise<(v15.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v15.Hash[]>
-    getKeys(block: Block, key: v15.Hash): Promise<v15.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v15.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v15.Hash): AsyncIterable<v15.Hash[]>
-    getPairs(block: Block): Promise<[k: v15.Hash, v: (v15.Proposal | undefined)][]>
-    getPairs(block: Block, key: v15.Hash): Promise<[k: v15.Hash, v: (v15.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v15.Hash, v: (v15.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v15.Hash): AsyncIterable<[k: v15.Hash, v: (v15.Proposal | undefined)][]>
+    get(block: Block, key: v290.Hash): Promise<(v290.Proposal | undefined)>
+    getMany(block: Block, keys: v290.Hash[]): Promise<(v290.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v290.Hash[]>
+    getKeys(block: Block, key: v290.Hash): Promise<v290.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v290.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v290.Hash): AsyncIterable<v290.Hash[]>
+    getPairs(block: Block): Promise<[k: v290.Hash, v: (v290.Proposal | undefined)][]>
+    getPairs(block: Block, key: v290.Hash): Promise<[k: v290.Hash, v: (v290.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v290.Hash, v: (v290.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v290.Hash): AsyncIterable<[k: v290.Hash, v: (v290.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV17  {
+export interface ProposalOfV291  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v17.Hash): Promise<(v17.Proposal | undefined)>
-    getMany(block: Block, keys: v17.Hash[]): Promise<(v17.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v17.Hash[]>
-    getKeys(block: Block, key: v17.Hash): Promise<v17.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v17.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v17.Hash): AsyncIterable<v17.Hash[]>
-    getPairs(block: Block): Promise<[k: v17.Hash, v: (v17.Proposal | undefined)][]>
-    getPairs(block: Block, key: v17.Hash): Promise<[k: v17.Hash, v: (v17.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v17.Hash, v: (v17.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v17.Hash): AsyncIterable<[k: v17.Hash, v: (v17.Proposal | undefined)][]>
+    get(block: Block, key: v291.Hash): Promise<(v291.Proposal | undefined)>
+    getMany(block: Block, keys: v291.Hash[]): Promise<(v291.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v291.Hash[]>
+    getKeys(block: Block, key: v291.Hash): Promise<v291.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v291.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v291.Hash): AsyncIterable<v291.Hash[]>
+    getPairs(block: Block): Promise<[k: v291.Hash, v: (v291.Proposal | undefined)][]>
+    getPairs(block: Block, key: v291.Hash): Promise<[k: v291.Hash, v: (v291.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v291.Hash, v: (v291.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v291.Hash): AsyncIterable<[k: v291.Hash, v: (v291.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV18  {
+export interface ProposalOfV292  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v18.Hash): Promise<(v18.Proposal | undefined)>
-    getMany(block: Block, keys: v18.Hash[]): Promise<(v18.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v18.Hash[]>
-    getKeys(block: Block, key: v18.Hash): Promise<v18.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v18.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v18.Hash): AsyncIterable<v18.Hash[]>
-    getPairs(block: Block): Promise<[k: v18.Hash, v: (v18.Proposal | undefined)][]>
-    getPairs(block: Block, key: v18.Hash): Promise<[k: v18.Hash, v: (v18.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v18.Hash, v: (v18.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v18.Hash): AsyncIterable<[k: v18.Hash, v: (v18.Proposal | undefined)][]>
+    get(block: Block, key: v292.Hash): Promise<(v292.Proposal | undefined)>
+    getMany(block: Block, keys: v292.Hash[]): Promise<(v292.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v292.Hash[]>
+    getKeys(block: Block, key: v292.Hash): Promise<v292.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v292.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v292.Hash): AsyncIterable<v292.Hash[]>
+    getPairs(block: Block): Promise<[k: v292.Hash, v: (v292.Proposal | undefined)][]>
+    getPairs(block: Block, key: v292.Hash): Promise<[k: v292.Hash, v: (v292.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v292.Hash, v: (v292.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v292.Hash): AsyncIterable<[k: v292.Hash, v: (v292.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV23  {
+export interface ProposalOfV293  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v23.Hash): Promise<(v23.Proposal | undefined)>
-    getMany(block: Block, keys: v23.Hash[]): Promise<(v23.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v23.Hash[]>
-    getKeys(block: Block, key: v23.Hash): Promise<v23.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v23.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v23.Hash): AsyncIterable<v23.Hash[]>
-    getPairs(block: Block): Promise<[k: v23.Hash, v: (v23.Proposal | undefined)][]>
-    getPairs(block: Block, key: v23.Hash): Promise<[k: v23.Hash, v: (v23.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v23.Hash, v: (v23.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v23.Hash): AsyncIterable<[k: v23.Hash, v: (v23.Proposal | undefined)][]>
+    get(block: Block, key: v293.Hash): Promise<(v293.Proposal | undefined)>
+    getMany(block: Block, keys: v293.Hash[]): Promise<(v293.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v293.Hash[]>
+    getKeys(block: Block, key: v293.Hash): Promise<v293.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v293.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v293.Hash): AsyncIterable<v293.Hash[]>
+    getPairs(block: Block): Promise<[k: v293.Hash, v: (v293.Proposal | undefined)][]>
+    getPairs(block: Block, key: v293.Hash): Promise<[k: v293.Hash, v: (v293.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v293.Hash, v: (v293.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v293.Hash): AsyncIterable<[k: v293.Hash, v: (v293.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV24  {
+export interface ProposalOfV294  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v24.Hash): Promise<(v24.Proposal | undefined)>
-    getMany(block: Block, keys: v24.Hash[]): Promise<(v24.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v24.Hash[]>
-    getKeys(block: Block, key: v24.Hash): Promise<v24.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v24.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v24.Hash): AsyncIterable<v24.Hash[]>
-    getPairs(block: Block): Promise<[k: v24.Hash, v: (v24.Proposal | undefined)][]>
-    getPairs(block: Block, key: v24.Hash): Promise<[k: v24.Hash, v: (v24.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v24.Hash, v: (v24.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v24.Hash): AsyncIterable<[k: v24.Hash, v: (v24.Proposal | undefined)][]>
+    get(block: Block, key: v294.Hash): Promise<(v294.Proposal | undefined)>
+    getMany(block: Block, keys: v294.Hash[]): Promise<(v294.Proposal | undefined)[]>
+    getKeys(block: Block): Promise<v294.Hash[]>
+    getKeys(block: Block, key: v294.Hash): Promise<v294.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v294.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v294.Hash): AsyncIterable<v294.Hash[]>
+    getPairs(block: Block): Promise<[k: v294.Hash, v: (v294.Proposal | undefined)][]>
+    getPairs(block: Block, key: v294.Hash): Promise<[k: v294.Hash, v: (v294.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v294.Hash, v: (v294.Proposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v294.Hash): AsyncIterable<[k: v294.Hash, v: (v294.Proposal | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV25  {
+export interface ProposalOfV295  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v25.Hash): Promise<(v25.Proposal | undefined)>
-    getMany(block: Block, keys: v25.Hash[]): Promise<(v25.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v25.Hash[]>
-    getKeys(block: Block, key: v25.Hash): Promise<v25.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v25.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v25.Hash): AsyncIterable<v25.Hash[]>
-    getPairs(block: Block): Promise<[k: v25.Hash, v: (v25.Proposal | undefined)][]>
-    getPairs(block: Block, key: v25.Hash): Promise<[k: v25.Hash, v: (v25.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v25.Hash, v: (v25.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v25.Hash): AsyncIterable<[k: v25.Hash, v: (v25.Proposal | undefined)][]>
+    get(block: Block, key: v295.H256): Promise<(v295.Call | undefined)>
+    getMany(block: Block, keys: v295.H256[]): Promise<(v295.Call | undefined)[]>
+    getKeys(block: Block): Promise<v295.H256[]>
+    getKeys(block: Block, key: v295.H256): Promise<v295.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v295.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v295.H256): AsyncIterable<v295.H256[]>
+    getPairs(block: Block): Promise<[k: v295.H256, v: (v295.Call | undefined)][]>
+    getPairs(block: Block, key: v295.H256): Promise<[k: v295.H256, v: (v295.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v295.H256, v: (v295.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v295.H256): AsyncIterable<[k: v295.H256, v: (v295.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV26  {
+export interface ProposalOfV297  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v26.Hash): Promise<(v26.Proposal | undefined)>
-    getMany(block: Block, keys: v26.Hash[]): Promise<(v26.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v26.Hash[]>
-    getKeys(block: Block, key: v26.Hash): Promise<v26.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v26.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v26.Hash): AsyncIterable<v26.Hash[]>
-    getPairs(block: Block): Promise<[k: v26.Hash, v: (v26.Proposal | undefined)][]>
-    getPairs(block: Block, key: v26.Hash): Promise<[k: v26.Hash, v: (v26.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v26.Hash, v: (v26.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v26.Hash): AsyncIterable<[k: v26.Hash, v: (v26.Proposal | undefined)][]>
+    get(block: Block, key: v297.H256): Promise<(v297.Call | undefined)>
+    getMany(block: Block, keys: v297.H256[]): Promise<(v297.Call | undefined)[]>
+    getKeys(block: Block): Promise<v297.H256[]>
+    getKeys(block: Block, key: v297.H256): Promise<v297.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v297.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v297.H256): AsyncIterable<v297.H256[]>
+    getPairs(block: Block): Promise<[k: v297.H256, v: (v297.Call | undefined)][]>
+    getPairs(block: Block, key: v297.H256): Promise<[k: v297.H256, v: (v297.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v297.H256, v: (v297.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v297.H256): AsyncIterable<[k: v297.H256, v: (v297.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV28  {
+export interface ProposalOfV299  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v28.Hash): Promise<(v28.Proposal | undefined)>
-    getMany(block: Block, keys: v28.Hash[]): Promise<(v28.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v28.Hash[]>
-    getKeys(block: Block, key: v28.Hash): Promise<v28.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v28.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v28.Hash): AsyncIterable<v28.Hash[]>
-    getPairs(block: Block): Promise<[k: v28.Hash, v: (v28.Proposal | undefined)][]>
-    getPairs(block: Block, key: v28.Hash): Promise<[k: v28.Hash, v: (v28.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v28.Hash, v: (v28.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v28.Hash): AsyncIterable<[k: v28.Hash, v: (v28.Proposal | undefined)][]>
+    get(block: Block, key: v299.H256): Promise<(v299.Call | undefined)>
+    getMany(block: Block, keys: v299.H256[]): Promise<(v299.Call | undefined)[]>
+    getKeys(block: Block): Promise<v299.H256[]>
+    getKeys(block: Block, key: v299.H256): Promise<v299.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v299.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v299.H256): AsyncIterable<v299.H256[]>
+    getPairs(block: Block): Promise<[k: v299.H256, v: (v299.Call | undefined)][]>
+    getPairs(block: Block, key: v299.H256): Promise<[k: v299.H256, v: (v299.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v299.H256, v: (v299.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v299.H256): AsyncIterable<[k: v299.H256, v: (v299.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV29  {
+export interface ProposalOfV300  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v29.Hash): Promise<(v29.Proposal | undefined)>
-    getMany(block: Block, keys: v29.Hash[]): Promise<(v29.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v29.Hash[]>
-    getKeys(block: Block, key: v29.Hash): Promise<v29.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v29.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v29.Hash): AsyncIterable<v29.Hash[]>
-    getPairs(block: Block): Promise<[k: v29.Hash, v: (v29.Proposal | undefined)][]>
-    getPairs(block: Block, key: v29.Hash): Promise<[k: v29.Hash, v: (v29.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v29.Hash, v: (v29.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v29.Hash): AsyncIterable<[k: v29.Hash, v: (v29.Proposal | undefined)][]>
+    get(block: Block, key: v300.H256): Promise<(v300.Call | undefined)>
+    getMany(block: Block, keys: v300.H256[]): Promise<(v300.Call | undefined)[]>
+    getKeys(block: Block): Promise<v300.H256[]>
+    getKeys(block: Block, key: v300.H256): Promise<v300.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v300.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v300.H256): AsyncIterable<v300.H256[]>
+    getPairs(block: Block): Promise<[k: v300.H256, v: (v300.Call | undefined)][]>
+    getPairs(block: Block, key: v300.H256): Promise<[k: v300.H256, v: (v300.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v300.H256, v: (v300.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v300.H256): AsyncIterable<[k: v300.H256, v: (v300.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV30  {
+export interface ProposalOfV301  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v30.Hash): Promise<(v30.Proposal | undefined)>
-    getMany(block: Block, keys: v30.Hash[]): Promise<(v30.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v30.Hash[]>
-    getKeys(block: Block, key: v30.Hash): Promise<v30.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v30.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v30.Hash): AsyncIterable<v30.Hash[]>
-    getPairs(block: Block): Promise<[k: v30.Hash, v: (v30.Proposal | undefined)][]>
-    getPairs(block: Block, key: v30.Hash): Promise<[k: v30.Hash, v: (v30.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v30.Hash, v: (v30.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v30.Hash): AsyncIterable<[k: v30.Hash, v: (v30.Proposal | undefined)][]>
+    get(block: Block, key: v301.H256): Promise<(v301.Call | undefined)>
+    getMany(block: Block, keys: v301.H256[]): Promise<(v301.Call | undefined)[]>
+    getKeys(block: Block): Promise<v301.H256[]>
+    getKeys(block: Block, key: v301.H256): Promise<v301.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v301.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v301.H256): AsyncIterable<v301.H256[]>
+    getPairs(block: Block): Promise<[k: v301.H256, v: (v301.Call | undefined)][]>
+    getPairs(block: Block, key: v301.H256): Promise<[k: v301.H256, v: (v301.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v301.H256, v: (v301.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v301.H256): AsyncIterable<[k: v301.H256, v: (v301.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9050  {
+export interface ProposalOfV30500  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9050.Hash): Promise<(v9050.Proposal | undefined)>
-    getMany(block: Block, keys: v9050.Hash[]): Promise<(v9050.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v9050.Hash[]>
-    getKeys(block: Block, key: v9050.Hash): Promise<v9050.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9050.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9050.Hash): AsyncIterable<v9050.Hash[]>
-    getPairs(block: Block): Promise<[k: v9050.Hash, v: (v9050.Proposal | undefined)][]>
-    getPairs(block: Block, key: v9050.Hash): Promise<[k: v9050.Hash, v: (v9050.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9050.Hash, v: (v9050.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9050.Hash): AsyncIterable<[k: v9050.Hash, v: (v9050.Proposal | undefined)][]>
+    get(block: Block, key: v30500.H256): Promise<(v30500.Call | undefined)>
+    getMany(block: Block, keys: v30500.H256[]): Promise<(v30500.Call | undefined)[]>
+    getKeys(block: Block): Promise<v30500.H256[]>
+    getKeys(block: Block, key: v30500.H256): Promise<v30500.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v30500.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v30500.H256): AsyncIterable<v30500.H256[]>
+    getPairs(block: Block): Promise<[k: v30500.H256, v: (v30500.Call | undefined)][]>
+    getPairs(block: Block, key: v30500.H256): Promise<[k: v30500.H256, v: (v30500.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v30500.H256, v: (v30500.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v30500.H256): AsyncIterable<[k: v30500.H256, v: (v30500.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9080  {
+export interface ProposalOfV30800  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9080.Hash): Promise<(v9080.Proposal | undefined)>
-    getMany(block: Block, keys: v9080.Hash[]): Promise<(v9080.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v9080.Hash[]>
-    getKeys(block: Block, key: v9080.Hash): Promise<v9080.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9080.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9080.Hash): AsyncIterable<v9080.Hash[]>
-    getPairs(block: Block): Promise<[k: v9080.Hash, v: (v9080.Proposal | undefined)][]>
-    getPairs(block: Block, key: v9080.Hash): Promise<[k: v9080.Hash, v: (v9080.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9080.Hash, v: (v9080.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9080.Hash): AsyncIterable<[k: v9080.Hash, v: (v9080.Proposal | undefined)][]>
+    get(block: Block, key: v30800.H256): Promise<(v30800.Call | undefined)>
+    getMany(block: Block, keys: v30800.H256[]): Promise<(v30800.Call | undefined)[]>
+    getKeys(block: Block): Promise<v30800.H256[]>
+    getKeys(block: Block, key: v30800.H256): Promise<v30800.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v30800.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v30800.H256): AsyncIterable<v30800.H256[]>
+    getPairs(block: Block): Promise<[k: v30800.H256, v: (v30800.Call | undefined)][]>
+    getPairs(block: Block, key: v30800.H256): Promise<[k: v30800.H256, v: (v30800.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v30800.H256, v: (v30800.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v30800.H256): AsyncIterable<[k: v30800.H256, v: (v30800.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9090  {
+export interface ProposalOfV43000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9090.Hash): Promise<(v9090.Proposal | undefined)>
-    getMany(block: Block, keys: v9090.Hash[]): Promise<(v9090.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v9090.Hash[]>
-    getKeys(block: Block, key: v9090.Hash): Promise<v9090.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9090.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9090.Hash): AsyncIterable<v9090.Hash[]>
-    getPairs(block: Block): Promise<[k: v9090.Hash, v: (v9090.Proposal | undefined)][]>
-    getPairs(block: Block, key: v9090.Hash): Promise<[k: v9090.Hash, v: (v9090.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9090.Hash, v: (v9090.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9090.Hash): AsyncIterable<[k: v9090.Hash, v: (v9090.Proposal | undefined)][]>
+    get(block: Block, key: v43000.H256): Promise<(v43000.Call | undefined)>
+    getMany(block: Block, keys: v43000.H256[]): Promise<(v43000.Call | undefined)[]>
+    getKeys(block: Block): Promise<v43000.H256[]>
+    getKeys(block: Block, key: v43000.H256): Promise<v43000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v43000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v43000.H256): AsyncIterable<v43000.H256[]>
+    getPairs(block: Block): Promise<[k: v43000.H256, v: (v43000.Call | undefined)][]>
+    getPairs(block: Block, key: v43000.H256): Promise<[k: v43000.H256, v: (v43000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v43000.H256, v: (v43000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v43000.H256): AsyncIterable<[k: v43000.H256, v: (v43000.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9100  {
+export interface ProposalOfV45000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9100.Hash): Promise<(v9100.Proposal | undefined)>
-    getMany(block: Block, keys: v9100.Hash[]): Promise<(v9100.Proposal | undefined)[]>
-    getKeys(block: Block): Promise<v9100.Hash[]>
-    getKeys(block: Block, key: v9100.Hash): Promise<v9100.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9100.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9100.Hash): AsyncIterable<v9100.Hash[]>
-    getPairs(block: Block): Promise<[k: v9100.Hash, v: (v9100.Proposal | undefined)][]>
-    getPairs(block: Block, key: v9100.Hash): Promise<[k: v9100.Hash, v: (v9100.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9100.Hash, v: (v9100.Proposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9100.Hash): AsyncIterable<[k: v9100.Hash, v: (v9100.Proposal | undefined)][]>
+    get(block: Block, key: v45000.H256): Promise<(v45000.Call | undefined)>
+    getMany(block: Block, keys: v45000.H256[]): Promise<(v45000.Call | undefined)[]>
+    getKeys(block: Block): Promise<v45000.H256[]>
+    getKeys(block: Block, key: v45000.H256): Promise<v45000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v45000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v45000.H256): AsyncIterable<v45000.H256[]>
+    getPairs(block: Block): Promise<[k: v45000.H256, v: (v45000.Call | undefined)][]>
+    getPairs(block: Block, key: v45000.H256): Promise<[k: v45000.H256, v: (v45000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v45000.H256, v: (v45000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v45000.H256): AsyncIterable<[k: v45000.H256, v: (v45000.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9110  {
+export interface ProposalOfV46000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9110.H256): Promise<(v9110.Call | undefined)>
-    getMany(block: Block, keys: v9110.H256[]): Promise<(v9110.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9110.H256[]>
-    getKeys(block: Block, key: v9110.H256): Promise<v9110.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9110.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9110.H256): AsyncIterable<v9110.H256[]>
-    getPairs(block: Block): Promise<[k: v9110.H256, v: (v9110.Call | undefined)][]>
-    getPairs(block: Block, key: v9110.H256): Promise<[k: v9110.H256, v: (v9110.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9110.H256, v: (v9110.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9110.H256): AsyncIterable<[k: v9110.H256, v: (v9110.Call | undefined)][]>
+    get(block: Block, key: v46000.H256): Promise<(v46000.Call | undefined)>
+    getMany(block: Block, keys: v46000.H256[]): Promise<(v46000.Call | undefined)[]>
+    getKeys(block: Block): Promise<v46000.H256[]>
+    getKeys(block: Block, key: v46000.H256): Promise<v46000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v46000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v46000.H256): AsyncIterable<v46000.H256[]>
+    getPairs(block: Block): Promise<[k: v46000.H256, v: (v46000.Call | undefined)][]>
+    getPairs(block: Block, key: v46000.H256): Promise<[k: v46000.H256, v: (v46000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v46000.H256, v: (v46000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v46000.H256): AsyncIterable<[k: v46000.H256, v: (v46000.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9140  {
+export interface ProposalOfV47000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9140.H256): Promise<(v9140.Call | undefined)>
-    getMany(block: Block, keys: v9140.H256[]): Promise<(v9140.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9140.H256[]>
-    getKeys(block: Block, key: v9140.H256): Promise<v9140.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9140.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9140.H256): AsyncIterable<v9140.H256[]>
-    getPairs(block: Block): Promise<[k: v9140.H256, v: (v9140.Call | undefined)][]>
-    getPairs(block: Block, key: v9140.H256): Promise<[k: v9140.H256, v: (v9140.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9140.H256, v: (v9140.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9140.H256): AsyncIterable<[k: v9140.H256, v: (v9140.Call | undefined)][]>
+    get(block: Block, key: v47000.H256): Promise<(v47000.Call | undefined)>
+    getMany(block: Block, keys: v47000.H256[]): Promise<(v47000.Call | undefined)[]>
+    getKeys(block: Block): Promise<v47000.H256[]>
+    getKeys(block: Block, key: v47000.H256): Promise<v47000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v47000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v47000.H256): AsyncIterable<v47000.H256[]>
+    getPairs(block: Block): Promise<[k: v47000.H256, v: (v47000.Call | undefined)][]>
+    getPairs(block: Block, key: v47000.H256): Promise<[k: v47000.H256, v: (v47000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v47000.H256, v: (v47000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v47000.H256): AsyncIterable<[k: v47000.H256, v: (v47000.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9170  {
+export interface ProposalOfV48001  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9170.H256): Promise<(v9170.Call | undefined)>
-    getMany(block: Block, keys: v9170.H256[]): Promise<(v9170.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9170.H256[]>
-    getKeys(block: Block, key: v9170.H256): Promise<v9170.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9170.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9170.H256): AsyncIterable<v9170.H256[]>
-    getPairs(block: Block): Promise<[k: v9170.H256, v: (v9170.Call | undefined)][]>
-    getPairs(block: Block, key: v9170.H256): Promise<[k: v9170.H256, v: (v9170.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9170.H256, v: (v9170.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9170.H256): AsyncIterable<[k: v9170.H256, v: (v9170.Call | undefined)][]>
+    get(block: Block, key: v48001.H256): Promise<(v48001.Call | undefined)>
+    getMany(block: Block, keys: v48001.H256[]): Promise<(v48001.Call | undefined)[]>
+    getKeys(block: Block): Promise<v48001.H256[]>
+    getKeys(block: Block, key: v48001.H256): Promise<v48001.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v48001.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v48001.H256): AsyncIterable<v48001.H256[]>
+    getPairs(block: Block): Promise<[k: v48001.H256, v: (v48001.Call | undefined)][]>
+    getPairs(block: Block, key: v48001.H256): Promise<[k: v48001.H256, v: (v48001.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v48001.H256, v: (v48001.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v48001.H256): AsyncIterable<[k: v48001.H256, v: (v48001.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9180  {
+export interface ProposalOfV48202  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9180.H256): Promise<(v9180.Call | undefined)>
-    getMany(block: Block, keys: v9180.H256[]): Promise<(v9180.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9180.H256[]>
-    getKeys(block: Block, key: v9180.H256): Promise<v9180.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9180.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9180.H256): AsyncIterable<v9180.H256[]>
-    getPairs(block: Block): Promise<[k: v9180.H256, v: (v9180.Call | undefined)][]>
-    getPairs(block: Block, key: v9180.H256): Promise<[k: v9180.H256, v: (v9180.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9180.H256, v: (v9180.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9180.H256): AsyncIterable<[k: v9180.H256, v: (v9180.Call | undefined)][]>
+    get(block: Block, key: v48202.H256): Promise<(v48202.Call | undefined)>
+    getMany(block: Block, keys: v48202.H256[]): Promise<(v48202.Call | undefined)[]>
+    getKeys(block: Block): Promise<v48202.H256[]>
+    getKeys(block: Block, key: v48202.H256): Promise<v48202.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v48202.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v48202.H256): AsyncIterable<v48202.H256[]>
+    getPairs(block: Block): Promise<[k: v48202.H256, v: (v48202.Call | undefined)][]>
+    getPairs(block: Block, key: v48202.H256): Promise<[k: v48202.H256, v: (v48202.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v48202.H256, v: (v48202.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v48202.H256): AsyncIterable<[k: v48202.H256, v: (v48202.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9190  {
+export interface ProposalOfV48300  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9190.H256): Promise<(v9190.Call | undefined)>
-    getMany(block: Block, keys: v9190.H256[]): Promise<(v9190.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9190.H256[]>
-    getKeys(block: Block, key: v9190.H256): Promise<v9190.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9190.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9190.H256): AsyncIterable<v9190.H256[]>
-    getPairs(block: Block): Promise<[k: v9190.H256, v: (v9190.Call | undefined)][]>
-    getPairs(block: Block, key: v9190.H256): Promise<[k: v9190.H256, v: (v9190.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9190.H256, v: (v9190.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9190.H256): AsyncIterable<[k: v9190.H256, v: (v9190.Call | undefined)][]>
+    get(block: Block, key: v48300.H256): Promise<(v48300.Call | undefined)>
+    getMany(block: Block, keys: v48300.H256[]): Promise<(v48300.Call | undefined)[]>
+    getKeys(block: Block): Promise<v48300.H256[]>
+    getKeys(block: Block, key: v48300.H256): Promise<v48300.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v48300.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v48300.H256): AsyncIterable<v48300.H256[]>
+    getPairs(block: Block): Promise<[k: v48300.H256, v: (v48300.Call | undefined)][]>
+    getPairs(block: Block, key: v48300.H256): Promise<[k: v48300.H256, v: (v48300.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v48300.H256, v: (v48300.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v48300.H256): AsyncIterable<[k: v48300.H256, v: (v48300.Call | undefined)][]>
 }
 
 /**
  *  Actual proposal for a given hash, if it's current.
  */
-export interface ProposalOfV9220  {
+export interface ProposalOfV48400  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9220.H256): Promise<(v9220.Call | undefined)>
-    getMany(block: Block, keys: v9220.H256[]): Promise<(v9220.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9220.H256[]>
-    getKeys(block: Block, key: v9220.H256): Promise<v9220.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9220.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9220.H256): AsyncIterable<v9220.H256[]>
-    getPairs(block: Block): Promise<[k: v9220.H256, v: (v9220.Call | undefined)][]>
-    getPairs(block: Block, key: v9220.H256): Promise<[k: v9220.H256, v: (v9220.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9220.H256, v: (v9220.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9220.H256): AsyncIterable<[k: v9220.H256, v: (v9220.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9230  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9230.H256): Promise<(v9230.Call | undefined)>
-    getMany(block: Block, keys: v9230.H256[]): Promise<(v9230.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9230.H256[]>
-    getKeys(block: Block, key: v9230.H256): Promise<v9230.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9230.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9230.H256): AsyncIterable<v9230.H256[]>
-    getPairs(block: Block): Promise<[k: v9230.H256, v: (v9230.Call | undefined)][]>
-    getPairs(block: Block, key: v9230.H256): Promise<[k: v9230.H256, v: (v9230.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9230.H256, v: (v9230.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9230.H256): AsyncIterable<[k: v9230.H256, v: (v9230.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9250  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9250.H256): Promise<(v9250.Call | undefined)>
-    getMany(block: Block, keys: v9250.H256[]): Promise<(v9250.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9250.H256[]>
-    getKeys(block: Block, key: v9250.H256): Promise<v9250.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9250.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9250.H256): AsyncIterable<v9250.H256[]>
-    getPairs(block: Block): Promise<[k: v9250.H256, v: (v9250.Call | undefined)][]>
-    getPairs(block: Block, key: v9250.H256): Promise<[k: v9250.H256, v: (v9250.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9250.H256, v: (v9250.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9250.H256): AsyncIterable<[k: v9250.H256, v: (v9250.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9270  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9270.H256): Promise<(v9270.Call | undefined)>
-    getMany(block: Block, keys: v9270.H256[]): Promise<(v9270.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9270.H256[]>
-    getKeys(block: Block, key: v9270.H256): Promise<v9270.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9270.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9270.H256): AsyncIterable<v9270.H256[]>
-    getPairs(block: Block): Promise<[k: v9270.H256, v: (v9270.Call | undefined)][]>
-    getPairs(block: Block, key: v9270.H256): Promise<[k: v9270.H256, v: (v9270.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9270.H256, v: (v9270.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9270.H256): AsyncIterable<[k: v9270.H256, v: (v9270.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9280  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9280.H256): Promise<(v9280.Call | undefined)>
-    getMany(block: Block, keys: v9280.H256[]): Promise<(v9280.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9280.H256[]>
-    getKeys(block: Block, key: v9280.H256): Promise<v9280.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9280.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9280.H256): AsyncIterable<v9280.H256[]>
-    getPairs(block: Block): Promise<[k: v9280.H256, v: (v9280.Call | undefined)][]>
-    getPairs(block: Block, key: v9280.H256): Promise<[k: v9280.H256, v: (v9280.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9280.H256, v: (v9280.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9280.H256): AsyncIterable<[k: v9280.H256, v: (v9280.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9291  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9291.H256): Promise<(v9291.Call | undefined)>
-    getMany(block: Block, keys: v9291.H256[]): Promise<(v9291.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9291.H256[]>
-    getKeys(block: Block, key: v9291.H256): Promise<v9291.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9291.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9291.H256): AsyncIterable<v9291.H256[]>
-    getPairs(block: Block): Promise<[k: v9291.H256, v: (v9291.Call | undefined)][]>
-    getPairs(block: Block, key: v9291.H256): Promise<[k: v9291.H256, v: (v9291.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9291.H256, v: (v9291.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9291.H256): AsyncIterable<[k: v9291.H256, v: (v9291.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9300  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9300.H256): Promise<(v9300.Call | undefined)>
-    getMany(block: Block, keys: v9300.H256[]): Promise<(v9300.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9300.H256[]>
-    getKeys(block: Block, key: v9300.H256): Promise<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<v9300.H256[]>
-    getPairs(block: Block): Promise<[k: v9300.H256, v: (v9300.Call | undefined)][]>
-    getPairs(block: Block, key: v9300.H256): Promise<[k: v9300.H256, v: (v9300.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9300.H256, v: (v9300.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<[k: v9300.H256, v: (v9300.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9340  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9340.H256): Promise<(v9340.Call | undefined)>
-    getMany(block: Block, keys: v9340.H256[]): Promise<(v9340.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9340.H256[]>
-    getKeys(block: Block, key: v9340.H256): Promise<v9340.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9340.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9340.H256): AsyncIterable<v9340.H256[]>
-    getPairs(block: Block): Promise<[k: v9340.H256, v: (v9340.Call | undefined)][]>
-    getPairs(block: Block, key: v9340.H256): Promise<[k: v9340.H256, v: (v9340.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9340.H256, v: (v9340.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9340.H256): AsyncIterable<[k: v9340.H256, v: (v9340.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9370  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9370.H256): Promise<(v9370.Call | undefined)>
-    getMany(block: Block, keys: v9370.H256[]): Promise<(v9370.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9370.H256[]>
-    getKeys(block: Block, key: v9370.H256): Promise<v9370.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9370.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9370.H256): AsyncIterable<v9370.H256[]>
-    getPairs(block: Block): Promise<[k: v9370.H256, v: (v9370.Call | undefined)][]>
-    getPairs(block: Block, key: v9370.H256): Promise<[k: v9370.H256, v: (v9370.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9370.H256, v: (v9370.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9370.H256): AsyncIterable<[k: v9370.H256, v: (v9370.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9420  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9420.H256): Promise<(v9420.Call | undefined)>
-    getMany(block: Block, keys: v9420.H256[]): Promise<(v9420.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9420.H256[]>
-    getKeys(block: Block, key: v9420.H256): Promise<v9420.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9420.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9420.H256): AsyncIterable<v9420.H256[]>
-    getPairs(block: Block): Promise<[k: v9420.H256, v: (v9420.Call | undefined)][]>
-    getPairs(block: Block, key: v9420.H256): Promise<[k: v9420.H256, v: (v9420.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9420.H256, v: (v9420.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9420.H256): AsyncIterable<[k: v9420.H256, v: (v9420.Call | undefined)][]>
-}
-
-/**
- *  Actual proposal for a given hash, if it's current.
- */
-export interface ProposalOfV9430  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9430.H256): Promise<(v9430.Call | undefined)>
-    getMany(block: Block, keys: v9430.H256[]): Promise<(v9430.Call | undefined)[]>
-    getKeys(block: Block): Promise<v9430.H256[]>
-    getKeys(block: Block, key: v9430.H256): Promise<v9430.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9430.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9430.H256): AsyncIterable<v9430.H256[]>
-    getPairs(block: Block): Promise<[k: v9430.H256, v: (v9430.Call | undefined)][]>
-    getPairs(block: Block, key: v9430.H256): Promise<[k: v9430.H256, v: (v9430.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9430.H256, v: (v9430.Call | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9430.H256): AsyncIterable<[k: v9430.H256, v: (v9430.Call | undefined)][]>
+    get(block: Block, key: v48400.H256): Promise<(v48400.Call | undefined)>
+    getMany(block: Block, keys: v48400.H256[]): Promise<(v48400.Call | undefined)[]>
+    getKeys(block: Block): Promise<v48400.H256[]>
+    getKeys(block: Block, key: v48400.H256): Promise<v48400.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v48400.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v48400.H256): AsyncIterable<v48400.H256[]>
+    getPairs(block: Block): Promise<[k: v48400.H256, v: (v48400.Call | undefined)][]>
+    getPairs(block: Block, key: v48400.H256): Promise<[k: v48400.H256, v: (v48400.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v48400.H256, v: (v48400.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v48400.H256): AsyncIterable<[k: v48400.H256, v: (v48400.Call | undefined)][]>
 }

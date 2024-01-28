@@ -17,8 +17,8 @@ interface ClosedData {
 }
 
 export function getClosedDataOld(itemEvent: Event): ClosedData {
-    if (TipsClosedEvent.v0.is(itemEvent)) {
-        const [hash, , reward] = TipsClosedEvent.v0.decode(itemEvent)
+    if (TipsClosedEvent.v266.is(itemEvent)) {
+        const [hash, , reward] = TipsClosedEvent.v266.decode(itemEvent)
         return {
             hash,
             reward,
@@ -29,14 +29,14 @@ export function getClosedDataOld(itemEvent: Event): ClosedData {
 }
 
 export function getClosedData(itemEvent: Event): ClosedData {
-    if (tipClosed.v28.is(itemEvent)) {
-        const [hash, , reward] = tipClosed.v28.decode(itemEvent)
+    if (tipClosed.v283.is(itemEvent)) {
+        const [hash, , reward] = tipClosed.v283.decode(itemEvent)
         return {
             hash,
             reward,
         }
-    } else if (tipClosed.v9140.is(itemEvent)) {
-        const { tipHash: hash, payout: reward } = tipClosed.v9140.decode(itemEvent)
+    } else if (tipClosed.v297.is(itemEvent)) {
+        const { tipHash: hash, payout: reward } = tipClosed.v297.decode(itemEvent)
         return {
             hash,
             reward,
@@ -51,8 +51,8 @@ interface NewTipData {
 }
 
 export function getNewTipDataOld(itemEvent: Event): NewTipData {
-    if (TipsNewTipEvent.v0.is(itemEvent)) {
-        const hash = TipsNewTipEvent.v0.decode(itemEvent)
+    if (TipsNewTipEvent.v266.is(itemEvent)) {
+        const hash = TipsNewTipEvent.v266.decode(itemEvent)
         return {
             hash
         }
@@ -62,13 +62,13 @@ export function getNewTipDataOld(itemEvent: Event): NewTipData {
 }
 
 export function getNewTipData(itemEvent: Event): NewTipData {
-    if (newTip.v28.is(itemEvent)) {
-        const hash = newTip.v28.decode(itemEvent)
+    if (newTip.v283.is(itemEvent)) {
+        const hash = newTip.v283.decode(itemEvent)
         return {
             hash,
         }
-    } else if (newTip.v9140.is(itemEvent)) {
-        const { tipHash: hash } = newTip.v9140.decode(itemEvent)
+    } else if (newTip.v297.is(itemEvent)) {
+        const { tipHash: hash } = newTip.v297.decode(itemEvent)
         return {
             hash,
         }
@@ -82,8 +82,8 @@ interface RectractedData {
 }
 
 export function getRectractedDataOld(itemEvent: Event): RectractedData {
-    if (TipsRetractedEvent.v0.is(itemEvent)) {
-        const hash = TipsRetractedEvent.v0.decode(itemEvent)
+    if (TipsRetractedEvent.v266.is(itemEvent)) {
+        const hash = TipsRetractedEvent.v266.decode(itemEvent)
         return {
             hash,
         }
@@ -93,13 +93,13 @@ export function getRectractedDataOld(itemEvent: Event): RectractedData {
 }
 
 export function getRectractedData(itemEvent: Event): RectractedData {
-    if (tipRetracted.v28.is(itemEvent)) {
-        const hash = tipRetracted.v28.decode(itemEvent)
+    if (tipRetracted.v283.is(itemEvent)) {
+        const hash = tipRetracted.v283.decode(itemEvent)
         return {
             hash,
         }
-    } else if (tipRetracted.v9140.is(itemEvent)) {
-        const { tipHash: hash } = tipRetracted.v9140.decode(itemEvent)
+    } else if (tipRetracted.v297.is(itemEvent)) {
+        const { tipHash: hash } = tipRetracted.v297.decode(itemEvent)
         return {
             hash,
         }
@@ -113,13 +113,13 @@ interface SlashedData {
 }
 
 export function getSlashedData(itemEvent: Event): SlashedData {
-    if (tipSlashed.v28.is(itemEvent)) {
-        const [hash] = tipSlashed.v28.decode(itemEvent)
+    if (tipSlashed.v283.is(itemEvent)) {
+        const [hash] = tipSlashed.v283.decode(itemEvent)
         return {
             hash,
         }
-    } else if (tipSlashed.v9140.is(itemEvent)) {
-        const { tipHash: hash } = tipSlashed.v9140.decode(itemEvent)
+    } else if (tipSlashed.v297.is(itemEvent)) {
+        const { tipHash: hash } = tipSlashed.v297.decode(itemEvent)
         return {
             hash,
         }

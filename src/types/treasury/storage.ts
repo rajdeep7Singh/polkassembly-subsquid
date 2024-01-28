@@ -1,30 +1,28 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
-import * as v13 from '../v13'
-import * as v25 from '../v25'
+import * as v266 from '../v266'
 
 export const proposals =  {
     /**
      *  Proposals that have been made.
      */
-    v0: new StorageType('Treasury.Proposals', 'Optional', [v0.ProposalIndex], v0.TreasuryProposal) as ProposalsV0,
+    v266: new StorageType('Treasury.Proposals', 'Optional', [v266.ProposalIndex], v266.TreasuryProposal) as ProposalsV266,
 }
 
 /**
  *  Proposals that have been made.
  */
-export interface ProposalsV0  {
+export interface ProposalsV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v0.ProposalIndex): Promise<(v0.TreasuryProposal | undefined)>
-    getMany(block: Block, keys: v0.ProposalIndex[]): Promise<(v0.TreasuryProposal | undefined)[]>
-    getKeys(block: Block): Promise<v0.ProposalIndex[]>
-    getKeys(block: Block, key: v0.ProposalIndex): Promise<v0.ProposalIndex[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v0.ProposalIndex[]>
-    getKeysPaged(pageSize: number, block: Block, key: v0.ProposalIndex): AsyncIterable<v0.ProposalIndex[]>
-    getPairs(block: Block): Promise<[k: v0.ProposalIndex, v: (v0.TreasuryProposal | undefined)][]>
-    getPairs(block: Block, key: v0.ProposalIndex): Promise<[k: v0.ProposalIndex, v: (v0.TreasuryProposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v0.ProposalIndex, v: (v0.TreasuryProposal | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v0.ProposalIndex): AsyncIterable<[k: v0.ProposalIndex, v: (v0.TreasuryProposal | undefined)][]>
+    get(block: Block, key: v266.ProposalIndex): Promise<(v266.TreasuryProposal | undefined)>
+    getMany(block: Block, keys: v266.ProposalIndex[]): Promise<(v266.TreasuryProposal | undefined)[]>
+    getKeys(block: Block): Promise<v266.ProposalIndex[]>
+    getKeys(block: Block, key: v266.ProposalIndex): Promise<v266.ProposalIndex[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.ProposalIndex[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.ProposalIndex): AsyncIterable<v266.ProposalIndex[]>
+    getPairs(block: Block): Promise<[k: v266.ProposalIndex, v: (v266.TreasuryProposal | undefined)][]>
+    getPairs(block: Block, key: v266.ProposalIndex): Promise<[k: v266.ProposalIndex, v: (v266.TreasuryProposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.ProposalIndex, v: (v266.TreasuryProposal | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.ProposalIndex): AsyncIterable<[k: v266.ProposalIndex, v: (v266.TreasuryProposal | undefined)][]>
 }
 
 export const tips =  {
@@ -33,13 +31,7 @@ export const tips =  {
      *  This has the insecure enumerable hash function since the key itself is already
      *  guaranteed to be a secure hash.
      */
-    v0: new StorageType('Treasury.Tips', 'Optional', [v0.Hash], v0.OpenTip) as TipsV0,
-    /**
-     *  Tips that are not yet completed. Keyed by the hash of `(reason, who)` from the value.
-     *  This has the insecure enumerable hash function since the key itself is already
-     *  guaranteed to be a secure hash.
-     */
-    v13: new StorageType('Treasury.Tips', 'Optional', [v13.Hash], v13.OpenTip) as TipsV13,
+    v266: new StorageType('Treasury.Tips', 'Optional', [v266.Hash], v266.OpenTip) as TipsV266,
 }
 
 /**
@@ -47,37 +39,18 @@ export const tips =  {
  *  This has the insecure enumerable hash function since the key itself is already
  *  guaranteed to be a secure hash.
  */
-export interface TipsV0  {
+export interface TipsV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v0.Hash): Promise<(v0.OpenTip | undefined)>
-    getMany(block: Block, keys: v0.Hash[]): Promise<(v0.OpenTip | undefined)[]>
-    getKeys(block: Block): Promise<v0.Hash[]>
-    getKeys(block: Block, key: v0.Hash): Promise<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<v0.Hash[]>
-    getPairs(block: Block): Promise<[k: v0.Hash, v: (v0.OpenTip | undefined)][]>
-    getPairs(block: Block, key: v0.Hash): Promise<[k: v0.Hash, v: (v0.OpenTip | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v0.Hash, v: (v0.OpenTip | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<[k: v0.Hash, v: (v0.OpenTip | undefined)][]>
-}
-
-/**
- *  Tips that are not yet completed. Keyed by the hash of `(reason, who)` from the value.
- *  This has the insecure enumerable hash function since the key itself is already
- *  guaranteed to be a secure hash.
- */
-export interface TipsV13  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v13.Hash): Promise<(v13.OpenTip | undefined)>
-    getMany(block: Block, keys: v13.Hash[]): Promise<(v13.OpenTip | undefined)[]>
-    getKeys(block: Block): Promise<v13.Hash[]>
-    getKeys(block: Block, key: v13.Hash): Promise<v13.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v13.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v13.Hash): AsyncIterable<v13.Hash[]>
-    getPairs(block: Block): Promise<[k: v13.Hash, v: (v13.OpenTip | undefined)][]>
-    getPairs(block: Block, key: v13.Hash): Promise<[k: v13.Hash, v: (v13.OpenTip | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v13.Hash, v: (v13.OpenTip | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v13.Hash): AsyncIterable<[k: v13.Hash, v: (v13.OpenTip | undefined)][]>
+    get(block: Block, key: v266.Hash): Promise<(v266.OpenTip | undefined)>
+    getMany(block: Block, keys: v266.Hash[]): Promise<(v266.OpenTip | undefined)[]>
+    getKeys(block: Block): Promise<v266.Hash[]>
+    getKeys(block: Block, key: v266.Hash): Promise<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<v266.Hash[]>
+    getPairs(block: Block): Promise<[k: v266.Hash, v: (v266.OpenTip | undefined)][]>
+    getPairs(block: Block, key: v266.Hash): Promise<[k: v266.Hash, v: (v266.OpenTip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.Hash, v: (v266.OpenTip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<[k: v266.Hash, v: (v266.OpenTip | undefined)][]>
 }
 
 export const reasons =  {
@@ -85,71 +58,71 @@ export const reasons =  {
      *  Simple preimage lookup from the reason's hash to the original data. Again, has an
      *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
      */
-    v0: new StorageType('Treasury.Reasons', 'Optional', [v0.Hash], sts.bytes()) as ReasonsV0,
+    v266: new StorageType('Treasury.Reasons', 'Optional', [v266.Hash], sts.bytes()) as ReasonsV266,
 }
 
 /**
  *  Simple preimage lookup from the reason's hash to the original data. Again, has an
  *  insecure enumerable hash since the key is guaranteed to be the result of a secure hash.
  */
-export interface ReasonsV0  {
+export interface ReasonsV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v0.Hash): Promise<(Bytes | undefined)>
-    getMany(block: Block, keys: v0.Hash[]): Promise<(Bytes | undefined)[]>
-    getKeys(block: Block): Promise<v0.Hash[]>
-    getKeys(block: Block, key: v0.Hash): Promise<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v0.Hash[]>
-    getKeysPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<v0.Hash[]>
-    getPairs(block: Block): Promise<[k: v0.Hash, v: (Bytes | undefined)][]>
-    getPairs(block: Block, key: v0.Hash): Promise<[k: v0.Hash, v: (Bytes | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v0.Hash, v: (Bytes | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v0.Hash): AsyncIterable<[k: v0.Hash, v: (Bytes | undefined)][]>
+    get(block: Block, key: v266.Hash): Promise<(Bytes | undefined)>
+    getMany(block: Block, keys: v266.Hash[]): Promise<(Bytes | undefined)[]>
+    getKeys(block: Block): Promise<v266.Hash[]>
+    getKeys(block: Block, key: v266.Hash): Promise<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.Hash[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<v266.Hash[]>
+    getPairs(block: Block): Promise<[k: v266.Hash, v: (Bytes | undefined)][]>
+    getPairs(block: Block, key: v266.Hash): Promise<[k: v266.Hash, v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.Hash, v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.Hash): AsyncIterable<[k: v266.Hash, v: (Bytes | undefined)][]>
 }
 
 export const bounties =  {
     /**
      *  Bounties that have been made.
      */
-    v25: new StorageType('Treasury.Bounties', 'Optional', [v25.BountyIndex], v25.Bounty) as BountiesV25,
+    v266: new StorageType('Treasury.Bounties', 'Optional', [v266.BountyIndex], v266.Bounty) as BountiesV266,
 }
 
 /**
  *  Bounties that have been made.
  */
-export interface BountiesV25  {
+export interface BountiesV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v25.BountyIndex): Promise<(v25.Bounty | undefined)>
-    getMany(block: Block, keys: v25.BountyIndex[]): Promise<(v25.Bounty | undefined)[]>
-    getKeys(block: Block): Promise<v25.BountyIndex[]>
-    getKeys(block: Block, key: v25.BountyIndex): Promise<v25.BountyIndex[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v25.BountyIndex[]>
-    getKeysPaged(pageSize: number, block: Block, key: v25.BountyIndex): AsyncIterable<v25.BountyIndex[]>
-    getPairs(block: Block): Promise<[k: v25.BountyIndex, v: (v25.Bounty | undefined)][]>
-    getPairs(block: Block, key: v25.BountyIndex): Promise<[k: v25.BountyIndex, v: (v25.Bounty | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v25.BountyIndex, v: (v25.Bounty | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v25.BountyIndex): AsyncIterable<[k: v25.BountyIndex, v: (v25.Bounty | undefined)][]>
+    get(block: Block, key: v266.BountyIndex): Promise<(v266.Bounty | undefined)>
+    getMany(block: Block, keys: v266.BountyIndex[]): Promise<(v266.Bounty | undefined)[]>
+    getKeys(block: Block): Promise<v266.BountyIndex[]>
+    getKeys(block: Block, key: v266.BountyIndex): Promise<v266.BountyIndex[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.BountyIndex[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.BountyIndex): AsyncIterable<v266.BountyIndex[]>
+    getPairs(block: Block): Promise<[k: v266.BountyIndex, v: (v266.Bounty | undefined)][]>
+    getPairs(block: Block, key: v266.BountyIndex): Promise<[k: v266.BountyIndex, v: (v266.Bounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.BountyIndex, v: (v266.Bounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.BountyIndex): AsyncIterable<[k: v266.BountyIndex, v: (v266.Bounty | undefined)][]>
 }
 
 export const bountyDescriptions =  {
     /**
      *  The description of each bounty.
      */
-    v25: new StorageType('Treasury.BountyDescriptions', 'Optional', [v25.BountyIndex], sts.bytes()) as BountyDescriptionsV25,
+    v266: new StorageType('Treasury.BountyDescriptions', 'Optional', [v266.BountyIndex], sts.bytes()) as BountyDescriptionsV266,
 }
 
 /**
  *  The description of each bounty.
  */
-export interface BountyDescriptionsV25  {
+export interface BountyDescriptionsV266  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v25.BountyIndex): Promise<(Bytes | undefined)>
-    getMany(block: Block, keys: v25.BountyIndex[]): Promise<(Bytes | undefined)[]>
-    getKeys(block: Block): Promise<v25.BountyIndex[]>
-    getKeys(block: Block, key: v25.BountyIndex): Promise<v25.BountyIndex[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v25.BountyIndex[]>
-    getKeysPaged(pageSize: number, block: Block, key: v25.BountyIndex): AsyncIterable<v25.BountyIndex[]>
-    getPairs(block: Block): Promise<[k: v25.BountyIndex, v: (Bytes | undefined)][]>
-    getPairs(block: Block, key: v25.BountyIndex): Promise<[k: v25.BountyIndex, v: (Bytes | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v25.BountyIndex, v: (Bytes | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v25.BountyIndex): AsyncIterable<[k: v25.BountyIndex, v: (Bytes | undefined)][]>
+    get(block: Block, key: v266.BountyIndex): Promise<(Bytes | undefined)>
+    getMany(block: Block, keys: v266.BountyIndex[]): Promise<(Bytes | undefined)[]>
+    getKeys(block: Block): Promise<v266.BountyIndex[]>
+    getKeys(block: Block, key: v266.BountyIndex): Promise<v266.BountyIndex[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v266.BountyIndex[]>
+    getKeysPaged(pageSize: number, block: Block, key: v266.BountyIndex): AsyncIterable<v266.BountyIndex[]>
+    getPairs(block: Block): Promise<[k: v266.BountyIndex, v: (Bytes | undefined)][]>
+    getPairs(block: Block, key: v266.BountyIndex): Promise<[k: v266.BountyIndex, v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v266.BountyIndex, v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v266.BountyIndex): AsyncIterable<[k: v266.BountyIndex, v: (Bytes | undefined)][]>
 }

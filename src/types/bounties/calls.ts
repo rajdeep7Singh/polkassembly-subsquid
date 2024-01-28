@@ -1,6 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v28 from '../v28'
-import * as v9110 from '../v9110'
+import * as v283 from '../v283'
 
 export const proposeCurator =  {
     name: 'Bounties.propose_curator',
@@ -13,28 +12,11 @@ export const proposeCurator =  {
      *  - O(1).
      *  # </weight>
      */
-    v28: new CallType(
+    v283: new CallType(
         'Bounties.propose_curator',
         sts.struct({
             bountyId: sts.number(),
-            curator: v28.LookupSource,
-            fee: sts.bigint(),
-        })
-    ),
-    /**
-     * Assign a curator to a funded bounty.
-     * 
-     * May only be called from `T::ApproveOrigin`.
-     * 
-     * # <weight>
-     * - O(1).
-     * # </weight>
-     */
-    v9110: new CallType(
-        'Bounties.propose_curator',
-        sts.struct({
-            bountyId: sts.number(),
-            curator: v9110.MultiAddress,
+            curator: v283.LookupSource,
             fee: sts.bigint(),
         })
     ),
@@ -62,7 +44,7 @@ export const unassignCurator =  {
      *  - O(1).
      *  # </weight>
      */
-    v28: new CallType(
+    v283: new CallType(
         'Bounties.unassign_curator',
         sts.struct({
             bountyId: sts.number(),
@@ -82,7 +64,7 @@ export const acceptCurator =  {
      *  - O(1).
      *  # </weight>
      */
-    v28: new CallType(
+    v283: new CallType(
         'Bounties.accept_curator',
         sts.struct({
             bountyId: sts.number(),

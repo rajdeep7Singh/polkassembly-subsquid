@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v0 from '../v0'
+import * as v266 from '../v266'
 
 export const tip =  {
     name: 'Treasury.tip',
@@ -30,11 +30,11 @@ export const tip =  {
      *  - DbWrites: `Tips`
      *  # </weight>
      */
-    v0: new CallType(
+    v266: new CallType(
         'Treasury.tip',
         sts.struct({
-            hash: v0.Hash,
-            tipValue: v0.BalanceOf,
+            hash: v266.Hash,
+            tipValue: sts.bigint(),
         })
     ),
 }
@@ -63,7 +63,7 @@ export const unassignCurator =  {
      *  - One DB change.
      *  # </weight>
      */
-    v25: new CallType(
+    v266: new CallType(
         'Treasury.unassign_curator',
         sts.struct({
             bountyId: sts.number(),
@@ -85,7 +85,7 @@ export const acceptCurator =  {
      *  - One DB change.
      *  # </weight>
      */
-    v25: new CallType(
+    v266: new CallType(
         'Treasury.accept_curator',
         sts.struct({
             bountyId: sts.number(),
