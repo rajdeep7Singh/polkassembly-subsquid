@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v2000 from '../v2000'
+import * as v2700 from '../v2700'
 
 export const statusFor =  {
     /**
@@ -41,4 +42,28 @@ export interface PreimageForV2000  {
     getPairs(block: Block, key: [v2000.H256, number]): Promise<[k: [v2000.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [v2000.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: [v2000.H256, number]): AsyncIterable<[k: [v2000.H256, number], v: (Bytes | undefined)][]>
+}
+
+export const requestStatusFor =  {
+    /**
+     *  The request status of a given hash.
+     */
+    v2700: new StorageType('Preimage.RequestStatusFor', 'Optional', [v2700.H256], v2700.RequestStatus) as RequestStatusForV2700,
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface RequestStatusForV2700  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v2700.H256): Promise<(v2700.RequestStatus | undefined)>
+    getMany(block: Block, keys: v2700.H256[]): Promise<(v2700.RequestStatus | undefined)[]>
+    getKeys(block: Block): Promise<v2700.H256[]>
+    getKeys(block: Block, key: v2700.H256): Promise<v2700.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v2700.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v2700.H256): AsyncIterable<v2700.H256[]>
+    getPairs(block: Block): Promise<[k: v2700.H256, v: (v2700.RequestStatus | undefined)][]>
+    getPairs(block: Block, key: v2700.H256): Promise<[k: v2700.H256, v: (v2700.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v2700.H256, v: (v2700.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v2700.H256): AsyncIterable<[k: v2700.H256, v: (v2700.RequestStatus | undefined)][]>
 }
