@@ -7,7 +7,10 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://polkadex.public.curie.radiumblock.co/ws',
+        chain: {
+            url: 'wss://polkadex.api.onfinality.io/public-ws',
+            rateLimit: 50
+        },
         archive: lookupArchive('polkadex',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})
@@ -18,7 +21,27 @@ const processor = new SubstrateBatchProcessor()
         'Bounties.unassign_curator', 'Bounties.propose_curator', 'ChildBounties.propose_curator', 'ChildBounties.accept_curator', 'ChildBounties.unassign_curator', 'Tips.tip', 'Treasury.tip'
     ]
     })
-    .setTypesBundle('typegen/typesBundle.json')
+    .setTypesBundle({
+        "types": {},
+        "versions": [
+            {
+                "minmax": [0, null],
+                "types": {
+                    "BurnTxDetails": {
+                        "approvals": "u32",
+                        "approvers": "Vec<AccountId>"
+                    },
+                    "OrmlVestingSchedule": {
+                        "start": "BlockNumber",
+                        "period": "BlockNumber",
+                        "periodCount": "u32",
+                        "perPeriod": "Compact<Balance>"
+                    },
+                    "VestingScheduleOf": "OrmlVestingSchedule"
+                }
+            }
+        ]
+    })
     .addEvent({
         name: [ 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.MetadataSet', 'Referenda.MetadataCleared',  'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Referenda.Killed', 'Referenda.Confirmed', 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Referenda.ConfirmStarted', 

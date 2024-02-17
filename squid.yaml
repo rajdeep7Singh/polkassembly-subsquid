@@ -19,9 +19,11 @@ deploy:
 scale:
   dedicated: true
   addons:
-     postgres:
-         storage: 10Gi
-         profile: small
+    postgres:
+      storage: 10Gi
+      profile: small
+    rpc:
+      max-rate: 50rps
   processor:
      profile: small
   api:
