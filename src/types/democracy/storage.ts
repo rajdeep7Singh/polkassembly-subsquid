@@ -1,12 +1,17 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v273 from '../v273'
 import * as v274 from '../v274'
+import * as v283 from '../v283'
 
 export const publicProps =  {
     /**
      *  The public proposals. Unsorted. The second item is the proposal's hash.
      */
     v273: new StorageType('Democracy.PublicProps', 'Default', [], sts.array(() => sts.tuple(() => [v273.PropIndex, v273.Hash, v273.AccountId]))) as PublicPropsV273,
+    /**
+     *  The public proposals. Unsorted. The second item is the proposal.
+     */
+    v283: new StorageType('Democracy.PublicProps', 'Default', [], sts.array(() => sts.tuple(() => [sts.number(), v283.Bounded, v283.AccountId32]))) as PublicPropsV283,
 }
 
 /**
@@ -16,6 +21,15 @@ export interface PublicPropsV273  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): [v273.PropIndex, v273.Hash, v273.AccountId][]
     get(block: Block): Promise<([v273.PropIndex, v273.Hash, v273.AccountId][] | undefined)>
+}
+
+/**
+ *  The public proposals. Unsorted. The second item is the proposal.
+ */
+export interface PublicPropsV283  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): [number, v283.Bounded, v283.AccountId32][]
+    get(block: Block): Promise<([number, v283.Bounded, v283.AccountId32][] | undefined)>
 }
 
 export const preimages =  {
@@ -80,6 +94,12 @@ export const referendumInfoOf =  {
      *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
      */
     v274: new StorageType('Democracy.ReferendumInfoOf', 'Optional', [sts.number()], v274.ReferendumInfo) as ReferendumInfoOfV274,
+    /**
+     *  Information concerning any given referendum.
+     * 
+     *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+     */
+    v283: new StorageType('Democracy.ReferendumInfoOf', 'Optional', [sts.number()], v283.ReferendumInfo) as ReferendumInfoOfV283,
 }
 
 /**
@@ -118,4 +138,23 @@ export interface ReferendumInfoOfV274  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v274.ReferendumInfo | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v274.ReferendumInfo | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v274.ReferendumInfo | undefined)][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ * 
+ *  TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+ */
+export interface ReferendumInfoOfV283  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v283.ReferendumInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v283.ReferendumInfo | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v283.ReferendumInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v283.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v283.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v283.ReferendumInfo | undefined)][]>
 }

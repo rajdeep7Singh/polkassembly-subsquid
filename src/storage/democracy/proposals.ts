@@ -18,7 +18,19 @@ async function getStorageData(ctx: ProcessorContext<Store>, block: any): Promise
             const [index, hash, proposer] = proposal
             return {
                 index,
-                hash: hash,
+                hash,
+                proposer,
+            }
+        })
+    } else if (publicProps.v283.is(block)) {
+        const storageData = await publicProps.v283.get(block)
+        if (!storageData) return undefined
+
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, bounded, proposer] = proposal
+            return {
+                index,
+                hash: bounded.__kind != "Inline" ? bounded.hash : bounded.value,
                 proposer,
             }
         })

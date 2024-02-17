@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v268 from '../v268'
 import * as v274 from '../v274'
+import * as v277 from '../v277'
 
 export const proposed =  {
     name: 'Treasury.Proposed',
@@ -61,6 +62,21 @@ export const rejected =  {
         sts.struct({
             proposalIndex: sts.number(),
             slashed: sts.bigint(),
+        })
+    ),
+}
+
+export const spendApproved =  {
+    name: 'Treasury.SpendApproved',
+    /**
+     * A new spend proposal has been approved.
+     */
+    v277: new EventType(
+        'Treasury.SpendApproved',
+        sts.struct({
+            proposalIndex: sts.number(),
+            amount: sts.bigint(),
+            beneficiary: v277.AccountId32,
         })
     ),
 }

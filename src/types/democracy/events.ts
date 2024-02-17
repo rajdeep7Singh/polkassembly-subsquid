@@ -44,6 +44,16 @@ export const tabled =  {
             depositors: sts.array(() => v274.AccountId32),
         })
     ),
+    /**
+     * A public proposal has been tabled for referendum vote.
+     */
+    v283: new EventType(
+        'Democracy.Tabled',
+        sts.struct({
+            proposalIndex: sts.number(),
+            deposit: sts.bigint(),
+        })
+    ),
 }
 
 export const started =  {

@@ -83,6 +83,13 @@ export function getDelegateData(itemCall: any): ConvictionVoteDelegateCallData {
             lockPeriod: convictionToLockPeriod(conviction.__kind),
             balance
         }
+    }else if (delegate.v283.is(itemCall)) {
+        const { to, conviction, balance } = delegate.v283.decode(itemCall)
+        return {
+            to: to,
+            lockPeriod: convictionToLockPeriod(conviction.__kind),
+            balance
+        }
     } else {
         throw new UnknownVersionError(itemCall.name)
     }
@@ -116,6 +123,12 @@ export function getRemoveOtherVoteData(itemCall: any): ConvictionVotingRemoveOth
         const { target, index } = removeOtherVote.v273.decode(itemCall)
         return {
             target,
+            index
+        }
+    } else if (removeOtherVote.v283.is(itemCall)) {
+        const { target, index } = removeOtherVote.v283.decode(itemCall)
+        return {
+            target: target.__kind != "Index" ? target.value : null,
             index
         }
     } else {

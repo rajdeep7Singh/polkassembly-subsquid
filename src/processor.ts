@@ -7,7 +7,7 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://polkadex-rpc.dwellir.com/',
+        chain: 'wss://polkadex.public.curie.radiumblock.co/ws',
         archive: lookupArchive('polkadex',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})
@@ -18,6 +18,7 @@ const processor = new SubstrateBatchProcessor()
         'Bounties.unassign_curator', 'Bounties.propose_curator', 'ChildBounties.propose_curator', 'ChildBounties.accept_curator', 'ChildBounties.unassign_curator', 'Tips.tip', 'Treasury.tip'
     ]
     })
+    .setTypesBundle('typegen/typesBundle.json')
     .addEvent({
         name: [ 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.MetadataSet', 'Referenda.MetadataCleared',  'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Referenda.Killed', 'Referenda.Confirmed', 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Referenda.ConfirmStarted', 

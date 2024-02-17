@@ -34,7 +34,17 @@ async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block:
             data: storageData,
             ...preimageStatus
         }
-    } else {
+    } else if(preimageFor.v283.is(block)) {
+        if(!preimageStatus?.len){
+            throw new UnknownVersionError('preimage.PreimageFor') 
+        }
+        const storageData = await preimageFor.v283.get(block, [hash, preimageStatus?.len])
+        if (!storageData) return undefined
+        return {
+            data: storageData,
+            ...preimageStatus
+        }
+    }else {
         throw new UnknownVersionError('preimage.PreimageFor')
     }
 }
@@ -53,6 +63,14 @@ export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: 
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
+        }
+    } else if(statusFor.v283.is(block)) {
+        const storageData = await statusFor.v283.get(block, hash)
+        if (!storageData) return undefined
+        return {
+            status: storageData.__kind,
+            value: storageData.deposit,
+            len: storageData.len
         }
     } else {
         throw new UnknownVersionError('preimage.StatusFor')
