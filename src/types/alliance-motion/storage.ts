@@ -4,6 +4,7 @@ import * as v9360 from '../v9360'
 import * as v9370 from '../v9370'
 import * as v9420 from '../v9420'
 import * as v1000000 from '../v1000000'
+import * as v1001000 from '../v1001000'
 
 export const proposals =  {
     /**
@@ -42,6 +43,10 @@ export const proposalOf =  {
      *  Actual proposal for a given hash, if it's current.
      */
     v1000000: new StorageType('AllianceMotion.ProposalOf', 'Optional', [v1000000.H256], v1000000.Call) as ProposalOfV1000000,
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    v1001000: new StorageType('AllianceMotion.ProposalOf', 'Optional', [v1001000.H256], v1001000.Call) as ProposalOfV1001000,
 }
 
 /**
@@ -127,4 +132,21 @@ export interface ProposalOfV1000000  {
     getPairs(block: Block, key: v1000000.H256): Promise<[k: v1000000.H256, v: (v1000000.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1000000.H256, v: (v1000000.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v1000000.H256): AsyncIterable<[k: v1000000.H256, v: (v1000000.Call | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface ProposalOfV1001000  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1001000.H256): Promise<(v1001000.Call | undefined)>
+    getMany(block: Block, keys: v1001000.H256[]): Promise<(v1001000.Call | undefined)[]>
+    getKeys(block: Block): Promise<v1001000.H256[]>
+    getKeys(block: Block, key: v1001000.H256): Promise<v1001000.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1001000.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v1001000.H256): AsyncIterable<v1001000.H256[]>
+    getPairs(block: Block): Promise<[k: v1001000.H256, v: (v1001000.Call | undefined)][]>
+    getPairs(block: Block, key: v1001000.H256): Promise<[k: v1001000.H256, v: (v1001000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1001000.H256, v: (v1001000.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v1001000.H256): AsyncIterable<[k: v1001000.H256, v: (v1001000.Call | undefined)][]>
 }

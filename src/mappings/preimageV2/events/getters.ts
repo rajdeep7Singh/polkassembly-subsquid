@@ -11,7 +11,7 @@ interface PreimageNotedData {
     hash: string
 }
 
-export function getPreimageNotedData(ctx: ProcessorContext<Store>, itemEvent: Event): PreimageNotedData {
+export function getPreimageNotedData(itemEvent: Event): PreimageNotedData {
     if (noted.v9420.is(itemEvent)) {
         const { hash } = noted.v9420.decode(itemEvent)
         return {

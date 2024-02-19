@@ -4,6 +4,7 @@ import * as v9360 from '../v9360'
 import * as v9370 from '../v9370'
 import * as v9420 from '../v9420'
 import * as v1000000 from '../v1000000'
+import * as v1001000 from '../v1001000'
 
 export const execute =  {
     name: 'AllianceMotion.execute',
@@ -92,6 +93,16 @@ export const execute =  {
         'AllianceMotion.execute',
         sts.struct({
             proposal: v1000000.Call,
+            lengthBound: sts.number(),
+        })
+    ),
+    /**
+     * See [`Pallet::execute`].
+     */
+    v1001000: new CallType(
+        'AllianceMotion.execute',
+        sts.struct({
+            proposal: v1001000.Call,
             lengthBound: sts.number(),
         })
     ),
@@ -242,6 +253,17 @@ export const propose =  {
         sts.struct({
             threshold: sts.number(),
             proposal: v1000000.Call,
+            lengthBound: sts.number(),
+        })
+    ),
+    /**
+     * See [`Pallet::propose`].
+     */
+    v1001000: new CallType(
+        'AllianceMotion.propose',
+        sts.struct({
+            threshold: sts.number(),
+            proposal: v1001000.Call,
             lengthBound: sts.number(),
         })
     ),
