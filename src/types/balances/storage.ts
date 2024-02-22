@@ -1,34 +1,51 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v1020 from '../v1020'
-import * as v1050 from '../v1050'
+import * as v9190 from '../v9190'
 import * as v9420 from '../v9420'
 
 export const totalIssuance =  {
     /**
      *  The total units issued in the system.
      */
-    v1020: new StorageType('Balances.TotalIssuance', 'Default', [], v1020.Balance) as TotalIssuanceV1020,
+    v9190: new StorageType('Balances.TotalIssuance', 'Default', [], sts.bigint()) as TotalIssuanceV9190,
 }
 
 /**
  *  The total units issued in the system.
  */
-export interface TotalIssuanceV1020  {
+export interface TotalIssuanceV9190  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v1020.Balance
-    get(block: Block): Promise<(v1020.Balance | undefined)>
+    getDefault(block: Block): bigint
+    get(block: Block): Promise<(bigint | undefined)>
 }
 
 export const account =  {
     /**
-     *  The balance of an account.
+     *  The Balances pallet example of storing the balance of an account.
      * 
-     *  NOTE: THIS MAY NEVER BE IN EXISTENCE AND YET HAVE A `total().is_zero()`. If the total
-     *  is ever zero, then the entry *MUST* be removed.
+     *  # Example
      * 
-     *  NOTE: This is only used in the case that this module is used to store balances.
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+     *   }
+     *  ```
+     * 
+     *  You can also store the balance of an account in the `System` pallet.
+     * 
+     *  # Example
+     * 
+     *  ```nocompile
+     *   impl pallet_balances::Config for Runtime {
+     *    type AccountStore = System
+     *   }
+     *  ```
+     * 
+     *  But this comes with tradeoffs, storing account balances in the system pallet stores
+     *  `frame_system` data alongside the account data contrary to storing account balances in the
+     *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+     *  NOTE: This is only used in the case that this pallet is used to store balances.
      */
-    v1050: new StorageType('Balances.Account', 'Default', [v1050.AccountId], v1050.AccountData) as AccountV1050,
+    v9190: new StorageType('Balances.Account', 'Default', [v9190.AccountId32], v9190.AccountData) as AccountV9190,
     /**
      *  The Balances pallet example of storing the balance of an account.
      * 
@@ -59,18 +76,44 @@ export const account =  {
 }
 
 /**
- *  The balance of an account.
+ *  The Balances pallet example of storing the balance of an account.
  * 
- *  NOTE: THIS MAY NEVER BE IN EXISTENCE AND YET HAVE A `total().is_zero()`. If the total
- *  is ever zero, then the entry *MUST* be removed.
+ *  # Example
  * 
- *  NOTE: This is only used in the case that this module is used to store balances.
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *     type AccountStore = StorageMapShim<Self::Account<Runtime>, frame_system::Provider<Runtime>, AccountId, Self::AccountData<Balance>>
+ *   }
+ *  ```
+ * 
+ *  You can also store the balance of an account in the `System` pallet.
+ * 
+ *  # Example
+ * 
+ *  ```nocompile
+ *   impl pallet_balances::Config for Runtime {
+ *    type AccountStore = System
+ *   }
+ *  ```
+ * 
+ *  But this comes with tradeoffs, storing account balances in the system pallet stores
+ *  `frame_system` data alongside the account data contrary to storing account balances in the
+ *  `Balances` pallet, which uses a `StorageMap` to store balances data only.
+ *  NOTE: This is only used in the case that this pallet is used to store balances.
  */
-export interface AccountV1050  {
+export interface AccountV9190  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v1050.AccountData
-    get(block: Block, key: v1050.AccountId): Promise<(v1050.AccountData | undefined)>
-    getMany(block: Block, keys: v1050.AccountId[]): Promise<(v1050.AccountData | undefined)[]>
+    getDefault(block: Block): v9190.AccountData
+    get(block: Block, key: v9190.AccountId32): Promise<(v9190.AccountData | undefined)>
+    getMany(block: Block, keys: v9190.AccountId32[]): Promise<(v9190.AccountData | undefined)[]>
+    getKeys(block: Block): Promise<v9190.AccountId32[]>
+    getKeys(block: Block, key: v9190.AccountId32): Promise<v9190.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9190.AccountId32[]>
+    getKeysPaged(pageSize: number, block: Block, key: v9190.AccountId32): AsyncIterable<v9190.AccountId32[]>
+    getPairs(block: Block): Promise<[k: v9190.AccountId32, v: (v9190.AccountData | undefined)][]>
+    getPairs(block: Block, key: v9190.AccountId32): Promise<[k: v9190.AccountId32, v: (v9190.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9190.AccountId32, v: (v9190.AccountData | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v9190.AccountId32): AsyncIterable<[k: v9190.AccountId32, v: (v9190.AccountData | undefined)][]>
 }
 
 /**
@@ -118,13 +161,13 @@ export const inactiveIssuance =  {
     /**
      *  The total units of outstanding deactivated balance in the system.
      */
-    v9340: new StorageType('Balances.InactiveIssuance', 'Default', [], sts.bigint()) as InactiveIssuanceV9340,
+    v9370: new StorageType('Balances.InactiveIssuance', 'Default', [], sts.bigint()) as InactiveIssuanceV9370,
 }
 
 /**
  *  The total units of outstanding deactivated balance in the system.
  */
-export interface InactiveIssuanceV9340  {
+export interface InactiveIssuanceV9370  {
     is(block: RuntimeCtx): boolean
     getDefault(block: Block): bigint
     get(block: Block): Promise<(bigint | undefined)>

@@ -30,16 +30,16 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.v9160.is(block)) {
-        const storageData = await preimageFor.v9160.get(block, hash)
+    if(preimageFor.v9300.is(block)) {
+        const storageData = await preimageFor.v9300.get(block, hash)
         if (!storageData) return undefined
         return {
             data: storageData,
             ...preimageStatus
         }
-    }else if(preimageFor.v9320.is(block)) {
+    }else if(preimageFor.v9310.is(block)) {
         if(preimageStatus && preimageStatus.len){
-            const storageData = await preimageFor.v9320.get(block, [hash, preimageStatus.len])
+            const storageData = await preimageFor.v9310.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
             return {
                 data: storageData,
@@ -85,16 +85,16 @@ export async function getPreimageRequestStatusData(ctx: ProcessorContext<Store>,
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(statusFor.v9160.is(block)) {
-        const storageData = await statusFor.v9160.get(block, hash)
+    if(statusFor.v9300.is(block)) {
+        const storageData = await statusFor.v9300.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
         }
-    }else if(statusFor.v9320.is(block)) {
-        const storageData = await statusFor.v9320.get(block, hash)
+    }else if(statusFor.v9310.is(block)) {
+        const storageData = await statusFor.v9310.get(block, hash)
         if (!storageData) return undefined
         return {
             status: storageData.__kind,

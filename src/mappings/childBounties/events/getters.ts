@@ -1,4 +1,3 @@
-import { Index } from 'typeorm'
 import { UnknownVersionError } from '../../../common/errors'
 import {
     added,
@@ -14,8 +13,8 @@ interface ChildBountyAwardedData {
 }
 
 export function getChildBountyAwardedData(itemEvent: any): ChildBountyAwardedData {
-    if (awarded.v9190.is(itemEvent)) {
-        const { index, childIndex, beneficiary } = awarded.v9190.decode(itemEvent)
+    if (awarded.v9300.is(itemEvent)) {
+        const { index, childIndex, beneficiary } = awarded.v9300.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
@@ -32,8 +31,8 @@ interface ChildBountyCancelledData {
 }
 
 export function getChildBountyCancelledData(itemEvent: any): ChildBountyCancelledData {
-    if (canceled.v9190.is(itemEvent)) {
-        const { index, childIndex } = canceled.v9190.decode(itemEvent)
+    if (canceled.v9300.is(itemEvent)) {
+        const { index, childIndex } = canceled.v9300.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex
@@ -51,8 +50,8 @@ interface ChildBountyClaimedData {
 }
 
 export function getChildBountyClaimedData(itemEvent: any): ChildBountyClaimedData {
-    if (claimed.v9190.is(itemEvent)) {
-        const { index, childIndex, payout, beneficiary } = claimed.v9190.decode(itemEvent)
+    if (claimed.v9300.is(itemEvent)) {
+        const { index, childIndex, payout, beneficiary } = claimed.v9300.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex,
@@ -70,8 +69,8 @@ interface ChildBountyAddedData {
 }
 
 export function getChildBountyAddedData(itemEvent: any): ChildBountyAddedData {
-    if (added.v9190.is(itemEvent)) {
-        const { index, childIndex } = added.v9190.decode(itemEvent)
+    if (added.v9300.is(itemEvent)) {
+        const { index, childIndex } = added.v9300.decode(itemEvent)
         return {
             parentIndex: index,
             childIndex

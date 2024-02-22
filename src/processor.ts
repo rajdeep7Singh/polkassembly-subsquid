@@ -9,8 +9,8 @@ import { createPreimageV2 } from './mappings/utils/proposals'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://kusama-rpc.dwellir.com',
-        archive: lookupArchive('kusama',  {type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://rococo-rpc.polkadot.io',
+        archive: lookupArchive('rococo',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 21587940, to: 21587943 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

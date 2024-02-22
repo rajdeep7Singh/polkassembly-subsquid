@@ -1,114 +1,70 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v9320 from '../v9320'
-import * as v9350 from '../v9350'
-import * as v9370 from '../v9370'
-import * as v9381 from '../v9381'
-import * as v9420 from '../v9420'
+import * as v103000 from '../v103000'
+import * as v1005000 from '../v1005000'
+import * as v1007000 from '../v1007000'
 
 export const referendumInfoFor =  {
     /**
      *  Information concerning any given referendum.
      */
-    v9320: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v9320.Type_620) as ReferendumInfoForV9320,
+    v103000: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v103000.ReferendumInfo) as ReferendumInfoForV103000,
     /**
      *  Information concerning any given referendum.
      */
-    v9350: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v9350.Type_620) as ReferendumInfoForV9350,
+    v1005000: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v1005000.ReferendumInfo) as ReferendumInfoForV1005000,
     /**
      *  Information concerning any given referendum.
      */
-    v9370: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v9370.Type_621) as ReferendumInfoForV9370,
-    /**
-     *  Information concerning any given referendum.
-     */
-    v9381: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v9381.Type_626) as ReferendumInfoForV9381,
-    /**
-     *  Information concerning any given referendum.
-     */
-    v9420: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v9420.ReferendumInfo) as ReferendumInfoForV9420,
+    v1007000: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v1007000.ReferendumInfo) as ReferendumInfoForV1007000,
 }
 
 /**
  *  Information concerning any given referendum.
  */
-export interface ReferendumInfoForV9320  {
+export interface ReferendumInfoForV103000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v9320.Type_620 | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v9320.Type_620 | undefined)[]>
+    get(block: Block, key: number): Promise<(v103000.ReferendumInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v103000.ReferendumInfo | undefined)[]>
     getKeys(block: Block): Promise<number[]>
     getKeys(block: Block, key: number): Promise<number[]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
     getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v9320.Type_620 | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v9320.Type_620 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9320.Type_620 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9320.Type_620 | undefined)][]>
+    getPairs(block: Block): Promise<[k: number, v: (v103000.ReferendumInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v103000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v103000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v103000.ReferendumInfo | undefined)][]>
 }
 
 /**
  *  Information concerning any given referendum.
  */
-export interface ReferendumInfoForV9350  {
+export interface ReferendumInfoForV1005000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v9350.Type_620 | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v9350.Type_620 | undefined)[]>
+    get(block: Block, key: number): Promise<(v1005000.ReferendumInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v1005000.ReferendumInfo | undefined)[]>
     getKeys(block: Block): Promise<number[]>
     getKeys(block: Block, key: number): Promise<number[]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
     getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v9350.Type_620 | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v9350.Type_620 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9350.Type_620 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9350.Type_620 | undefined)][]>
+    getPairs(block: Block): Promise<[k: number, v: (v1005000.ReferendumInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v1005000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v1005000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v1005000.ReferendumInfo | undefined)][]>
 }
 
 /**
  *  Information concerning any given referendum.
  */
-export interface ReferendumInfoForV9370  {
+export interface ReferendumInfoForV1007000  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v9370.Type_621 | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v9370.Type_621 | undefined)[]>
+    get(block: Block, key: number): Promise<(v1007000.ReferendumInfo | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v1007000.ReferendumInfo | undefined)[]>
     getKeys(block: Block): Promise<number[]>
     getKeys(block: Block, key: number): Promise<number[]>
     getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
     getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v9370.Type_621 | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v9370.Type_621 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9370.Type_621 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9370.Type_621 | undefined)][]>
-}
-
-/**
- *  Information concerning any given referendum.
- */
-export interface ReferendumInfoForV9381  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v9381.Type_626 | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v9381.Type_626 | undefined)[]>
-    getKeys(block: Block): Promise<number[]>
-    getKeys(block: Block, key: number): Promise<number[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
-    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v9381.Type_626 | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v9381.Type_626 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9381.Type_626 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9381.Type_626 | undefined)][]>
-}
-
-/**
- *  Information concerning any given referendum.
- */
-export interface ReferendumInfoForV9420  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: number): Promise<(v9420.ReferendumInfo | undefined)>
-    getMany(block: Block, keys: number[]): Promise<(v9420.ReferendumInfo | undefined)[]>
-    getKeys(block: Block): Promise<number[]>
-    getKeys(block: Block, key: number): Promise<number[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
-    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
-    getPairs(block: Block): Promise<[k: number, v: (v9420.ReferendumInfo | undefined)][]>
-    getPairs(block: Block, key: number): Promise<[k: number, v: (v9420.ReferendumInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9420.ReferendumInfo | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9420.ReferendumInfo | undefined)][]>
+    getPairs(block: Block): Promise<[k: number, v: (v1007000.ReferendumInfo | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v1007000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v1007000.ReferendumInfo | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v1007000.ReferendumInfo | undefined)][]>
 }
