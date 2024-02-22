@@ -62,8 +62,8 @@ interface PreimageStatusStorageData{
 }
 
 export async function getPreimageRequestStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
-    if(requestStatusFor.v1001000.is(block)) {
-        const storageData = await requestStatusFor.v1001000.get(block, hash)
+    if(requestStatusFor.v102000.is(block)) {
+        const storageData = await requestStatusFor.v102000.get(block, hash)
         if (!storageData) return undefined
         if(storageData.__kind == 'Unrequested'){
             return {

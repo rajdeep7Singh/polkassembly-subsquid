@@ -12,7 +12,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://rococo-rpc.polkadot.io',
         archive: lookupArchive('rococo',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
-    .setBlockRange({ from: 21587940, to: 21587943 })
+    .setBlockRange({ from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
         name: [ 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
@@ -109,12 +109,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             if (item.name == 'Bounties.propose_curator'){
                 await modules.bounties.extrinsic.handleProposeCurator(ctx, item, block.header)
             }
-            if (item.name == 'Treasury.accept_curator'){
-                await modules.bounties.extrinsic.handleAcceptCuratorOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.unassign_curator'){
-                await modules.bounties.extrinsic.handleUnassignCuratorOld(ctx, item, block.header)
-            }
             if (item.name == 'ChildBounties.accept_curator'){
                 await modules.childBounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
             }
@@ -126,9 +120,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Tips.tip'){
                 await modules.tips.extrinsics.handleNewTipValue(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.tip'){
-                await modules.tips.extrinsics.handleNewTipValueOld(ctx, item, block.header)
             }
         }
         for (let item of block.events) {
@@ -218,36 +209,6 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Treasury.SpendApproved'){
                 await modules.treasury.events.handleSpendApproved(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyProposed'){
-                await modules.bounties.events.handleProposedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyRejected'){
-                await modules.bounties.events.handleRejectedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyBecameActive'){
-                await modules.bounties.events.handleBecameActiveOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyAwarded'){
-                await modules.bounties.events.handleAwardedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyClaimed'){
-                await modules.bounties.events.handleClaimedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyCanceled'){
-                await modules.bounties.events.handleCanceledOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.BountyExtended'){
-                await modules.bounties.events.handleExtendedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.NewTip'){
-                await modules.tips.events.handleNewTipOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.TipRetracted'){
-                await modules.tips.events.handleRetractedOld(ctx, item, block.header)
-            }
-            if (item.name == 'Treasury.TipClosed'){
-                await modules.tips.events.handleClosedOld(ctx, item, block.header)
             }
             if (item.name == 'Tips.TipClosed'){
                 await modules.tips.events.handleClosed(ctx, item, block.header)
