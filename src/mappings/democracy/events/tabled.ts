@@ -12,22 +12,8 @@ interface TabledEventData {
 }
 
 function getEventData(itemEvent: Event): TabledEventData {
-    if (tabled.v0.is(itemEvent)) {
-        const [index, deposit, depositors] = tabled.v0.decode(itemEvent)
-        return {
-            index,
-            deposit,
-            depositors,
-        }
-    } else if (tabled.v9140.is(itemEvent)) {
-        const { proposalIndex: index, deposit, depositors } = tabled.v9140.decode(itemEvent)
-        return {
-            index,
-            deposit,
-            depositors,
-        }
-    } else if (tabled.v9340.is(itemEvent)) {
-        const { proposalIndex: index, deposit } = tabled.v9340.decode(itemEvent)
+    if (tabled.v5000.is(itemEvent)) {
+        const { proposalIndex: index, deposit } = tabled.v5000.decode(itemEvent)
         return {
             index,
             deposit,

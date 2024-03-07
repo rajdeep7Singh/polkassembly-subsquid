@@ -44,7 +44,6 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import config from '../../config'
-import referendumV2 from '../referendumV2'
 import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
@@ -1085,82 +1084,83 @@ export async function sendNotification(ctx: ProcessorContext<Store>, proposal: P
     const { hash, type, index, proposer, curator, status, trackNumber } = proposal
     let statusName = null
     // if difference between proposal update time and current time > 10 mins return
-    if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
-        ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
-        return
-    }
+    return
+    // if(proposal.updatedAt && (new Date().getTime() - proposal.updatedAt.getTime()) > 600000){
+    //     ctx.log.info(`Proposal ${index || hash} updated more than 10 mins ago, skipping notification`)
+    //     return
+    // }
 
-    if([ProposalStatus.Started, 
-        ProposalStatus.Submitted, 
-        ProposalStatus.Added, 
-        ProposalStatus.Proposed, 
-        ProposalStatus.Opened,
-    ].includes(status)){
-        statusName = 'submitted'
-    }
-    else if([ProposalStatus.Executed,
-        ProposalStatus.Cancelled,
-        ProposalStatus.Killed,
-        ProposalStatus.Rejected,
-        ProposalStatus.Executed,
-        ProposalStatus.ExecutionFailed,
-        ProposalStatus.Closed,
-        ProposalStatus.Approved,
-        ProposalStatus.Disapproved,
-        ProposalStatus.Awarded,
-        ProposalStatus.Claimed,
-        ProposalStatus.NotPassed,
-        ProposalStatus.Passed,
-        ProposalStatus.Tabled,
-        ProposalStatus.Retracted,
-        ProposalStatus.Slashed,
-        ProposalStatus.TimedOut,
-    ].includes(status)){
-        statusName = 'closed'
-    }
-    else if([ProposalStatus.Deciding,
-        ProposalStatus.ConfirmStarted,
-        ProposalStatus.ConfirmAborted,
-    ].includes(status)){
-        statusName = 'voting'
-    }
+    // if([ProposalStatus.Started, 
+    //     ProposalStatus.Submitted, 
+    //     ProposalStatus.Added, 
+    //     ProposalStatus.Proposed, 
+    //     ProposalStatus.Opened,
+    // ].includes(status)){
+    //     statusName = 'submitted'
+    // }
+    // else if([ProposalStatus.Executed,
+    //     ProposalStatus.Cancelled,
+    //     ProposalStatus.Killed,
+    //     ProposalStatus.Rejected,
+    //     ProposalStatus.Executed,
+    //     ProposalStatus.ExecutionFailed,
+    //     ProposalStatus.Closed,
+    //     ProposalStatus.Approved,
+    //     ProposalStatus.Disapproved,
+    //     ProposalStatus.Awarded,
+    //     ProposalStatus.Claimed,
+    //     ProposalStatus.NotPassed,
+    //     ProposalStatus.Passed,
+    //     ProposalStatus.Tabled,
+    //     ProposalStatus.Retracted,
+    //     ProposalStatus.Slashed,
+    //     ProposalStatus.TimedOut,
+    // ].includes(status)){
+    //     statusName = 'closed'
+    // }
+    // else if([ProposalStatus.Deciding,
+    //     ProposalStatus.ConfirmStarted,
+    //     ProposalStatus.ConfirmAborted,
+    // ].includes(status)){
+    //     statusName = 'voting'
+    // }
 
-    const notification = {
-        trigger: trigger,
-        args : {
-            network: config.chain.name,
-            postType: type,
-            postId: type != ProposalType.Tip ? String(index) : hash,
-            proposerAddress: proposer || curator,
-            statusType: statusName,
-            track: String(trackNumber),
-            statusName: status,
-          }
-    }
+    // const notification = {
+    //     trigger: trigger,
+    //     args : {
+    //         network: config.chain.name,
+    //         postType: type,
+    //         postId: type != ProposalType.Tip ? String(index) : hash,
+    //         proposerAddress: proposer || curator,
+    //         statusType: statusName,
+    //         track: String(trackNumber),
+    //         statusName: status,
+    //       }
+    // }
 
-    if(!process.env.NOTIFICATION_API_KEY){
-        ctx.log.error(`Notification Api Key not found`)
-        return
-    }
+    // if(!process.env.NOTIFICATION_API_KEY){
+    //     ctx.log.error(`Notification Api Key not found`)
+    //     return
+    // }
 
-    ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
+    // ctx.log.info(`Sending notification with data ${JSON.stringify(notification)}`)
 
-    const response = await fetch(NOTIFICATION_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': process.env.NOTIFICATION_API_KEY || '',
-            'x-source': 'polkassembly'
-        },
-        body: JSON.stringify(notification),
-    })
+    // const response = await fetch(NOTIFICATION_URL, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'x-api-key': process.env.NOTIFICATION_API_KEY || '',
+    //         'x-source': 'polkassembly'
+    //     },
+    //     body: JSON.stringify(notification),
+    // })
 
-    ctx.log.info(`Notification response ${JSON.stringify(response)}`)
+    // ctx.log.info(`Notification response ${JSON.stringify(response)}`)
 
-    if (response.status !== 200) {
-        ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
-        return
-    }
+    // if (response.status !== 200) {
+    //     ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
+    //     return
+    // }
 }
 
 export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal){

@@ -1,7 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://v2.archive.subsquid.io/metadata/polkadot",
-  "typesBundle": "polkadot",
+  "specVersions": "https://v2.archive.subsquid.io/metadata/rolimec",
   "pallets": {
     "Democracy": {
       "events": [
