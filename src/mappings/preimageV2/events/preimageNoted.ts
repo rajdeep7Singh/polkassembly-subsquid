@@ -102,7 +102,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     const hexHash = hash
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
-    const storageData = await getStorageData(ctx, hash, header)
+    const storageData = await getPreimageStatusData(ctx, hash, header) || await getPreimageRequestStatusData(ctx, hash, header)
     if (!storageData) {
         ctx.log.warn(StorageNotExistsWarn('PreimageV2', hexHash))
         return
