@@ -2,7 +2,8 @@
 import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
 import {
     statusFor,
-    preimageFor
+    preimageFor,
+    requestStatusFor
 } from '../../../types/preimage/storage'
 
 import { ProposalStatus, ProposalType } from '../../../model'
@@ -27,7 +28,7 @@ interface PreimageStorageData {
 // }
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
-    const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageStatusData(ctx, hash, block)
+    const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageRequestStatusData(ctx, hash, block) || await getPreimageStatusData(ctx, hash, block)
     if(preimageFor.v2000.is(block)) {
         if(preimageStatus && preimageStatus.len){
             const storageData = await preimageFor.v2000.get(block, [hash, preimageStatus.len])
@@ -50,6 +51,29 @@ interface PreimageStatusStorageData{
     status: string
     value: number | [string, bigint] | undefined
     len?: number
+}
+
+export async function getPreimageRequestStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
+    if(requestStatusFor.v2700.is(block)) {
+        const storageData = await requestStatusFor.v2700.get(block, hash)
+        if (!storageData) return undefined
+        if(storageData.__kind == 'Unrequested'){
+            return {
+                status: storageData.__kind,
+                value: storageData.ticket,
+                len: storageData.len
+            }
+        } else{
+            return {
+                status: storageData.__kind,
+                value: storageData.maybeTicket,
+                len: storageData.maybeLen
+            }
+        }
+    }
+    else {
+        throw new UnknownVersionError('preimage.StatusFor')
+    }
 }
 
 export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: string, block: Block): Promise<PreimageStatusStorageData | undefined> {
