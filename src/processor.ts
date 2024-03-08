@@ -6,8 +6,8 @@ import assert from 'assert'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
-    .setGateway('https://v2.archive.subsquid.io/network/rolimec')
-    .setRpcEndpoint('wss://rpc.rolimec.org')
+    .setGateway('https://v2.archive.subsquid.io/network/polimec')
+    .setRpcEndpoint('wss://rpc.polimec.org')
     .setBlockRange({ from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({

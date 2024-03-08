@@ -1,5 +1,5 @@
 import { ProcessorContext } from '../../processor'
-import { Call } from '../../types/v5002'
+import { Call } from '../../types/v5000'
 import { Store } from '@subsquid/typeorm-store'
 import {proposalOf} from '../../types/council/storage'
 type CouncilProposalStorageData = Call

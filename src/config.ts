@@ -2,7 +2,7 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'rolimec',
+        name: 'polimec',
         prefix: 41,
     },
     typesBundle: 'polkadot',

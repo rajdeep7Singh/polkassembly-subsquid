@@ -1,6 +1,5 @@
 export * as v5000 from './v5000'
 export * as v1 from './v1'
-export * as v5002 from './v5002'
 export * as events from './events'
 export * as calls from './calls'
 export * as storage from './storage'
