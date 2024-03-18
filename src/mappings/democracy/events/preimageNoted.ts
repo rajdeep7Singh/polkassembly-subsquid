@@ -5,11 +5,13 @@ import { Chain } from '@subsquid/substrate-processor/lib/chain'
 import { createPreimage } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
+
 // import { Event } from '../../../types/support'
 import {
     preimages
 } from '../../../types/democracy/storage'
 import { Block, ProcessorContext, Event} from '../../../processor'
+import { ss58codec } from '../../../common/tools'
 
 type ProposalCall = any
 
@@ -97,7 +99,7 @@ export async function handlePreimageNoted(ctx: ProcessorContext<Store>,
 
     await createPreimage(ctx, header, extrinsicIndex, {
         hash: hash,
-        proposer: provider,
+        proposer: ss58codec.encode(provider),
         deposit,
         call: decodedCall,
         section: decodedCall?.section,

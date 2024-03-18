@@ -10,6 +10,7 @@ import { createPreimageV2 } from '../../utils/proposals'
 import { getPreimageNotedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { ProcessorContext, Event, Block } from '../../../processor'
+import { ss58codec } from '../../../common/tools'
 
 type ProposalCall = any
 
@@ -122,7 +123,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
 
     await createPreimageV2(ctx, header, extrinsicIndex, {
         hash: hexHash,
-        proposer,
+        proposer: proposer ? ss58codec.encode(proposer): undefined,
         deposit,
         call: decodedCall,
         section: decodedCall?.section,

@@ -3,7 +3,7 @@ import {lookupArchive} from "@subsquid/archive-registry"
 const config: any = {
     chain: {
         name: 'polkadex',
-        prefix: 89,
+        prefix: 88,
     },
     dataSource: {
         chain: 'wss://polkadex-rpc.dwellir.com',

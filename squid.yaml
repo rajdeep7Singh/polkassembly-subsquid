@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: polkadex-polkassembly
-version: 1
+version: 2
 description: |-
   Polkadex's governance proposals
 
