@@ -4,6 +4,7 @@ import * as v2000 from '../v2000'
 import * as v2100 from '../v2100'
 import * as v2201 from '../v2201'
 import * as v2301 from '../v2301'
+import * as v2801 from '../v2801'
 
 export const referendumInfoFor =  {
     /**
@@ -26,6 +27,10 @@ export const referendumInfoFor =  {
      *  Information concerning any given referendum.
      */
     v2301: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v2301.Type_571) as ReferendumInfoForV2301,
+    /**
+     *  Information concerning any given referendum.
+     */
+    v2801: new StorageType('Referenda.ReferendumInfoFor', 'Optional', [sts.number()], v2801.Type_603) as ReferendumInfoForV2801,
 }
 
 /**
@@ -111,4 +116,21 @@ export interface ReferendumInfoForV2301  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v2301.Type_571 | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v2301.Type_571 | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v2301.Type_571 | undefined)][]>
+}
+
+/**
+ *  Information concerning any given referendum.
+ */
+export interface ReferendumInfoForV2801  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v2801.Type_603 | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v2801.Type_603 | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v2801.Type_603 | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v2801.Type_603 | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v2801.Type_603 | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v2801.Type_603 | undefined)][]>
 }
