@@ -10,7 +10,7 @@ import { createPreimageV2 } from './mappings/utils/proposals'
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://kusama-rpc.dwellir.com',
-        archive: lookupArchive('kusama',  {type: 'Substrate', release: 'ArrowSquid' }),
+        archive: 'https://v2.archive.subsquid.io/network/kusama',
     })
     .setBlockRange({ from: 0 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

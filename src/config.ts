@@ -6,7 +6,7 @@ const config: any = {
         prefix: 'kusama',
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
+        archive: 'https://v2.archive.subsquid.io/network/rolimec',
         chain: 'wss://kusama-rpc.dwellir.com',
     },
     typesBundle: 'kusama',
