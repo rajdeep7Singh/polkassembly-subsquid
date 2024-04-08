@@ -1,33 +1,8 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type BoundedVec = Bytes
-
-export const BoundedVec = sts.bytes()
-
-export type RequestStatus = RequestStatus_Requested | RequestStatus_Unrequested
-
-export interface RequestStatus_Requested {
-    __kind: 'Requested'
-    value: number
-}
-
-export interface RequestStatus_Unrequested {
-    __kind: 'Unrequested'
-    value?: ([AccountId32, bigint] | undefined)
-}
-
-export type AccountId32 = Bytes
-
-export const RequestStatus: sts.Type<RequestStatus> = sts.closedEnum(() => {
-    return  {
-        Requested: sts.number(),
-        Unrequested: sts.option(() => sts.tuple(() => [AccountId32, sts.bigint()])),
-    }
-})
-
 export type H256 = Bytes
 
-export type Call = Call_Balances | Call_Datalog | Call_Democracy | Call_DigitalTwin | Call_Identity | Call_Launch | Call_Lighthouse | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_RWS | Call_Scheduler | Call_Staking | Call_Sudo | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting
+export type Call = Call_Balances | Call_Datalog | Call_Democracy | Call_DigitalTwin | Call_Identity | Call_Launch | Call_Liability | Call_Lighthouse | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_RWS | Call_Scheduler | Call_Staking | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting
 
 export interface Call_Balances {
     __kind: 'Balances'
@@ -57,6 +32,11 @@ export interface Call_Identity {
 export interface Call_Launch {
     __kind: 'Launch'
     value: LaunchCall
+}
+
+export interface Call_Liability {
+    __kind: 'Liability'
+    value: LiabilityCall
 }
 
 export interface Call_Lighthouse {
@@ -92,11 +72,6 @@ export interface Call_Scheduler {
 export interface Call_Staking {
     __kind: 'Staking'
     value: StakingCall
-}
-
-export interface Call_Sudo {
-    __kind: 'Sudo'
-    value: SudoCall
 }
 
 export interface Call_System {
@@ -293,6 +268,8 @@ export interface MultiAddress_Raw {
     value: Bytes
 }
 
+export type AccountId32 = Bytes
+
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -388,7 +365,7 @@ export type OriginCaller = OriginCaller_TechnicalCommittee | OriginCaller_Void |
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_172
+    value: Type_182
 }
 
 export interface OriginCaller_Void {
@@ -418,19 +395,19 @@ export interface RawOrigin_Signed {
 
 export type Void = never
 
-export type Type_172 = Type_172_Member | Type_172_Members | Type_172__Phantom
+export type Type_182 = Type_182_Member | Type_182_Members | Type_182__Phantom
 
-export interface Type_172_Member {
+export interface Type_182_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_172_Members {
+export interface Type_182_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_172__Phantom {
+export interface Type_182__Phantom {
     __kind: '_Phantom'
 }
 
@@ -890,82 +867,6 @@ export interface SystemCall_set_storage {
 }
 
 export type Perbill = number
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type SudoCall = SudoCall_set_key | SudoCall_sudo | SudoCall_sudo_as | SudoCall_sudo_unchecked_weight
-
-/**
- * Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo
- * key.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB change.
- * # </weight>
- */
-export interface SudoCall_set_key {
-    __kind: 'set_key'
-    new: MultiAddress
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Root` origin.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB write (event).
- * - Weight of derivative `call` execution + 10,000.
- * # </weight>
- */
-export interface SudoCall_sudo {
-    __kind: 'sudo'
-    call: Call
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Signed` origin from
- * a given account.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB write (event).
- * - Weight of derivative `call` execution + 10,000.
- * # </weight>
- */
-export interface SudoCall_sudo_as {
-    __kind: 'sudo_as'
-    who: MultiAddress
-    call: Call
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Root` origin.
- * This function does not check the weight of the call, and instead allows the
- * Sudo user to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - The weight of this call is defined by the caller.
- * # </weight>
- */
-export interface SudoCall_sudo_unchecked_weight {
-    __kind: 'sudo_unchecked_weight'
-    call: Call
-    weight: bigint
-}
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -1628,6 +1529,70 @@ export type LighthouseCall = LighthouseCall_set
 export interface LighthouseCall_set {
     __kind: 'set'
     lighthouse: AccountId32
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export type LiabilityCall = LiabilityCall_create | LiabilityCall_finalize
+
+/**
+ * Create agreement between two parties.
+ */
+export interface LiabilityCall_create {
+    __kind: 'create'
+    agreement: SignedAgreement
+}
+
+/**
+ * Publish technical report of complite works.
+ */
+export interface LiabilityCall_finalize {
+    __kind: 'finalize'
+    report: SignedReport
+}
+
+export interface SignedReport {
+    index: number
+    sender: AccountId32
+    payload: IPFS
+    signature: MultiSignature
+}
+
+export type MultiSignature = MultiSignature_Ecdsa | MultiSignature_Ed25519 | MultiSignature_Sr25519
+
+export interface MultiSignature_Ecdsa {
+    __kind: 'Ecdsa'
+    value: Bytes
+}
+
+export interface MultiSignature_Ed25519 {
+    __kind: 'Ed25519'
+    value: Signature
+}
+
+export interface MultiSignature_Sr25519 {
+    __kind: 'Sr25519'
+    value: Bytes
+}
+
+export type Signature = Bytes
+
+export interface IPFS {
+    hash: H256
+}
+
+export interface SignedAgreement {
+    technics: IPFS
+    economics: SimpleMarket
+    promisee: AccountId32
+    promisor: AccountId32
+    promiseeSignature: MultiSignature
+    promisorSignature: MultiSignature
+}
+
+export interface SimpleMarket {
+    price: bigint
 }
 
 /**
@@ -2872,6 +2837,7 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         DigitalTwin: DigitalTwinCall,
         Identity: IdentityCall,
         Launch: LaunchCall,
+        Liability: LiabilityCall,
         Lighthouse: LighthouseCall,
         Multisig: MultisigCall,
         ParachainSystem: ParachainSystemCall,
@@ -2879,7 +2845,6 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         RWS: RWSCall,
         Scheduler: SchedulerCall,
         Staking: StakingCall,
-        Sudo: SudoCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalMembership: TechnicalMembershipCall,
@@ -2933,6 +2898,8 @@ export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
     }
 })
 
+export const AccountId32 = sts.bytes()
+
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -2957,7 +2924,7 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        TechnicalCommittee: Type_172,
+        TechnicalCommittee: Type_182,
         Void: Void,
         system: RawOrigin,
     }
@@ -2976,7 +2943,7 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
-export const Type_172: sts.Type<Type_172> = sts.closedEnum(() => {
+export const Type_182: sts.Type<Type_182> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -3114,28 +3081,6 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
 })
 
 export const Perbill = sts.number()
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const SudoCall: sts.Type<SudoCall> = sts.closedEnum(() => {
-    return  {
-        set_key: sts.enumStruct({
-            new: MultiAddress,
-        }),
-        sudo: sts.enumStruct({
-            call: Call,
-        }),
-        sudo_as: sts.enumStruct({
-            who: MultiAddress,
-            call: Call,
-        }),
-        sudo_unchecked_weight: sts.enumStruct({
-            call: Call,
-            weight: sts.bigint(),
-        }),
-    }
-})
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -3379,6 +3324,62 @@ export const LighthouseCall: sts.Type<LighthouseCall> = sts.closedEnum(() => {
         set: sts.enumStruct({
             lighthouse: AccountId32,
         }),
+    }
+})
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const LiabilityCall: sts.Type<LiabilityCall> = sts.closedEnum(() => {
+    return  {
+        create: sts.enumStruct({
+            agreement: SignedAgreement,
+        }),
+        finalize: sts.enumStruct({
+            report: SignedReport,
+        }),
+    }
+})
+
+export const SignedReport: sts.Type<SignedReport> = sts.struct(() => {
+    return  {
+        index: sts.number(),
+        sender: AccountId32,
+        payload: IPFS,
+        signature: MultiSignature,
+    }
+})
+
+export const MultiSignature: sts.Type<MultiSignature> = sts.closedEnum(() => {
+    return  {
+        Ecdsa: sts.bytes(),
+        Ed25519: Signature,
+        Sr25519: sts.bytes(),
+    }
+})
+
+export const Signature = sts.bytes()
+
+export const IPFS: sts.Type<IPFS> = sts.struct(() => {
+    return  {
+        hash: H256,
+    }
+})
+
+export const SignedAgreement: sts.Type<SignedAgreement> = sts.struct(() => {
+    return  {
+        technics: IPFS,
+        economics: SimpleMarket,
+        promisee: AccountId32,
+        promisor: AccountId32,
+        promiseeSignature: MultiSignature,
+        promisorSignature: MultiSignature,
+    }
+})
+
+export const SimpleMarket: sts.Type<SimpleMarket> = sts.struct(() => {
+    return  {
+        price: sts.bigint(),
     }
 })
 
@@ -3700,136 +3701,3 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
 })
 
 export const H256 = sts.bytes()
-
-export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
-    return  {
-        Arithmetic: ArithmeticError,
-        BadOrigin: sts.unit(),
-        CannotLookup: sts.unit(),
-        ConsumerRemaining: sts.unit(),
-        Module: ModuleError,
-        NoProviders: sts.unit(),
-        Other: sts.unit(),
-        Token: TokenError,
-        TooManyConsumers: sts.unit(),
-    }
-})
-
-export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
-    return  {
-        BelowMinimum: sts.unit(),
-        CannotCreate: sts.unit(),
-        Frozen: sts.unit(),
-        NoFunds: sts.unit(),
-        UnknownAsset: sts.unit(),
-        Unsupported: sts.unit(),
-        WouldDie: sts.unit(),
-    }
-})
-
-export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_Frozen | TokenError_NoFunds | TokenError_UnknownAsset | TokenError_Unsupported | TokenError_WouldDie
-
-export interface TokenError_BelowMinimum {
-    __kind: 'BelowMinimum'
-}
-
-export interface TokenError_CannotCreate {
-    __kind: 'CannotCreate'
-}
-
-export interface TokenError_Frozen {
-    __kind: 'Frozen'
-}
-
-export interface TokenError_NoFunds {
-    __kind: 'NoFunds'
-}
-
-export interface TokenError_UnknownAsset {
-    __kind: 'UnknownAsset'
-}
-
-export interface TokenError_Unsupported {
-    __kind: 'Unsupported'
-}
-
-export interface TokenError_WouldDie {
-    __kind: 'WouldDie'
-}
-
-export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
-    return  {
-        index: sts.number(),
-        error: sts.number(),
-    }
-})
-
-export interface ModuleError {
-    index: number
-    error: number
-}
-
-export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
-    return  {
-        DivisionByZero: sts.unit(),
-        Overflow: sts.unit(),
-        Underflow: sts.unit(),
-    }
-})
-
-export type ArithmeticError = ArithmeticError_DivisionByZero | ArithmeticError_Overflow | ArithmeticError_Underflow
-
-export interface ArithmeticError_DivisionByZero {
-    __kind: 'DivisionByZero'
-}
-
-export interface ArithmeticError_Overflow {
-    __kind: 'Overflow'
-}
-
-export interface ArithmeticError_Underflow {
-    __kind: 'Underflow'
-}
-
-export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers
-
-export interface DispatchError_Arithmetic {
-    __kind: 'Arithmetic'
-    value: ArithmeticError
-}
-
-export interface DispatchError_BadOrigin {
-    __kind: 'BadOrigin'
-}
-
-export interface DispatchError_CannotLookup {
-    __kind: 'CannotLookup'
-}
-
-export interface DispatchError_ConsumerRemaining {
-    __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_Module {
-    __kind: 'Module'
-    value: ModuleError
-}
-
-export interface DispatchError_NoProviders {
-    __kind: 'NoProviders'
-}
-
-export interface DispatchError_Other {
-    __kind: 'Other'
-}
-
-export interface DispatchError_Token {
-    __kind: 'Token'
-    value: TokenError
-}
-
-export interface DispatchError_TooManyConsumers {
-    __kind: 'TooManyConsumers'
-}
-
-export const AccountId32 = sts.bytes()

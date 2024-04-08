@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
-name: polkadot-polkassembly
-version: 1
+name: robonomics-polkassembly
+version: 2
 description: |-
   Polkadot's governance proposals
 
@@ -9,10 +9,6 @@ build:
 deploy:
   addons:
     postgres:
-        config:
-          statement_timeout: 100000
-          max_pred_locks_per_transaction: 256
-          max_locks_per_transaction: 256
   secrets:
     - NOTIFICATION_API_KEY
   processor:
@@ -22,12 +18,3 @@ deploy:
 
 scale:
   dedicated: true
-  addons:
-     postgres:
-         storage: 20Gi
-         profile: medium
-  processor:
-     profile: medium
-  api:
-     profile: medium
-     replicas: 1

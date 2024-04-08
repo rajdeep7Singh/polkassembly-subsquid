@@ -6,13 +6,13 @@ interface ProposedData {
 }
 
 export function getProposedData(itemEvent: Event): ProposedData {
-    if (proposed.v0.is(itemEvent)) {
-        const index = proposed.v0.decode(itemEvent)
+    if (proposed.v5.is(itemEvent)) {
+        const index = proposed.v5.decode(itemEvent)
         return {
             index,
         }
-    } else if (proposed.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = proposed.v9170.decode(itemEvent)
+    } else if (proposed.v13.is(itemEvent)) {
+        const { proposalIndex: index } = proposed.v13.decode(itemEvent)
         return {
             index,
         }
@@ -26,13 +26,13 @@ interface RejectedData {
 }
 
 export function getRejectedData(itemEvent: Event): RejectedData {
-    if (rejected.v0.is(itemEvent)) {
-        const [index] = rejected.v0.decode(itemEvent)
+    if (rejected.v5.is(itemEvent)) {
+        const [index] = rejected.v5.decode(itemEvent)
         return {
             index,
         }
-    } else if (rejected.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = rejected.v9170.decode(itemEvent)
+    } else if (rejected.v13.is(itemEvent)) {
+        const { proposalIndex: index } = rejected.v13.decode(itemEvent)
         return {
             index,
         }
@@ -46,13 +46,13 @@ interface AwarderData {
 }
 
 export function getAwarderData(itemEvent: Event): AwarderData {
-    if (awarded.v0.is(itemEvent)) {
-        const [index] = awarded.v0.decode(itemEvent)
+    if (awarded.v5.is(itemEvent)) {
+        const [index] = awarded.v5.decode(itemEvent)
         return {
             index,
         }
-    } else if (awarded.v9170.is(itemEvent)) {
-        const { proposalIndex: index } = awarded.v9170.decode(itemEvent)
+    } else if (awarded.v13.is(itemEvent)) {
+        const { proposalIndex: index } = awarded.v13.decode(itemEvent)
         return {
             index,
         }
@@ -69,8 +69,8 @@ interface SpendApprovedData {
 }
 
 export function getSpendApprovedData(itemEvent: Event): SpendApprovedData {
-    if (spendApproved.v9250.is(itemEvent)) {
-        const { proposalIndex, amount, beneficiary}= spendApproved.v9250.decode(itemEvent)
+    if (spendApproved.v23.is(itemEvent)) {
+        const { proposalIndex, amount, beneficiary}= spendApproved.v23.decode(itemEvent)
         return {
             proposalIndex,
             amount,

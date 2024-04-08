@@ -2,14 +2,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'robonomics',
+        prefix: 32,
     },
     dataSource: {
-        archive: 'https://v2.archive.subsquid.io/network/polkadot',
-        chain: 'wss://rpc.polkadot.io',
+        archive: 'https://v2.archive.subsquid.io/network/robonomics',
+        chain: 'wss://kusama.rpc.robonomics.network/',
     },
-    typesBundle: 'polkadot',
+    typesBundle: 'robonomics',
     batchSize: 500,
     blockRange: {
         from: 0,

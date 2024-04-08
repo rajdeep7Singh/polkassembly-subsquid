@@ -2,7 +2,7 @@ import {sts, Result, Option, Bytes, BitSequence} from './support'
 
 export type H256 = Bytes
 
-export type Call = Call_Assets | Call_Balances | Call_CumulusXcm | Call_Datalog | Call_Democracy | Call_DigitalTwin | Call_DmpQueue | Call_Identity | Call_Launch | Call_Liability | Call_Lighthouse | Call_Multisig | Call_ParachainInfo | Call_ParachainSystem | Call_PolkadotXcm | Call_Preimage | Call_RWS | Call_Scheduler | Call_Staking | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting | Call_XcmpQueue
+export type Call = Call_Assets | Call_Balances | Call_Crowdloan | Call_CumulusXcm | Call_Datalog | Call_Democracy | Call_DigitalTwin | Call_DmpQueue | Call_Identity | Call_Launch | Call_Liability | Call_Lighthouse | Call_Multisig | Call_ParachainInfo | Call_ParachainSystem | Call_PolkadotXcm | Call_Preimage | Call_RWS | Call_Scheduler | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting | Call_XcmpQueue
 
 export interface Call_Assets {
     __kind: 'Assets'
@@ -12,6 +12,11 @@ export interface Call_Assets {
 export interface Call_Balances {
     __kind: 'Balances'
     value: BalancesCall
+}
+
+export interface Call_Crowdloan {
+    __kind: 'Crowdloan'
+    value: CrowdloanCall
 }
 
 export interface Call_CumulusXcm {
@@ -92,11 +97,6 @@ export interface Call_RWS {
 export interface Call_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
-}
-
-export interface Call_Staking {
-    __kind: 'Staking'
-    value: StakingCall
 }
 
 export interface Call_System {
@@ -1291,169 +1291,6 @@ export interface SystemCall_set_storage {
 }
 
 export type Perbill = number
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_claim_rewards | StakingCall_force_set_bonus | StakingCall_unbond | StakingCall_withdraw_unbonded
-
-/**
- * Take the origin account as a stash and lock up `value` of its balance. `controller` will
- * be the account that controls it.
- * 
- * `value` must be more than the `minimum_balance` specified by `T::Currency`.
- * 
- * The dispatch origin for this call must be _Signed_ by the stash account.
- * 
- * Emits `Bonded`.
- * 
- * # <weight>
- * - Independent of the arguments. Moderate complexity.
- * - O(1).
- * - Three extra DB entries.
- * 
- * NOTE: Two of the storage writes (`Self::bonded`) are _never_ cleaned
- * unless the `origin` falls below _existential deposit_ and gets removed as dust.
- * ------------------
- * Weight: O(1)
- * DB Weight:
- * - Read: Bonded, Ledger, [Origin Account], Locks
- * - Write: Bonded, [Origin Account], Locks, Ledger
- * # </weight>
- */
-export interface StakingCall_bond {
-    __kind: 'bond'
-    controller: MultiAddress
-    value: bigint
-}
-
-/**
- * Add some extra amount that have appeared in the stash `free_balance` into the balance up
- * for staking.
- * 
- * The dispatch origin for this call must be _Signed_ by the stash, not the controller.
- * 
- * Use this if there are additional funds in your stash account that you wish to bond.
- * Unlike [`bond`](Self::bond) or [`unbond`](Self::unbond) this function does not impose any limitation
- * on the amount that can be added.
- * 
- * Emits `Bonded`.
- * 
- * # <weight>
- * - Independent of the arguments. Insignificant complexity.
- * - O(1).
- * # </weight>
- */
-export interface StakingCall_bond_extra {
-    __kind: 'bond_extra'
-    maxAdditional: bigint
-}
-
-/**
- * Claim rewards accumulated from last `claim_rewards` call.
- * 
- * Generally, current reward scheme has fixed income for each block. For example,
- * if you have locked 10 XRT you will get 0.00000004 * 10 XRT for each block.
- * 
- * The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- * 
- * Emits `Reward`.
- * 
- * See also [`Call::bond`].
- * 
- * # <weight>
- * - Contains a limited number of reads, yet the size of which could be large based on `ledger`.
- * - Writes are limited to the `origin` account key.
- * ---------------
- * Weight: O(1)
- * DB Weight:
- * - Reads: Ledger, System BlockNumber, Locks, [Origin Account]
- * - Writes: [Origin Account], Locks, System Account, Ledger
- * # </weight>
- */
-export interface StakingCall_claim_rewards {
-    __kind: 'claim_rewards'
-}
-
-/**
- * Sudo call for extending list of bonus rates.
- */
-export interface StakingCall_force_set_bonus {
-    __kind: 'force_set_bonus'
-    target: AccountId32
-    bonus: bigint
-}
-
-/**
- * Schedule a portion of the stash to be unlocked ready for transfer out after the bond
- * period ends. If this leaves an amount actively bonded less than
- * T::Currency::minimum_balance(), then it is increased to the full amount.
- * 
- * Once the unlock period is done, you can call `withdraw_unbonded` to actually move
- * the funds out of management ready for transfer.
- * 
- * No more than a limited number of unlocking chunks (see `MAX_UNLOCKING_CHUNKS`)
- * can co-exists at the same time. In that case, [`Call::withdraw_unbonded`] need
- * to be called first to remove some of the chunks (if possible).
- * 
- * The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- * 
- * Emits `Unbonded`.
- * 
- * See also [`Call::withdraw_unbonded`].
- * 
- * # <weight>
- * - Independent of the arguments. Limited but potentially exploitable complexity.
- * - Contains a limited number of reads.
- * - Each call (requires the remainder of the bonded balance to be above `minimum_balance`)
- *   will cause a new entry to be inserted into a vector (`Ledger.unlocking`) kept in storage.
- *   The only way to clean the aforementioned storage item is also user-controlled via
- *   `withdraw_unbonded`.
- * - One DB entry.
- * ----------
- * Weight: O(1)
- * DB Weight:
- * - Read: Ledger, Locks, BalanceOf Stash,
- * - Write: Locks, Ledger, BalanceOf Stash,
- * </weight>
- */
-export interface StakingCall_unbond {
-    __kind: 'unbond'
-    value: bigint
-}
-
-/**
- * Remove any unlocked chunks from the `unlocking` queue from our management.
- * 
- * This essentially frees up that balance to be used by the stash account to do
- * whatever it wants.
- * 
- * The dispatch origin for this call must be _Signed_ by the controller, not the stash.
- * 
- * Emits `Withdrawn`.
- * 
- * See also [`Call::unbond`].
- * 
- * # <weight>
- * - Could be dependent on the `origin` argument and how much `unlocking` chunks exist.
- *  It implies `consolidate_unlocked` which loops over `Ledger.unlocking`, which is
- *  indirectly user-controlled. See [`unbond`] for more detail.
- * - Contains a limited number of reads, yet the size of which could be large based on `ledger`.
- * - Writes are limited to the `origin` account key.
- * ---------------
- * Complexity O(S) where S is the number of slashing spans to remove
- * Update:
- * - Reads: Ledger, Locks, [Origin Account]
- * - Writes: [Origin Account], Locks, Ledger
- * Kill:
- * - Reads: Ledger, Bonded, [Origin Account], Locks, BalanceOf stash
- * - Writes: Bonded, Ledger, [Origin Account], Locks, BalanceOf stash.
- * NOTE: Weight annotation is the kill scenario, we refund otherwise.
- * # </weight>
- */
-export interface StakingCall_withdraw_unbonded {
-    __kind: 'withdraw_unbonded'
-}
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -4778,6 +4615,20 @@ export type CumulusXcmCall = never
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
+export type CrowdloanCall = CrowdloanCall_send_reward
+
+/**
+ * Reward crowdloan participant.
+ */
+export interface CrowdloanCall_send_reward {
+    __kind: 'send_reward'
+    recipient: AccountId32
+    rewardValue: bigint
+}
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
 export type BalancesCall = BalancesCall_force_transfer | BalancesCall_force_unreserve | BalancesCall_set_balance | BalancesCall_transfer | BalancesCall_transfer_all | BalancesCall_transfer_keep_alive
 
 /**
@@ -5484,6 +5335,7 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
     return  {
         Assets: AssetsCall,
         Balances: BalancesCall,
+        Crowdloan: CrowdloanCall,
         CumulusXcm: CumulusXcmCall,
         Datalog: DatalogCall,
         Democracy: DemocracyCall,
@@ -5500,7 +5352,6 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Preimage: PreimageCall,
         RWS: RWSCall,
         Scheduler: SchedulerCall,
-        Staking: StakingCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalMembership: TechnicalMembershipCall,
@@ -5889,30 +5740,6 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
 })
 
 export const Perbill = sts.number()
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
-    return  {
-        bond: sts.enumStruct({
-            controller: MultiAddress,
-            value: sts.bigint(),
-        }),
-        bond_extra: sts.enumStruct({
-            maxAdditional: sts.bigint(),
-        }),
-        claim_rewards: sts.unit(),
-        force_set_bonus: sts.enumStruct({
-            target: AccountId32,
-            bonus: sts.bigint(),
-        }),
-        unbond: sts.enumStruct({
-            value: sts.bigint(),
-        }),
-        withdraw_unbonded: sts.unit(),
-    }
-})
 
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
@@ -7389,6 +7216,18 @@ export const DatalogCall: sts.Type<DatalogCall> = sts.closedEnum(() => {
  */
 export const CumulusXcmCall: sts.Type<CumulusXcmCall> = sts.closedEnum(() => {
     return  {
+    }
+})
+
+/**
+ * Contains one variant per dispatchable that can be called by an extrinsic.
+ */
+export const CrowdloanCall: sts.Type<CrowdloanCall> = sts.closedEnum(() => {
+    return  {
+        send_reward: sts.enumStruct({
+            recipient: AccountId32,
+            rewardValue: sts.bigint(),
+        }),
     }
 })
 

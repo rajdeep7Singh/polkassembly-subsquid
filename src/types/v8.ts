@@ -1,33 +1,8 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type BoundedVec = Bytes
-
-export const BoundedVec = sts.bytes()
-
-export type RequestStatus = RequestStatus_Requested | RequestStatus_Unrequested
-
-export interface RequestStatus_Requested {
-    __kind: 'Requested'
-    value: number
-}
-
-export interface RequestStatus_Unrequested {
-    __kind: 'Unrequested'
-    value?: ([AccountId32, bigint] | undefined)
-}
-
-export type AccountId32 = Bytes
-
-export const RequestStatus: sts.Type<RequestStatus> = sts.closedEnum(() => {
-    return  {
-        Requested: sts.number(),
-        Unrequested: sts.option(() => sts.tuple(() => [AccountId32, sts.bigint()])),
-    }
-})
-
 export type H256 = Bytes
 
-export type Call = Call_Balances | Call_Datalog | Call_Democracy | Call_DigitalTwin | Call_Identity | Call_Launch | Call_Lighthouse | Call_Multisig | Call_ParachainSystem | Call_Preimage | Call_RWS | Call_Scheduler | Call_Staking | Call_Sudo | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility | Call_Vesting
+export type Call = Call_Balances | Call_Datalog | Call_DigitalTwin | Call_Identity | Call_Launch | Call_Lighthouse | Call_Multisig | Call_ParachainSystem | Call_RWS | Call_Scheduler | Call_Staking | Call_Sudo | Call_System | Call_TechnicalCommittee | Call_TechnicalMembership | Call_Timestamp | Call_Treasury | Call_Utility
 
 export interface Call_Balances {
     __kind: 'Balances'
@@ -37,11 +12,6 @@ export interface Call_Balances {
 export interface Call_Datalog {
     __kind: 'Datalog'
     value: DatalogCall
-}
-
-export interface Call_Democracy {
-    __kind: 'Democracy'
-    value: DemocracyCall
 }
 
 export interface Call_DigitalTwin {
@@ -72,11 +42,6 @@ export interface Call_Multisig {
 export interface Call_ParachainSystem {
     __kind: 'ParachainSystem'
     value: ParachainSystemCall
-}
-
-export interface Call_Preimage {
-    __kind: 'Preimage'
-    value: PreimageCall
 }
 
 export interface Call_RWS {
@@ -127,170 +92,6 @@ export interface Call_Treasury {
 export interface Call_Utility {
     __kind: 'Utility'
     value: UtilityCall
-}
-
-export interface Call_Vesting {
-    __kind: 'Vesting'
-    value: VestingCall
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type VestingCall = VestingCall_force_vested_transfer | VestingCall_merge_schedules | VestingCall_vest | VestingCall_vest_other | VestingCall_vested_transfer
-
-/**
- * Force a vested transfer.
- * 
- * The dispatch origin for this call must be _Root_.
- * 
- * - `source`: The account whose funds should be transferred.
- * - `target`: The account that should be transferred the vested funds.
- * - `schedule`: The vesting schedule attached to the transfer.
- * 
- * Emits `VestingCreated`.
- * 
- * NOTE: This will unlock all schedules through the current block.
- * 
- * # <weight>
- * - `O(1)`.
- * - DbWeight: 4 Reads, 4 Writes
- *     - Reads: Vesting Storage, Balances Locks, Target Account, Source Account
- *     - Writes: Vesting Storage, Balances Locks, Target Account, Source Account
- * # </weight>
- */
-export interface VestingCall_force_vested_transfer {
-    __kind: 'force_vested_transfer'
-    source: MultiAddress
-    target: MultiAddress
-    schedule: VestingInfo
-}
-
-/**
- * Merge two vesting schedules together, creating a new vesting schedule that unlocks over
- * the highest possible start and end blocks. If both schedules have already started the
- * current block will be used as the schedule start; with the caveat that if one schedule
- * is finished by the current block, the other will be treated as the new merged schedule,
- * unmodified.
- * 
- * NOTE: If `schedule1_index == schedule2_index` this is a no-op.
- * NOTE: This will unlock all schedules through the current block prior to merging.
- * NOTE: If both schedules have ended by the current block, no new schedule will be created
- * and both will be removed.
- * 
- * Merged schedule attributes:
- * - `starting_block`: `MAX(schedule1.starting_block, scheduled2.starting_block,
- *   current_block)`.
- * - `ending_block`: `MAX(schedule1.ending_block, schedule2.ending_block)`.
- * - `locked`: `schedule1.locked_at(current_block) + schedule2.locked_at(current_block)`.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * - `schedule1_index`: index of the first schedule to merge.
- * - `schedule2_index`: index of the second schedule to merge.
- */
-export interface VestingCall_merge_schedules {
-    __kind: 'merge_schedules'
-    schedule1Index: number
-    schedule2Index: number
-}
-
-/**
- * Unlock any vested funds of the sender account.
- * 
- * The dispatch origin for this call must be _Signed_ and the sender must have funds still
- * locked under this pallet.
- * 
- * Emits either `VestingCompleted` or `VestingUpdated`.
- * 
- * # <weight>
- * - `O(1)`.
- * - DbWeight: 2 Reads, 2 Writes
- *     - Reads: Vesting Storage, Balances Locks, [Sender Account]
- *     - Writes: Vesting Storage, Balances Locks, [Sender Account]
- * # </weight>
- */
-export interface VestingCall_vest {
-    __kind: 'vest'
-}
-
-/**
- * Unlock any vested funds of a `target` account.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * - `target`: The account whose vested funds should be unlocked. Must have funds still
- * locked under this pallet.
- * 
- * Emits either `VestingCompleted` or `VestingUpdated`.
- * 
- * # <weight>
- * - `O(1)`.
- * - DbWeight: 3 Reads, 3 Writes
- *     - Reads: Vesting Storage, Balances Locks, Target Account
- *     - Writes: Vesting Storage, Balances Locks, Target Account
- * # </weight>
- */
-export interface VestingCall_vest_other {
-    __kind: 'vest_other'
-    target: MultiAddress
-}
-
-/**
- * Create a vested transfer.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * - `target`: The account receiving the vested funds.
- * - `schedule`: The vesting schedule attached to the transfer.
- * 
- * Emits `VestingCreated`.
- * 
- * NOTE: This will unlock all schedules through the current block.
- * 
- * # <weight>
- * - `O(1)`.
- * - DbWeight: 3 Reads, 3 Writes
- *     - Reads: Vesting Storage, Balances Locks, Target Account, [Sender Account]
- *     - Writes: Vesting Storage, Balances Locks, Target Account, [Sender Account]
- * # </weight>
- */
-export interface VestingCall_vested_transfer {
-    __kind: 'vested_transfer'
-    target: MultiAddress
-    schedule: VestingInfo
-}
-
-export interface VestingInfo {
-    locked: bigint
-    perBlock: bigint
-    startingBlock: number
-}
-
-export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
-
-export interface MultiAddress_Address20 {
-    __kind: 'Address20'
-    value: Bytes
-}
-
-export interface MultiAddress_Address32 {
-    __kind: 'Address32'
-    value: Bytes
-}
-
-export interface MultiAddress_Id {
-    __kind: 'Id'
-    value: AccountId32
-}
-
-export interface MultiAddress_Index {
-    __kind: 'Index'
-}
-
-export interface MultiAddress_Raw {
-    __kind: 'Raw'
-    value: Bytes
 }
 
 /**
@@ -388,7 +189,7 @@ export type OriginCaller = OriginCaller_TechnicalCommittee | OriginCaller_Void |
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_172
+    value: Type_159
 }
 
 export interface OriginCaller_Void {
@@ -416,21 +217,23 @@ export interface RawOrigin_Signed {
     value: AccountId32
 }
 
+export type AccountId32 = Bytes
+
 export type Void = never
 
-export type Type_172 = Type_172_Member | Type_172_Members | Type_172__Phantom
+export type Type_159 = Type_159_Member | Type_159_Members | Type_159__Phantom
 
-export interface Type_172_Member {
+export interface Type_159_Member {
     __kind: 'Member'
     value: AccountId32
 }
 
-export interface Type_172_Members {
+export interface Type_159_Members {
     __kind: 'Members'
     value: [number, number]
 }
 
-export interface Type_172__Phantom {
+export interface Type_159__Phantom {
     __kind: '_Phantom'
 }
 
@@ -487,6 +290,32 @@ export interface TreasuryCall_propose_spend {
 export interface TreasuryCall_reject_proposal {
     __kind: 'reject_proposal'
     proposalId: number
+}
+
+export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
+
+export interface MultiAddress_Address20 {
+    __kind: 'Address20'
+    value: Bytes
+}
+
+export interface MultiAddress_Address32 {
+    __kind: 'Address32'
+    value: Bytes
+}
+
+export interface MultiAddress_Id {
+    __kind: 'Id'
+    value: AccountId32
+}
+
+export interface MultiAddress_Index {
+    __kind: 'Index'
+}
+
+export interface MultiAddress_Raw {
+    __kind: 'Raw'
+    value: Bytes
 }
 
 /**
@@ -832,6 +661,11 @@ export interface SystemCall_remark {
 
 /**
  * Make some on-chain remark and emit event.
+ * 
+ * # <weight>
+ * - `O(b)` where b is the length of the remark.
+ * - 1 event.
+ * # </weight>
  */
 export interface SystemCall_remark_with_event {
     __kind: 'remark_with_event'
@@ -970,7 +804,7 @@ export interface SudoCall_sudo_unchecked_weight {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_claim_rewards | StakingCall_force_set_bonus | StakingCall_unbond | StakingCall_withdraw_unbonded
+export type StakingCall = StakingCall_bond | StakingCall_bond_extra | StakingCall_claim_rewards | StakingCall_extend_bonus | StakingCall_unbond | StakingCall_withdraw_unbonded
 
 /**
  * Take the origin account as a stash and lock up `value` of its balance. `controller` will
@@ -1053,10 +887,9 @@ export interface StakingCall_claim_rewards {
 /**
  * Sudo call for extending list of bonus rates.
  */
-export interface StakingCall_force_set_bonus {
-    __kind: 'force_set_bonus'
-    target: AccountId32
-    bonus: bigint
+export interface StakingCall_extend_bonus {
+    __kind: 'extend_bonus'
+    extra: [AccountId32, bigint][]
 }
 
 /**
@@ -1160,7 +993,7 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
@@ -1175,7 +1008,7 @@ export interface SchedulerCall_schedule_after {
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
@@ -1187,7 +1020,7 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
@@ -1203,19 +1036,7 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
-}
-
-export type MaybeHashed = MaybeHashed_Hash | MaybeHashed_Value
-
-export interface MaybeHashed_Hash {
-    __kind: 'Hash'
-    value: H256
-}
-
-export interface MaybeHashed_Value {
-    __kind: 'Value'
-    value: Call
+    call: Call
 }
 
 /**
@@ -1329,51 +1150,6 @@ export interface Subscription_Daily {
 export interface Subscription_Lifetime {
     __kind: 'Lifetime'
     tps: number
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type PreimageCall = PreimageCall_note_preimage | PreimageCall_request_preimage | PreimageCall_unnote_preimage | PreimageCall_unrequest_preimage
-
-/**
- * Register a preimage on-chain.
- * 
- * If the preimage was previously requested, no fees or deposits are taken for providing
- * the preimage. Otherwise, a deposit is taken proportional to the size of the preimage.
- */
-export interface PreimageCall_note_preimage {
-    __kind: 'note_preimage'
-    bytes: Bytes
-}
-
-/**
- * Request a preimage be uploaded to the chain without paying any fees or deposits.
- * 
- * If the preimage requests has already been provided on-chain, we unreserve any deposit
- * a user may have paid, and take the control of the preimage out of their hands.
- */
-export interface PreimageCall_request_preimage {
-    __kind: 'request_preimage'
-    hash: H256
-}
-
-/**
- * Clear an unrequested preimage from the runtime storage.
- */
-export interface PreimageCall_unnote_preimage {
-    __kind: 'unnote_preimage'
-    hash: H256
-}
-
-/**
- * Clear a previously made request for a preimage.
- * 
- * NOTE: THIS MUST NOT BE CALLED ON `hash` MORE TIMES THAN `request_preimage`.
- */
-export interface PreimageCall_unrequest_preimage {
-    __kind: 'unrequest_preimage'
-    hash: H256
 }
 
 /**
@@ -1641,7 +1417,7 @@ export type LaunchCall = LaunchCall_launch
 export interface LaunchCall_launch {
     __kind: 'launch'
     robot: AccountId32
-    param: H256
+    param: boolean
 }
 
 /**
@@ -2237,496 +2013,6 @@ export interface DigitalTwinCall_set_source {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type DemocracyCall = DemocracyCall_blacklist | DemocracyCall_cancel_proposal | DemocracyCall_cancel_queued | DemocracyCall_cancel_referendum | DemocracyCall_clear_public_proposals | DemocracyCall_delegate | DemocracyCall_emergency_cancel | DemocracyCall_enact_proposal | DemocracyCall_external_propose | DemocracyCall_external_propose_default | DemocracyCall_external_propose_majority | DemocracyCall_fast_track | DemocracyCall_note_imminent_preimage | DemocracyCall_note_imminent_preimage_operational | DemocracyCall_note_preimage | DemocracyCall_note_preimage_operational | DemocracyCall_propose | DemocracyCall_reap_preimage | DemocracyCall_remove_other_vote | DemocracyCall_remove_vote | DemocracyCall_second | DemocracyCall_undelegate | DemocracyCall_unlock | DemocracyCall_veto_external | DemocracyCall_vote
-
-/**
- * Permanently place a proposal into the blacklist. This prevents it from ever being
- * proposed again.
- * 
- * If called on a queued public or external proposal, then this will result in it being
- * removed. If the `ref_index` supplied is an active referendum with the proposal hash,
- * then it will be cancelled.
- * 
- * The dispatch origin of this call must be `BlacklistOrigin`.
- * 
- * - `proposal_hash`: The proposal hash to blacklist permanently.
- * - `ref_index`: An ongoing referendum whose hash is `proposal_hash`, which will be
- * cancelled.
- * 
- * Weight: `O(p)` (though as this is an high-privilege dispatch, we assume it has a
- *   reasonable value).
- */
-export interface DemocracyCall_blacklist {
-    __kind: 'blacklist'
-    proposalHash: H256
-    maybeRefIndex?: (number | undefined)
-}
-
-/**
- * Remove a proposal.
- * 
- * The dispatch origin of this call must be `CancelProposalOrigin`.
- * 
- * - `prop_index`: The index of the proposal to cancel.
- * 
- * Weight: `O(p)` where `p = PublicProps::<T>::decode_len()`
- */
-export interface DemocracyCall_cancel_proposal {
-    __kind: 'cancel_proposal'
-    propIndex: number
-}
-
-/**
- * Cancel a proposal queued for enactment.
- * 
- * The dispatch origin of this call must be _Root_.
- * 
- * - `which`: The index of the referendum to cancel.
- * 
- * Weight: `O(D)` where `D` is the items in the dispatch queue. Weighted as `D = 10`.
- */
-export interface DemocracyCall_cancel_queued {
-    __kind: 'cancel_queued'
-    which: number
-}
-
-/**
- * Remove a referendum.
- * 
- * The dispatch origin of this call must be _Root_.
- * 
- * - `ref_index`: The index of the referendum to cancel.
- * 
- * # Weight: `O(1)`.
- */
-export interface DemocracyCall_cancel_referendum {
-    __kind: 'cancel_referendum'
-    refIndex: number
-}
-
-/**
- * Clears all public proposals.
- * 
- * The dispatch origin of this call must be _Root_.
- * 
- * Weight: `O(1)`.
- */
-export interface DemocracyCall_clear_public_proposals {
-    __kind: 'clear_public_proposals'
-}
-
-/**
- * Delegate the voting power (with some given conviction) of the sending account.
- * 
- * The balance delegated is locked for as long as it's delegated, and thereafter for the
- * time appropriate for the conviction's lock period.
- * 
- * The dispatch origin of this call must be _Signed_, and the signing account must either:
- *   - be delegating already; or
- *   - have no voting activity (if there is, then it will need to be removed/consolidated
- *     through `reap_vote` or `unvote`).
- * 
- * - `to`: The account whose voting the `target` account's voting power will follow.
- * - `conviction`: The conviction that will be attached to the delegated votes. When the
- *   account is undelegated, the funds will be locked for the corresponding period.
- * - `balance`: The amount of the account's balance to be used in delegating. This must not
- *   be more than the account's current balance.
- * 
- * Emits `Delegated`.
- * 
- * Weight: `O(R)` where R is the number of referendums the voter delegating to has
- *   voted on. Weight is charged as if maximum votes.
- */
-export interface DemocracyCall_delegate {
-    __kind: 'delegate'
-    to: AccountId32
-    conviction: Conviction
-    balance: bigint
-}
-
-/**
- * Schedule an emergency cancellation of a referendum. Cannot happen twice to the same
- * referendum.
- * 
- * The dispatch origin of this call must be `CancellationOrigin`.
- * 
- * -`ref_index`: The index of the referendum to cancel.
- * 
- * Weight: `O(1)`.
- */
-export interface DemocracyCall_emergency_cancel {
-    __kind: 'emergency_cancel'
-    refIndex: number
-}
-
-/**
- * Enact a proposal from a referendum. For now we just make the weight be the maximum.
- */
-export interface DemocracyCall_enact_proposal {
-    __kind: 'enact_proposal'
-    proposalHash: H256
-    index: number
-}
-
-/**
- * Schedule a referendum to be tabled once it is legal to schedule an external
- * referendum.
- * 
- * The dispatch origin of this call must be `ExternalOrigin`.
- * 
- * - `proposal_hash`: The preimage hash of the proposal.
- * 
- * Weight: `O(V)` with V number of vetoers in the blacklist of proposal.
- *   Decoding vec of length V. Charged as maximum
- */
-export interface DemocracyCall_external_propose {
-    __kind: 'external_propose'
-    proposalHash: H256
-}
-
-/**
- * Schedule a negative-turnout-bias referendum to be tabled next once it is legal to
- * schedule an external referendum.
- * 
- * The dispatch of this call must be `ExternalDefaultOrigin`.
- * 
- * - `proposal_hash`: The preimage hash of the proposal.
- * 
- * Unlike `external_propose`, blacklisting has no effect on this and it may replace a
- * pre-scheduled `external_propose` call.
- * 
- * Weight: `O(1)`
- */
-export interface DemocracyCall_external_propose_default {
-    __kind: 'external_propose_default'
-    proposalHash: H256
-}
-
-/**
- * Schedule a majority-carries referendum to be tabled next once it is legal to schedule
- * an external referendum.
- * 
- * The dispatch of this call must be `ExternalMajorityOrigin`.
- * 
- * - `proposal_hash`: The preimage hash of the proposal.
- * 
- * Unlike `external_propose`, blacklisting has no effect on this and it may replace a
- * pre-scheduled `external_propose` call.
- * 
- * Weight: `O(1)`
- */
-export interface DemocracyCall_external_propose_majority {
-    __kind: 'external_propose_majority'
-    proposalHash: H256
-}
-
-/**
- * Schedule the currently externally-proposed majority-carries referendum to be tabled
- * immediately. If there is no externally-proposed referendum currently, or if there is one
- * but it is not a majority-carries referendum then it fails.
- * 
- * The dispatch of this call must be `FastTrackOrigin`.
- * 
- * - `proposal_hash`: The hash of the current external proposal.
- * - `voting_period`: The period that is allowed for voting on this proposal. Increased to
- *   `FastTrackVotingPeriod` if too low.
- * - `delay`: The number of block after voting has ended in approval and this should be
- *   enacted. This doesn't have a minimum amount.
- * 
- * Emits `Started`.
- * 
- * Weight: `O(1)`
- */
-export interface DemocracyCall_fast_track {
-    __kind: 'fast_track'
-    proposalHash: H256
-    votingPeriod: number
-    delay: number
-}
-
-/**
- * Register the preimage for an upcoming proposal. This requires the proposal to be
- * in the dispatch queue. No deposit is needed. When this call is successful, i.e.
- * the preimage has not been uploaded before and matches some imminent proposal,
- * no fee is paid.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `encoded_proposal`: The preimage of a proposal.
- * 
- * Emits `PreimageNoted`.
- * 
- * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
- */
-export interface DemocracyCall_note_imminent_preimage {
-    __kind: 'note_imminent_preimage'
-    encodedProposal: Bytes
-}
-
-/**
- * Same as `note_imminent_preimage` but origin is `OperationalPreimageOrigin`.
- */
-export interface DemocracyCall_note_imminent_preimage_operational {
-    __kind: 'note_imminent_preimage_operational'
-    encodedProposal: Bytes
-}
-
-/**
- * Register the preimage for an upcoming proposal. This doesn't require the proposal to be
- * in the dispatch queue but does require a deposit, returned once enacted.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `encoded_proposal`: The preimage of a proposal.
- * 
- * Emits `PreimageNoted`.
- * 
- * Weight: `O(E)` with E size of `encoded_proposal` (protected by a required deposit).
- */
-export interface DemocracyCall_note_preimage {
-    __kind: 'note_preimage'
-    encodedProposal: Bytes
-}
-
-/**
- * Same as `note_preimage` but origin is `OperationalPreimageOrigin`.
- */
-export interface DemocracyCall_note_preimage_operational {
-    __kind: 'note_preimage_operational'
-    encodedProposal: Bytes
-}
-
-/**
- * Propose a sensitive action to be taken.
- * 
- * The dispatch origin of this call must be _Signed_ and the sender must
- * have funds to cover the deposit.
- * 
- * - `proposal_hash`: The hash of the proposal preimage.
- * - `value`: The amount of deposit (must be at least `MinimumDeposit`).
- * 
- * Emits `Proposed`.
- * 
- * Weight: `O(p)`
- */
-export interface DemocracyCall_propose {
-    __kind: 'propose'
-    proposalHash: H256
-    value: bigint
-}
-
-/**
- * Remove an expired proposal preimage and collect the deposit.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `proposal_hash`: The preimage hash of a proposal.
- * - `proposal_length_upper_bound`: an upper bound on length of the proposal. Extrinsic is
- *   weighted according to this value with no refund.
- * 
- * This will only work after `VotingPeriod` blocks from the time that the preimage was
- * noted, if it's the same account doing it. If it's a different account, then it'll only
- * work an additional `EnactmentPeriod` later.
- * 
- * Emits `PreimageReaped`.
- * 
- * Weight: `O(D)` where D is length of proposal.
- */
-export interface DemocracyCall_reap_preimage {
-    __kind: 'reap_preimage'
-    proposalHash: H256
-    proposalLenUpperBound: number
-}
-
-/**
- * Remove a vote for a referendum.
- * 
- * If the `target` is equal to the signer, then this function is exactly equivalent to
- * `remove_vote`. If not equal to the signer, then the vote must have expired,
- * either because the referendum was cancelled, because the voter lost the referendum or
- * because the conviction period is over.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `target`: The account of the vote to be removed; this account must have voted for
- *   referendum `index`.
- * - `index`: The index of referendum of the vote to be removed.
- * 
- * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
- *   Weight is calculated for the maximum number of vote.
- */
-export interface DemocracyCall_remove_other_vote {
-    __kind: 'remove_other_vote'
-    target: AccountId32
-    index: number
-}
-
-/**
- * Remove a vote for a referendum.
- * 
- * If:
- * - the referendum was cancelled, or
- * - the referendum is ongoing, or
- * - the referendum has ended such that
- *   - the vote of the account was in opposition to the result; or
- *   - there was no conviction to the account's vote; or
- *   - the account made a split vote
- * ...then the vote is removed cleanly and a following call to `unlock` may result in more
- * funds being available.
- * 
- * If, however, the referendum has ended and:
- * - it finished corresponding to the vote of the account, and
- * - the account made a standard vote with conviction, and
- * - the lock period of the conviction is not over
- * ...then the lock will be aggregated into the overall account's lock, which may involve
- * *overlocking* (where the two locks are combined into a single lock that is the maximum
- * of both the amount locked and the time is it locked for).
- * 
- * The dispatch origin of this call must be _Signed_, and the signer must have a vote
- * registered for referendum `index`.
- * 
- * - `index`: The index of referendum of the vote to be removed.
- * 
- * Weight: `O(R + log R)` where R is the number of referenda that `target` has voted on.
- *   Weight is calculated for the maximum number of vote.
- */
-export interface DemocracyCall_remove_vote {
-    __kind: 'remove_vote'
-    index: number
-}
-
-/**
- * Signals agreement with a particular proposal.
- * 
- * The dispatch origin of this call must be _Signed_ and the sender
- * must have funds to cover the deposit, equal to the original deposit.
- * 
- * - `proposal`: The index of the proposal to second.
- * - `seconds_upper_bound`: an upper bound on the current number of seconds on this
- *   proposal. Extrinsic is weighted according to this value with no refund.
- * 
- * Weight: `O(S)` where S is the number of seconds a proposal already has.
- */
-export interface DemocracyCall_second {
-    __kind: 'second'
-    proposal: number
-    secondsUpperBound: number
-}
-
-/**
- * Undelegate the voting power of the sending account.
- * 
- * Tokens may be unlocked following once an amount of time consistent with the lock period
- * of the conviction with which the delegation was issued.
- * 
- * The dispatch origin of this call must be _Signed_ and the signing account must be
- * currently delegating.
- * 
- * Emits `Undelegated`.
- * 
- * Weight: `O(R)` where R is the number of referendums the voter delegating to has
- *   voted on. Weight is charged as if maximum votes.
- */
-export interface DemocracyCall_undelegate {
-    __kind: 'undelegate'
-}
-
-/**
- * Unlock tokens that have an expired lock.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `target`: The account to remove the lock on.
- * 
- * Weight: `O(R)` with R number of vote of target.
- */
-export interface DemocracyCall_unlock {
-    __kind: 'unlock'
-    target: AccountId32
-}
-
-/**
- * Veto and blacklist the external proposal hash.
- * 
- * The dispatch origin of this call must be `VetoOrigin`.
- * 
- * - `proposal_hash`: The preimage hash of the proposal to veto and blacklist.
- * 
- * Emits `Vetoed`.
- * 
- * Weight: `O(V + log(V))` where V is number of `existing vetoers`
- */
-export interface DemocracyCall_veto_external {
-    __kind: 'veto_external'
-    proposalHash: H256
-}
-
-/**
- * Vote in a referendum. If `vote.is_aye()`, the vote is to enact the proposal;
- * otherwise it is a vote to keep the status quo.
- * 
- * The dispatch origin of this call must be _Signed_.
- * 
- * - `ref_index`: The index of the referendum to vote for.
- * - `vote`: The vote configuration.
- * 
- * Weight: `O(R)` where R is the number of referendums the voter has voted on.
- */
-export interface DemocracyCall_vote {
-    __kind: 'vote'
-    refIndex: number
-    vote: AccountVote
-}
-
-export type AccountVote = AccountVote_Split | AccountVote_Standard
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    aye: bigint
-    nay: bigint
-}
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    vote: Vote
-    balance: bigint
-}
-
-export type Vote = number
-
-export type Conviction = Conviction_Locked1x | Conviction_Locked2x | Conviction_Locked3x | Conviction_Locked4x | Conviction_Locked5x | Conviction_Locked6x | Conviction_None
-
-export interface Conviction_Locked1x {
-    __kind: 'Locked1x'
-}
-
-export interface Conviction_Locked2x {
-    __kind: 'Locked2x'
-}
-
-export interface Conviction_Locked3x {
-    __kind: 'Locked3x'
-}
-
-export interface Conviction_Locked4x {
-    __kind: 'Locked4x'
-}
-
-export interface Conviction_Locked5x {
-    __kind: 'Locked5x'
-}
-
-export interface Conviction_Locked6x {
-    __kind: 'Locked6x'
-}
-
-export interface Conviction_None {
-    __kind: 'None'
-}
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export type DatalogCall = DatalogCall_erase | DatalogCall_record
 
 /**
@@ -2779,7 +2065,7 @@ export interface BalancesCall_force_unreserve {
  * Set the balances of a given account.
  * 
  * This will alter `FreeBalance` and `ReservedBalance` in storage. it will
- * also alter the total issuance of the system (`TotalIssuance`) appropriately.
+ * also decrease the total issuance of the system (`TotalIssuance`).
  * If the new free or reserved balance is below the existential deposit,
  * it will reset the account nonce (`frame_system::AccountNonce`).
  * 
@@ -2796,6 +2082,7 @@ export interface BalancesCall_set_balance {
  * Transfer some liquid free balance to another account.
  * 
  * `transfer` will set the `FreeBalance` of the sender and receiver.
+ * It will decrease the total issuance of the system by the `TransferFee`.
  * If the sender's account is below the existential deposit as a result
  * of the transfer, the account will be reaped.
  * 
@@ -2868,14 +2155,12 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
     return  {
         Balances: BalancesCall,
         Datalog: DatalogCall,
-        Democracy: DemocracyCall,
         DigitalTwin: DigitalTwinCall,
         Identity: IdentityCall,
         Launch: LaunchCall,
         Lighthouse: LighthouseCall,
         Multisig: MultisigCall,
         ParachainSystem: ParachainSystemCall,
-        Preimage: PreimageCall,
         RWS: RWSCall,
         Scheduler: SchedulerCall,
         Staking: StakingCall,
@@ -2886,50 +2171,6 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         Utility: UtilityCall,
-        Vesting: VestingCall,
-    }
-})
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const VestingCall: sts.Type<VestingCall> = sts.closedEnum(() => {
-    return  {
-        force_vested_transfer: sts.enumStruct({
-            source: MultiAddress,
-            target: MultiAddress,
-            schedule: VestingInfo,
-        }),
-        merge_schedules: sts.enumStruct({
-            schedule1Index: sts.number(),
-            schedule2Index: sts.number(),
-        }),
-        vest: sts.unit(),
-        vest_other: sts.enumStruct({
-            target: MultiAddress,
-        }),
-        vested_transfer: sts.enumStruct({
-            target: MultiAddress,
-            schedule: VestingInfo,
-        }),
-    }
-})
-
-export const VestingInfo: sts.Type<VestingInfo> = sts.struct(() => {
-    return  {
-        locked: sts.bigint(),
-        perBlock: sts.bigint(),
-        startingBlock: sts.number(),
-    }
-})
-
-export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
-    return  {
-        Address20: sts.bytes(),
-        Address32: sts.bytes(),
-        Id: AccountId32,
-        Index: sts.unit(),
-        Raw: sts.bytes(),
     }
 })
 
@@ -2957,7 +2198,7 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        TechnicalCommittee: Type_172,
+        TechnicalCommittee: Type_159,
         Void: Void,
         system: RawOrigin,
     }
@@ -2976,7 +2217,7 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
-export const Type_172: sts.Type<Type_172> = sts.closedEnum(() => {
+export const Type_159: sts.Type<Type_159> = sts.closedEnum(() => {
     return  {
         Member: AccountId32,
         Members: sts.tuple(() => [sts.number(), sts.number()]),
@@ -2999,6 +2240,16 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
         reject_proposal: sts.enumStruct({
             proposalId: sts.number(),
         }),
+    }
+})
+
+export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
+    return  {
+        Address20: sts.bytes(),
+        Address32: sts.bytes(),
+        Id: AccountId32,
+        Index: sts.unit(),
+        Raw: sts.bytes(),
     }
 })
 
@@ -3150,9 +2401,8 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
             maxAdditional: sts.bigint(),
         }),
         claim_rewards: sts.unit(),
-        force_set_bonus: sts.enumStruct({
-            target: AccountId32,
-            bonus: sts.bigint(),
+        extend_bonus: sts.enumStruct({
+            extra: sts.array(() => sts.tuple(() => [AccountId32, sts.bigint()])),
         }),
         unbond: sts.enumStruct({
             value: sts.bigint(),
@@ -3177,35 +2427,28 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_after: sts.enumStruct({
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_named_after: sts.enumStruct({
             id: sts.bytes(),
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
-    }
-})
-
-export const MaybeHashed: sts.Type<MaybeHashed> = sts.closedEnum(() => {
-    return  {
-        Hash: H256,
-        Value: Call,
     }
 })
 
@@ -3245,26 +2488,6 @@ export const Subscription: sts.Type<Subscription> = sts.closedEnum(() => {
         }),
         Lifetime: sts.enumStruct({
             tps: sts.number(),
-        }),
-    }
-})
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const PreimageCall: sts.Type<PreimageCall> = sts.closedEnum(() => {
-    return  {
-        note_preimage: sts.enumStruct({
-            bytes: sts.bytes(),
-        }),
-        request_preimage: sts.enumStruct({
-            hash: H256,
-        }),
-        unnote_preimage: sts.enumStruct({
-            hash: H256,
-        }),
-        unrequest_preimage: sts.enumStruct({
-            hash: H256,
         }),
     }
 })
@@ -3389,7 +2612,7 @@ export const LaunchCall: sts.Type<LaunchCall> = sts.closedEnum(() => {
     return  {
         launch: sts.enumStruct({
             robot: AccountId32,
-            param: H256,
+            param: sts.boolean(),
         }),
     }
 })
@@ -3539,123 +2762,6 @@ export const DigitalTwinCall: sts.Type<DigitalTwinCall> = sts.closedEnum(() => {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export const DemocracyCall: sts.Type<DemocracyCall> = sts.closedEnum(() => {
-    return  {
-        blacklist: sts.enumStruct({
-            proposalHash: H256,
-            maybeRefIndex: sts.option(() => sts.number()),
-        }),
-        cancel_proposal: sts.enumStruct({
-            propIndex: sts.number(),
-        }),
-        cancel_queued: sts.enumStruct({
-            which: sts.number(),
-        }),
-        cancel_referendum: sts.enumStruct({
-            refIndex: sts.number(),
-        }),
-        clear_public_proposals: sts.unit(),
-        delegate: sts.enumStruct({
-            to: AccountId32,
-            conviction: Conviction,
-            balance: sts.bigint(),
-        }),
-        emergency_cancel: sts.enumStruct({
-            refIndex: sts.number(),
-        }),
-        enact_proposal: sts.enumStruct({
-            proposalHash: H256,
-            index: sts.number(),
-        }),
-        external_propose: sts.enumStruct({
-            proposalHash: H256,
-        }),
-        external_propose_default: sts.enumStruct({
-            proposalHash: H256,
-        }),
-        external_propose_majority: sts.enumStruct({
-            proposalHash: H256,
-        }),
-        fast_track: sts.enumStruct({
-            proposalHash: H256,
-            votingPeriod: sts.number(),
-            delay: sts.number(),
-        }),
-        note_imminent_preimage: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_imminent_preimage_operational: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_preimage: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        note_preimage_operational: sts.enumStruct({
-            encodedProposal: sts.bytes(),
-        }),
-        propose: sts.enumStruct({
-            proposalHash: H256,
-            value: sts.bigint(),
-        }),
-        reap_preimage: sts.enumStruct({
-            proposalHash: H256,
-            proposalLenUpperBound: sts.number(),
-        }),
-        remove_other_vote: sts.enumStruct({
-            target: AccountId32,
-            index: sts.number(),
-        }),
-        remove_vote: sts.enumStruct({
-            index: sts.number(),
-        }),
-        second: sts.enumStruct({
-            proposal: sts.number(),
-            secondsUpperBound: sts.number(),
-        }),
-        undelegate: sts.unit(),
-        unlock: sts.enumStruct({
-            target: AccountId32,
-        }),
-        veto_external: sts.enumStruct({
-            proposalHash: H256,
-        }),
-        vote: sts.enumStruct({
-            refIndex: sts.number(),
-            vote: AccountVote,
-        }),
-    }
-})
-
-export const AccountVote: sts.Type<AccountVote> = sts.closedEnum(() => {
-    return  {
-        Split: sts.enumStruct({
-            aye: sts.bigint(),
-            nay: sts.bigint(),
-        }),
-        Standard: sts.enumStruct({
-            vote: Vote,
-            balance: sts.bigint(),
-        }),
-    }
-})
-
-export const Vote = sts.number()
-
-export const Conviction: sts.Type<Conviction> = sts.closedEnum(() => {
-    return  {
-        Locked1x: sts.unit(),
-        Locked2x: sts.unit(),
-        Locked3x: sts.unit(),
-        Locked4x: sts.unit(),
-        Locked5x: sts.unit(),
-        Locked6x: sts.unit(),
-        None: sts.unit(),
-    }
-})
-
-/**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
 export const DatalogCall: sts.Type<DatalogCall> = sts.closedEnum(() => {
     return  {
         erase: sts.unit(),
@@ -3699,19 +2805,19 @@ export const BalancesCall: sts.Type<BalancesCall> = sts.closedEnum(() => {
     }
 })
 
-export const H256 = sts.bytes()
-
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {
         Arithmetic: ArithmeticError,
         BadOrigin: sts.unit(),
         CannotLookup: sts.unit(),
         ConsumerRemaining: sts.unit(),
-        Module: ModuleError,
+        Module: sts.enumStruct({
+            index: sts.number(),
+            error: sts.number(),
+        }),
         NoProviders: sts.unit(),
         Other: sts.unit(),
         Token: TokenError,
-        TooManyConsumers: sts.unit(),
     }
 })
 
@@ -3757,18 +2863,6 @@ export interface TokenError_WouldDie {
     __kind: 'WouldDie'
 }
 
-export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
-    return  {
-        index: sts.number(),
-        error: sts.number(),
-    }
-})
-
-export interface ModuleError {
-    index: number
-    error: number
-}
-
 export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
     return  {
         DivisionByZero: sts.unit(),
@@ -3791,7 +2885,7 @@ export interface ArithmeticError_Underflow {
     __kind: 'Underflow'
 }
 
-export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token
 
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
@@ -3812,7 +2906,8 @@ export interface DispatchError_ConsumerRemaining {
 
 export interface DispatchError_Module {
     __kind: 'Module'
-    value: ModuleError
+    index: number
+    error: number
 }
 
 export interface DispatchError_NoProviders {
@@ -3828,8 +2923,6 @@ export interface DispatchError_Token {
     value: TokenError
 }
 
-export interface DispatchError_TooManyConsumers {
-    __kind: 'TooManyConsumers'
-}
+export const H256 = sts.bytes()
 
 export const AccountId32 = sts.bytes()
