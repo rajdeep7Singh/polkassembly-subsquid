@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v1 from '../v1'
 import * as v7 from '../v7'
+import * as v15 from '../v15'
 
 export const proposed =  {
     name: 'TechnicalCommittee.Proposed',
@@ -83,6 +84,16 @@ export const executed =  {
         sts.struct({
             proposalHash: v7.H256,
             result: sts.result(() => sts.unit(), () => v7.DispatchError),
+        })
+    ),
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    v15: new EventType(
+        'TechnicalCommittee.Executed',
+        sts.struct({
+            proposalHash: v15.H256,
+            result: sts.result(() => sts.unit(), () => v15.DispatchError),
         })
     ),
 }
