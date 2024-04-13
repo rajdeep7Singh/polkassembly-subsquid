@@ -2,14 +2,14 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'rococo',
+        name: 'westend',
         prefix: 42,
     },
     dataSource: {
-        archive: 'https://v2.archive.subsquid.io/network/rococo',
-        chain: 'wss://rococo-rpc.polkadot.io',
+        archive: 'https://v2.archive.subsquid.io/network/westend',
+        chain: 'wss://westend-rpc.polkadot.io',
     },
-    typesBundle: 'rococo',
+    typesBundle: 'westend',
     batchSize: 500,
     blockRange: {
         from: 0,

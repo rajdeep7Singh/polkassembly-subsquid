@@ -1,38 +1,38 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type Type_517 = Type_517_Approved | Type_517_Cancelled | Type_517_Killed | Type_517_Ongoing | Type_517_Rejected | Type_517_TimedOut
+export type ReferendumInfo = ReferendumInfo_Approved | ReferendumInfo_Cancelled | ReferendumInfo_Killed | ReferendumInfo_Ongoing | ReferendumInfo_Rejected | ReferendumInfo_TimedOut
 
-export interface Type_517_Approved {
+export interface ReferendumInfo_Approved {
     __kind: 'Approved'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_517_Cancelled {
+export interface ReferendumInfo_Cancelled {
     __kind: 'Cancelled'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_517_Killed {
+export interface ReferendumInfo_Killed {
     __kind: 'Killed'
     value: number
 }
 
-export interface Type_517_Ongoing {
+export interface ReferendumInfo_Ongoing {
     __kind: 'Ongoing'
-    value: Type_518
+    value: ReferendumStatus
 }
 
-export interface Type_517_Rejected {
+export interface ReferendumInfo_Rejected {
     __kind: 'Rejected'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_517_TimedOut {
+export interface ReferendumInfo_TimedOut {
     __kind: 'TimedOut'
     value: [number, (Deposit | undefined), (Deposit | undefined)]
 }
 
-export interface Type_518 {
+export interface ReferendumStatus {
     track: number
     origin: OriginCaller
     proposal: Bounded
@@ -41,15 +41,15 @@ export interface Type_518 {
     submissionDeposit: Deposit
     decisionDeposit?: (Deposit | undefined)
     deciding?: (DecidingStatus | undefined)
-    tally: Type_353
+    tally: Tally
     inQueue: boolean
     alarm?: ([number, [number, number]] | undefined)
 }
 
-export interface Type_353 {
-    bareAyes: number
-    ayes: number
-    nays: number
+export interface Tally {
+    ayes: bigint
+    nays: bigint
+    support: bigint
 }
 
 export interface DecidingStatus {
@@ -98,7 +98,7 @@ export interface OriginCaller_Origins {
 
 export interface OriginCaller_ParachainsOrigin {
     __kind: 'ParachainsOrigin'
-    value: Type_132
+    value: Type_151
 }
 
 export interface OriginCaller_Void {
@@ -108,7 +108,7 @@ export interface OriginCaller_Void {
 
 export interface OriginCaller_XcmPallet {
     __kind: 'XcmPallet'
-    value: Type_134
+    value: Type_153
 }
 
 export interface OriginCaller_system {
@@ -133,14 +133,14 @@ export interface RawOrigin_Signed {
 
 export type AccountId32 = Bytes
 
-export type Type_134 = Type_134_Response | Type_134_Xcm
+export type Type_153 = Type_153_Response | Type_153_Xcm
 
-export interface Type_134_Response {
+export interface Type_153_Response {
     __kind: 'Response'
     value: V3MultiLocation
 }
 
-export interface Type_134_Xcm {
+export interface Type_153_Xcm {
     __kind: 'Xcm'
     value: V3MultiLocation
 }
@@ -377,9 +377,9 @@ export interface V3NetworkId_Wococo {
 
 export type Void = never
 
-export type Type_132 = Type_132_Parachain
+export type Type_151 = Type_151_Parachain
 
-export interface Type_132_Parachain {
+export interface Type_151_Parachain {
     __kind: 'Parachain'
     value: Id
 }
@@ -501,18 +501,18 @@ export interface Deposit {
     amount: bigint
 }
 
-export const Type_517: sts.Type<Type_517> = sts.closedEnum(() => {
+export const ReferendumInfo: sts.Type<ReferendumInfo> = sts.closedEnum(() => {
     return  {
         Approved: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         Cancelled: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         Killed: sts.number(),
-        Ongoing: Type_518,
+        Ongoing: ReferendumStatus,
         Rejected: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
         TimedOut: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
     }
 })
 
-export const Type_518: sts.Type<Type_518> = sts.struct(() => {
+export const ReferendumStatus: sts.Type<ReferendumStatus> = sts.struct(() => {
     return  {
         track: sts.number(),
         origin: OriginCaller,
@@ -522,17 +522,17 @@ export const Type_518: sts.Type<Type_518> = sts.struct(() => {
         submissionDeposit: Deposit,
         decisionDeposit: sts.option(() => Deposit),
         deciding: sts.option(() => DecidingStatus),
-        tally: Type_353,
+        tally: Tally,
         inQueue: sts.boolean(),
         alarm: sts.option(() => sts.tuple(() => [sts.number(), sts.tuple(() => [sts.number(), sts.number()])])),
     }
 })
 
-export const Type_353: sts.Type<Type_353> = sts.struct(() => {
+export const Tally: sts.Type<Tally> = sts.struct(() => {
     return  {
-        bareAyes: sts.number(),
-        ayes: sts.number(),
-        nays: sts.number(),
+        ayes: sts.bigint(),
+        nays: sts.bigint(),
+        support: sts.bigint(),
     }
 })
 
@@ -568,9 +568,9 @@ export const H256 = sts.bytes()
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
         Origins: Origin,
-        ParachainsOrigin: Type_132,
+        ParachainsOrigin: Type_151,
         Void: Void,
-        XcmPallet: Type_134,
+        XcmPallet: Type_153,
         system: RawOrigin,
     }
 })
@@ -585,7 +585,7 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
 
 export const AccountId32 = sts.bytes()
 
-export const Type_134: sts.Type<Type_134> = sts.closedEnum(() => {
+export const Type_153: sts.Type<Type_153> = sts.closedEnum(() => {
     return  {
         Response: V3MultiLocation,
         Xcm: V3MultiLocation,
@@ -705,7 +705,7 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
-export const Type_132: sts.Type<Type_132> = sts.closedEnum(() => {
+export const Type_151: sts.Type<Type_151> = sts.closedEnum(() => {
     return  {
         Parachain: Id,
     }
@@ -749,92 +749,5 @@ export const Deposit: sts.Type<Deposit> = sts.struct(() => {
     return  {
         who: AccountId32,
         amount: sts.bigint(),
-    }
-})
-
-export type ReferendumInfo = ReferendumInfo_Approved | ReferendumInfo_Cancelled | ReferendumInfo_Killed | ReferendumInfo_Ongoing | ReferendumInfo_Rejected | ReferendumInfo_TimedOut
-
-export interface ReferendumInfo_Approved {
-    __kind: 'Approved'
-    value: [number, (Deposit | undefined), (Deposit | undefined)]
-}
-
-export interface ReferendumInfo_Cancelled {
-    __kind: 'Cancelled'
-    value: [number, (Deposit | undefined), (Deposit | undefined)]
-}
-
-export interface ReferendumInfo_Killed {
-    __kind: 'Killed'
-    value: number
-}
-
-export interface ReferendumInfo_Ongoing {
-    __kind: 'Ongoing'
-    value: ReferendumStatus
-}
-
-export interface ReferendumInfo_Rejected {
-    __kind: 'Rejected'
-    value: [number, (Deposit | undefined), (Deposit | undefined)]
-}
-
-export interface ReferendumInfo_TimedOut {
-    __kind: 'TimedOut'
-    value: [number, (Deposit | undefined), (Deposit | undefined)]
-}
-
-export interface ReferendumStatus {
-    track: number
-    origin: OriginCaller
-    proposal: Bounded
-    enactment: DispatchTime
-    submitted: number
-    submissionDeposit: Deposit
-    decisionDeposit?: (Deposit | undefined)
-    deciding?: (DecidingStatus | undefined)
-    tally: Tally
-    inQueue: boolean
-    alarm?: ([number, [number, number]] | undefined)
-}
-
-export interface Tally {
-    ayes: bigint
-    nays: bigint
-    support: bigint
-}
-
-export const ReferendumInfo: sts.Type<ReferendumInfo> = sts.closedEnum(() => {
-    return  {
-        Approved: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
-        Cancelled: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
-        Killed: sts.number(),
-        Ongoing: ReferendumStatus,
-        Rejected: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
-        TimedOut: sts.tuple(() => [sts.number(), sts.option(() => Deposit), sts.option(() => Deposit)]),
-    }
-})
-
-export const ReferendumStatus: sts.Type<ReferendumStatus> = sts.struct(() => {
-    return  {
-        track: sts.number(),
-        origin: OriginCaller,
-        proposal: Bounded,
-        enactment: DispatchTime,
-        submitted: sts.number(),
-        submissionDeposit: Deposit,
-        decisionDeposit: sts.option(() => Deposit),
-        deciding: sts.option(() => DecidingStatus),
-        tally: Tally,
-        inQueue: sts.boolean(),
-        alarm: sts.option(() => sts.tuple(() => [sts.number(), sts.tuple(() => [sts.number(), sts.number()])])),
-    }
-})
-
-export const Tally: sts.Type<Tally> = sts.struct(() => {
-    return  {
-        ayes: sts.bigint(),
-        nays: sts.bigint(),
-        support: sts.bigint(),
     }
 })

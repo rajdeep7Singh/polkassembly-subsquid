@@ -6,31 +6,15 @@ export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
         BadOrigin: sts.unit(),
         CannotLookup: sts.unit(),
         ConsumerRemaining: sts.unit(),
-        Module: ModuleError,
+        Module: sts.enumStruct({
+            index: sts.number(),
+            error: sts.number(),
+        }),
         NoProviders: sts.unit(),
         Other: sts.unit(),
         Token: TokenError,
-        TooManyConsumers: sts.unit(),
-        Transactional: TransactionalError,
     }
 })
-
-export const TransactionalError: sts.Type<TransactionalError> = sts.closedEnum(() => {
-    return  {
-        LimitReached: sts.unit(),
-        NoLayer: sts.unit(),
-    }
-})
-
-export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
-
-export interface TransactionalError_LimitReached {
-    __kind: 'LimitReached'
-}
-
-export interface TransactionalError_NoLayer {
-    __kind: 'NoLayer'
-}
 
 export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
     return  {
@@ -74,18 +58,6 @@ export interface TokenError_WouldDie {
     __kind: 'WouldDie'
 }
 
-export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
-    return  {
-        index: sts.number(),
-        error: sts.bytes(),
-    }
-})
-
-export interface ModuleError {
-    index: number
-    error: Bytes
-}
-
 export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
     return  {
         DivisionByZero: sts.unit(),
@@ -108,7 +80,7 @@ export interface ArithmeticError_Underflow {
     __kind: 'Underflow'
 }
 
-export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers | DispatchError_Transactional
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token
 
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
@@ -129,7 +101,8 @@ export interface DispatchError_ConsumerRemaining {
 
 export interface DispatchError_Module {
     __kind: 'Module'
-    value: ModuleError
+    index: number
+    error: number
 }
 
 export interface DispatchError_NoProviders {
@@ -143,13 +116,4 @@ export interface DispatchError_Other {
 export interface DispatchError_Token {
     __kind: 'Token'
     value: TokenError
-}
-
-export interface DispatchError_TooManyConsumers {
-    __kind: 'TooManyConsumers'
-}
-
-export interface DispatchError_Transactional {
-    __kind: 'Transactional'
-    value: TransactionalError
 }

@@ -1,6 +1,7 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://v2.archive.subsquid.io/metadata/rococo",
+  "specVersions": "https://v2.archive.subsquid.io/metadata/westend",
+  "typesBundle": "./westend.json",
   "pallets": {
     "Democracy": {
       "events": [

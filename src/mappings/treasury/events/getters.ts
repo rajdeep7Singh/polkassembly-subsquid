@@ -6,8 +6,8 @@ interface ProposedData {
 }
 
 export function getProposedData(itemEvent: Event): ProposedData {
-    if (proposed.v9300.is(itemEvent)) {
-        const { proposalIndex: index } = proposed.v9300.decode(itemEvent)
+    if (proposed.v103000.is(itemEvent)) {
+        const { proposalIndex: index } = proposed.v103000.decode(itemEvent)
         return {
             index,
         }
@@ -21,8 +21,8 @@ interface RejectedData {
 }
 
 export function getRejectedData(itemEvent: Event): RejectedData {
-    if (rejected.v9300.is(itemEvent)) {
-        const { proposalIndex: index } = rejected.v9300.decode(itemEvent)
+    if (rejected.v103000.is(itemEvent)) {
+        const { proposalIndex: index } = rejected.v103000.decode(itemEvent)
         return {
             index,
         }
@@ -36,8 +36,8 @@ interface AwarderData {
 }
 
 export function getAwarderData(itemEvent: Event): AwarderData {
-    if (awarded.v9300.is(itemEvent)) {
-        const { proposalIndex: index } = awarded.v9300.decode(itemEvent)
+    if (awarded.v103000.is(itemEvent)) {
+        const { proposalIndex: index } = awarded.v103000.decode(itemEvent)
         return {
             index,
         }
@@ -54,8 +54,8 @@ interface SpendApprovedData {
 }
 
 export function getSpendApprovedData(itemEvent: Event): SpendApprovedData {
-    if (spendApproved.v9300.is(itemEvent)) {
-        const { proposalIndex, amount, beneficiary}= spendApproved.v9300.decode(itemEvent)
+    if (spendApproved.v103000.is(itemEvent)) {
+        const { proposalIndex, amount, beneficiary}= spendApproved.v103000.decode(itemEvent)
         return {
             proposalIndex,
             amount,

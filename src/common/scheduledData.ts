@@ -10,8 +10,32 @@ interface ScheduledData {
 }
 
 export function getDispatchedEventData(itemEvent: Event): ScheduledData | undefined {
-    if (dispatched.v9300.is(itemEvent)) {
-        const { task, id, result } = dispatched.v9300.decode(itemEvent)
+    if (dispatched.v1.is(itemEvent)) {
+        const [task, id, result] = dispatched.v1.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    }else if (dispatched.v9110.is(itemEvent)) {
+        const [task, id, result] = dispatched.v9110.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    }else if (dispatched.v9160.is(itemEvent)) {
+        const { task, id, result } = dispatched.v9160.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    }else if (dispatched.v9170.is(itemEvent)) {
+        const { task, id, result } = dispatched.v9170.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    } else if (dispatched.v9190.is(itemEvent)) {
+        const { task, id, result } = dispatched.v9190.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind

@@ -1,12 +1,12 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
-import * as v9300 from '../v9300'
+import * as v103000 from '../v103000'
 
 export const proposed =  {
     name: 'Treasury.Proposed',
     /**
      * New proposal.
      */
-    v9300: new EventType(
+    v103000: new EventType(
         'Treasury.Proposed',
         sts.struct({
             proposalIndex: sts.number(),
@@ -19,12 +19,12 @@ export const awarded =  {
     /**
      * Some funds have been allocated.
      */
-    v9300: new EventType(
+    v103000: new EventType(
         'Treasury.Awarded',
         sts.struct({
             proposalIndex: sts.number(),
             award: sts.bigint(),
-            account: v9300.AccountId32,
+            account: v103000.AccountId32,
         })
     ),
 }
@@ -34,7 +34,7 @@ export const rejected =  {
     /**
      * A proposal was rejected; funds were slashed.
      */
-    v9300: new EventType(
+    v103000: new EventType(
         'Treasury.Rejected',
         sts.struct({
             proposalIndex: sts.number(),
@@ -48,12 +48,12 @@ export const spendApproved =  {
     /**
      * A new spend proposal has been approved.
      */
-    v9300: new EventType(
+    v103000: new EventType(
         'Treasury.SpendApproved',
         sts.struct({
             proposalIndex: sts.number(),
             amount: sts.bigint(),
-            beneficiary: v9300.AccountId32,
+            beneficiary: v103000.AccountId32,
         })
     ),
 }

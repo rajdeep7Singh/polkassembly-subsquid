@@ -1,5 +1,5 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v9300 from '../v9300'
+import * as v9160 from '../v9160'
 import * as v9310 from '../v9310'
 import * as v102000 from '../v102000'
 
@@ -7,7 +7,7 @@ export const statusFor =  {
     /**
      *  The request status of a given hash.
      */
-    v9300: new StorageType('Preimage.StatusFor', 'Optional', [v9300.H256], v9300.RequestStatus) as StatusForV9300,
+    v9160: new StorageType('Preimage.StatusFor', 'Optional', [v9160.H256], v9160.RequestStatus) as StatusForV9160,
     /**
      *  The request status of a given hash.
      */
@@ -17,18 +17,18 @@ export const statusFor =  {
 /**
  *  The request status of a given hash.
  */
-export interface StatusForV9300  {
+export interface StatusForV9160  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9300.H256): Promise<(v9300.RequestStatus | undefined)>
-    getMany(block: Block, keys: v9300.H256[]): Promise<(v9300.RequestStatus | undefined)[]>
-    getKeys(block: Block): Promise<v9300.H256[]>
-    getKeys(block: Block, key: v9300.H256): Promise<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<v9300.H256[]>
-    getPairs(block: Block): Promise<[k: v9300.H256, v: (v9300.RequestStatus | undefined)][]>
-    getPairs(block: Block, key: v9300.H256): Promise<[k: v9300.H256, v: (v9300.RequestStatus | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9300.H256, v: (v9300.RequestStatus | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<[k: v9300.H256, v: (v9300.RequestStatus | undefined)][]>
+    get(block: Block, key: v9160.H256): Promise<(v9160.RequestStatus | undefined)>
+    getMany(block: Block, keys: v9160.H256[]): Promise<(v9160.RequestStatus | undefined)[]>
+    getKeys(block: Block): Promise<v9160.H256[]>
+    getKeys(block: Block, key: v9160.H256): Promise<v9160.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9160.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v9160.H256): AsyncIterable<v9160.H256[]>
+    getPairs(block: Block): Promise<[k: v9160.H256, v: (v9160.RequestStatus | undefined)][]>
+    getPairs(block: Block, key: v9160.H256): Promise<[k: v9160.H256, v: (v9160.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9160.H256, v: (v9160.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v9160.H256): AsyncIterable<[k: v9160.H256, v: (v9160.RequestStatus | undefined)][]>
 }
 
 /**
@@ -52,25 +52,25 @@ export const preimageFor =  {
     /**
      *  The preimages stored by this pallet.
      */
-    v9300: new StorageType('Preimage.PreimageFor', 'Optional', [v9300.H256], v9300.BoundedVec) as PreimageForV9300,
+    v9160: new StorageType('Preimage.PreimageFor', 'Optional', [v9160.H256], v9160.BoundedVec) as PreimageForV9160,
     v9310: new StorageType('Preimage.PreimageFor', 'Optional', [sts.tuple(() => [v9310.H256, sts.number()])], sts.bytes()) as PreimageForV9310,
 }
 
 /**
  *  The preimages stored by this pallet.
  */
-export interface PreimageForV9300  {
+export interface PreimageForV9160  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v9300.H256): Promise<(v9300.BoundedVec | undefined)>
-    getMany(block: Block, keys: v9300.H256[]): Promise<(v9300.BoundedVec | undefined)[]>
-    getKeys(block: Block): Promise<v9300.H256[]>
-    getKeys(block: Block, key: v9300.H256): Promise<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9300.H256[]>
-    getKeysPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<v9300.H256[]>
-    getPairs(block: Block): Promise<[k: v9300.H256, v: (v9300.BoundedVec | undefined)][]>
-    getPairs(block: Block, key: v9300.H256): Promise<[k: v9300.H256, v: (v9300.BoundedVec | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9300.H256, v: (v9300.BoundedVec | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v9300.H256): AsyncIterable<[k: v9300.H256, v: (v9300.BoundedVec | undefined)][]>
+    get(block: Block, key: v9160.H256): Promise<(v9160.BoundedVec | undefined)>
+    getMany(block: Block, keys: v9160.H256[]): Promise<(v9160.BoundedVec | undefined)[]>
+    getKeys(block: Block): Promise<v9160.H256[]>
+    getKeys(block: Block, key: v9160.H256): Promise<v9160.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v9160.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v9160.H256): AsyncIterable<v9160.H256[]>
+    getPairs(block: Block): Promise<[k: v9160.H256, v: (v9160.BoundedVec | undefined)][]>
+    getPairs(block: Block, key: v9160.H256): Promise<[k: v9160.H256, v: (v9160.BoundedVec | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v9160.H256, v: (v9160.BoundedVec | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v9160.H256): AsyncIterable<[k: v9160.H256, v: (v9160.BoundedVec | undefined)][]>
 }
 
 export interface PreimageForV9310  {

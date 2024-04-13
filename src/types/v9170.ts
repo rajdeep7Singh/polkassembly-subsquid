@@ -1,79 +1,32 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type AccountId32 = Bytes
-
-export interface AccountData {
-    free: bigint
-    reserved: bigint
-    frozen: bigint
-    flags: ExtraFlags
-}
-
-export type ExtraFlags = bigint
-
-export const AccountData: sts.Type<AccountData> = sts.struct(() => {
-    return  {
-        free: sts.bigint(),
-        reserved: sts.bigint(),
-        frozen: sts.bigint(),
-        flags: ExtraFlags,
-    }
-})
-
-export const ExtraFlags = sts.bigint()
-
-export const AccountId32 = sts.bytes()
-
 export const DispatchError: sts.Type<DispatchError> = sts.closedEnum(() => {
     return  {
         Arithmetic: ArithmeticError,
         BadOrigin: sts.unit(),
         CannotLookup: sts.unit(),
         ConsumerRemaining: sts.unit(),
-        Corruption: sts.unit(),
-        Exhausted: sts.unit(),
         Module: ModuleError,
         NoProviders: sts.unit(),
         Other: sts.unit(),
         Token: TokenError,
         TooManyConsumers: sts.unit(),
-        Transactional: TransactionalError,
-        Unavailable: sts.unit(),
     }
 })
-
-export const TransactionalError: sts.Type<TransactionalError> = sts.closedEnum(() => {
-    return  {
-        LimitReached: sts.unit(),
-        NoLayer: sts.unit(),
-    }
-})
-
-export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
-
-export interface TransactionalError_LimitReached {
-    __kind: 'LimitReached'
-}
-
-export interface TransactionalError_NoLayer {
-    __kind: 'NoLayer'
-}
 
 export const TokenError: sts.Type<TokenError> = sts.closedEnum(() => {
     return  {
         BelowMinimum: sts.unit(),
         CannotCreate: sts.unit(),
-        CannotCreateHold: sts.unit(),
         Frozen: sts.unit(),
-        FundsUnavailable: sts.unit(),
-        NotExpendable: sts.unit(),
-        OnlyProvider: sts.unit(),
+        NoFunds: sts.unit(),
         UnknownAsset: sts.unit(),
         Unsupported: sts.unit(),
+        WouldDie: sts.unit(),
     }
 })
 
-export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_CannotCreateHold | TokenError_Frozen | TokenError_FundsUnavailable | TokenError_NotExpendable | TokenError_OnlyProvider | TokenError_UnknownAsset | TokenError_Unsupported
+export type TokenError = TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_Frozen | TokenError_NoFunds | TokenError_UnknownAsset | TokenError_Unsupported | TokenError_WouldDie
 
 export interface TokenError_BelowMinimum {
     __kind: 'BelowMinimum'
@@ -83,24 +36,12 @@ export interface TokenError_CannotCreate {
     __kind: 'CannotCreate'
 }
 
-export interface TokenError_CannotCreateHold {
-    __kind: 'CannotCreateHold'
-}
-
 export interface TokenError_Frozen {
     __kind: 'Frozen'
 }
 
-export interface TokenError_FundsUnavailable {
-    __kind: 'FundsUnavailable'
-}
-
-export interface TokenError_NotExpendable {
-    __kind: 'NotExpendable'
-}
-
-export interface TokenError_OnlyProvider {
-    __kind: 'OnlyProvider'
+export interface TokenError_NoFunds {
+    __kind: 'NoFunds'
 }
 
 export interface TokenError_UnknownAsset {
@@ -111,16 +52,20 @@ export interface TokenError_Unsupported {
     __kind: 'Unsupported'
 }
 
+export interface TokenError_WouldDie {
+    __kind: 'WouldDie'
+}
+
 export const ModuleError: sts.Type<ModuleError> = sts.struct(() => {
     return  {
         index: sts.number(),
-        error: sts.bytes(),
+        error: sts.number(),
     }
 })
 
 export interface ModuleError {
     index: number
-    error: Bytes
+    error: number
 }
 
 export const ArithmeticError: sts.Type<ArithmeticError> = sts.closedEnum(() => {
@@ -145,7 +90,7 @@ export interface ArithmeticError_Underflow {
     __kind: 'Underflow'
 }
 
-export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Corruption | DispatchError_Exhausted | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers | DispatchError_Transactional | DispatchError_Unavailable
+export type DispatchError = DispatchError_Arithmetic | DispatchError_BadOrigin | DispatchError_CannotLookup | DispatchError_ConsumerRemaining | DispatchError_Module | DispatchError_NoProviders | DispatchError_Other | DispatchError_Token | DispatchError_TooManyConsumers
 
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
@@ -162,14 +107,6 @@ export interface DispatchError_CannotLookup {
 
 export interface DispatchError_ConsumerRemaining {
     __kind: 'ConsumerRemaining'
-}
-
-export interface DispatchError_Corruption {
-    __kind: 'Corruption'
-}
-
-export interface DispatchError_Exhausted {
-    __kind: 'Exhausted'
 }
 
 export interface DispatchError_Module {
@@ -192,13 +129,4 @@ export interface DispatchError_Token {
 
 export interface DispatchError_TooManyConsumers {
     __kind: 'TooManyConsumers'
-}
-
-export interface DispatchError_Transactional {
-    __kind: 'Transactional'
-    value: TransactionalError
-}
-
-export interface DispatchError_Unavailable {
-    __kind: 'Unavailable'
 }
