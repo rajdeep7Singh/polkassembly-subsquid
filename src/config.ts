@@ -6,7 +6,7 @@ const config: any = {
         prefix: 42,
     },
     dataSource: {
-        archive: lookupArchive("kusama", {release: "FireSquid"}),
+        archive: 'https://v2.archive.subsquid.io/network/rococo',
         chain: 'wss://rococo-rpc.polkadot.io',
     },
     typesBundle: 'rococo',

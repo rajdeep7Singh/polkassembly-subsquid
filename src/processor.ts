@@ -10,7 +10,7 @@ import { createPreimageV2 } from './mappings/utils/proposals'
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://rococo-rpc.polkadot.io',
-        archive: lookupArchive('rococo',  {type: 'Substrate', release: 'ArrowSquid' }),
+        archive: 'https://v2.archive.subsquid.io/network/rococo',
     })
     .setBlockRange({ from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
