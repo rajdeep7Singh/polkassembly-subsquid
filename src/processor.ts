@@ -1,14 +1,17 @@
-import { SubstrateBatchProcessor } from '@subsquid/substrate-processor'
+import { BlockHeader, DataHandlerContext, SubstrateBatchProcessor, SubstrateBatchProcessorFields, Event as _Event, Call as _Call, Extrinsic as _Extrinsic } from '@subsquid/substrate-processor'
+import { lookupArchive } from '@subsquid/archive-registry'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
+import assert from 'assert'
 import * as modules from './mappings'
 
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         chain: 'wss://mainnet-rpc.polymesh.network',
-        archive: 'https://polymesh.archive.subsquid.io/graphql',
+        archive: 'https://v2.archive.subsquid.io/network/polymesh',
     })
     .setBlockRange({from: 0})
+    .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .setTypesBundle({
         "types": {
           "DispatchErrorModuleU8": {
@@ -10959,45 +10962,48 @@ const processor = new SubstrateBatchProcessor()
           "StoreCallMetadata": "Null"
         }
       })
-    .addEvent('Pips.ProposalCreated', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('PolymeshCommittee.Proposed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('PolymeshCommittee.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('PolymeshCommittee.VoteRetracted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Pips.ProposalStateUpdated', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Pips.PipSkipped', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Pips.PipClosed', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('Pips.Voted', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
-    .addEvent('PolymeshCommittee.FinalVotes', { data: { event: { args: true, extrinsic: { hash: true, } }, } } as const)
+    .addEvent({
+      name: [ 'Pips.ProposalCreated', 'PolymeshCommittee.Proposed', 'PolymeshCommittee.Voted', 'PolymeshCommittee.VoteRetracted', 'Pips.ProposalStateUpdated',  
+      'Pips.PipSkipped', 'Pips.PipClosed', 'Pips.Voted', 'PolymeshCommittee.FinalVotes'
+  ],
+      call: true,
+      extrinsic: true
+  })
 
 processor.run(new TypeormDatabase(), async (ctx: any) => {
   for (let block of ctx.blocks) {
-      for (let item of block.items) {
-          if (item.kind === 'event'){
-              if (item.name == 'Pips.ProposalCreated'){
-                  await modules.pip.events.handleProposed(ctx, item, block.header)
-              }
-              // if (item.name == 'PolymeshCommittee.Proposed'){
-              //   await modules.pip.events.handlePolymeshCommitteeProposed(ctx, item, block.header)
-              // }
-              if (item.name == 'Pips.ProposalStateUpdated'){
-                  await modules.pip.events.handleStatusChange(ctx, item, block.header)
-              }
-              if (item.name == 'Pips.PipSkipped'){
-                  await modules.pip.events.handlePipSkipped(ctx, item, block.header)
-              }
-              if (item.name == 'PolymeshCommittee.VoteRetracted'){
-                  await modules.pip.events.handleVoteRetracted(ctx, item, block.header)
-              }                
-              if (item.name == 'PolymeshCommittee.Voted'){
-                  await modules.pip.events.handleVote(ctx, item, block.header)
-              }      
-              if (item.name == 'Pips.Voted'){
-                await modules.pip.events.handleCommunityVote(ctx, item, block.header)
-              }
-              if (item.name == 'PolymeshCommittee.FinalVotes'){
-                await modules.pip.events.handlePolymeshCommitteefinalVotesData(ctx, item, block.header)
-              }             
-          }
+      for (let item of block.events) {
+        if (item.name == 'Pips.ProposalCreated'){
+            await modules.pip.events.handleProposed(ctx, item, block.header)
+        }
+        // if (item.name == 'PolymeshCommittee.Proposed'){
+        //   await modules.pip.events.handlePolymeshCommitteeProposed(ctx, item, block.header)
+        // }
+        if (item.name == 'Pips.ProposalStateUpdated'){
+            await modules.pip.events.handleStatusChange(ctx, item, block.header)
+        }
+        if (item.name == 'Pips.PipSkipped'){
+            await modules.pip.events.handlePipSkipped(ctx, item, block.header)
+        }
+        if (item.name == 'PolymeshCommittee.VoteRetracted'){
+            await modules.pip.events.handleVoteRetracted(ctx, item, block.header)
+        }                
+        if (item.name == 'PolymeshCommittee.Voted'){
+            await modules.pip.events.handleVote(ctx, item, block.header)
+        }      
+        if (item.name == 'Pips.Voted'){
+        await modules.pip.events.handleCommunityVote(ctx, item, block.header)
+        }
+        if (item.name == 'PolymeshCommittee.FinalVotes'){
+        await modules.pip.events.handlePolymeshCommitteefinalVotesData(ctx, item, block.header)
+        }
       }
   }
 });
+
+export type Fields = SubstrateBatchProcessorFields<typeof processor>
+export type Block = BlockHeader<Fields>
+export type Event = _Event<Fields>
+export type Call = _Call<Fields>
+export type Extrinsic = _Extrinsic<Fields>
+export type ProcessorContext<Store> = DataHandlerContext<Store, Fields>

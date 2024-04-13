@@ -1,8 +1,6 @@
 import { FindOneOptions, Store } from '@subsquid/typeorm-store'
 import { toJSON } from '@subsquid/util-internal-json'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
 import { MissingProposalRecordWarn } from '../../common/errors'
-import { parseProposalCall, ss58codec } from '../../common/tools'
 import fetch from 'node-fetch'
 import { NOTIFICATION_URL } from '../../consts/consts'
 // import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
@@ -29,6 +27,7 @@ import { bigint } from '../../model/generated/marshal'
 import { storage } from '../../storage'
 import { Chain } from '@subsquid/substrate-processor/lib/chain'
 import config from '../../config'
+import { ProcessorContext } from '../../processor'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -39,8 +38,8 @@ type ProposalUpdateData = Partial<
 
 
 export async function updateProposalStatus(
-    ctx: BatchContext<Store, unknown>,
-    header: SubstrateBlock,
+    ctx: ProcessorContext<Store>,
+    header: any,
     index: number,
     options: {
         status: ProposalStatus
@@ -77,7 +76,7 @@ export async function updateProposalStatus(
     await ctx.store.insert(
         new StatusHistory({
             id: randomUUID(),
-            block: proposal.updatedAtBlock,
+            block: proposal.updatedAtBlock ||  undefined,
             timestamp: proposal.updatedAt,
             status: proposal.status,
             proposal,
@@ -87,7 +86,7 @@ export async function updateProposalStatus(
 }
 
 // async function getOrCreateProposalGroup(
-//     ctx: BatchContext<Store, unknown>,
+//     ctx: ProcessorContext<Store>,
 //     index: number,
 //     type: ProposalType,
 //     parentId: number,
@@ -230,8 +229,8 @@ async function getProposalId(store: Store, type: ProposalType) {
 // // }
 
 // export async function createDemocracyProposal(
-//     ctx: BatchContext<Store, unknown>,
-//     header: SubstrateBlock,
+//     ctx: ProcessorContext<Store>,
+//     header: any,
 //     data: DemocracyProposalData
 // ): Promise<Proposal> {
 //     const { index, hash, proposer, deposit, status } = data
@@ -281,7 +280,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return proposal
 // }
 
-// export async function createReferendum( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ReferendumData): Promise<Proposal> {
+// export async function createReferendum( ctx: ProcessorContext<Store>, header: any, data: ReferendumData): Promise<Proposal> {
 //     const { index, threshold, hash, status, end, delay } = data
 
 //     const type = ProposalType.Referendum
@@ -388,8 +387,8 @@ async function getProposalId(store: Store, type: ProposalType) {
 // }
 
 // export async function createCoucilMotion(
-//     ctx: BatchContext<Store, unknown>,
-//     header: SubstrateBlock,
+//     ctx: ProcessorContext<Store>,
+//     header: any,
 //     data: CouncilMotionData,
 //     type: ProposalType.CouncilMotion | ProposalType.TechCommitteeProposal = ProposalType.CouncilMotion
 // ): Promise<Proposal> {
@@ -541,14 +540,14 @@ async function getProposalId(store: Store, type: ProposalType) {
 // }
 
 // export async function createTechCommitteeMotion(
-//     ctx: BatchContext<Store, unknown>,
-//     header: SubstrateBlock,
+//     ctx: ProcessorContext<Store>,
+//     header: any,
 //     data: TechCommitteeMotionData
 // ): Promise<Proposal> {
 //     return await createCoucilMotion(ctx, header, data, ProposalType.TechCommitteeProposal)
 // }
 
-// export async function createTip( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TipData): Promise<Proposal> {
+// export async function createTip( ctx: ProcessorContext<Store>, header: any, data: TipData): Promise<Proposal> {
 //     const { status, hash, proposer, payee, deposit, reason } = data
 
 //     const type = ProposalType.Tip
@@ -586,7 +585,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return proposal
 // }
 
-// export async function createBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: BountyData): Promise<Proposal> {
+// export async function createBounty( ctx: ProcessorContext<Store>, header: any, data: BountyData): Promise<Proposal> {
 //     const { status, index, proposer, deposit, reward, curatorDeposit, description, fee } = data
 
 //     const type = ProposalType.Bounty
@@ -628,7 +627,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return proposal
 // }
 
-// export async function createChildBounty( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: ChildBountyData): Promise<Proposal> {
+// export async function createChildBounty( ctx: ProcessorContext<Store>, header: any, data: ChildBountyData): Promise<Proposal> {
 //     const { status, index, parentBountyIndex, curatorDeposit, reward, fee, description } = data
 
 //     const type = ProposalType.ChildBounty
@@ -669,7 +668,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return proposal
 // }
 
-// export async function createTreasury( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: TreasuryData): Promise<Proposal> {
+// export async function createTreasury( ctx: ProcessorContext<Store>, header: any, data: TreasuryData): Promise<Proposal> {
 //     const { status, index, proposer, deposit, reward, payee } = data
 
 //     const type = ProposalType.TreasuryProposal
@@ -734,7 +733,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return proposal
 // }
 
-// export async function createPreimage( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+// export async function createPreimage( ctx: ProcessorContext<Store>, header: any, data: PreimageData): Promise<Preimage> {
 //     const { status, hash, proposer, call, section, method } = data
 
 //     // const type = ProposalType.Preimage
@@ -768,7 +767,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return preimage
 // }
 
-// export async function createPreimageV2( ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PreimageData): Promise<Preimage> {
+// export async function createPreimageV2( ctx: ProcessorContext<Store>, header: any, data: PreimageData): Promise<Preimage> {
 //     const { status, hash, proposer, call, section, method, deposit, length } = data
 
 //     // const type = ProposalType.Preimage
@@ -804,7 +803,7 @@ async function getProposalId(store: Store, type: ProposalType) {
 //     return preimage
 // }
 
-export async function createPip(ctx: BatchContext<Store, unknown>, header: SubstrateBlock, data: PipData, type: ProposalType): Promise<Proposal> {
+export async function createPip(ctx: ProcessorContext<Store>, header: any, data: PipData, type: ProposalType): Promise<Proposal> {
 
     const { status, index, proposer, hash, did, url, description, deposit, expiryTime, proposedCall } = data
 
@@ -847,7 +846,7 @@ export async function createPip(ctx: BatchContext<Store, unknown>, header: Subst
     return proposal
 }
 
-export async function getDecodedCall(ctx: BatchContext<Store, unknown>, pipId: number, header: SubstrateBlock) {
+export async function getDecodedCall(ctx: ProcessorContext<Store>, pipId: number, header: any, item: any) {
     const storageData = await storage.pips.getPipfromStorage(ctx, pipId, header)
 
     if (!storageData) {
@@ -865,20 +864,23 @@ export async function getDecodedCall(ctx: BatchContext<Store, unknown>, pipId: n
           args: Record<string, unknown>
       }
     | undefined
-
+    
     if (proposedCall){
-        const { section, method, args, description } = parseProposalCall(ctx._chain as Chain, proposedCall)
+        // const { section, method, args, description } = parseProposalCall(ctx._chain as Chain, proposedCall)
+    //    const args = header._runtime.decodeCall(proposedCall);
 
+       const section = proposedCall.__kind as string
+       const method = proposedCall.value.__kind as string
+       const desc = (header._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
+   
+       const { __kind, ...argsValue } = proposedCall.value;
+   
         decodedCall = {
-            section,
-            method,
-            description,
-            args: args as Record<string, unknown>,
-        }
-
-        if(method == 'set_code'){
-            decodedCall.args.code = 'Large data please check on subscan.'
-        }
+           section,
+           method,
+           description: desc,
+           args: argsValue,
+       }
     }
     return decodedCall ? createProposedCall(decodedCall) : null
 }
@@ -903,7 +905,7 @@ export function createTally(data: TallyData): Tally {
 //     return new SubmissionDeposit(toJSON(data))
 // }
 
-export async function sendNotification(ctx: BatchContext<Store, unknown>, proposal: Proposal, trigger: String) {
+export async function sendNotification(ctx: ProcessorContext<Store>, proposal: Proposal, trigger: String) {
     const { hash, type, index, proposer, status } = proposal
     let statusName = null
 

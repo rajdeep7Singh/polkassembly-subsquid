@@ -1,40 +1,42 @@
 import { UnknownVersionError } from '../../../common/errors'
 import {
-    PipsProposalCreatedEvent,
-    PipsPipSkippedEvent,
-    PipsProposalStateUpdatedEvent,
-    PolymeshCommitteeVotedEvent,
-    PolymeshCommitteeVoteRetractedEvent,
-    PipsVotedEvent,
-    PolymeshCommitteeFinalVotesEvent,
-    PolymeshCommitteeProposedEvent
-} from '../../../types/events'
-import { Event } from '../../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { Store } from '@subsquid/typeorm-store'
+    voted,
+    voteRetracted,
+    finalVotes,
+    proposed
+} from '../../../types/polymesh-committee/events'
+import {
+    proposalCreated,
+    pipSkipped,
+    proposalStateUpdated,
+    voted as pipsVoted,
+} from '../../../types/pips/events'
+import { Event } from '../../../processor'
+import { ss58codec } from '../../../common/tools'
+import { decodeHex } from '@subsquid/substrate-processor'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
+import { polymeshCommittee } from '../../../types/events'
 
 interface PipCreatedData {
-    did: Uint8Array
+    did: string
     pipType: ProposalType
-    proposerAddress: Uint8Array | null
+    proposerAddress: string | null
     pipId: number
     deposit: bigint
-    url?: String | Uint8Array
-    description?: String | Uint8Array
+    url?: String
+    description?: String
     expiryTime: number | null
-    proposalData: Uint8Array
+    proposalData: string
 }
 
-export function getPipCreatedEvent(ctx: BatchContext<Store, unknown>, itemEvent: Event): PipCreatedData {
-    const event = new PipsProposalCreatedEvent(ctx, itemEvent)
+export function getPipCreatedEvent(itemEvent: Event): PipCreatedData {
     let pipType = null
     let proposerAddress = null
     let expiryTime = null
     let proposalData = null
 
-    if (event.isV3000) {
-        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = event.asV3000
+    if (proposalCreated.v3000.is(itemEvent)) {
+        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = proposalCreated.v3000.decode(itemEvent)
         proposalData = proposalDataValue.value
         if(maybeBlock.__kind == "Some"){
             expiryTime = maybeBlock.value
@@ -63,8 +65,8 @@ export function getPipCreatedEvent(ctx: BatchContext<Store, unknown>, itemEvent:
             proposalData,
 
         }
-    }else if(event.isV5000003){
-        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = event.asV5000003
+    }else if(proposalCreated.v5000003.is(itemEvent)){
+        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = proposalCreated.v5000003.decode(itemEvent)
         proposalData = proposalDataValue.value
         if(maybeBlock.__kind == "Some"){
             expiryTime = maybeBlock.value
@@ -95,7 +97,7 @@ export function getPipCreatedEvent(ctx: BatchContext<Store, unknown>, itemEvent:
         }
 
     } else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -104,10 +106,9 @@ interface statusChangedData {
     status: ProposalStatus
 }
 
-export function getStatusData(ctx: BatchContext<Store, unknown>, itemEvent: Event): statusChangedData {
-    const event = new PipsProposalStateUpdatedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, status] = event.asV3000
+export function getStatusData(itemEvent: Event): statusChangedData {
+    if (proposalStateUpdated.v3000.is(itemEvent)) {
+        const [identityId, pipId, status] = proposalStateUpdated.v3000.decode(itemEvent)
         let proposalStatus = ProposalStatus.Proposed
         switch (status.__kind){
             case 'Pending':
@@ -134,7 +135,7 @@ export function getStatusData(ctx: BatchContext<Store, unknown>, itemEvent: Even
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
@@ -142,33 +143,31 @@ interface skippedData {
     index: number
 }
 
-export function getPipSkippedData(ctx: BatchContext<Store, unknown>, itemEvent: Event): skippedData {
-    const event = new PipsPipSkippedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, newCount] = event.asV3000
+export function getPipSkippedData(itemEvent: Event): skippedData {
+    if (pipSkipped.v3000.is(itemEvent)) {
+        const [identityId, pipId, newCount] = pipSkipped.v3000.decode(itemEvent)
         return {
             index: pipId
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface voteData {
     index: number
-    did: Uint8Array
-    hash: Uint8Array
+    did: string
+    hash: string
     currentVote: boolean
     aye: number
     nay: number
     totalSeats: number
 }
 
-export function getVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event): voteData {
-    const event = new PolymeshCommitteeVotedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, hash, currentVote, aye, nay, totalSeats] = event.asV3000
+export function getVoteData(itemEvent: Event): voteData {
+    if (voted.v3000.is(itemEvent)) {
+        const [identityId, pipId, hash, currentVote, aye, nay, totalSeats] = voted.v3000.decode(itemEvent)
         return {
             index: pipId,
             did: identityId,
@@ -180,22 +179,21 @@ export function getVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event)
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface communityVoteData {
     index: number
-    did: Uint8Array
-    accountId: Uint8Array
+    did: string
+    accountId: string
     currentVote: boolean
     deposit: bigint
 }
 
-export function getCommunityVoteData(ctx: BatchContext<Store, unknown>, itemEvent: Event): communityVoteData {
-    const event = new PipsVotedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, accountId, pipId, currentVote, deposit] = event.asV3000
+export function getCommunityVoteData(itemEvent: Event): communityVoteData {
+    if (pipsVoted.v3000.is(itemEvent)) {
+        const [identityId, accountId, pipId, currentVote, deposit] = pipsVoted.v3000.decode(itemEvent)
         return {
             index: pipId,
             did: identityId,
@@ -205,21 +203,20 @@ export function getCommunityVoteData(ctx: BatchContext<Store, unknown>, itemEven
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface voteRetractedData {
     index: number
-    did: Uint8Array
-    hash: Uint8Array
+    did: string
+    hash: string
     currentVote: boolean
 }
 
-export function getVoteRetractedData (ctx: BatchContext<Store, unknown>, itemEvent: Event): voteRetractedData {
-    const event = new PolymeshCommitteeVoteRetractedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, hash, currentVote ] = event.asV3000
+export function getVoteRetractedData (itemEvent: Event): voteRetractedData {
+    if (voteRetracted.v3000.is(itemEvent)) {
+        const [identityId, pipId, hash, currentVote ] = voteRetracted.v3000.decode(itemEvent)
         return {
             index: pipId,
             did: identityId,
@@ -228,20 +225,19 @@ export function getVoteRetractedData (ctx: BatchContext<Store, unknown>, itemEve
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface polymeshCommitteeProposedData {
     index: number
-    identityId: Uint8Array
-    hash: Uint8Array
+    identityId: string
+    hash: string
 }
 
-export function getPolymeshCommitteeProposedEvent(ctx: BatchContext<Store, unknown>, itemEvent: Event): polymeshCommitteeProposedData {
-    const event = new PolymeshCommitteeProposedEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, hash] = event.asV3000
+export function getPolymeshCommitteeProposedEvent(itemEvent: Event): polymeshCommitteeProposedData {
+    if (proposed.v3000.is(itemEvent)) {
+        const [identityId, pipId, hash] = proposed.v3000.decode(itemEvent)
         return {
             index: pipId,
             identityId,
@@ -249,22 +245,21 @@ export function getPolymeshCommitteeProposedEvent(ctx: BatchContext<Store, unkno
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }
 
 interface polymeshCommitteeFinalVotesData {
     index: number
-    identityId: Uint8Array
-    hash: Uint8Array
-    ayes: Uint8Array[]
-    nays: Uint8Array[]
+    identityId: string
+    hash: string
+    ayes: string[]
+    nays: string[]
 }
 
-export function getPolymeshCommitteeFinalVotesDataEvent(ctx: BatchContext<Store, unknown>, itemEvent: Event): polymeshCommitteeFinalVotesData {
-    const event = new PolymeshCommitteeFinalVotesEvent(ctx, itemEvent)
-    if (event.isV3000) {
-        const [identityId, pipId, hash, ayes, nays] = event.asV3000
+export function getPolymeshCommitteeFinalVotesDataEvent(itemEvent: Event): polymeshCommitteeFinalVotesData {
+    if (finalVotes.v3000.is(itemEvent)) {
+        const [identityId, pipId, hash, ayes, nays] = finalVotes.v3000.decode(itemEvent)
         return {
             index: pipId,
             identityId,
@@ -274,6 +269,6 @@ export function getPolymeshCommitteeFinalVotesDataEvent(ctx: BatchContext<Store,
         }
     }
     else {
-        throw new UnknownVersionError(event.constructor.name)
+        throw new UnknownVersionError(itemEvent.name)
     }
 }

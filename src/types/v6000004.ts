@@ -32,16 +32,11 @@ export interface Committee_Upgrade {
     __kind: 'Upgrade'
 }
 
-export type Call = Call_Asset | Call_Authorship | Call_Babe | Call_Balances | Call_Base | Call_Bridge | Call_CapitalDistribution | Call_CddServiceProviders | Call_Checkpoint | Call_CommitteeMembership | Call_ComplianceManager | Call_Contracts | Call_CorporateAction | Call_CorporateBallot | Call_ExternalAgents | Call_Grandpa | Call_Identity | Call_ImOnline | Call_Indices | Call_MultiSig | Call_Pips | Call_PolymeshCommittee | Call_PolymeshContracts | Call_Portfolio | Call_Preimage | Call_ProtocolFee | Call_Relayer | Call_Rewards | Call_Scheduler | Call_Session | Call_Settlement | Call_Staking | Call_Statistics | Call_Sto | Call_Sudo | Call_System | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Timestamp | Call_Treasury | Call_UpgradeCommittee | Call_UpgradeCommitteeMembership | Call_Utility
+export type Call = Call_Asset | Call_Babe | Call_Balances | Call_Base | Call_Bridge | Call_CapitalDistribution | Call_CddServiceProviders | Call_Checkpoint | Call_CommitteeMembership | Call_ComplianceManager | Call_Contracts | Call_CorporateAction | Call_CorporateBallot | Call_ExternalAgents | Call_Grandpa | Call_Identity | Call_ImOnline | Call_Indices | Call_MultiSig | Call_Nft | Call_Pips | Call_PolymeshCommittee | Call_PolymeshContracts | Call_Portfolio | Call_Preimage | Call_ProtocolFee | Call_Relayer | Call_Scheduler | Call_Session | Call_Settlement | Call_Staking | Call_Statistics | Call_Sto | Call_System | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Timestamp | Call_Treasury | Call_UpgradeCommittee | Call_UpgradeCommitteeMembership | Call_Utility
 
 export interface Call_Asset {
     __kind: 'Asset'
     value: AssetCall
-}
-
-export interface Call_Authorship {
-    __kind: 'Authorship'
-    value: AuthorshipCall
 }
 
 export interface Call_Babe {
@@ -134,6 +129,11 @@ export interface Call_MultiSig {
     value: MultiSigCall
 }
 
+export interface Call_Nft {
+    __kind: 'Nft'
+    value: NftCall
+}
+
 export interface Call_Pips {
     __kind: 'Pips'
     value: PipsCall
@@ -169,11 +169,6 @@ export interface Call_Relayer {
     value: RelayerCall
 }
 
-export interface Call_Rewards {
-    __kind: 'Rewards'
-    value: RewardsCall
-}
-
 export interface Call_Scheduler {
     __kind: 'Scheduler'
     value: SchedulerCall
@@ -202,11 +197,6 @@ export interface Call_Statistics {
 export interface Call_Sto {
     __kind: 'Sto'
     value: StoCall
-}
-
-export interface Call_Sudo {
-    __kind: 'Sudo'
-    value: SudoCall
 }
 
 export interface Call_System {
@@ -250,11 +240,82 @@ export interface Call_Utility {
 }
 
 /**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type UtilityCall = UtilityCall_batch | UtilityCall_batch_atomic | UtilityCall_batch_optimistic | UtilityCall_relay_tx
+export type UtilityCall = UtilityCall_batch | UtilityCall_batch_all | UtilityCall_batch_atomic | UtilityCall_batch_old | UtilityCall_batch_optimistic | UtilityCall_dispatch_as | UtilityCall_force_batch | UtilityCall_relay_tx | UtilityCall_with_weight
+
+/**
+ * Send a batch of dispatch calls.
+ * 
+ * May be called from any origin except `None`.
+ * 
+ * - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *   exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ * If origin is root then the calls are dispatched without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ * ## Complexity
+ * - O(C) where C is the number of calls to be batched.
+ * 
+ * This will return `Ok` in all circumstances. To determine the success of the batch, an
+ * event is deposited. If a call failed and the batch was interrupted, then the
+ * `BatchInterrupted` event is deposited, along with the number of successful calls made
+ * and the error of the failed call. If all were successful, then the `BatchCompleted`
+ * event is deposited.
+ */
+export interface UtilityCall_batch {
+    __kind: 'batch'
+    calls: Call[]
+}
+
+/**
+ * Send a batch of dispatch calls and atomically execute them.
+ * The whole transaction will rollback and fail if any of the calls failed.
+ * 
+ * May be called from any origin except `None`.
+ * 
+ * - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *   exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ * If origin is root then the calls are dispatched without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ * ## Complexity
+ * - O(C) where C is the number of calls to be batched.
+ */
+export interface UtilityCall_batch_all {
+    __kind: 'batch_all'
+    calls: Call[]
+}
+
+/**
+ * Dispatch multiple calls from the sender's origin.
+ * 
+ * This will execute all calls, in order, stopping at the first failure,
+ * in which case the state changes are rolled back.
+ * On failure, an event `BatchInterruptedOld(failure_idx, error)` is deposited.
+ * 
+ * May be called from root or a signed origin.
+ * 
+ * # Parameters
+ * - `calls`: The calls to be dispatched from the same origin.
+ * 
+ * # Weight
+ * - The sum of the weights of the `calls`.
+ * - One event.
+ * 
+ * This will return `Ok` in all circumstances except an unsigned origin.
+ * To determine the success of the batch, an event is deposited.
+ * If any call failed, then `BatchInterruptedOld` is deposited.
+ * If all were successful, then the `BatchCompletedOld` event is deposited.
+ * 
+ * POLYMESH: deprecated.
+ */
+export interface UtilityCall_batch_atomic {
+    __kind: 'batch_atomic'
+    calls: Call[]
+}
 
 /**
  * Dispatch multiple calls from the sender's origin.
@@ -272,38 +333,14 @@ export type UtilityCall = UtilityCall_batch | UtilityCall_batch_atomic | Utility
  * 
  * This will return `Ok` in all circumstances except an unsigned origin. To determine the success of the batch, an
  * event is deposited. If a call failed and the batch was interrupted, then the
- * `BatchInterrupted` event is deposited, along with the number of successful calls made
- * and the error of the failed call. If all were successful, then the `BatchCompleted`
+ * `BatchInterruptedOld` event is deposited, along with the number of successful calls made
+ * and the error of the failed call. If all were successful, then the `BatchCompletedOld`
  * event is deposited.
+ * 
+ * POLYMESH: Renamed from `batch` and deprecated.
  */
-export interface UtilityCall_batch {
-    __kind: 'batch'
-    calls: Call[]
-}
-
-/**
- * Dispatch multiple calls from the sender's origin.
- * 
- * This will execute all calls, in order, stopping at the first failure,
- * in which case the state changes are rolled back.
- * On failure, an event `BatchInterrupted(failure_idx, error)` is deposited.
- * 
- * May be called from root or a signed origin.
- * 
- * # Parameters
- * - `calls`: The calls to be dispatched from the same origin.
- * 
- * # Weight
- * - The sum of the weights of the `calls`.
- * - One event.
- * 
- * This will return `Ok` in all circumstances except an unsigned origin.
- * To determine the success of the batch, an event is deposited.
- * If any call failed, then `BatchInterrupted` is deposited.
- * If all were successful, then the `BatchCompleted` event is deposited.
- */
-export interface UtilityCall_batch_atomic {
-    __kind: 'batch_atomic'
+export interface UtilityCall_batch_old {
+    __kind: 'batch_old'
     calls: Call[]
 }
 
@@ -328,10 +365,46 @@ export interface UtilityCall_batch_atomic {
  * If any call failed, then `BatchOptimisticFailed` is deposited,
  * with a vector of event counts for each call as well as a vector
  * of errors.
- * If all were successful, then the `BatchCompleted` event is deposited.
+ * If all were successful, then the `BatchCompletedOld` event is deposited.
+ * 
+ * POLYMESH: deprecated.
  */
 export interface UtilityCall_batch_optimistic {
     __kind: 'batch_optimistic'
+    calls: Call[]
+}
+
+/**
+ * Dispatches a function call with a provided origin.
+ * 
+ * The dispatch origin for this call must be _Root_.
+ * 
+ * ## Complexity
+ * - O(1).
+ */
+export interface UtilityCall_dispatch_as {
+    __kind: 'dispatch_as'
+    asOrigin: OriginCaller
+    call: Call
+}
+
+/**
+ * Send a batch of dispatch calls.
+ * Unlike `batch`, it allows errors and won't interrupt.
+ * 
+ * May be called from any origin except `None`.
+ * 
+ * - `calls`: The calls to be dispatched from the same origin. The number of call must not
+ *   exceed the constant: `batched_calls_limit` (available in constant metadata).
+ * 
+ * If origin is root then the calls are dispatch without checking origin filter. (This
+ * includes bypassing `frame_system::Config::BaseCallFilter`).
+ * 
+ * ## Complexity
+ * - O(C) where C is the number of calls to be batched.
+ */
+export interface UtilityCall_force_batch {
+    __kind: 'force_batch'
     calls: Call[]
 }
 
@@ -348,12 +421,32 @@ export interface UtilityCall_batch_optimistic {
  * - `signature`: Signature from target authorizing the relay
  * - `call`: Call to be relayed on behalf of target
  * 
+ * POLYMESH: added.
  */
 export interface UtilityCall_relay_tx {
     __kind: 'relay_tx'
     target: AccountId32
     signature: MultiSignature
     call: UniqueCall
+}
+
+/**
+ * Dispatch a function call with a specified weight.
+ * 
+ * This function does not check the weight of the call, and instead allows the
+ * Root origin to specify the weight of the call.
+ * 
+ * The dispatch origin for this call must be _Root_.
+ */
+export interface UtilityCall_with_weight {
+    __kind: 'with_weight'
+    call: Call
+    weight: Weight
+}
+
+export interface Weight {
+    refTime: bigint
+    proofSize: bigint
 }
 
 export interface UniqueCall {
@@ -376,6 +469,68 @@ export interface MultiSignature_Ed25519 {
 export interface MultiSignature_Sr25519 {
     __kind: 'Sr25519'
     value: Bytes
+}
+
+export type OriginCaller = OriginCaller_PolymeshCommittee | OriginCaller_TechnicalCommittee | OriginCaller_UpgradeCommittee | OriginCaller_Void | OriginCaller_system
+
+export interface OriginCaller_PolymeshCommittee {
+    __kind: 'PolymeshCommittee'
+    value: Type_522
+}
+
+export interface OriginCaller_TechnicalCommittee {
+    __kind: 'TechnicalCommittee'
+    value: Type_523
+}
+
+export interface OriginCaller_UpgradeCommittee {
+    __kind: 'UpgradeCommittee'
+    value: Type_524
+}
+
+export interface OriginCaller_Void {
+    __kind: 'Void'
+    value: Void
+}
+
+export interface OriginCaller_system {
+    __kind: 'system'
+    value: RawOrigin
+}
+
+export type RawOrigin = RawOrigin_None | RawOrigin_Root | RawOrigin_Signed
+
+export interface RawOrigin_None {
+    __kind: 'None'
+}
+
+export interface RawOrigin_Root {
+    __kind: 'Root'
+}
+
+export interface RawOrigin_Signed {
+    __kind: 'Signed'
+    value: AccountId32
+}
+
+export type Void = never
+
+export type Type_524 = Type_524_Endorsed
+
+export interface Type_524_Endorsed {
+    __kind: 'Endorsed'
+}
+
+export type Type_523 = Type_523_Endorsed
+
+export interface Type_523_Endorsed {
+    __kind: 'Endorsed'
+}
+
+export type Type_522 = Type_522_Endorsed
+
+export interface Type_522_Endorsed {
+    __kind: 'Endorsed'
 }
 
 /**
@@ -643,12 +798,11 @@ export type TimestampCall = TimestampCall_set
  * 
  * The dispatch origin for this call must be `Inherent`.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)` (Note that implementations of `OnTimestampSet` must also be `O(1)`)
  * - 1 storage read and 1 storage mutation (codec `O(1)`). (because of `DidUpdate::take` in
  *   `on_finalize`)
  * - 1 event handler `on_timestamp_set`. Must be `O(1)`.
- * # </weight>
  */
 export interface TimestampCall_set {
     __kind: 'set'
@@ -865,15 +1019,7 @@ export interface TechnicalCommitteeCall_vote_or_propose {
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type SystemCall = SystemCall_fill_block | SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
-
-/**
- * A dispatch that will fill the block weight up to the given ratio.
- */
-export interface SystemCall_fill_block {
-    __kind: 'fill_block'
-    ratio: Perbill
-}
+export type SystemCall = SystemCall_kill_prefix | SystemCall_kill_storage | SystemCall_remark | SystemCall_remark_with_event | SystemCall_set_code | SystemCall_set_code_without_checks | SystemCall_set_heap_pages | SystemCall_set_storage
 
 /**
  * Kill all storage items with a key that starts with the given prefix.
@@ -898,9 +1044,8 @@ export interface SystemCall_kill_storage {
 /**
  * Make some on-chain remark.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`
- * # </weight>
  */
 export interface SystemCall_remark {
     __kind: 'remark'
@@ -918,16 +1063,8 @@ export interface SystemCall_remark_with_event {
 /**
  * Set the new runtime code.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(C + S)` where `C` length of `code` and `S` complexity of `can_set_code`
- * - 1 call to `can_set_code`: `O(S)` (calls `sp_io::misc::runtime_version` which is
- *   expensive).
- * - 1 storage write (codec `O(C)`).
- * - 1 digest item.
- * - 1 event.
- * The weight of this function is dependent on the runtime, but generally this is very
- * expensive. We will treat this as a full block.
- * # </weight>
  */
 export interface SystemCall_set_code {
     __kind: 'set_code'
@@ -937,13 +1074,8 @@ export interface SystemCall_set_code {
 /**
  * Set the new runtime code without doing any checks of the given `code`.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(C)` where `C` length of `code`
- * - 1 storage write (codec `O(C)`).
- * - 1 digest item.
- * - 1 event.
- * The weight of this function is dependent on the runtime. We will treat this as a full
- * block. # </weight>
  */
 export interface SystemCall_set_code_without_checks {
     __kind: 'set_code_without_checks'
@@ -964,112 +1096,6 @@ export interface SystemCall_set_heap_pages {
 export interface SystemCall_set_storage {
     __kind: 'set_storage'
     items: [Bytes, Bytes][]
-}
-
-export type Perbill = number
-
-/**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
- */
-export type SudoCall = SudoCall_set_key | SudoCall_sudo | SudoCall_sudo_as | SudoCall_sudo_unchecked_weight
-
-/**
- * Authenticates the current sudo key and sets the given AccountId (`new`) as the new sudo key.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB change.
- * # </weight>
- */
-export interface SudoCall_set_key {
-    __kind: 'set_key'
-    new: MultiAddress
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Root` origin.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB write (event).
- * - Weight of derivative `call` execution + 10,000.
- * # </weight>
- */
-export interface SudoCall_sudo {
-    __kind: 'sudo'
-    call: Call
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Signed` origin from
- * a given account.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - Limited storage reads.
- * - One DB write (event).
- * - Weight of derivative `call` execution + 10,000.
- * # </weight>
- */
-export interface SudoCall_sudo_as {
-    __kind: 'sudo_as'
-    who: MultiAddress
-    call: Call
-}
-
-/**
- * Authenticates the sudo key and dispatches a function call with `Root` origin.
- * This function does not check the weight of the call, and instead allows the
- * Sudo user to specify the weight of the call.
- * 
- * The dispatch origin for this call must be _Signed_.
- * 
- * # <weight>
- * - O(1).
- * - The weight of this call is defined by the caller.
- * # </weight>
- */
-export interface SudoCall_sudo_unchecked_weight {
-    __kind: 'sudo_unchecked_weight'
-    call: Call
-    weight: bigint
-}
-
-export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
-
-export interface MultiAddress_Address20 {
-    __kind: 'Address20'
-    value: Bytes
-}
-
-export interface MultiAddress_Address32 {
-    __kind: 'Address32'
-    value: Bytes
-}
-
-export interface MultiAddress_Id {
-    __kind: 'Id'
-    value: AccountId32
-}
-
-export interface MultiAddress_Index {
-    __kind: 'Index'
-    value: number
-}
-
-export interface MultiAddress_Raw {
-    __kind: 'Raw'
-    value: Bytes
 }
 
 /**
@@ -1201,16 +1227,19 @@ export interface StoCall_unfreeze_fundraiser {
 }
 
 export interface ReceiptDetails {
-    receiptUid: bigint
+    uid: bigint
+    instructionId: InstructionId
     legId: LegId
     signer: AccountId32
     signature: MultiSignature
-    metadata: ReceiptMetadata
+    metadata?: (ReceiptMetadata | undefined)
 }
 
 export type ReceiptMetadata = Bytes
 
 export type LegId = bigint
+
+export type InstructionId = bigint
 
 export type FundraiserId = bigint
 
@@ -1349,7 +1378,7 @@ export interface TransferConditionExemptKey {
     claimType?: (ClaimType | undefined)
 }
 
-export type ClaimType = ClaimType_Accredited | ClaimType_Affiliate | ClaimType_Blocked | ClaimType_BuyLockup | ClaimType_Custom | ClaimType_CustomerDueDiligence | ClaimType_Exempted | ClaimType_InvestorUniqueness | ClaimType_InvestorUniquenessV2 | ClaimType_Jurisdiction | ClaimType_KnowYourCustomer | ClaimType_NoType | ClaimType_SellLockup
+export type ClaimType = ClaimType_Accredited | ClaimType_Affiliate | ClaimType_Blocked | ClaimType_BuyLockup | ClaimType_Custom | ClaimType_CustomerDueDiligence | ClaimType_Exempted | ClaimType_Jurisdiction | ClaimType_KnowYourCustomer | ClaimType_SellLockup
 
 export interface ClaimType_Accredited {
     __kind: 'Accredited'
@@ -1380,24 +1409,12 @@ export interface ClaimType_Exempted {
     __kind: 'Exempted'
 }
 
-export interface ClaimType_InvestorUniqueness {
-    __kind: 'InvestorUniqueness'
-}
-
-export interface ClaimType_InvestorUniquenessV2 {
-    __kind: 'InvestorUniquenessV2'
-}
-
 export interface ClaimType_Jurisdiction {
     __kind: 'Jurisdiction'
 }
 
 export interface ClaimType_KnowYourCustomer {
     __kind: 'KnowYourCustomer'
-}
-
-export interface ClaimType_NoType {
-    __kind: 'NoType'
 }
 
 export interface ClaimType_SellLockup {
@@ -2492,7 +2509,7 @@ export interface AssetScope_Ticker {
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type StakingCall = StakingCall_add_permissioned_validator | StakingCall_bond | StakingCall_bond_extra | StakingCall_cancel_deferred_slash | StakingCall_change_slashing_allowed_for | StakingCall_chill | StakingCall_force_new_era | StakingCall_force_new_era_always | StakingCall_force_no_eras | StakingCall_force_unstake | StakingCall_increase_validator_count | StakingCall_nominate | StakingCall_payout_stakers | StakingCall_payout_stakers_by_system | StakingCall_reap_stash | StakingCall_rebond | StakingCall_remove_permissioned_validator | StakingCall_scale_validator_count | StakingCall_set_commission_cap | StakingCall_set_controller | StakingCall_set_history_depth | StakingCall_set_invulnerables | StakingCall_set_min_bond_threshold | StakingCall_set_payee | StakingCall_set_validator_count | StakingCall_submit_election_solution | StakingCall_submit_election_solution_unsigned | StakingCall_unbond | StakingCall_update_permissioned_validator_intended_count | StakingCall_validate | StakingCall_validate_cdd_expiry_nominators | StakingCall_withdraw_unbonded
+export type StakingCall = StakingCall_add_permissioned_validator | StakingCall_bond | StakingCall_bond_extra | StakingCall_cancel_deferred_slash | StakingCall_change_slashing_allowed_for | StakingCall_chill | StakingCall_chill_from_governance | StakingCall_force_new_era | StakingCall_force_new_era_always | StakingCall_force_no_eras | StakingCall_force_unstake | StakingCall_increase_validator_count | StakingCall_nominate | StakingCall_payout_stakers | StakingCall_payout_stakers_by_system | StakingCall_reap_stash | StakingCall_rebond | StakingCall_remove_permissioned_validator | StakingCall_scale_validator_count | StakingCall_set_commission_cap | StakingCall_set_controller | StakingCall_set_history_depth | StakingCall_set_invulnerables | StakingCall_set_min_bond_threshold | StakingCall_set_payee | StakingCall_set_validator_count | StakingCall_submit_election_solution | StakingCall_submit_election_solution_unsigned | StakingCall_unbond | StakingCall_update_permissioned_validator_intended_count | StakingCall_validate | StakingCall_validate_cdd_expiry_nominators | StakingCall_withdraw_unbonded
 
 /**
  * Governance committee on 2/3 rds majority can introduce a new potential identity
@@ -2623,6 +2640,28 @@ export interface StakingCall_change_slashing_allowed_for {
  */
 export interface StakingCall_chill {
     __kind: 'chill'
+}
+
+/**
+ * GC forcefully chills a validator.
+ * Effects will be felt at the beginning of the next era.
+ * And, it can be only called when [`EraElectionStatus`] is `Closed`.
+ * 
+ * # Arguments
+ * * origin which must be a GC.
+ * * identity must be permissioned to run operator/validator nodes.
+ * * stash_keys contains the secondary keys of the permissioned identity
+ * 
+ * # Errors
+ * * `BadOrigin` The origin was not a GC member.
+ * * `CallNotAllowed` The call is not allowed at the given time due to restrictions of election period.
+ * * `NotExists` Permissioned validator doesn't exist.
+ * * `NotStash` Not a stash account for the permissioned identity.
+ */
+export interface StakingCall_chill_from_governance {
+    __kind: 'chill_from_governance'
+    identity: IdentityId
+    stashKeys: AccountId32[]
 }
 
 /**
@@ -3218,6 +3257,8 @@ export interface CompactAssignments {
     votes16: [number, [number, number][], number][]
 }
 
+export type Perbill = number
+
 export type Percent = number
 
 export type SlashingSwitch = SlashingSwitch_None | SlashingSwitch_Validator | SlashingSwitch_ValidatorAndNominator
@@ -3253,25 +3294,52 @@ export interface RewardDestination_Stash {
     __kind: 'Stash'
 }
 
+export type MultiAddress = MultiAddress_Address20 | MultiAddress_Address32 | MultiAddress_Id | MultiAddress_Index | MultiAddress_Raw
+
+export interface MultiAddress_Address20 {
+    __kind: 'Address20'
+    value: Bytes
+}
+
+export interface MultiAddress_Address32 {
+    __kind: 'Address32'
+    value: Bytes
+}
+
+export interface MultiAddress_Id {
+    __kind: 'Id'
+    value: AccountId32
+}
+
+export interface MultiAddress_Index {
+    __kind: 'Index'
+    value: number
+}
+
+export interface MultiAddress_Raw {
+    __kind: 'Raw'
+    value: Bytes
+}
+
 /**
  * Dispatchable calls.
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type SettlementCall = SettlementCall_add_and_affirm_instruction | SettlementCall_add_and_affirm_instruction_with_memo | SettlementCall_add_instruction | SettlementCall_add_instruction_with_memo | SettlementCall_affirm_instruction | SettlementCall_affirm_with_receipts | SettlementCall_allow_venues | SettlementCall_change_receipt_validity | SettlementCall_claim_receipt | SettlementCall_create_venue | SettlementCall_disallow_venues | SettlementCall_execute_scheduled_instruction | SettlementCall_reject_instruction | SettlementCall_reschedule_instruction | SettlementCall_set_venue_filtering | SettlementCall_unclaim_receipt | SettlementCall_update_venue_details | SettlementCall_update_venue_signers | SettlementCall_update_venue_type | SettlementCall_withdraw_affirmation
+export type SettlementCall = SettlementCall_add_and_affirm_instruction | SettlementCall_add_instruction | SettlementCall_affirm_instruction | SettlementCall_affirm_instruction_with_count | SettlementCall_affirm_with_receipts | SettlementCall_affirm_with_receipts_with_count | SettlementCall_allow_venues | SettlementCall_create_venue | SettlementCall_disallow_venues | SettlementCall_execute_manual_instruction | SettlementCall_execute_scheduled_instruction | SettlementCall_reject_instruction | SettlementCall_reject_instruction_with_count | SettlementCall_set_venue_filtering | SettlementCall_update_venue_details | SettlementCall_update_venue_signers | SettlementCall_update_venue_type | SettlementCall_withdraw_affirmation | SettlementCall_withdraw_affirmation_with_count
 
 /**
- * Deprecated. Use `add_and_affirm_instruction_with_memo` instead.
  * Adds and affirms a new instruction.
  * 
  * # Arguments
  * * `venue_id` - ID of the venue this instruction belongs to.
- * * `settlement_type` - Defines if the instruction should be settled
- *    in the next block after receiving all affirmations or waiting till a specific block.
+ * * `settlement_type` - Defines if the instruction should be settled in the next block, after receiving all affirmations
+ * or waiting till a specific block.
  * * `trade_date` - Optional date from which people can interact with this instruction.
  * * `value_date` - Optional date after which the instruction should be settled (not enforced)
  * * `legs` - Legs included in this instruction.
  * * `portfolios` - Portfolios that the sender controls and wants to use in this affirmations.
+ * * `instruction_memo` - Memo field for this instruction.
  * 
  * # Permissions
  * * Portfolio
@@ -3284,46 +3352,20 @@ export interface SettlementCall_add_and_affirm_instruction {
     valueDate?: (bigint | undefined)
     legs: Leg[]
     portfolios: PortfolioId[]
+    instructionMemo?: (Memo | undefined)
 }
 
 /**
- * Adds and affirms a new instruction.
- * 
- * # Arguments
- * * `venue_id` - ID of the venue this instruction belongs to.
- * * `settlement_type` - Defines if the instruction should be settled
- *    in the next block after receiving all affirmations or waiting till a specific block.
- * * `trade_date` - Optional date from which people can interact with this instruction.
- * * `value_date` - Optional date after which the instruction should be settled (not enforced)
- * * `legs` - Legs included in this instruction.
- * * `portfolios` - Portfolios that the sender controls and wants to use in this affirmations.
- * * `memo` - Memo field for this instruction.
- * 
- * # Permissions
- * * Portfolio
- */
-export interface SettlementCall_add_and_affirm_instruction_with_memo {
-    __kind: 'add_and_affirm_instruction_with_memo'
-    venueId: VenueId
-    settlementType: SettlementType
-    tradeDate?: (bigint | undefined)
-    valueDate?: (bigint | undefined)
-    legs: Leg[]
-    portfolios: PortfolioId[]
-    instructionMemo?: (InstructionMemo | undefined)
-}
-
-/**
- * Deprecated. Use `add_instruction_with_memo` instead.
  * Adds a new instruction.
  * 
  * # Arguments
  * * `venue_id` - ID of the venue this instruction belongs to.
- * * `settlement_type` - Defines if the instruction should be settled
- *    in the next block after receiving all affirmations or waiting till a specific block.
+ * * `settlement_type` - Defines if the instruction should be settled in the next block, after receiving all affirmations
+ * or waiting till a specific block.
  * * `trade_date` - Optional date from which people can interact with this instruction.
  * * `value_date` - Optional date after which the instruction should be settled (not enforced)
  * * `legs` - Legs included in this instruction.
+ * * `memo` - Memo field for this instruction.
  * 
  * # Weight
  * `950_000_000 + 1_000_000 * legs.len()`
@@ -3335,40 +3377,15 @@ export interface SettlementCall_add_instruction {
     tradeDate?: (bigint | undefined)
     valueDate?: (bigint | undefined)
     legs: Leg[]
-}
-
-/**
- * Adds a new instruction with memo.
- * 
- * # Arguments
- * * `venue_id` - ID of the venue this instruction belongs to.
- * * `settlement_type` - Defines if the instruction should be settled
- *    in the next block after receiving all affirmations or waiting till a specific block.
- * * `trade_date` - Optional date from which people can interact with this instruction.
- * * `value_date` - Optional date after which the instruction should be settled (not enforced)
- * * `legs` - Legs included in this instruction.
- * * `memo` - Memo field for this instruction.
- * 
- * # Weight
- * `950_000_000 + 1_000_000 * legs.len()`
- */
-export interface SettlementCall_add_instruction_with_memo {
-    __kind: 'add_instruction_with_memo'
-    venueId: VenueId
-    settlementType: SettlementType
-    tradeDate?: (bigint | undefined)
-    valueDate?: (bigint | undefined)
-    legs: Leg[]
-    instructionMemo?: (InstructionMemo | undefined)
+    instructionMemo?: (Memo | undefined)
 }
 
 /**
  * Provide affirmation to an existing instruction.
  * 
  * # Arguments
- * * `id` - Instruction id to affirm.
- * * `portfolios` - Portfolios that the sender controls and wants to affirm this instruction.
- * * `max_legs_count` - Number of legs that need to be  affirmed.
+ * * `id` - the [`InstructionId`] of the instruction being affirmed.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation.
  * 
  * # Permissions
  * * Portfolio
@@ -3377,19 +3394,35 @@ export interface SettlementCall_affirm_instruction {
     __kind: 'affirm_instruction'
     id: InstructionId
     portfolios: PortfolioId[]
-    maxLegsCount: number
 }
 
 /**
- * Accepts an instruction and claims a signed receipt.
+ * Provide affirmation to an existing instruction.
  * 
  * # Arguments
- * * `id` - Target instruction id.
- * * `leg_id` - Target leg id for the receipt
- * * `receipt_uid` - Receipt ID generated by the signer.
- * * `signer` - Signer of the receipt.
- * * `signed_data` - Signed receipt.
- * * `portfolios` - Portfolios that the sender controls and wants to accept this instruction with
+ * * `id` - the [`InstructionId`] of the instruction being affirmed.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation.
+ * * `number_of_assets` - an optional [`AffirmationCount`] that will be used for a precise fee estimation before executing the extrinsic.
+ * 
+ * Note: calling the rpc method `get_affirmation_count` returns an instance of [`AffirmationCount`].
+ * 
+ * # Permissions
+ * * Portfolio
+ */
+export interface SettlementCall_affirm_instruction_with_count {
+    __kind: 'affirm_instruction_with_count'
+    id: InstructionId
+    portfolios: PortfolioId[]
+    numberOfAssets?: (AffirmationCount | undefined)
+}
+
+/**
+ * Affirms an instruction using receipts for offchain transfers.
+ * 
+ * # Arguments
+ * * `id` - the [`InstructionId`] of the instruction being affirmed.
+ * * `receipt_details` - a vector of [`ReceiptDetails`], which contain the details about the offchain transfer.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation.
  * 
  * # Permissions
  * * Portfolio
@@ -3399,7 +3432,28 @@ export interface SettlementCall_affirm_with_receipts {
     id: InstructionId
     receiptDetails: ReceiptDetails[]
     portfolios: PortfolioId[]
-    maxLegsCount: number
+}
+
+/**
+ * Affirms an instruction using receipts for offchain transfers.
+ * 
+ * # Arguments
+ * * `id` - the [`InstructionId`] of the instruction being affirmed.
+ * * `receipt_details` - a vector of [`ReceiptDetails`], which contain the details about the offchain transfer.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation.
+ * * `number_of_assets` - an optional [`AffirmationCount`] that will be used for a precise fee estimation before executing the extrinsic.
+ * 
+ * Note: calling the rpc method `get_affirmation_count` returns an instance of [`AffirmationCount`].
+ * 
+ * # Permissions
+ * * Portfolio
+ */
+export interface SettlementCall_affirm_with_receipts_with_count {
+    __kind: 'affirm_with_receipts_with_count'
+    id: InstructionId
+    receiptDetails: ReceiptDetails[]
+    portfolios: PortfolioId[]
+    numberOfAssets?: (AffirmationCount | undefined)
 }
 
 /**
@@ -3415,38 +3469,6 @@ export interface SettlementCall_allow_venues {
     __kind: 'allow_venues'
     ticker: Ticker
     venues: VenueId[]
-}
-
-/**
- * Marks a receipt issued by the caller as claimed or not claimed.
- * This allows the receipt issuer to invalidate an already issued receipt or revalidate an already claimed receipt.
- * 
- * * `receipt_uid` - Unique ID of the receipt.
- * * `validity` - New validity of the receipt.
- */
-export interface SettlementCall_change_receipt_validity {
-    __kind: 'change_receipt_validity'
-    receiptUid: bigint
-    validity: boolean
-}
-
-/**
- * Claims a signed receipt.
- * 
- * # Arguments
- * * `id` - Target instruction id for the receipt.
- * * `leg_id` - Target leg id for the receipt
- * * `receipt_uid` - Receipt ID generated by the signer.
- * * `signer` - Signer of the receipt.
- * * `signed_data` - Signed receipt.
- * 
- * # Permissions
- * * Portfolio
- */
-export interface SettlementCall_claim_receipt {
-    __kind: 'claim_receipt'
-    id: InstructionId
-    receiptDetails: ReceiptDetails
 }
 
 /**
@@ -3479,21 +3501,45 @@ export interface SettlementCall_disallow_venues {
 }
 
 /**
+ * Manually executes an instruction.
+ * 
+ * # Arguments
+ * * `id`: The [`InstructionId`] of the instruction to be executed.
+ * * `portfolio`:  One of the caller's [`PortfolioId`] which is also a counter patry in the instruction.
+ * If None, the caller must be the venue creator or a counter party in a [`Leg::OffChain`].
+ * * `fungible_transfers`: The number of fungible legs in the instruction.
+ * * `nfts_transfers`: The number of nfts being transferred in the instruction.
+ * * `offchain_transfers`: The number of offchain legs in the instruction.
+ * * `weight_limit`: An optional maximum [`Weight`] value to be charged for executing the instruction.
+ * If the `weight_limit` is less than the required amount, the instruction will fail execution.
+ * 
+ * Note: calling the rpc method `get_execute_instruction_info` returns an instance of [`ExecuteInstructionInfo`], which contains the count parameters.
+ */
+export interface SettlementCall_execute_manual_instruction {
+    __kind: 'execute_manual_instruction'
+    id: InstructionId
+    portfolio?: (PortfolioId | undefined)
+    fungibleTransfers: number
+    nftsTransfers: number
+    offchainTransfers: number
+    weightLimit?: (Weight | undefined)
+}
+
+/**
  * Root callable extrinsic, used as an internal call to execute a scheduled settlement instruction.
  */
 export interface SettlementCall_execute_scheduled_instruction {
     __kind: 'execute_scheduled_instruction'
     id: InstructionId
-    legsCount: number
+    weightLimit: Weight
 }
 
 /**
  * Rejects an existing instruction.
  * 
  * # Arguments
- * * `id` - Instruction id to reject.
- * * `portfolio` - Portfolio to reject the instruction.
- * * `num_of_legs` - Number of legs in the instruction.
+ * * `id` - the [`InstructionId`] of the instruction being rejected.
+ * * `portfolio` - the [`PortfolioId`] that belongs to the instruction and is rejecting it.
  * 
  * # Permissions
  * * Portfolio
@@ -3502,24 +3548,26 @@ export interface SettlementCall_reject_instruction {
     __kind: 'reject_instruction'
     id: InstructionId
     portfolio: PortfolioId
-    numOfLegs: number
 }
 
 /**
- * Reschedules a failed instruction.
+ * Rejects an existing instruction.
  * 
  * # Arguments
- * * `id` - Target instruction id to reschedule.
+ * * `id` - the [`InstructionId`] of the instruction being rejected.
+ * * `portfolio` - the [`PortfolioId`] that belongs to the instruction and is rejecting it.
+ * * `number_of_assets` - an optional [`AssetCount`] that will be used for a precise fee estimation before executing the extrinsic.
+ * 
+ * Note: calling the rpc method `get_execute_instruction_info` returns an instance of [`ExecuteInstructionInfo`], which contain the asset count.
  * 
  * # Permissions
  * * Portfolio
- * 
- * # Errors
- * * `InstructionNotFailed` - Instruction not in a failed state or does not exist.
  */
-export interface SettlementCall_reschedule_instruction {
-    __kind: 'reschedule_instruction'
+export interface SettlementCall_reject_instruction_with_count {
+    __kind: 'reject_instruction_with_count'
     id: InstructionId
+    portfolio: PortfolioId
+    numberOfAssets?: (AssetCount | undefined)
 }
 
 /**
@@ -3536,22 +3584,6 @@ export interface SettlementCall_set_venue_filtering {
     __kind: 'set_venue_filtering'
     ticker: Ticker
     enabled: boolean
-}
-
-/**
- * Unclaims a previously claimed receipt.
- * 
- * # Arguments
- * * `instruction_id` - Target instruction id for the receipt.
- * * `leg_id` - Target leg id for the receipt
- * 
- * # Permissions
- * * Portfolio
- */
-export interface SettlementCall_unclaim_receipt {
-    __kind: 'unclaim_receipt'
-    instructionId: InstructionId
-    legId: LegId
 }
 
 /**
@@ -3595,9 +3627,8 @@ export interface SettlementCall_update_venue_type {
  * Withdraw an affirmation for a given instruction.
  * 
  * # Arguments
- * * `id` - Instruction id for that affirmation get withdrawn.
- * * `portfolios` - Portfolios that the sender controls and wants to withdraw affirmation.
- * * `max_legs_count` - Number of legs that need to be un-affirmed.
+ * * `id` - the [`InstructionId`] of the instruction getting an affirmation withdrawn.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation withdrawal.
  * 
  * # Permissions
  * * Portfolio
@@ -3606,7 +3637,32 @@ export interface SettlementCall_withdraw_affirmation {
     __kind: 'withdraw_affirmation'
     id: InstructionId
     portfolios: PortfolioId[]
-    maxLegsCount: number
+}
+
+/**
+ * Withdraw an affirmation for a given instruction.
+ * 
+ * # Arguments
+ * * `id` - the [`InstructionId`] of the instruction getting an affirmation withdrawn.
+ * * `portfolios` - a vector of [`PortfolioId`] under the caller's control and intended for affirmation withdrawal.
+ * * `number_of_assets` - an optional [`AffirmationCount`] that will be used for a precise fee estimation before executing the extrinsic.
+ * 
+ * Note: calling the rpc method `get_affirmation_count` returns an instance of [`AffirmationCount`].
+ * 
+ * # Permissions
+ * * Portfolio
+ */
+export interface SettlementCall_withdraw_affirmation_with_count {
+    __kind: 'withdraw_affirmation_with_count'
+    id: InstructionId
+    portfolios: PortfolioId[]
+    numberOfAssets?: (AffirmationCount | undefined)
+}
+
+export interface AssetCount {
+    fungible: number
+    nonFungible: number
+    offChain: number
 }
 
 export type VenueType = VenueType_Distribution | VenueType_Exchange | VenueType_Other | VenueType_Sto
@@ -3629,18 +3685,52 @@ export interface VenueType_Sto {
 
 export type VenueDetails = Bytes
 
-export type InstructionId = bigint
+export interface AffirmationCount {
+    senderAssetCount: AssetCount
+    receiverAssetCount: AssetCount
+    offchainCount: number
+}
 
-export type InstructionMemo = Bytes
+export type Memo = Bytes
 
-export interface Leg {
-    from: PortfolioId
-    to: PortfolioId
-    asset: Ticker
+export type Leg = Leg_Fungible | Leg_NonFungible | Leg_OffChain
+
+export interface Leg_Fungible {
+    __kind: 'Fungible'
+    sender: PortfolioId
+    receiver: PortfolioId
+    ticker: Ticker
     amount: bigint
 }
 
-export type SettlementType = SettlementType_SettleOnAffirmation | SettlementType_SettleOnBlock
+export interface Leg_NonFungible {
+    __kind: 'NonFungible'
+    sender: PortfolioId
+    receiver: PortfolioId
+    nfts: NFTs
+}
+
+export interface Leg_OffChain {
+    __kind: 'OffChain'
+    senderIdentity: IdentityId
+    receiverIdentity: IdentityId
+    ticker: Ticker
+    amount: bigint
+}
+
+export interface NFTs {
+    ticker: Ticker
+    ids: NFTId[]
+}
+
+export type NFTId = bigint
+
+export type SettlementType = SettlementType_SettleManual | SettlementType_SettleOnAffirmation | SettlementType_SettleOnBlock
+
+export interface SettlementType_SettleManual {
+    __kind: 'SettleManual'
+    value: number
+}
 
 export interface SettlementType_SettleOnAffirmation {
     __kind: 'SettleOnAffirmation'
@@ -3666,13 +3756,9 @@ export type SessionCall = SessionCall_purge_keys | SessionCall_set_keys
  * means being a controller account) or directly convertible into a validator ID (which
  * usually means being a stash account).
  * 
- * # <weight>
- * - Complexity: `O(1)` in number of key types. Actual cost depends on the number of length
- *   of `T::Keys::key_ids()` which is fixed.
- * - DbReads: `T::ValidatorIdOf`, `NextKeys`, `origin account`
- * - DbWrites: `NextKeys`, `origin account`
- * - DbWrites per key id: `KeyOwner`
- * # </weight>
+ * ## Complexity
+ * - `O(1)` in number of key types. Actual cost depends on the number of length of
+ *   `T::Keys::key_ids()` which is fixed.
  */
 export interface SessionCall_purge_keys {
     __kind: 'purge_keys'
@@ -3685,14 +3771,9 @@ export interface SessionCall_purge_keys {
  * 
  * The dispatch origin of this function must be signed.
  * 
- * # <weight>
- * - Complexity: `O(1)`. Actual cost depends on the number of length of
- *   `T::Keys::key_ids()` which is fixed.
- * - DbReads: `origin account`, `T::ValidatorIdOf`, `NextKeys`
- * - DbWrites: `origin account`, `NextKeys`
- * - DbReads per key id: `KeyOwner`
- * - DbWrites per key id: `KeyOwner`
- * # </weight>
+ * ## Complexity
+ * - `O(1)`. Actual cost depends on the number of length of `T::Keys::key_ids()` which is
+ *   fixed.
  */
 export interface SessionCall_set_keys {
     __kind: 'set_keys'
@@ -3739,22 +3820,18 @@ export interface SchedulerCall_schedule {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
  * Anonymously schedule a task after a delay.
- * 
- * # <weight>
- * Same as [`schedule`].
- * # </weight>
  */
 export interface SchedulerCall_schedule_after {
     __kind: 'schedule_after'
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
@@ -3766,15 +3843,11 @@ export interface SchedulerCall_schedule_named {
     when: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
+    call: Call
 }
 
 /**
  * Schedule a named task after a delay.
- * 
- * # <weight>
- * Same as [`schedule_named`](Self::schedule_named).
- * # </weight>
  */
 export interface SchedulerCall_schedule_named_after {
     __kind: 'schedule_named_after'
@@ -3782,65 +3855,7 @@ export interface SchedulerCall_schedule_named_after {
     after: number
     maybePeriodic?: ([number, number] | undefined)
     priority: number
-    call: MaybeHashed
-}
-
-export type MaybeHashed = MaybeHashed_Hash | MaybeHashed_Value
-
-export interface MaybeHashed_Hash {
-    __kind: 'Hash'
-    value: H256
-}
-
-export interface MaybeHashed_Value {
-    __kind: 'Value'
-    value: Call
-}
-
-/**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
- */
-export type RewardsCall = RewardsCall_claim_itn_reward | RewardsCall_set_itn_reward_status
-
-/**
- * Claim an ITN reward.
- * 
- * ## Arguments
- * * `itn_address` specifying the awarded address on ITN.
- * * `signature` authenticating the claim to the reward.
- *    The signature should contain `reward_address` followed by the suffix `"claim_itn_reward"`,
- *    and must have been signed by `itn_address`.
- * 
- * # Errors
- * * `InsufficientBalance` - Itn rewards has insufficient funds to issue the reward.
- * * `InvalidSignature` - `signature` had an invalid signer or invalid message.
- * * `ItnRewardAlreadyClaimed` - Reward issued to the `itn_address` has already been claimed.
- * * `UnknownItnAddress` - `itn_address` is not in the rewards table and has no reward to be claimed.
- */
-export interface RewardsCall_claim_itn_reward {
-    __kind: 'claim_itn_reward'
-    rewardAddress: AccountId32
-    itnAddress: AccountId32
-    signature: MultiSignature
-}
-
-export interface RewardsCall_set_itn_reward_status {
-    __kind: 'set_itn_reward_status'
-    itnAddress: AccountId32
-    status: ItnRewardStatus
-}
-
-export type ItnRewardStatus = ItnRewardStatus_Claimed | ItnRewardStatus_Unclaimed
-
-export interface ItnRewardStatus_Claimed {
-    __kind: 'Claimed'
-}
-
-export interface ItnRewardStatus_Unclaimed {
-    __kind: 'Unclaimed'
-    value: bigint
+    call: Call
 }
 
 /**
@@ -3994,7 +4009,7 @@ export interface ProtocolFeeCall_change_coefficient {
 
 export type PosRatio = [number, number]
 
-export type ProtocolOp = ProtocolOp_AssetAddDocuments | ProtocolOp_AssetCreateAsset | ProtocolOp_AssetIssue | ProtocolOp_AssetRegisterTicker | ProtocolOp_CapitalDistributionDistribute | ProtocolOp_CheckpointCreateSchedule | ProtocolOp_ComplianceManagerAddComplianceRequirement | ProtocolOp_ContractsPutCode | ProtocolOp_CorporateBallotAttachBallot | ProtocolOp_IdentityAddClaim | ProtocolOp_IdentityAddSecondaryKeysWithAuthorization | ProtocolOp_IdentityCddRegisterDid | ProtocolOp_PipsPropose
+export type ProtocolOp = ProtocolOp_AssetAddDocuments | ProtocolOp_AssetCreateAsset | ProtocolOp_AssetIssue | ProtocolOp_AssetRegisterTicker | ProtocolOp_CapitalDistributionDistribute | ProtocolOp_CheckpointCreateSchedule | ProtocolOp_ComplianceManagerAddComplianceRequirement | ProtocolOp_ContractsPutCode | ProtocolOp_CorporateBallotAttachBallot | ProtocolOp_IdentityAddClaim | ProtocolOp_IdentityAddSecondaryKeysWithAuthorization | ProtocolOp_IdentityCddRegisterDid | ProtocolOp_IdentityCreateChildIdentity | ProtocolOp_NFTCreateCollection | ProtocolOp_NFTMint | ProtocolOp_PipsPropose
 
 export interface ProtocolOp_AssetAddDocuments {
     __kind: 'AssetAddDocuments'
@@ -4044,6 +4059,18 @@ export interface ProtocolOp_IdentityCddRegisterDid {
     __kind: 'IdentityCddRegisterDid'
 }
 
+export interface ProtocolOp_IdentityCreateChildIdentity {
+    __kind: 'IdentityCreateChildIdentity'
+}
+
+export interface ProtocolOp_NFTCreateCollection {
+    __kind: 'NFTCreateCollection'
+}
+
+export interface ProtocolOp_NFTMint {
+    __kind: 'NFTMint'
+}
+
 export interface ProtocolOp_PipsPropose {
     __kind: 'PipsPropose'
 }
@@ -4077,6 +4104,11 @@ export interface PreimageCall_request_preimage {
 
 /**
  * Clear an unrequested preimage from the runtime storage.
+ * 
+ * If `len` is provided, then it will be a much cheaper operation.
+ * 
+ * - `hash`: The hash of the preimage to be removed from the store.
+ * - `len`: The length of the preimage of `hash`.
  */
 export interface PreimageCall_unnote_preimage {
     __kind: 'unnote_preimage'
@@ -4098,7 +4130,7 @@ export interface PreimageCall_unrequest_preimage {
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type PortfolioCall = PortfolioCall_accept_portfolio_custody | PortfolioCall_create_portfolio | PortfolioCall_delete_portfolio | PortfolioCall_move_portfolio_funds | PortfolioCall_quit_portfolio_custody | PortfolioCall_rename_portfolio
+export type PortfolioCall = PortfolioCall_accept_portfolio_custody | PortfolioCall_create_portfolio | PortfolioCall_delete_portfolio | PortfolioCall_move_portfolio_funds | PortfolioCall_pre_approve_portfolio | PortfolioCall_quit_portfolio_custody | PortfolioCall_remove_portfolio_pre_approval | PortfolioCall_rename_portfolio
 
 export interface PortfolioCall_accept_portfolio_custody {
     __kind: 'accept_portfolio_custody'
@@ -4129,7 +4161,7 @@ export interface PortfolioCall_delete_portfolio {
 }
 
 /**
- * Moves a token amount from one portfolio of an identity to another portfolio of the same
+ * Moves fungigle an non-fungible tokens from one portfolio of an identity to another portfolio of the same
  * identity. Must be called by the custodian of the sender.
  * Funds from deleted portfolios can also be recovered via this method.
  * 
@@ -4141,6 +4173,9 @@ export interface PortfolioCall_delete_portfolio {
  * * `DifferentIdentityPortfolios` if the sender and receiver portfolios belong to different identities
  * * `UnauthorizedCustodian` if the caller is not the custodian of the from portfolio
  * * `InsufficientPortfolioBalance` if the sender does not have enough free balance
+ * * `NoDuplicateAssetsAllowed` the same ticker can't be repeated in the items vector.
+ * * `InvalidTransferNFTNotOwned` if the caller is trying to move an NFT he doesn't own.
+ * * `InvalidTransferNFTIsLocked` if the caller is trying to move a locked NFT.
  * 
  * # Permissions
  * * Portfolio
@@ -4149,7 +4184,24 @@ export interface PortfolioCall_move_portfolio_funds {
     __kind: 'move_portfolio_funds'
     from: PortfolioId
     to: PortfolioId
-    items: MovePortfolioItem[]
+    funds: Fund[]
+}
+
+/**
+ * Pre-approves the receivement of an asset to a portfolio.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will be exempt from affirmation.
+ * * `portfolio_id` - the [`PortfolioId`] that can receive `ticker` without affirmation.
+ * 
+ * # Permissions
+ * * Portfolio
+ */
+export interface PortfolioCall_pre_approve_portfolio {
+    __kind: 'pre_approve_portfolio'
+    ticker: Ticker
+    portfolioId: PortfolioId
 }
 
 /**
@@ -4168,6 +4220,23 @@ export interface PortfolioCall_quit_portfolio_custody {
 }
 
 /**
+ * Removes the pre approval of an asset to a portfolio.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will be exempt from affirmation.
+ * * `portfolio_id` - the [`PortfolioId`] that can receive `ticker` without affirmation.
+ * 
+ * # Permissions
+ * * Portfolio
+ */
+export interface PortfolioCall_remove_portfolio_pre_approval {
+    __kind: 'remove_portfolio_pre_approval'
+    ticker: Ticker
+    portfolioId: PortfolioId
+}
+
+/**
  * Renames a non-default portfolio.
  * 
  * # Errors
@@ -4182,13 +4251,23 @@ export interface PortfolioCall_rename_portfolio {
     toName: PortfolioName
 }
 
-export interface MovePortfolioItem {
-    ticker: Ticker
-    amount: bigint
+export interface Fund {
+    description: FundDescription
     memo?: (Memo | undefined)
 }
 
-export type Memo = Bytes
+export type FundDescription = FundDescription_Fungible | FundDescription_NonFungible
+
+export interface FundDescription_Fungible {
+    __kind: 'Fungible'
+    ticker: Ticker
+    amount: bigint
+}
+
+export interface FundDescription_NonFungible {
+    __kind: 'NonFungible'
+    value: NFTs
+}
 
 export type PortfolioName = Bytes
 
@@ -4197,7 +4276,7 @@ export type PortfolioName = Bytes
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type PolymeshContractsCall = PolymeshContractsCall_instantiate_with_code_perms | PolymeshContractsCall_instantiate_with_hash_perms
+export type PolymeshContractsCall = PolymeshContractsCall_instantiate_with_code_perms | PolymeshContractsCall_instantiate_with_hash_perms | PolymeshContractsCall_update_call_runtime_whitelist
 
 /**
  * Instantiates a smart contract defining it with the given `code` and `salt`.
@@ -4228,7 +4307,7 @@ export type PolymeshContractsCall = PolymeshContractsCall_instantiate_with_code_
 export interface PolymeshContractsCall_instantiate_with_code_perms {
     __kind: 'instantiate_with_code_perms'
     endowment: bigint
-    gasLimit: bigint
+    gasLimit: Weight
     storageDepositLimit?: (bigint | undefined)
     code: Bytes
     data: Bytes
@@ -4268,7 +4347,7 @@ export interface PolymeshContractsCall_instantiate_with_code_perms {
 export interface PolymeshContractsCall_instantiate_with_hash_perms {
     __kind: 'instantiate_with_hash_perms'
     endowment: bigint
-    gasLimit: bigint
+    gasLimit: Weight
     storageDepositLimit?: (bigint | undefined)
     codeHash: H256
     data: Bytes
@@ -4276,62 +4355,76 @@ export interface PolymeshContractsCall_instantiate_with_hash_perms {
     perms: Permissions
 }
 
+/**
+ * Update CallRuntime whitelist.
+ * 
+ * # Arguments
+ * 
+ * # Errors
+ */
+export interface PolymeshContractsCall_update_call_runtime_whitelist {
+    __kind: 'update_call_runtime_whitelist'
+    updates: [ExtrinsicId, boolean][]
+}
+
+export type ExtrinsicId = [number, number]
+
 export interface Permissions {
     asset: SubsetRestriction
-    extrinsic: Type_43
-    portfolio: Type_52
+    extrinsic: Type_46
+    portfolio: Type_55
 }
 
-export type Type_52 = Type_52_Except | Type_52_These | Type_52_Whole
+export type Type_55 = Type_55_Except | Type_55_These | Type_55_Whole
 
-export interface Type_52_Except {
+export interface Type_55_Except {
     __kind: 'Except'
     value: PortfolioId[]
 }
 
-export interface Type_52_These {
+export interface Type_55_These {
     __kind: 'These'
     value: PortfolioId[]
 }
 
-export interface Type_52_Whole {
+export interface Type_55_Whole {
     __kind: 'Whole'
-}
-
-export type Type_43 = Type_43_Except | Type_43_These | Type_43_Whole
-
-export interface Type_43_Except {
-    __kind: 'Except'
-    value: PalletPermissions[]
-}
-
-export interface Type_43_These {
-    __kind: 'These'
-    value: PalletPermissions[]
-}
-
-export interface Type_43_Whole {
-    __kind: 'Whole'
-}
-
-export interface PalletPermissions {
-    palletName: PalletName
-    dispatchableNames: Type_46
 }
 
 export type Type_46 = Type_46_Except | Type_46_These | Type_46_Whole
 
 export interface Type_46_Except {
     __kind: 'Except'
-    value: DispatchableName[]
+    value: PalletPermissions[]
 }
 
 export interface Type_46_These {
     __kind: 'These'
-    value: DispatchableName[]
+    value: PalletPermissions[]
 }
 
 export interface Type_46_Whole {
+    __kind: 'Whole'
+}
+
+export interface PalletPermissions {
+    palletName: PalletName
+    dispatchableNames: Type_49
+}
+
+export type Type_49 = Type_49_Except | Type_49_These | Type_49_Whole
+
+export interface Type_49_Except {
+    __kind: 'Except'
+    value: DispatchableName[]
+}
+
+export interface Type_49_These {
+    __kind: 'These'
+    value: DispatchableName[]
+}
+
+export interface Type_49_Whole {
     __kind: 'Whole'
 }
 
@@ -4718,7 +4811,134 @@ export interface SnapshotResult_Skip {
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type MultiSigCall = MultiSigCall_accept_multisig_signer_as_identity | MultiSigCall_accept_multisig_signer_as_key | MultiSigCall_add_multisig_signer | MultiSigCall_add_multisig_signers_via_creator | MultiSigCall_approve_as_identity | MultiSigCall_approve_as_key | MultiSigCall_change_sigs_required | MultiSigCall_create_multisig | MultiSigCall_create_or_approve_proposal_as_identity | MultiSigCall_create_or_approve_proposal_as_key | MultiSigCall_create_proposal_as_identity | MultiSigCall_create_proposal_as_key | MultiSigCall_execute_scheduled_proposal | MultiSigCall_make_multisig_primary | MultiSigCall_make_multisig_secondary | MultiSigCall_reject_as_identity | MultiSigCall_reject_as_key | MultiSigCall_remove_multisig_signer | MultiSigCall_remove_multisig_signers_via_creator
+export type NftCall = NftCall_create_nft_collection | NftCall_issue_nft | NftCall_redeem_nft
+
+/**
+ * Cretes a new `NFTCollection`.
+ * 
+ * # Arguments
+ * * `origin` - contains the secondary key of the caller (i.e. who signed the transaction to execute this function).
+ * * `ticker` - the ticker associated to the new collection.
+ * * `nft_type` - in case the asset hasn't been created yet, one will be created with the given type.
+ * * `collection_keys` - all mandatory metadata keys that the tokens in the collection must have.
+ * 
+ * ## Errors
+ * - `CollectionAlredyRegistered` - if the ticker is already associated to an NFT collection.
+ * - `InvalidAssetType` - if the associated asset is not of type NFT.
+ * - `MaxNumberOfKeysExceeded` - if the number of metadata keys for the collection is greater than the maximum allowed.
+ * - `UnregisteredMetadataKey` - if any of the metadata keys needed for the collection has not been registered.
+ * - `DuplicateMetadataKey` - if a duplicate metadata keys has been passed as input.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface NftCall_create_nft_collection {
+    __kind: 'create_nft_collection'
+    ticker: Ticker
+    nftType?: (NonFungibleType | undefined)
+    collectionKeys: AssetMetadataKey[]
+}
+
+/**
+ * Issues an NFT to the caller.
+ * 
+ * # Arguments
+ * * `origin` - is a signer that has permissions to act as an agent of `ticker`.
+ * * `ticker` - the ticker of the NFT collection.
+ * * `nft_metadata_attributes` - all mandatory metadata keys and values for the NFT.
+ * - `portfolio_kind` - the portfolio that will receive the minted nft.
+ * 
+ * ## Errors
+ * - `CollectionNotFound` - if the collection associated to the given ticker has not been created.
+ * - `InvalidMetadataAttribute` - if the number of attributes is not equal to the number set in the collection or attempting to set a value for a key not definied in the collection.
+ * - `DuplicateMetadataKey` - if a duplicate metadata keys has been passed as input.
+ * 
+ * 
+ * # Permissions
+ * * Asset
+ * * Portfolio
+ */
+export interface NftCall_issue_nft {
+    __kind: 'issue_nft'
+    ticker: Ticker
+    nftMetadataAttributes: NFTMetadataAttribute[]
+    portfolioKind: PortfolioKind
+}
+
+/**
+ * Redeems the given NFT from the caller's portfolio.
+ * 
+ * # Arguments
+ * * `origin` - is a signer that has permissions to act as an agent of `ticker`.
+ * * `ticker` - the ticker of the NFT collection.
+ * * `nft_id` - the id of the NFT to be burned.
+ * * `portfolio_kind` - the portfolio that contains the nft.
+ * 
+ * ## Errors
+ * - `CollectionNotFound` - if the collection associated to the given ticker has not been created.
+ * - `NFTNotFound` - if the given NFT does not exist in the portfolio.
+ * 
+ * # Permissions
+ * * Asset
+ * * Portfolio
+ */
+export interface NftCall_redeem_nft {
+    __kind: 'redeem_nft'
+    ticker: Ticker
+    nftId: NFTId
+    portfolioKind: PortfolioKind
+}
+
+export interface NFTMetadataAttribute {
+    key: AssetMetadataKey
+    value: AssetMetadataValue
+}
+
+export type AssetMetadataValue = Bytes
+
+export type AssetMetadataKey = AssetMetadataKey_Global | AssetMetadataKey_Local
+
+export interface AssetMetadataKey_Global {
+    __kind: 'Global'
+    value: AssetMetadataGlobalKey
+}
+
+export interface AssetMetadataKey_Local {
+    __kind: 'Local'
+    value: AssetMetadataLocalKey
+}
+
+export type AssetMetadataLocalKey = bigint
+
+export type AssetMetadataGlobalKey = bigint
+
+export type NonFungibleType = NonFungibleType_Custom | NonFungibleType_Derivative | NonFungibleType_FixedIncome | NonFungibleType_Invoice
+
+export interface NonFungibleType_Custom {
+    __kind: 'Custom'
+    value: CustomAssetTypeId
+}
+
+export interface NonFungibleType_Derivative {
+    __kind: 'Derivative'
+}
+
+export interface NonFungibleType_FixedIncome {
+    __kind: 'FixedIncome'
+}
+
+export interface NonFungibleType_Invoice {
+    __kind: 'Invoice'
+}
+
+export type CustomAssetTypeId = number
+
+/**
+ * Dispatchable calls.
+ * 
+ * Each variant of this enum maps to a dispatchable function from the associated module.
+ */
+export type MultiSigCall = MultiSigCall_accept_multisig_signer_as_identity | MultiSigCall_accept_multisig_signer_as_key | MultiSigCall_add_multisig_signer | MultiSigCall_add_multisig_signers_via_creator | MultiSigCall_approve_as_identity | MultiSigCall_approve_as_key | MultiSigCall_change_sigs_required | MultiSigCall_change_sigs_required_via_creator | MultiSigCall_create_multisig | MultiSigCall_create_or_approve_proposal_as_identity | MultiSigCall_create_or_approve_proposal_as_key | MultiSigCall_create_proposal_as_identity | MultiSigCall_create_proposal_as_key | MultiSigCall_execute_scheduled_proposal | MultiSigCall_make_multisig_primary | MultiSigCall_make_multisig_secondary | MultiSigCall_reject_as_identity | MultiSigCall_reject_as_key | MultiSigCall_remove_creator_controls | MultiSigCall_remove_multisig_signer | MultiSigCall_remove_multisig_signers_via_creator
 
 /**
  * Accepts a multisig signer authorization given to signer's identity.
@@ -4811,6 +5031,19 @@ export interface MultiSigCall_change_sigs_required {
 }
 
 /**
+ * Changes the number of signatures required by a multisig. This must be called by the creator of the multisig.
+ * 
+ * # Arguments
+ * * `multisig_account` - The account identifier ([`AccountId`]) for the multi signature account.
+ * * `signatures_required` - The number of required signatures.
+ */
+export interface MultiSigCall_change_sigs_required_via_creator {
+    __kind: 'change_sigs_required_via_creator'
+    multisigAccount: AccountId32
+    signaturesRequired: bigint
+}
+
+/**
  * Creates a multisig
  * 
  * # Arguments
@@ -4832,6 +5065,7 @@ export interface MultiSigCall_create_multisig {
  * * `expiry` - Optional proposal expiry time.
  * * `auto_close` - Close proposal on receiving enough reject votes.
  * If this is 1 out of `m` multisig, the proposal will be immediately executed.
+ * #[deprecated(since = "6.0.0", note = "Please use the `create_proposal_as_identity` and `approve_as_identity` instead")]
  */
 export interface MultiSigCall_create_or_approve_proposal_as_identity {
     __kind: 'create_or_approve_proposal_as_identity'
@@ -4850,6 +5084,7 @@ export interface MultiSigCall_create_or_approve_proposal_as_identity {
  * * `expiry` - Optional proposal expiry time.
  * * `auto_close` - Close proposal on receiving enough reject votes.
  * If this is 1 out of `m` multisig, the proposal will be immediately executed.
+ * #[deprecated(since = "6.0.0", note = "Please use the `create_proposal_as_key` and `approve_as_key` instead")]
  */
 export interface MultiSigCall_create_or_approve_proposal_as_key {
     __kind: 'create_or_approve_proposal_as_key'
@@ -4903,7 +5138,7 @@ export interface MultiSigCall_execute_scheduled_proposal {
     multisig: AccountId32
     proposalId: bigint
     multisigDid: IdentityId
-    proposalWeight: bigint
+    proposalWeight: Weight
 }
 
 /**
@@ -4957,6 +5192,15 @@ export interface MultiSigCall_reject_as_key {
     __kind: 'reject_as_key'
     multisig: AccountId32
     proposalId: bigint
+}
+
+/**
+ * Removes the creator ability to call `add_multisig_signers_via_creator`, `remove_multisig_signers_via_creator`
+ * and `change_sigs_required_via_creator`.
+ */
+export interface MultiSigCall_remove_creator_controls {
+    __kind: 'remove_creator_controls'
+    multisigAccount: AccountId32
 }
 
 /**
@@ -5015,14 +5259,8 @@ export type IndicesCall = IndicesCall_claim | IndicesCall_force_transfer | Indic
  * 
  * Emits `IndexAssigned` if successful.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`.
- * - One storage mutation (codec `O(1)`).
- * - One reserve operation.
- * - One event.
- * -------------------
- * - DB Weight: 1 Read/Write (Accounts)
- * # </weight>
  */
 export interface IndicesCall_claim {
     __kind: 'claim'
@@ -5041,20 +5279,12 @@ export interface IndicesCall_claim {
  * 
  * Emits `IndexAssigned` if successful.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`.
- * - One storage mutation (codec `O(1)`).
- * - Up to one reserve operation.
- * - One event.
- * -------------------
- * - DB Weight:
- *    - Reads: Indices Accounts, System Account (original owner)
- *    - Writes: Indices Accounts, System Account (original owner)
- * # </weight>
  */
 export interface IndicesCall_force_transfer {
     __kind: 'force_transfer'
-    new: AccountId32
+    new: MultiAddress
     index: number
     freeze: boolean
 }
@@ -5070,14 +5300,8 @@ export interface IndicesCall_force_transfer {
  * 
  * Emits `IndexFreed` if successful.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`.
- * - One storage mutation (codec `O(1)`).
- * - One reserve operation.
- * - One event.
- * -------------------
- * - DB Weight: 1 Read/Write (Accounts)
- * # </weight>
  */
 export interface IndicesCall_free {
     __kind: 'free'
@@ -5095,14 +5319,8 @@ export interface IndicesCall_free {
  * 
  * Emits `IndexFrozen` if successful.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`.
- * - One storage mutation (codec `O(1)`).
- * - Up to one slash operation.
- * - One event.
- * -------------------
- * - DB Weight: 1 Read/Write (Accounts)
- * # </weight>
  */
 export interface IndicesCall_freeze {
     __kind: 'freeze'
@@ -5120,20 +5338,12 @@ export interface IndicesCall_freeze {
  * 
  * Emits `IndexAssigned` if successful.
  * 
- * # <weight>
+ * ## Complexity
  * - `O(1)`.
- * - One storage mutation (codec `O(1)`).
- * - One transfer operation.
- * - One event.
- * -------------------
- * - DB Weight:
- *    - Reads: Indices Accounts, System Account (recipient)
- *    - Writes: Indices Accounts, System Account (recipient)
- * # </weight>
  */
 export interface IndicesCall_transfer {
     __kind: 'transfer'
-    new: AccountId32
+    new: MultiAddress
     index: number
 }
 
@@ -5143,15 +5353,11 @@ export interface IndicesCall_transfer {
 export type ImOnlineCall = ImOnlineCall_heartbeat
 
 /**
- * # <weight>
- * - Complexity: `O(K + E)` where K is length of `Keys` (heartbeat.validators_len) and E is
- *   length of `heartbeat.network_state.external_address`
+ * ## Complexity:
+ * - `O(K + E)` where K is length of `Keys` (heartbeat.validators_len) and E is length of
+ *   `heartbeat.network_state.external_address`
  *   - `O(K)`: decoding of length `K`
  *   - `O(E)`: decoding/encoding of length `E`
- * - DbReads: pallet_session `Validators`, pallet_session `CurrentIndex`, `Keys`,
- *   `ReceivedHeartbeats`
- * - DbWrites: `ReceivedHeartbeats`
- * # </weight>
  */
 export interface ImOnlineCall_heartbeat {
     __kind: 'heartbeat'
@@ -5181,7 +5387,7 @@ export type OpaquePeerId = Bytes
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type IdentityCall = IdentityCall_accept_primary_key | IdentityCall_add_authorization | IdentityCall_add_claim | IdentityCall_add_investor_uniqueness_claim | IdentityCall_add_investor_uniqueness_claim_v2 | IdentityCall_add_secondary_keys_with_authorization | IdentityCall_add_secondary_keys_with_authorization_old | IdentityCall_cdd_register_did | IdentityCall_change_cdd_requirement_for_mk_rotation | IdentityCall_freeze_secondary_keys | IdentityCall_gc_add_cdd_claim | IdentityCall_gc_revoke_cdd_claim | IdentityCall_invalidate_cdd_claims | IdentityCall_join_identity_as_key | IdentityCall_leave_identity_as_key | IdentityCall_placeholder_legacy_set_permission_to_signer | IdentityCall_register_custom_claim_type | IdentityCall_remove_authorization | IdentityCall_remove_secondary_keys | IdentityCall_remove_secondary_keys_old | IdentityCall_revoke_claim | IdentityCall_revoke_claim_by_index | IdentityCall_rotate_primary_key_to_secondary | IdentityCall_set_permission_to_signer | IdentityCall_set_secondary_key_permissions | IdentityCall_unfreeze_secondary_keys
+export type IdentityCall = IdentityCall_accept_primary_key | IdentityCall_add_authorization | IdentityCall_add_claim | IdentityCall_add_secondary_keys_with_authorization | IdentityCall_cdd_register_did | IdentityCall_cdd_register_did_with_cdd | IdentityCall_change_cdd_requirement_for_mk_rotation | IdentityCall_create_child_identities | IdentityCall_create_child_identity | IdentityCall_freeze_secondary_keys | IdentityCall_gc_add_cdd_claim | IdentityCall_gc_revoke_cdd_claim | IdentityCall_invalidate_cdd_claims | IdentityCall_join_identity_as_key | IdentityCall_leave_identity_as_key | IdentityCall_register_custom_claim_type | IdentityCall_remove_authorization | IdentityCall_remove_secondary_keys | IdentityCall_revoke_claim | IdentityCall_revoke_claim_by_index | IdentityCall_rotate_primary_key_to_secondary | IdentityCall_set_secondary_key_permissions | IdentityCall_unfreeze_secondary_keys | IdentityCall_unlink_child_identity
 
 /**
  * Call this with the new primary key. By invoking this method, caller accepts authorization
@@ -5227,45 +5433,6 @@ export interface IdentityCall_add_claim {
 }
 
 /**
- * Add `Claim::InvestorUniqueness` claim for a given target identity.
- * 
- * # <weight>
- *  Weight of the this extrinsic is depend on the computation that used to validate
- *  the proof of claim, which will be a constant independent of user inputs.
- * # </weight>
- * 
- * # Arguments
- * * origin - Who provides the claim to the user? In this case, it's the user's account id as the user provides.
- * * target - `IdentityId` to which the claim gets assigned.
- * * claim - `InvestorUniqueness` claim details.
- * * proof - To validate the self attestation.
- * * expiry - Expiry of claim.
- * 
- * # Errors
- * * `DidMustAlreadyExist` Target should already been a part of the ecosystem.
- * * `ClaimVariantNotAllowed` When origin trying to pass claim variant other than `InvestorUniqueness`.
- * * `ConfidentialScopeClaimNotAllowed` When issuer is different from target or CDD_ID is invalid for given user.
- * * `InvalidScopeClaim When proof is invalid.
- * * `InvalidCDDId` when you are not the owner of that CDD_ID.
- */
-export interface IdentityCall_add_investor_uniqueness_claim {
-    __kind: 'add_investor_uniqueness_claim'
-    target: IdentityId
-    claim: Claim
-    proof: Bytes
-    expiry?: (bigint | undefined)
-}
-
-export interface IdentityCall_add_investor_uniqueness_claim_v2 {
-    __kind: 'add_investor_uniqueness_claim_v2'
-    target: IdentityId
-    scope: Scope
-    claim: Claim
-    proof: ScopeClaimProof
-    expiry?: (bigint | undefined)
-}
-
-/**
  * Adds secondary keys to target identity `id`.
  * 
  * Keys are directly added to identity because each of them has an authorization.
@@ -5287,15 +5454,6 @@ export interface IdentityCall_add_secondary_keys_with_authorization {
 }
 
 /**
- * Deprecated. Use `add_secondary_keys_with_authorization` instead.
- */
-export interface IdentityCall_add_secondary_keys_with_authorization_old {
-    __kind: 'add_secondary_keys_with_authorization_old'
-    additionalKeys: SecondaryKeyWithAuthV1[]
-    expiresAt: bigint
-}
-
-/**
  * Register `target_account` with a new Identity.
  * 
  * # Failure
@@ -5304,14 +5462,28 @@ export interface IdentityCall_add_secondary_keys_with_authorization_old {
  * - `target_account` (primary key of the new Identity) can be linked to just one and only
  * one identity.
  * - External secondary keys can be linked to just one identity.
- * 
- * # Weight
- * `7_000_000_000 + 600_000 * secondary_keys.len()`
  */
 export interface IdentityCall_cdd_register_did {
     __kind: 'cdd_register_did'
     targetAccount: AccountId32
     secondaryKeys: SecondaryKey[]
+}
+
+/**
+ * Register `target_account` with a new Identity and issue a CDD claim with a blank CddId
+ * 
+ * # Failure
+ * - `origin` has to be a active CDD provider. Inactive CDD providers cannot add new
+ * claims.
+ * - `target_account` (primary key of the new Identity) can be linked to just one and only
+ * one identity.
+ * - External secondary keys can be linked to just one identity.
+ */
+export interface IdentityCall_cdd_register_did_with_cdd {
+    __kind: 'cdd_register_did_with_cdd'
+    targetAccount: AccountId32
+    secondaryKeys: SecondaryKey[]
+    expiry?: (bigint | undefined)
 }
 
 /**
@@ -5324,6 +5496,48 @@ export interface IdentityCall_cdd_register_did {
 export interface IdentityCall_change_cdd_requirement_for_mk_rotation {
     __kind: 'change_cdd_requirement_for_mk_rotation'
     authRequired: boolean
+}
+
+/**
+ * Create a child identities.
+ * 
+ * The new primary key for each child identity will need to sign (off-chain)
+ * an authorization.
+ * 
+ * Only the primary key can create child identities.
+ * 
+ * # Arguments
+ * - `child_keys` the keys that will become primary keys of their own child identity.
+ * 
+ * # Errors
+ * - `KeyNotAllowed` only the primary key can create a new identity.
+ * - `AlreadyLinked` one of the keys is already linked to an identity.
+ * - `DuplicateKey` one of the keys is included multiple times.
+ * - `IsChildIdentity` the caller's identity is already a child identity and can't create child identities.
+ */
+export interface IdentityCall_create_child_identities {
+    __kind: 'create_child_identities'
+    childKeys: CreateChildIdentityWithAuth[]
+    expiresAt: bigint
+}
+
+/**
+ * Create a child identity and make the `secondary_key` it's primary key.
+ * 
+ * Only the primary key can create child identities.
+ * 
+ * # Arguments
+ * - `secondary_key` the secondary key that will become the primary key of the new identity.
+ * 
+ * # Errors
+ * - `KeyNotAllowed` only the primary key can create a new identity.
+ * - `NotASigner` the `secondary_key` is not a secondary key of the caller's identity.
+ * - `AccountKeyIsBeingUsed` the `secondary_key` can't be unlinked from it's current identity.
+ * - `IsChildIdentity` the caller's identity is already a child identity and can't create child identities.
+ */
+export interface IdentityCall_create_child_identity {
+    __kind: 'create_child_identity'
+    secondaryKey: AccountId32
 }
 
 /**
@@ -5381,13 +5595,6 @@ export interface IdentityCall_leave_identity_as_key {
 }
 
 /**
- * Placeholder for removed `legacy_set_permission_to_signer`.
- */
-export interface IdentityCall_placeholder_legacy_set_permission_to_signer {
-    __kind: 'placeholder_legacy_set_permission_to_signer'
-}
-
-/**
  * Register custom claim type.
  * 
  * # Errors
@@ -5424,14 +5631,6 @@ export interface IdentityCall_remove_secondary_keys {
 }
 
 /**
- * Deprecated. Use `remove_secondary_keys` instead.
- */
-export interface IdentityCall_remove_secondary_keys_old {
-    __kind: 'remove_secondary_keys_old'
-    keysToRemove: Signatory[]
-}
-
-/**
  * Marks the specified claim as revoked.
  */
 export interface IdentityCall_revoke_claim {
@@ -5445,10 +5644,6 @@ export interface IdentityCall_revoke_claim {
  * `claim_type`, and `scope`.
  * 
  * Please note that `origin` must be the issuer of the target claim.
- * 
- * # Errors
- * - `TargetHasNonZeroBalanceAtScopeId` when you try to revoke a `InvestorUniqueness*`
- * claim, and `target` identity still have any balance on the given `scope`.
  */
 export interface IdentityCall_revoke_claim_by_index {
     __kind: 'revoke_claim_by_index'
@@ -5480,15 +5675,6 @@ export interface IdentityCall_rotate_primary_key_to_secondary {
 }
 
 /**
- * Deprecated. Use `set_secondary_key_permissions` instead.
- */
-export interface IdentityCall_set_permission_to_signer {
-    __kind: 'set_permission_to_signer'
-    key: Signatory
-    perms: Permissions
-}
-
-/**
  * Sets permissions for an specific `target_key` key.
  * 
  * Only the primary key of an identity is able to set secondary key permissions.
@@ -5506,43 +5692,22 @@ export interface IdentityCall_unfreeze_secondary_keys {
     __kind: 'unfreeze_secondary_keys'
 }
 
-export interface SecondaryKey {
-    key: AccountId32
-    permissions: Permissions
-}
-
-export interface SecondaryKeyWithAuthV1 {
-    secondaryKey: V1SecondaryKey
-    authSignature: H512
-}
-
-export type H512 = Bytes
-
-export interface V1SecondaryKey {
-    signer: Signatory
-    permissions: Permissions
-}
-
-export interface SecondaryKeyWithAuth {
-    secondaryKey: SecondaryKey
-    authSignature: H512
-}
-
-export interface ScopeClaimProof {
-    proofScopeIdWellformed: Signature
-    proofScopeIdCddIdMatch: ZkProofData
-    scopeId: Bytes
-}
-
-export interface ZkProofData {
-    challengeResponses: Bytes[]
-    subtractExpressionsRes: Bytes
-    blindedScopeDidHash: Bytes
-}
-
-export interface Signature {
-    r: Bytes
-    s: Bytes
+/**
+ * Unlink a child identity from it's parent identity.
+ * 
+ * Only the primary key of the parent or child identities can unlink the identities.
+ * 
+ * # Arguments
+ * - `child_did` the child identity to unlink from its parent identity.
+ * 
+ * # Errors
+ * - `KeyNotAllowed` only the primary key of either the parent or child identity can unlink the identities.
+ * - `NoParentIdentity` the identity `child_did` doesn't have a parent identity.
+ * - `NotParentOrChildIdentity` the caller's identity isn't the parent or child identity.
+ */
+export interface IdentityCall_unlink_child_identity {
+    __kind: 'unlink_child_identity'
+    childDid: IdentityId
 }
 
 export type Scope = Scope_Custom | Scope_Identity | Scope_Ticker
@@ -5562,7 +5727,24 @@ export interface Scope_Ticker {
     value: Ticker
 }
 
-export type Claim = Claim_Accredited | Claim_Affiliate | Claim_Blocked | Claim_BuyLockup | Claim_Custom | Claim_CustomerDueDiligence | Claim_Exempted | Claim_InvestorUniqueness | Claim_InvestorUniquenessV2 | Claim_Jurisdiction | Claim_KnowYourCustomer | Claim_NoData | Claim_SellLockup
+export interface CreateChildIdentityWithAuth {
+    key: AccountId32
+    authSignature: H512
+}
+
+export type H512 = Bytes
+
+export interface SecondaryKey {
+    key: AccountId32
+    permissions: Permissions
+}
+
+export interface SecondaryKeyWithAuth {
+    secondaryKey: SecondaryKey
+    authSignature: H512
+}
+
+export type Claim = Claim_Accredited | Claim_Affiliate | Claim_Blocked | Claim_BuyLockup | Claim_Custom | Claim_CustomerDueDiligence | Claim_Exempted | Claim_Jurisdiction | Claim_KnowYourCustomer | Claim_SellLockup
 
 export interface Claim_Accredited {
     __kind: 'Accredited'
@@ -5599,16 +5781,6 @@ export interface Claim_Exempted {
     value: Scope
 }
 
-export interface Claim_InvestorUniqueness {
-    __kind: 'InvestorUniqueness'
-    value: [Scope, IdentityId, CddId]
-}
-
-export interface Claim_InvestorUniquenessV2 {
-    __kind: 'InvestorUniquenessV2'
-    value: CddId
-}
-
 export interface Claim_Jurisdiction {
     __kind: 'Jurisdiction'
     value: [CountryCode, Scope]
@@ -5617,10 +5789,6 @@ export interface Claim_Jurisdiction {
 export interface Claim_KnowYourCustomer {
     __kind: 'KnowYourCustomer'
     value: Scope
-}
-
-export interface Claim_NoData {
-    __kind: 'NoData'
 }
 
 export interface Claim_SellLockup {
@@ -5712,12 +5880,17 @@ export type AGId = number
 export type GrandpaCall = GrandpaCall_note_stalled | GrandpaCall_report_equivocation | GrandpaCall_report_equivocation_unsigned
 
 /**
- * Note that the current authority set of the GRANDPA finality gadget has
- * stalled. This will trigger a forced authority set change at the beginning
- * of the next session, to be enacted `delay` blocks after that. The delay
- * should be high enough to safely assume that the block signalling the
- * forced change will not be re-orged (e.g. 1000 blocks). The GRANDPA voters
- * will start the new authority set using the given finalized block as base.
+ * Note that the current authority set of the GRANDPA finality gadget has stalled.
+ * 
+ * This will trigger a forced authority set change at the beginning of the next session, to
+ * be enacted `delay` blocks after that. The `delay` should be high enough to safely assume
+ * that the block signalling the forced change will not be re-orged e.g. 1000 blocks.
+ * The block production rate (which may be slowed down because of finality lagging) should
+ * be taken into account when choosing the `delay`. The GRANDPA voters based on the new
+ * authority will start voting on top of `best_finalized_block_number` for new finalized
+ * blocks. `best_finalized_block_number` should be the highest of the latest finalized
+ * block of all validators of the new authority set.
+ * 
  * Only callable by root.
  */
 export interface GrandpaCall_note_stalled {
@@ -5734,7 +5907,7 @@ export interface GrandpaCall_note_stalled {
  */
 export interface GrandpaCall_report_equivocation {
     __kind: 'report_equivocation'
-    equivocationProof: Type_449
+    equivocationProof: Type_453
     keyOwnerProof: MembershipProof
 }
 
@@ -5751,7 +5924,7 @@ export interface GrandpaCall_report_equivocation {
  */
 export interface GrandpaCall_report_equivocation_unsigned {
     __kind: 'report_equivocation_unsigned'
-    equivocationProof: Type_449
+    equivocationProof: Type_453
     keyOwnerProof: MembershipProof
 }
 
@@ -5761,7 +5934,7 @@ export interface MembershipProof {
     validatorCount: number
 }
 
-export interface Type_449 {
+export interface Type_453 {
     setId: bigint
     equivocation: Equivocation
 }
@@ -5770,31 +5943,33 @@ export type Equivocation = Equivocation_Precommit | Equivocation_Prevote
 
 export interface Equivocation_Precommit {
     __kind: 'Precommit'
-    value: Type_456
+    value: Type_460
 }
 
 export interface Equivocation_Prevote {
     __kind: 'Prevote'
-    value: Type_451
+    value: Type_455
 }
 
-export interface Type_451 {
+export interface Type_455 {
     roundNumber: bigint
     identity: Public
-    first: [Prevote, Bytes]
-    second: [Prevote, Bytes]
+    first: [Prevote, Signature]
+    second: [Prevote, Signature]
 }
+
+export type Signature = Bytes
 
 export interface Prevote {
     targetHash: H256
     targetNumber: number
 }
 
-export interface Type_456 {
+export interface Type_460 {
     roundNumber: bigint
     identity: Public
-    first: [Precommit, Bytes]
-    second: [Precommit, Bytes]
+    first: [Precommit, Signature]
+    second: [Precommit, Signature]
 }
 
 export interface Precommit {
@@ -5885,7 +6060,7 @@ export interface ExternalAgentsCall_change_group {
 export interface ExternalAgentsCall_create_and_change_custom_group {
     __kind: 'create_and_change_custom_group'
     ticker: Ticker
-    perms: Type_43
+    perms: Type_46
     agent: IdentityId
 }
 
@@ -5912,7 +6087,7 @@ export interface ExternalAgentsCall_create_and_change_custom_group {
 export interface ExternalAgentsCall_create_group {
     __kind: 'create_group'
     ticker: Ticker
-    perms: Type_43
+    perms: Type_46
 }
 
 /**
@@ -5925,7 +6100,7 @@ export interface ExternalAgentsCall_create_group {
 export interface ExternalAgentsCall_create_group_and_add_auth {
     __kind: 'create_group_and_add_auth'
     ticker: Ticker
-    perms: Type_43
+    perms: Type_46
     target: IdentityId
     expiry?: (bigint | undefined)
 }
@@ -5973,7 +6148,7 @@ export interface ExternalAgentsCall_set_group_permissions {
     __kind: 'set_group_permissions'
     ticker: Ticker
     id: AGId
-    perms: Type_43
+    perms: Type_46
 }
 
 /**
@@ -6447,7 +6622,7 @@ export type CheckpointId = bigint
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
-export type ContractsCall = ContractsCall_call | ContractsCall_instantiate | ContractsCall_instantiate_with_code | ContractsCall_remove_code | ContractsCall_upload_code
+export type ContractsCall = ContractsCall_call | ContractsCall_call_old_weight | ContractsCall_instantiate | ContractsCall_instantiate_old_weight | ContractsCall_instantiate_with_code | ContractsCall_instantiate_with_code_old_weight | ContractsCall_remove_code | ContractsCall_set_code | ContractsCall_upload_code
 
 /**
  * Makes a call to an account, optionally transferring some balance.
@@ -6471,6 +6646,18 @@ export interface ContractsCall_call {
     __kind: 'call'
     dest: MultiAddress
     value: bigint
+    gasLimit: Weight
+    storageDepositLimit?: (bigint | undefined)
+    data: Bytes
+}
+
+/**
+ * Deprecated version if [`Self::call`] for use in an in-storage `Call`.
+ */
+export interface ContractsCall_call_old_weight {
+    __kind: 'call_old_weight'
+    dest: MultiAddress
+    value: bigint
     gasLimit: bigint
     storageDepositLimit?: (bigint | undefined)
     data: Bytes
@@ -6485,6 +6672,19 @@ export interface ContractsCall_call {
  */
 export interface ContractsCall_instantiate {
     __kind: 'instantiate'
+    value: bigint
+    gasLimit: Weight
+    storageDepositLimit?: (bigint | undefined)
+    codeHash: H256
+    data: Bytes
+    salt: Bytes
+}
+
+/**
+ * Deprecated version if [`Self::instantiate`] for use in an in-storage `Call`.
+ */
+export interface ContractsCall_instantiate_old_weight {
+    __kind: 'instantiate_old_weight'
     value: bigint
     gasLimit: bigint
     storageDepositLimit?: (bigint | undefined)
@@ -6524,6 +6724,19 @@ export interface ContractsCall_instantiate {
 export interface ContractsCall_instantiate_with_code {
     __kind: 'instantiate_with_code'
     value: bigint
+    gasLimit: Weight
+    storageDepositLimit?: (bigint | undefined)
+    code: Bytes
+    data: Bytes
+    salt: Bytes
+}
+
+/**
+ * Deprecated version if [`Self::instantiate_with_code`] for use in an in-storage `Call`.
+ */
+export interface ContractsCall_instantiate_with_code_old_weight {
+    __kind: 'instantiate_with_code_old_weight'
+    value: bigint
     gasLimit: bigint
     storageDepositLimit?: (bigint | undefined)
     code: Bytes
@@ -6543,6 +6756,24 @@ export interface ContractsCall_remove_code {
 }
 
 /**
+ * Privileged function that changes the code of an existing contract.
+ * 
+ * This takes care of updating refcounts and all other necessary operations. Returns
+ * an error if either the `code_hash` or `dest` do not exist.
+ * 
+ * # Note
+ * 
+ * This does **not** change the address of the contract in question. This means
+ * that the contract address is no longer derived from its code hash after calling
+ * this dispatchable.
+ */
+export interface ContractsCall_set_code {
+    __kind: 'set_code'
+    dest: MultiAddress
+    codeHash: H256
+}
+
+/**
  * Upload new `code` without instantiating a contract from it.
  * 
  * If the code does not already exist a deposit is reserved from the caller
@@ -6552,6 +6783,10 @@ export interface ContractsCall_remove_code {
  * If the code already exists in storage it will still return `Ok` and upgrades
  * the in storage version to the current
  * [`InstructionWeights::version`](InstructionWeights).
+ * 
+ * - `determinism`: If this is set to any other value but [`Determinism::Deterministic`]
+ *   then the only way to use this code is to delegate call into it from an offchain
+ *   execution. Set to [`Determinism::Deterministic`] if in doubt.
  * 
  * # Note
  * 
@@ -6564,6 +6799,17 @@ export interface ContractsCall_upload_code {
     __kind: 'upload_code'
     code: Bytes
     storageDepositLimit?: (bigint | undefined)
+    determinism: Determinism
+}
+
+export type Determinism = Determinism_AllowIndeterminism | Determinism_Deterministic
+
+export interface Determinism_AllowIndeterminism {
+    __kind: 'AllowIndeterminism'
+}
+
+export interface Determinism_Deterministic {
+    __kind: 'Deterministic'
 }
 
 /**
@@ -6575,7 +6821,7 @@ export type ComplianceManagerCall = ComplianceManagerCall_add_compliance_require
 
 /**
  * Adds a compliance requirement to an asset's compliance by ticker.
- * If the compliance requirement is a duplicate, it does nothing.
+ * If there are duplicate ClaimTypes for a particular trusted issuer, duplicates are removed.
  * 
  * # Arguments
  * * origin - Signer of the dispatchable. It should be the owner of the ticker
@@ -6947,10 +7193,8 @@ export interface CheckpointCall_create_checkpoint {
  * 
  * # Errors
  * - `UnauthorizedAgent` if the DID of `origin` isn't a permissioned agent for `ticker`.
- * - `ScheduleDurationTooShort` if the schedule duration is too short.
  * - `InsufficientAccountBalance` if the protocol fee could not be charged.
  * - `CounterOverflow` if the schedule ID or total checkpoint counters would overflow.
- * - `FailedToComputeNextCheckpoint` if the next checkpoint for `schedule` is in the past.
  * 
  * # Permissions
  * * Asset
@@ -6958,7 +7202,7 @@ export interface CheckpointCall_create_checkpoint {
 export interface CheckpointCall_create_schedule {
     __kind: 'create_schedule'
     ticker: Ticker
-    schedule: ScheduleSpec
+    schedule: ScheduleCheckpoints
 }
 
 /**
@@ -6999,45 +7243,8 @@ export interface CheckpointCall_set_schedules_max_complexity {
     maxComplexity: bigint
 }
 
-export interface ScheduleSpec {
-    start?: (bigint | undefined)
-    period: CalendarPeriod
-    remaining: number
-}
-
-export interface CalendarPeriod {
-    unit: CalendarUnit
-    amount: bigint
-}
-
-export type CalendarUnit = CalendarUnit_Day | CalendarUnit_Hour | CalendarUnit_Minute | CalendarUnit_Month | CalendarUnit_Second | CalendarUnit_Week | CalendarUnit_Year
-
-export interface CalendarUnit_Day {
-    __kind: 'Day'
-}
-
-export interface CalendarUnit_Hour {
-    __kind: 'Hour'
-}
-
-export interface CalendarUnit_Minute {
-    __kind: 'Minute'
-}
-
-export interface CalendarUnit_Month {
-    __kind: 'Month'
-}
-
-export interface CalendarUnit_Second {
-    __kind: 'Second'
-}
-
-export interface CalendarUnit_Week {
-    __kind: 'Week'
-}
-
-export interface CalendarUnit_Year {
-    __kind: 'Year'
+export interface ScheduleCheckpoints {
+    pending: bigint[]
 }
 
 /**
@@ -7763,24 +7970,11 @@ export interface AllowedSlots_PrimarySlots {
 }
 
 /**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export type AuthorshipCall = AuthorshipCall_set_uncles
-
-/**
- * Provide a set of uncles.
- */
-export interface AuthorshipCall_set_uncles {
-    __kind: 'set_uncles'
-    newUncles: Header[]
-}
-
-/**
  * Dispatchable calls.
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
-export type AssetCall = AssetCall_accept_asset_ownership_transfer | AssetCall_accept_ticker_transfer | AssetCall_add_documents | AssetCall_claim_classic_ticker | AssetCall_controller_transfer | AssetCall_create_asset | AssetCall_create_asset_with_custom_type | AssetCall_freeze | AssetCall_issue | AssetCall_make_divisible | AssetCall_redeem | AssetCall_redeem_from_portfolio | AssetCall_register_and_set_local_asset_metadata | AssetCall_register_asset_metadata_global_type | AssetCall_register_asset_metadata_local_type | AssetCall_register_custom_asset_type | AssetCall_register_ticker | AssetCall_remove_documents | AssetCall_rename_asset | AssetCall_reserve_classic_ticker | AssetCall_set_asset_metadata | AssetCall_set_asset_metadata_details | AssetCall_set_funding_round | AssetCall_unfreeze | AssetCall_update_identifiers
+export type AssetCall = AssetCall_accept_asset_ownership_transfer | AssetCall_accept_ticker_transfer | AssetCall_add_documents | AssetCall_controller_transfer | AssetCall_create_asset | AssetCall_create_asset_with_custom_type | AssetCall_exempt_ticker_affirmation | AssetCall_freeze | AssetCall_issue | AssetCall_make_divisible | AssetCall_pre_approve_ticker | AssetCall_redeem | AssetCall_redeem_from_portfolio | AssetCall_register_and_set_local_asset_metadata | AssetCall_register_asset_metadata_global_type | AssetCall_register_asset_metadata_local_type | AssetCall_register_custom_asset_type | AssetCall_register_ticker | AssetCall_remove_documents | AssetCall_remove_local_metadata_key | AssetCall_remove_metadata_value | AssetCall_remove_ticker_affirmation_exemption | AssetCall_remove_ticker_pre_approval | AssetCall_rename_asset | AssetCall_set_asset_metadata | AssetCall_set_asset_metadata_details | AssetCall_set_funding_round | AssetCall_unfreeze | AssetCall_update_asset_type | AssetCall_update_identifiers
 
 /**
  * This function is used to accept a token ownership transfer.
@@ -7832,28 +8026,6 @@ export interface AssetCall_add_documents {
 }
 
 /**
- * Claim a systematically reserved Polymath Classic (PMC) `ticker`
- * and transfer it to the `origin`'s identity.
- * 
- * To verify that the `origin` is in control of the Ethereum account on the books,
- * an `ethereum_signature` containing the `origin`'s DID as the message
- * must be provided by that Ethereum account.
- * 
- * # Errors
- * - `NoSuchClassicTicker` if this is not a systematically reserved PMC ticker.
- * - `TickerAlreadyRegistered` if the ticker was already registered, e.g., by `origin`.
- * - `TickerRegistrationExpired` if the ticker's registration has expired.
- * - `BadOrigin` if not signed.
- * - `InvalidEthereumSignature` if the `ethereum_signature` is not valid.
- * - `NotAnOwner` if the ethereum account is not the owner of the PMC ticker.
- */
-export interface AssetCall_claim_classic_ticker {
-    __kind: 'claim_classic_ticker'
-    ticker: Ticker
-    ethereumSignature: EcdsaSignature
-}
-
-/**
  * Forces a transfer of token from `from_portfolio` to the caller's default portfolio.
  * 
  * # Arguments
@@ -7881,8 +8053,6 @@ export interface AssetCall_controller_transfer {
  * * `asset_type` - the asset type.
  * * `identifiers` - a vector of asset identifiers.
  * * `funding_round` - name of the funding round.
- * * `disable_iu` - whether or not investor uniqueness enforcement should be disabled.
- *   This cannot be changed after creating the asset.
  * 
  * ## Errors
  * - `InvalidAssetIdentifier` if any of `identifiers` are invalid.
@@ -7892,7 +8062,7 @@ export interface AssetCall_controller_transfer {
  * - `AssetAlreadyCreated` if asset was already created.
  * - `TickerTooLong` if `ticker`'s length is greater than `config.max_ticker_length` chain
  * parameter.
- * - `TickerNotAscii` if `ticker` is not yet registered, and contains non-ascii printable characters (from code 32 to 126) or any character after first occurrence of `\0`.
+ * - `TickerNotAlphanumeric` if `ticker` is not yet registered, and contains non-alphanumeric characters or any character after first occurrence of `\0`.
  * 
  * ## Permissions
  * * Portfolio
@@ -7905,7 +8075,6 @@ export interface AssetCall_create_asset {
     assetType: AssetType
     identifiers: AssetIdentifier[]
     fundingRound?: (FundingRoundName | undefined)
-    disableIu: boolean
 }
 
 /**
@@ -7919,7 +8088,21 @@ export interface AssetCall_create_asset_with_custom_type {
     customAssetType: Bytes
     identifiers: AssetIdentifier[]
     fundingRound?: (FundingRoundName | undefined)
-    disableIu: boolean
+}
+
+/**
+ * Pre-approves the receivement of the asset for all identities.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will be exempt from affirmation.
+ * 
+ * # Permissions
+ * * Root
+ */
+export interface AssetCall_exempt_ticker_affirmation {
+    __kind: 'exempt_ticker_affirmation'
+    ticker: Ticker
 }
 
 /**
@@ -7941,13 +8124,13 @@ export interface AssetCall_freeze {
 }
 
 /**
- * Issue, or mint, new tokens to the caller,
- * which must be an authorized external agent.
+ * Issue, or mint, new tokens to the caller, which must be an authorized external agent.
  * 
  * # Arguments
- * * `origin` is a signer that has permissions to act as an agent of `ticker`.
- * * `ticker` of the token.
- * * `amount` of tokens that get issued.
+ * * `origin` - A signer that has permissions to act as an agent of `ticker`.
+ * * `ticker` - The [`Ticker`] of the token.
+ * * `amount` - The amount of tokens that will be issued.
+ * * `portfolio_kind` - The [`PortfolioKind`] of the portfolio that will receive the minted tokens.
  * 
  * # Permissions
  * * Asset
@@ -7957,6 +8140,7 @@ export interface AssetCall_issue {
     __kind: 'issue'
     ticker: Ticker
     amount: bigint
+    portfolioKind: PortfolioKind
 }
 
 /**
@@ -7974,6 +8158,21 @@ export interface AssetCall_issue {
  */
 export interface AssetCall_make_divisible {
     __kind: 'make_divisible'
+    ticker: Ticker
+}
+
+/**
+ * Pre-approves the receivement of an asset.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will be exempt from affirmation.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface AssetCall_pre_approve_ticker {
+    __kind: 'pre_approve_ticker'
     ticker: Ticker
 }
 
@@ -8150,6 +8349,83 @@ export interface AssetCall_remove_documents {
 }
 
 /**
+ * Removes the asset metadata key and value of a local key.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the ticker of the local metadata key.
+ * * `local_key` - the local metadata key.
+ * 
+ * # Errors
+ *  - `SecondaryKeyNotAuthorizedForAsset` - if called by someone without the appropriate external agent permissions.
+ *  - `UnauthorizedAgent` - if called by someone without the appropriate external agent permissions.
+ *  - `AssetMetadataKeyIsMissing` - if the key doens't exist.
+ *  - `AssetMetadataValueIsLocked` - if the value of the key is locked.
+ *  - AssetMetadataKeyBelongsToNFTCollection - if the key is a mandatory key in an NFT collection.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface AssetCall_remove_local_metadata_key {
+    __kind: 'remove_local_metadata_key'
+    ticker: Ticker
+    localKey: AssetMetadataLocalKey
+}
+
+/**
+ * Removes the asset metadata value of a metadata key.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the ticker of the local metadata key.
+ * * `metadata_key` - the metadata key that will have its value deleted.
+ * 
+ * # Errors
+ *  - `SecondaryKeyNotAuthorizedForAsset` - if called by someone without the appropriate external agent permissions.
+ *  - `UnauthorizedAgent` - if called by someone without the appropriate external agent permissions.
+ *  - `AssetMetadataKeyIsMissing` - if the key doens't exist.
+ *  - `AssetMetadataValueIsLocked` - if the value of the key is locked.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface AssetCall_remove_metadata_value {
+    __kind: 'remove_metadata_value'
+    ticker: Ticker
+    metadataKey: AssetMetadataKey
+}
+
+/**
+ * Removes the pre-approval of the asset for all identities.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will have its exemption removed.
+ * 
+ * # Permissions
+ * * Root
+ */
+export interface AssetCall_remove_ticker_affirmation_exemption {
+    __kind: 'remove_ticker_affirmation_exemption'
+    ticker: Ticker
+}
+
+/**
+ * Removes the pre approval of an asset.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the [`Ticker`] that will have its exemption removed.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface AssetCall_remove_ticker_pre_approval {
+    __kind: 'remove_ticker_pre_approval'
+    ticker: Ticker
+}
+
+/**
  * Renames a given token.
  * 
  * # Arguments
@@ -8168,28 +8444,6 @@ export interface AssetCall_rename_asset {
     __kind: 'rename_asset'
     ticker: Ticker
     name: AssetName
-}
-
-/**
- * Reserve a Polymath Classic (PMC) ticker.
- * Must be called by root, and assigns the ticker to a systematic DID.
- * 
- * # Arguments
- * * `origin` which must be root.
- * * `classic_ticker_import` specification for the PMC ticker.
- * * `contract_did` to reserve the ticker to if `classic_ticker_import.is_contract` holds.
- * * `config` to use for expiry and ticker length.
- * 
- * # Errors
- * * `AssetAlreadyCreated` if `classic_ticker_import.ticker` was created as an asset.
- * * `TickerTooLong` if the `config` considers the `classic_ticker_import.ticker` too long.
- * * `TickerAlreadyRegistered` if `classic_ticker_import.ticker` was already registered.
- */
-export interface AssetCall_reserve_classic_ticker {
-    __kind: 'reserve_classic_ticker'
-    classicTickerImport: ClassicTickerImport
-    contractDid: IdentityId
-    config: TickerRegistrationConfig
 }
 
 /**
@@ -8283,6 +8537,26 @@ export interface AssetCall_unfreeze {
 }
 
 /**
+ * Updates the type of an asset.
+ * 
+ * # Arguments
+ * * `origin` - the secondary key of the sender.
+ * * `ticker` - the ticker of the token.
+ * * `asset_type` - the new type of the token.
+ * 
+ * ## Errors
+ * - `InvalidCustomAssetTypeId` if `asset_type` is of type custom and has an invalid type id.
+ * 
+ * # Permissions
+ * * Asset
+ */
+export interface AssetCall_update_asset_type {
+    __kind: 'update_asset_type'
+    ticker: Ticker
+    assetType: AssetType
+}
+
+/**
  * Updates the asset identifiers.
  * 
  * # Arguments
@@ -8303,36 +8577,6 @@ export interface AssetCall_update_identifiers {
     identifiers: AssetIdentifier[]
 }
 
-export type AssetMetadataKey = AssetMetadataKey_Global | AssetMetadataKey_Local
-
-export interface AssetMetadataKey_Global {
-    __kind: 'Global'
-    value: AssetMetadataGlobalKey
-}
-
-export interface AssetMetadataKey_Local {
-    __kind: 'Local'
-    value: AssetMetadataLocalKey
-}
-
-export type AssetMetadataLocalKey = bigint
-
-export type AssetMetadataGlobalKey = bigint
-
-export interface TickerRegistrationConfig {
-    maxTickerLength: number
-    registrationLength?: (bigint | undefined)
-}
-
-export interface ClassicTickerImport {
-    ethOwner: EthereumAddress
-    ticker: Ticker
-    isContract: boolean
-    isCreated: boolean
-}
-
-export type EthereumAddress = Bytes
-
 export interface AssetMetadataValueDetail {
     expire?: (bigint | undefined)
     lockStatus: AssetMetadataLockStatus
@@ -8352,8 +8596,6 @@ export interface AssetMetadataLockStatus_LockedUntil {
 export interface AssetMetadataLockStatus_Unlocked {
     __kind: 'Unlocked'
 }
-
-export type AssetMetadataValue = Bytes
 
 export interface AssetMetadataSpec {
     url?: (Url | undefined)
@@ -8394,7 +8636,7 @@ export interface AssetIdentifier_LEI {
     value: Bytes
 }
 
-export type AssetType = AssetType_Commodity | AssetType_Custom | AssetType_Derivative | AssetType_EquityCommon | AssetType_EquityPreferred | AssetType_FixedIncome | AssetType_Fund | AssetType_REIT | AssetType_RevenueShareAgreement | AssetType_StableCoin | AssetType_StructuredProduct
+export type AssetType = AssetType_Commodity | AssetType_Custom | AssetType_Derivative | AssetType_EquityCommon | AssetType_EquityPreferred | AssetType_FixedIncome | AssetType_Fund | AssetType_NonFungible | AssetType_REIT | AssetType_RevenueShareAgreement | AssetType_StableCoin | AssetType_StructuredProduct
 
 export interface AssetType_Commodity {
     __kind: 'Commodity'
@@ -8425,6 +8667,11 @@ export interface AssetType_Fund {
     __kind: 'Fund'
 }
 
+export interface AssetType_NonFungible {
+    __kind: 'NonFungible'
+    value: NonFungibleType
+}
+
 export interface AssetType_REIT {
     __kind: 'REIT'
 }
@@ -8441,11 +8688,7 @@ export interface AssetType_StructuredProduct {
     __kind: 'StructuredProduct'
 }
 
-export type CustomAssetTypeId = number
-
 export type AssetName = Bytes
-
-export type EcdsaSignature = Bytes
 
 export interface Document {
     uri: DocumentUri
@@ -8534,7 +8777,6 @@ export const Committee: sts.Type<Committee> = sts.closedEnum(() => {
 export const Call: sts.Type<Call> = sts.closedEnum(() => {
     return  {
         Asset: AssetCall,
-        Authorship: AuthorshipCall,
         Babe: BabeCall,
         Balances: BalancesCall,
         Base: BaseCall,
@@ -8553,6 +8795,7 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         ImOnline: ImOnlineCall,
         Indices: IndicesCall,
         MultiSig: MultiSigCall,
+        Nft: NftCall,
         Pips: PipsCall,
         PolymeshCommittee: PolymeshCommitteeCall,
         PolymeshContracts: PolymeshContractsCall,
@@ -8560,14 +8803,12 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         Preimage: PreimageCall,
         ProtocolFee: ProtocolFeeCall,
         Relayer: RelayerCall,
-        Rewards: RewardsCall,
         Scheduler: SchedulerCall,
         Session: SessionCall,
         Settlement: SettlementCall,
         Staking: StakingCall,
         Statistics: StatisticsCall,
         Sto: StoCall,
-        Sudo: SudoCall,
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalCommitteeMembership: TechnicalCommitteeMembershipCall,
@@ -8580,19 +8821,30 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
 })
 
 /**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
+ * Contains one variant per dispatchable that can be called by an extrinsic.
  */
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
         batch: sts.enumStruct({
             calls: sts.array(() => Call),
         }),
+        batch_all: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
         batch_atomic: sts.enumStruct({
             calls: sts.array(() => Call),
         }),
+        batch_old: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
         batch_optimistic: sts.enumStruct({
+            calls: sts.array(() => Call),
+        }),
+        dispatch_as: sts.enumStruct({
+            asOrigin: OriginCaller,
+            call: Call,
+        }),
+        force_batch: sts.enumStruct({
             calls: sts.array(() => Call),
         }),
         relay_tx: sts.enumStruct({
@@ -8600,6 +8852,17 @@ export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
             signature: MultiSignature,
             call: UniqueCall,
         }),
+        with_weight: sts.enumStruct({
+            call: Call,
+            weight: Weight,
+        }),
+    }
+})
+
+export const Weight: sts.Type<Weight> = sts.struct(() => {
+    return  {
+        refTime: sts.bigint(),
+        proofSize: sts.bigint(),
     }
 })
 
@@ -8615,6 +8878,47 @@ export const MultiSignature: sts.Type<MultiSignature> = sts.closedEnum(() => {
         Ecdsa: sts.bytes(),
         Ed25519: sts.bytes(),
         Sr25519: sts.bytes(),
+    }
+})
+
+export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
+    return  {
+        PolymeshCommittee: Type_522,
+        TechnicalCommittee: Type_523,
+        UpgradeCommittee: Type_524,
+        Void: Void,
+        system: RawOrigin,
+    }
+})
+
+export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
+    return  {
+        None: sts.unit(),
+        Root: sts.unit(),
+        Signed: AccountId32,
+    }
+})
+
+export const Void: sts.Type<Void> = sts.closedEnum(() => {
+    return  {
+    }
+})
+
+export const Type_524: sts.Type<Type_524> = sts.closedEnum(() => {
+    return  {
+        Endorsed: sts.unit(),
+    }
+})
+
+export const Type_523: sts.Type<Type_523> = sts.closedEnum(() => {
+    return  {
+        Endorsed: sts.unit(),
+    }
+})
+
+export const Type_522: sts.Type<Type_522> = sts.closedEnum(() => {
+    return  {
+        Endorsed: sts.unit(),
     }
 })
 
@@ -8785,9 +9089,6 @@ export const TechnicalCommitteeCall: sts.Type<TechnicalCommitteeCall> = sts.clos
  */
 export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
     return  {
-        fill_block: sts.enumStruct({
-            ratio: Perbill,
-        }),
         kill_prefix: sts.enumStruct({
             prefix: sts.bytes(),
             subkeys: sts.number(),
@@ -8813,42 +9114,6 @@ export const SystemCall: sts.Type<SystemCall> = sts.closedEnum(() => {
         set_storage: sts.enumStruct({
             items: sts.array(() => sts.tuple(() => [sts.bytes(), sts.bytes()])),
         }),
-    }
-})
-
-export const Perbill = sts.number()
-
-/**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
- */
-export const SudoCall: sts.Type<SudoCall> = sts.closedEnum(() => {
-    return  {
-        set_key: sts.enumStruct({
-            new: MultiAddress,
-        }),
-        sudo: sts.enumStruct({
-            call: Call,
-        }),
-        sudo_as: sts.enumStruct({
-            who: MultiAddress,
-            call: Call,
-        }),
-        sudo_unchecked_weight: sts.enumStruct({
-            call: Call,
-            weight: sts.bigint(),
-        }),
-    }
-})
-
-export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
-    return  {
-        Address20: sts.bytes(),
-        Address32: sts.bytes(),
-        Id: AccountId32,
-        Index: sts.number(),
-        Raw: sts.bytes(),
     }
 })
 
@@ -8903,17 +9168,20 @@ export const StoCall: sts.Type<StoCall> = sts.closedEnum(() => {
 
 export const ReceiptDetails: sts.Type<ReceiptDetails> = sts.struct(() => {
     return  {
-        receiptUid: sts.bigint(),
+        uid: sts.bigint(),
+        instructionId: InstructionId,
         legId: LegId,
         signer: AccountId32,
         signature: MultiSignature,
-        metadata: ReceiptMetadata,
+        metadata: sts.option(() => ReceiptMetadata),
     }
 })
 
 export const ReceiptMetadata = sts.bytes()
 
 export const LegId = sts.bigint()
+
+export const InstructionId = sts.bigint()
 
 export const FundraiserId = sts.bigint()
 
@@ -8991,11 +9259,8 @@ export const ClaimType: sts.Type<ClaimType> = sts.closedEnum(() => {
         Custom: CustomClaimTypeId,
         CustomerDueDiligence: sts.unit(),
         Exempted: sts.unit(),
-        InvestorUniqueness: sts.unit(),
-        InvestorUniquenessV2: sts.unit(),
         Jurisdiction: sts.unit(),
         KnowYourCustomer: sts.unit(),
-        NoType: sts.unit(),
         SellLockup: sts.unit(),
     }
 })
@@ -9337,6 +9602,10 @@ export const StakingCall: sts.Type<StakingCall> = sts.closedEnum(() => {
             slashingSwitch: SlashingSwitch,
         }),
         chill: sts.unit(),
+        chill_from_governance: sts.enumStruct({
+            identity: IdentityId,
+            stashKeys: sts.array(() => AccountId32),
+        }),
         force_new_era: sts.unit(),
         force_new_era_always: sts.unit(),
         force_no_eras: sts.unit(),
@@ -9469,6 +9738,8 @@ export const CompactAssignments: sts.Type<CompactAssignments> = sts.struct(() =>
     }
 })
 
+export const Perbill = sts.number()
+
 export const Percent = sts.number()
 
 export const SlashingSwitch: sts.Type<SlashingSwitch> = sts.closedEnum(() => {
@@ -9488,6 +9759,16 @@ export const RewardDestination: sts.Type<RewardDestination> = sts.closedEnum(() 
     }
 })
 
+export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
+    return  {
+        Address20: sts.bytes(),
+        Address32: sts.bytes(),
+        Id: AccountId32,
+        Index: sts.number(),
+        Raw: sts.bytes(),
+    }
+})
+
 /**
  * Dispatchable calls.
  * 
@@ -9502,15 +9783,7 @@ export const SettlementCall: sts.Type<SettlementCall> = sts.closedEnum(() => {
             valueDate: sts.option(() => sts.bigint()),
             legs: sts.array(() => Leg),
             portfolios: sts.array(() => PortfolioId),
-        }),
-        add_and_affirm_instruction_with_memo: sts.enumStruct({
-            venueId: VenueId,
-            settlementType: SettlementType,
-            tradeDate: sts.option(() => sts.bigint()),
-            valueDate: sts.option(() => sts.bigint()),
-            legs: sts.array(() => Leg),
-            portfolios: sts.array(() => PortfolioId),
-            instructionMemo: sts.option(() => InstructionMemo),
+            instructionMemo: sts.option(() => Memo),
         }),
         add_instruction: sts.enumStruct({
             venueId: VenueId,
@@ -9518,37 +9791,31 @@ export const SettlementCall: sts.Type<SettlementCall> = sts.closedEnum(() => {
             tradeDate: sts.option(() => sts.bigint()),
             valueDate: sts.option(() => sts.bigint()),
             legs: sts.array(() => Leg),
-        }),
-        add_instruction_with_memo: sts.enumStruct({
-            venueId: VenueId,
-            settlementType: SettlementType,
-            tradeDate: sts.option(() => sts.bigint()),
-            valueDate: sts.option(() => sts.bigint()),
-            legs: sts.array(() => Leg),
-            instructionMemo: sts.option(() => InstructionMemo),
+            instructionMemo: sts.option(() => Memo),
         }),
         affirm_instruction: sts.enumStruct({
             id: InstructionId,
             portfolios: sts.array(() => PortfolioId),
-            maxLegsCount: sts.number(),
+        }),
+        affirm_instruction_with_count: sts.enumStruct({
+            id: InstructionId,
+            portfolios: sts.array(() => PortfolioId),
+            numberOfAssets: sts.option(() => AffirmationCount),
         }),
         affirm_with_receipts: sts.enumStruct({
             id: InstructionId,
             receiptDetails: sts.array(() => ReceiptDetails),
             portfolios: sts.array(() => PortfolioId),
-            maxLegsCount: sts.number(),
+        }),
+        affirm_with_receipts_with_count: sts.enumStruct({
+            id: InstructionId,
+            receiptDetails: sts.array(() => ReceiptDetails),
+            portfolios: sts.array(() => PortfolioId),
+            numberOfAssets: sts.option(() => AffirmationCount),
         }),
         allow_venues: sts.enumStruct({
             ticker: Ticker,
             venues: sts.array(() => VenueId),
-        }),
-        change_receipt_validity: sts.enumStruct({
-            receiptUid: sts.bigint(),
-            validity: sts.boolean(),
-        }),
-        claim_receipt: sts.enumStruct({
-            id: InstructionId,
-            receiptDetails: ReceiptDetails,
         }),
         create_venue: sts.enumStruct({
             details: VenueDetails,
@@ -9559,25 +9826,30 @@ export const SettlementCall: sts.Type<SettlementCall> = sts.closedEnum(() => {
             ticker: Ticker,
             venues: sts.array(() => VenueId),
         }),
+        execute_manual_instruction: sts.enumStruct({
+            id: InstructionId,
+            portfolio: sts.option(() => PortfolioId),
+            fungibleTransfers: sts.number(),
+            nftsTransfers: sts.number(),
+            offchainTransfers: sts.number(),
+            weightLimit: sts.option(() => Weight),
+        }),
         execute_scheduled_instruction: sts.enumStruct({
             id: InstructionId,
-            legsCount: sts.number(),
+            weightLimit: Weight,
         }),
         reject_instruction: sts.enumStruct({
             id: InstructionId,
             portfolio: PortfolioId,
-            numOfLegs: sts.number(),
         }),
-        reschedule_instruction: sts.enumStruct({
+        reject_instruction_with_count: sts.enumStruct({
             id: InstructionId,
+            portfolio: PortfolioId,
+            numberOfAssets: sts.option(() => AssetCount),
         }),
         set_venue_filtering: sts.enumStruct({
             ticker: Ticker,
             enabled: sts.boolean(),
-        }),
-        unclaim_receipt: sts.enumStruct({
-            instructionId: InstructionId,
-            legId: LegId,
         }),
         update_venue_details: sts.enumStruct({
             id: VenueId,
@@ -9595,8 +9867,20 @@ export const SettlementCall: sts.Type<SettlementCall> = sts.closedEnum(() => {
         withdraw_affirmation: sts.enumStruct({
             id: InstructionId,
             portfolios: sts.array(() => PortfolioId),
-            maxLegsCount: sts.number(),
         }),
+        withdraw_affirmation_with_count: sts.enumStruct({
+            id: InstructionId,
+            portfolios: sts.array(() => PortfolioId),
+            numberOfAssets: sts.option(() => AffirmationCount),
+        }),
+    }
+})
+
+export const AssetCount: sts.Type<AssetCount> = sts.struct(() => {
+    return  {
+        fungible: sts.number(),
+        nonFungible: sts.number(),
+        offChain: sts.number(),
     }
 })
 
@@ -9611,21 +9895,50 @@ export const VenueType: sts.Type<VenueType> = sts.closedEnum(() => {
 
 export const VenueDetails = sts.bytes()
 
-export const InstructionId = sts.bigint()
-
-export const InstructionMemo = sts.bytes()
-
-export const Leg: sts.Type<Leg> = sts.struct(() => {
+export const AffirmationCount: sts.Type<AffirmationCount> = sts.struct(() => {
     return  {
-        from: PortfolioId,
-        to: PortfolioId,
-        asset: Ticker,
-        amount: sts.bigint(),
+        senderAssetCount: AssetCount,
+        receiverAssetCount: AssetCount,
+        offchainCount: sts.number(),
     }
 })
 
+export const Memo = sts.bytes()
+
+export const Leg: sts.Type<Leg> = sts.closedEnum(() => {
+    return  {
+        Fungible: sts.enumStruct({
+            sender: PortfolioId,
+            receiver: PortfolioId,
+            ticker: Ticker,
+            amount: sts.bigint(),
+        }),
+        NonFungible: sts.enumStruct({
+            sender: PortfolioId,
+            receiver: PortfolioId,
+            nfts: NFTs,
+        }),
+        OffChain: sts.enumStruct({
+            senderIdentity: IdentityId,
+            receiverIdentity: IdentityId,
+            ticker: Ticker,
+            amount: sts.bigint(),
+        }),
+    }
+})
+
+export const NFTs: sts.Type<NFTs> = sts.struct(() => {
+    return  {
+        ticker: Ticker,
+        ids: sts.array(() => NFTId),
+    }
+})
+
+export const NFTId = sts.bigint()
+
 export const SettlementType: sts.Type<SettlementType> = sts.closedEnum(() => {
     return  {
+        SettleManual: sts.number(),
         SettleOnAffirmation: sts.unit(),
         SettleOnBlock: sts.number(),
     }
@@ -9671,61 +9984,28 @@ export const SchedulerCall: sts.Type<SchedulerCall> = sts.closedEnum(() => {
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_after: sts.enumStruct({
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_named: sts.enumStruct({
             id: sts.bytes(),
             when: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
         schedule_named_after: sts.enumStruct({
             id: sts.bytes(),
             after: sts.number(),
             maybePeriodic: sts.option(() => sts.tuple(() => [sts.number(), sts.number()])),
             priority: sts.number(),
-            call: MaybeHashed,
+            call: Call,
         }),
-    }
-})
-
-export const MaybeHashed: sts.Type<MaybeHashed> = sts.closedEnum(() => {
-    return  {
-        Hash: H256,
-        Value: Call,
-    }
-})
-
-/**
- * Dispatchable calls.
- * 
- * Each variant of this enum maps to a dispatchable function from the associated module.
- */
-export const RewardsCall: sts.Type<RewardsCall> = sts.closedEnum(() => {
-    return  {
-        claim_itn_reward: sts.enumStruct({
-            rewardAddress: AccountId32,
-            itnAddress: AccountId32,
-            signature: MultiSignature,
-        }),
-        set_itn_reward_status: sts.enumStruct({
-            itnAddress: AccountId32,
-            status: ItnRewardStatus,
-        }),
-    }
-})
-
-export const ItnRewardStatus: sts.Type<ItnRewardStatus> = sts.closedEnum(() => {
-    return  {
-        Claimed: sts.unit(),
-        Unclaimed: sts.bigint(),
     }
 })
 
@@ -9795,6 +10075,9 @@ export const ProtocolOp: sts.Type<ProtocolOp> = sts.closedEnum(() => {
         IdentityAddClaim: sts.unit(),
         IdentityAddSecondaryKeysWithAuthorization: sts.unit(),
         IdentityCddRegisterDid: sts.unit(),
+        IdentityCreateChildIdentity: sts.unit(),
+        NFTCreateCollection: sts.unit(),
+        NFTMint: sts.unit(),
         PipsPropose: sts.unit(),
     }
 })
@@ -9838,10 +10121,18 @@ export const PortfolioCall: sts.Type<PortfolioCall> = sts.closedEnum(() => {
         move_portfolio_funds: sts.enumStruct({
             from: PortfolioId,
             to: PortfolioId,
-            items: sts.array(() => MovePortfolioItem),
+            funds: sts.array(() => Fund),
+        }),
+        pre_approve_portfolio: sts.enumStruct({
+            ticker: Ticker,
+            portfolioId: PortfolioId,
         }),
         quit_portfolio_custody: sts.enumStruct({
             pid: PortfolioId,
+        }),
+        remove_portfolio_pre_approval: sts.enumStruct({
+            ticker: Ticker,
+            portfolioId: PortfolioId,
         }),
         rename_portfolio: sts.enumStruct({
             num: PortfolioNumber,
@@ -9850,15 +10141,22 @@ export const PortfolioCall: sts.Type<PortfolioCall> = sts.closedEnum(() => {
     }
 })
 
-export const MovePortfolioItem: sts.Type<MovePortfolioItem> = sts.struct(() => {
+export const Fund: sts.Type<Fund> = sts.struct(() => {
     return  {
-        ticker: Ticker,
-        amount: sts.bigint(),
+        description: FundDescription,
         memo: sts.option(() => Memo),
     }
 })
 
-export const Memo = sts.bytes()
+export const FundDescription: sts.Type<FundDescription> = sts.closedEnum(() => {
+    return  {
+        Fungible: sts.enumStruct({
+            ticker: Ticker,
+            amount: sts.bigint(),
+        }),
+        NonFungible: NFTs,
+    }
+})
 
 export const PortfolioName = sts.bytes()
 
@@ -9871,7 +10169,7 @@ export const PolymeshContractsCall: sts.Type<PolymeshContractsCall> = sts.closed
     return  {
         instantiate_with_code_perms: sts.enumStruct({
             endowment: sts.bigint(),
-            gasLimit: sts.bigint(),
+            gasLimit: Weight,
             storageDepositLimit: sts.option(() => sts.bigint()),
             code: sts.bytes(),
             data: sts.bytes(),
@@ -9880,25 +10178,30 @@ export const PolymeshContractsCall: sts.Type<PolymeshContractsCall> = sts.closed
         }),
         instantiate_with_hash_perms: sts.enumStruct({
             endowment: sts.bigint(),
-            gasLimit: sts.bigint(),
+            gasLimit: Weight,
             storageDepositLimit: sts.option(() => sts.bigint()),
             codeHash: H256,
             data: sts.bytes(),
             salt: sts.bytes(),
             perms: Permissions,
         }),
+        update_call_runtime_whitelist: sts.enumStruct({
+            updates: sts.array(() => sts.tuple(() => [ExtrinsicId, sts.boolean()])),
+        }),
     }
 })
+
+export const ExtrinsicId = sts.tuple(() => [sts.number(), sts.number()])
 
 export const Permissions: sts.Type<Permissions> = sts.struct(() => {
     return  {
         asset: SubsetRestriction,
-        extrinsic: Type_43,
-        portfolio: Type_52,
+        extrinsic: Type_46,
+        portfolio: Type_55,
     }
 })
 
-export const Type_52: sts.Type<Type_52> = sts.closedEnum(() => {
+export const Type_55: sts.Type<Type_55> = sts.closedEnum(() => {
     return  {
         Except: sts.array(() => PortfolioId),
         These: sts.array(() => PortfolioId),
@@ -9906,7 +10209,7 @@ export const Type_52: sts.Type<Type_52> = sts.closedEnum(() => {
     }
 })
 
-export const Type_43: sts.Type<Type_43> = sts.closedEnum(() => {
+export const Type_46: sts.Type<Type_46> = sts.closedEnum(() => {
     return  {
         Except: sts.array(() => PalletPermissions),
         These: sts.array(() => PalletPermissions),
@@ -9917,11 +10220,11 @@ export const Type_43: sts.Type<Type_43> = sts.closedEnum(() => {
 export const PalletPermissions: sts.Type<PalletPermissions> = sts.struct(() => {
     return  {
         palletName: PalletName,
-        dispatchableNames: Type_46,
+        dispatchableNames: Type_49,
     }
 })
 
-export const Type_46: sts.Type<Type_46> = sts.closedEnum(() => {
+export const Type_49: sts.Type<Type_49> = sts.closedEnum(() => {
     return  {
         Except: sts.array(() => DispatchableName),
         These: sts.array(() => DispatchableName),
@@ -10051,6 +10354,62 @@ export const SnapshotResult: sts.Type<SnapshotResult> = sts.closedEnum(() => {
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
  */
+export const NftCall: sts.Type<NftCall> = sts.closedEnum(() => {
+    return  {
+        create_nft_collection: sts.enumStruct({
+            ticker: Ticker,
+            nftType: sts.option(() => NonFungibleType),
+            collectionKeys: sts.array(() => AssetMetadataKey),
+        }),
+        issue_nft: sts.enumStruct({
+            ticker: Ticker,
+            nftMetadataAttributes: sts.array(() => NFTMetadataAttribute),
+            portfolioKind: PortfolioKind,
+        }),
+        redeem_nft: sts.enumStruct({
+            ticker: Ticker,
+            nftId: NFTId,
+            portfolioKind: PortfolioKind,
+        }),
+    }
+})
+
+export const NFTMetadataAttribute: sts.Type<NFTMetadataAttribute> = sts.struct(() => {
+    return  {
+        key: AssetMetadataKey,
+        value: AssetMetadataValue,
+    }
+})
+
+export const AssetMetadataValue = sts.bytes()
+
+export const AssetMetadataKey: sts.Type<AssetMetadataKey> = sts.closedEnum(() => {
+    return  {
+        Global: AssetMetadataGlobalKey,
+        Local: AssetMetadataLocalKey,
+    }
+})
+
+export const AssetMetadataLocalKey = sts.bigint()
+
+export const AssetMetadataGlobalKey = sts.bigint()
+
+export const NonFungibleType: sts.Type<NonFungibleType> = sts.closedEnum(() => {
+    return  {
+        Custom: CustomAssetTypeId,
+        Derivative: sts.unit(),
+        FixedIncome: sts.unit(),
+        Invoice: sts.unit(),
+    }
+})
+
+export const CustomAssetTypeId = sts.number()
+
+/**
+ * Dispatchable calls.
+ * 
+ * Each variant of this enum maps to a dispatchable function from the associated module.
+ */
 export const MultiSigCall: sts.Type<MultiSigCall> = sts.closedEnum(() => {
     return  {
         accept_multisig_signer_as_identity: sts.enumStruct({
@@ -10076,6 +10435,10 @@ export const MultiSigCall: sts.Type<MultiSigCall> = sts.closedEnum(() => {
         }),
         change_sigs_required: sts.enumStruct({
             sigsRequired: sts.bigint(),
+        }),
+        change_sigs_required_via_creator: sts.enumStruct({
+            multisigAccount: AccountId32,
+            signaturesRequired: sts.bigint(),
         }),
         create_multisig: sts.enumStruct({
             signers: sts.array(() => Signatory),
@@ -10109,7 +10472,7 @@ export const MultiSigCall: sts.Type<MultiSigCall> = sts.closedEnum(() => {
             multisig: AccountId32,
             proposalId: sts.bigint(),
             multisigDid: IdentityId,
-            proposalWeight: sts.bigint(),
+            proposalWeight: Weight,
         }),
         make_multisig_primary: sts.enumStruct({
             multisig: AccountId32,
@@ -10125,6 +10488,9 @@ export const MultiSigCall: sts.Type<MultiSigCall> = sts.closedEnum(() => {
         reject_as_key: sts.enumStruct({
             multisig: AccountId32,
             proposalId: sts.bigint(),
+        }),
+        remove_creator_controls: sts.enumStruct({
+            multisigAccount: AccountId32,
         }),
         remove_multisig_signer: sts.enumStruct({
             signer: Signatory,
@@ -10152,7 +10518,7 @@ export const IndicesCall: sts.Type<IndicesCall> = sts.closedEnum(() => {
             index: sts.number(),
         }),
         force_transfer: sts.enumStruct({
-            new: AccountId32,
+            new: MultiAddress,
             index: sts.number(),
             freeze: sts.boolean(),
         }),
@@ -10163,7 +10529,7 @@ export const IndicesCall: sts.Type<IndicesCall> = sts.closedEnum(() => {
             index: sts.number(),
         }),
         transfer: sts.enumStruct({
-            new: AccountId32,
+            new: MultiAddress,
             index: sts.number(),
         }),
     }
@@ -10223,33 +10589,28 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
             claim: Claim,
             expiry: sts.option(() => sts.bigint()),
         }),
-        add_investor_uniqueness_claim: sts.enumStruct({
-            target: IdentityId,
-            claim: Claim,
-            proof: sts.bytes(),
-            expiry: sts.option(() => sts.bigint()),
-        }),
-        add_investor_uniqueness_claim_v2: sts.enumStruct({
-            target: IdentityId,
-            scope: Scope,
-            claim: Claim,
-            proof: ScopeClaimProof,
-            expiry: sts.option(() => sts.bigint()),
-        }),
         add_secondary_keys_with_authorization: sts.enumStruct({
             additionalKeys: sts.array(() => SecondaryKeyWithAuth),
-            expiresAt: sts.bigint(),
-        }),
-        add_secondary_keys_with_authorization_old: sts.enumStruct({
-            additionalKeys: sts.array(() => SecondaryKeyWithAuthV1),
             expiresAt: sts.bigint(),
         }),
         cdd_register_did: sts.enumStruct({
             targetAccount: AccountId32,
             secondaryKeys: sts.array(() => SecondaryKey),
         }),
+        cdd_register_did_with_cdd: sts.enumStruct({
+            targetAccount: AccountId32,
+            secondaryKeys: sts.array(() => SecondaryKey),
+            expiry: sts.option(() => sts.bigint()),
+        }),
         change_cdd_requirement_for_mk_rotation: sts.enumStruct({
             authRequired: sts.boolean(),
+        }),
+        create_child_identities: sts.enumStruct({
+            childKeys: sts.array(() => CreateChildIdentityWithAuth),
+            expiresAt: sts.bigint(),
+        }),
+        create_child_identity: sts.enumStruct({
+            secondaryKey: AccountId32,
         }),
         freeze_secondary_keys: sts.unit(),
         gc_add_cdd_claim: sts.enumStruct({
@@ -10267,7 +10628,6 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
             authId: sts.bigint(),
         }),
         leave_identity_as_key: sts.unit(),
-        placeholder_legacy_set_permission_to_signer: sts.unit(),
         register_custom_claim_type: sts.enumStruct({
             ty: sts.bytes(),
         }),
@@ -10278,9 +10638,6 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
         }),
         remove_secondary_keys: sts.enumStruct({
             keysToRemove: sts.array(() => AccountId32),
-        }),
-        remove_secondary_keys_old: sts.enumStruct({
-            keysToRemove: sts.array(() => Signatory),
         }),
         revoke_claim: sts.enumStruct({
             target: IdentityId,
@@ -10295,68 +10652,14 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
             authId: sts.bigint(),
             optionalCddAuthId: sts.option(() => sts.bigint()),
         }),
-        set_permission_to_signer: sts.enumStruct({
-            key: Signatory,
-            perms: Permissions,
-        }),
         set_secondary_key_permissions: sts.enumStruct({
             key: AccountId32,
             perms: Permissions,
         }),
         unfreeze_secondary_keys: sts.unit(),
-    }
-})
-
-export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
-    return  {
-        key: AccountId32,
-        permissions: Permissions,
-    }
-})
-
-export const SecondaryKeyWithAuthV1: sts.Type<SecondaryKeyWithAuthV1> = sts.struct(() => {
-    return  {
-        secondaryKey: V1SecondaryKey,
-        authSignature: H512,
-    }
-})
-
-export const H512 = sts.bytes()
-
-export const V1SecondaryKey: sts.Type<V1SecondaryKey> = sts.struct(() => {
-    return  {
-        signer: Signatory,
-        permissions: Permissions,
-    }
-})
-
-export const SecondaryKeyWithAuth: sts.Type<SecondaryKeyWithAuth> = sts.struct(() => {
-    return  {
-        secondaryKey: SecondaryKey,
-        authSignature: H512,
-    }
-})
-
-export const ScopeClaimProof: sts.Type<ScopeClaimProof> = sts.struct(() => {
-    return  {
-        proofScopeIdWellformed: Signature,
-        proofScopeIdCddIdMatch: ZkProofData,
-        scopeId: sts.bytes(),
-    }
-})
-
-export const ZkProofData: sts.Type<ZkProofData> = sts.struct(() => {
-    return  {
-        challengeResponses: sts.array(() => sts.bytes()),
-        subtractExpressionsRes: sts.bytes(),
-        blindedScopeDidHash: sts.bytes(),
-    }
-})
-
-export const Signature: sts.Type<Signature> = sts.struct(() => {
-    return  {
-        r: sts.bytes(),
-        s: sts.bytes(),
+        unlink_child_identity: sts.enumStruct({
+            childDid: IdentityId,
+        }),
     }
 })
 
@@ -10365,6 +10668,29 @@ export const Scope: sts.Type<Scope> = sts.closedEnum(() => {
         Custom: sts.bytes(),
         Identity: IdentityId,
         Ticker: Ticker,
+    }
+})
+
+export const CreateChildIdentityWithAuth: sts.Type<CreateChildIdentityWithAuth> = sts.struct(() => {
+    return  {
+        key: AccountId32,
+        authSignature: H512,
+    }
+})
+
+export const H512 = sts.bytes()
+
+export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
+    return  {
+        key: AccountId32,
+        permissions: Permissions,
+    }
+})
+
+export const SecondaryKeyWithAuth: sts.Type<SecondaryKeyWithAuth> = sts.struct(() => {
+    return  {
+        secondaryKey: SecondaryKey,
+        authSignature: H512,
     }
 })
 
@@ -10377,11 +10703,8 @@ export const Claim: sts.Type<Claim> = sts.closedEnum(() => {
         Custom: sts.tuple(() => [CustomClaimTypeId, sts.option(() => Scope)]),
         CustomerDueDiligence: CddId,
         Exempted: Scope,
-        InvestorUniqueness: sts.tuple(() => [Scope, IdentityId, CddId]),
-        InvestorUniquenessV2: CddId,
         Jurisdiction: sts.tuple(() => [CountryCode, Scope]),
         KnowYourCustomer: Scope,
-        NoData: sts.unit(),
         SellLockup: Scope,
     }
 })
@@ -10425,11 +10748,11 @@ export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
             bestFinalizedBlockNumber: sts.number(),
         }),
         report_equivocation: sts.enumStruct({
-            equivocationProof: Type_449,
+            equivocationProof: Type_453,
             keyOwnerProof: MembershipProof,
         }),
         report_equivocation_unsigned: sts.enumStruct({
-            equivocationProof: Type_449,
+            equivocationProof: Type_453,
             keyOwnerProof: MembershipProof,
         }),
     }
@@ -10443,7 +10766,7 @@ export const MembershipProof: sts.Type<MembershipProof> = sts.struct(() => {
     }
 })
 
-export const Type_449: sts.Type<Type_449> = sts.struct(() => {
+export const Type_453: sts.Type<Type_453> = sts.struct(() => {
     return  {
         setId: sts.bigint(),
         equivocation: Equivocation,
@@ -10452,19 +10775,21 @@ export const Type_449: sts.Type<Type_449> = sts.struct(() => {
 
 export const Equivocation: sts.Type<Equivocation> = sts.closedEnum(() => {
     return  {
-        Precommit: Type_456,
-        Prevote: Type_451,
+        Precommit: Type_460,
+        Prevote: Type_455,
     }
 })
 
-export const Type_451: sts.Type<Type_451> = sts.struct(() => {
+export const Type_455: sts.Type<Type_455> = sts.struct(() => {
     return  {
         roundNumber: sts.bigint(),
         identity: Public,
-        first: sts.tuple(() => [Prevote, sts.bytes()]),
-        second: sts.tuple(() => [Prevote, sts.bytes()]),
+        first: sts.tuple(() => [Prevote, Signature]),
+        second: sts.tuple(() => [Prevote, Signature]),
     }
 })
+
+export const Signature = sts.bytes()
 
 export const Prevote: sts.Type<Prevote> = sts.struct(() => {
     return  {
@@ -10473,12 +10798,12 @@ export const Prevote: sts.Type<Prevote> = sts.struct(() => {
     }
 })
 
-export const Type_456: sts.Type<Type_456> = sts.struct(() => {
+export const Type_460: sts.Type<Type_460> = sts.struct(() => {
     return  {
         roundNumber: sts.bigint(),
         identity: Public,
-        first: sts.tuple(() => [Precommit, sts.bytes()]),
-        second: sts.tuple(() => [Precommit, sts.bytes()]),
+        first: sts.tuple(() => [Precommit, Signature]),
+        second: sts.tuple(() => [Precommit, Signature]),
     }
 })
 
@@ -10509,16 +10834,16 @@ export const ExternalAgentsCall: sts.Type<ExternalAgentsCall> = sts.closedEnum((
         }),
         create_and_change_custom_group: sts.enumStruct({
             ticker: Ticker,
-            perms: Type_43,
+            perms: Type_46,
             agent: IdentityId,
         }),
         create_group: sts.enumStruct({
             ticker: Ticker,
-            perms: Type_43,
+            perms: Type_46,
         }),
         create_group_and_add_auth: sts.enumStruct({
             ticker: Ticker,
-            perms: Type_43,
+            perms: Type_46,
             target: IdentityId,
             expiry: sts.option(() => sts.bigint()),
         }),
@@ -10529,7 +10854,7 @@ export const ExternalAgentsCall: sts.Type<ExternalAgentsCall> = sts.closedEnum((
         set_group_permissions: sts.enumStruct({
             ticker: Ticker,
             id: AGId,
-            perms: Type_43,
+            perms: Type_46,
         }),
     }
 })
@@ -10732,11 +11057,26 @@ export const ContractsCall: sts.Type<ContractsCall> = sts.closedEnum(() => {
         call: sts.enumStruct({
             dest: MultiAddress,
             value: sts.bigint(),
+            gasLimit: Weight,
+            storageDepositLimit: sts.option(() => sts.bigint()),
+            data: sts.bytes(),
+        }),
+        call_old_weight: sts.enumStruct({
+            dest: MultiAddress,
+            value: sts.bigint(),
             gasLimit: sts.bigint(),
             storageDepositLimit: sts.option(() => sts.bigint()),
             data: sts.bytes(),
         }),
         instantiate: sts.enumStruct({
+            value: sts.bigint(),
+            gasLimit: Weight,
+            storageDepositLimit: sts.option(() => sts.bigint()),
+            codeHash: H256,
+            data: sts.bytes(),
+            salt: sts.bytes(),
+        }),
+        instantiate_old_weight: sts.enumStruct({
             value: sts.bigint(),
             gasLimit: sts.bigint(),
             storageDepositLimit: sts.option(() => sts.bigint()),
@@ -10745,6 +11085,14 @@ export const ContractsCall: sts.Type<ContractsCall> = sts.closedEnum(() => {
             salt: sts.bytes(),
         }),
         instantiate_with_code: sts.enumStruct({
+            value: sts.bigint(),
+            gasLimit: Weight,
+            storageDepositLimit: sts.option(() => sts.bigint()),
+            code: sts.bytes(),
+            data: sts.bytes(),
+            salt: sts.bytes(),
+        }),
+        instantiate_with_code_old_weight: sts.enumStruct({
             value: sts.bigint(),
             gasLimit: sts.bigint(),
             storageDepositLimit: sts.option(() => sts.bigint()),
@@ -10755,10 +11103,22 @@ export const ContractsCall: sts.Type<ContractsCall> = sts.closedEnum(() => {
         remove_code: sts.enumStruct({
             codeHash: H256,
         }),
+        set_code: sts.enumStruct({
+            dest: MultiAddress,
+            codeHash: H256,
+        }),
         upload_code: sts.enumStruct({
             code: sts.bytes(),
             storageDepositLimit: sts.option(() => sts.bigint()),
+            determinism: Determinism,
         }),
+    }
+})
+
+export const Determinism: sts.Type<Determinism> = sts.closedEnum(() => {
+    return  {
+        AllowIndeterminism: sts.unit(),
+        Deterministic: sts.unit(),
     }
 })
 
@@ -10896,7 +11256,7 @@ export const CheckpointCall: sts.Type<CheckpointCall> = sts.closedEnum(() => {
         }),
         create_schedule: sts.enumStruct({
             ticker: Ticker,
-            schedule: ScheduleSpec,
+            schedule: ScheduleCheckpoints,
         }),
         remove_schedule: sts.enumStruct({
             ticker: Ticker,
@@ -10908,30 +11268,9 @@ export const CheckpointCall: sts.Type<CheckpointCall> = sts.closedEnum(() => {
     }
 })
 
-export const ScheduleSpec: sts.Type<ScheduleSpec> = sts.struct(() => {
+export const ScheduleCheckpoints: sts.Type<ScheduleCheckpoints> = sts.struct(() => {
     return  {
-        start: sts.option(() => sts.bigint()),
-        period: CalendarPeriod,
-        remaining: sts.number(),
-    }
-})
-
-export const CalendarPeriod: sts.Type<CalendarPeriod> = sts.struct(() => {
-    return  {
-        unit: CalendarUnit,
-        amount: sts.bigint(),
-    }
-})
-
-export const CalendarUnit: sts.Type<CalendarUnit> = sts.closedEnum(() => {
-    return  {
-        Day: sts.unit(),
-        Hour: sts.unit(),
-        Minute: sts.unit(),
-        Month: sts.unit(),
-        Second: sts.unit(),
-        Week: sts.unit(),
-        Year: sts.unit(),
+        pending: sts.array(() => sts.bigint()),
     }
 })
 
@@ -11185,17 +11524,6 @@ export const AllowedSlots: sts.Type<AllowedSlots> = sts.closedEnum(() => {
 })
 
 /**
- * Contains one variant per dispatchable that can be called by an extrinsic.
- */
-export const AuthorshipCall: sts.Type<AuthorshipCall> = sts.closedEnum(() => {
-    return  {
-        set_uncles: sts.enumStruct({
-            newUncles: sts.array(() => Header),
-        }),
-    }
-})
-
-/**
  * Dispatchable calls.
  * 
  * Each variant of this enum maps to a dispatchable function from the associated module.
@@ -11212,10 +11540,6 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
             docs: sts.array(() => Document),
             ticker: Ticker,
         }),
-        claim_classic_ticker: sts.enumStruct({
-            ticker: Ticker,
-            ethereumSignature: EcdsaSignature,
-        }),
         controller_transfer: sts.enumStruct({
             ticker: Ticker,
             value: sts.bigint(),
@@ -11228,7 +11552,6 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
             assetType: AssetType,
             identifiers: sts.array(() => AssetIdentifier),
             fundingRound: sts.option(() => FundingRoundName),
-            disableIu: sts.boolean(),
         }),
         create_asset_with_custom_type: sts.enumStruct({
             name: AssetName,
@@ -11237,7 +11560,9 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
             customAssetType: sts.bytes(),
             identifiers: sts.array(() => AssetIdentifier),
             fundingRound: sts.option(() => FundingRoundName),
-            disableIu: sts.boolean(),
+        }),
+        exempt_ticker_affirmation: sts.enumStruct({
+            ticker: Ticker,
         }),
         freeze: sts.enumStruct({
             ticker: Ticker,
@@ -11245,8 +11570,12 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
         issue: sts.enumStruct({
             ticker: Ticker,
             amount: sts.bigint(),
+            portfolioKind: PortfolioKind,
         }),
         make_divisible: sts.enumStruct({
+            ticker: Ticker,
+        }),
+        pre_approve_ticker: sts.enumStruct({
             ticker: Ticker,
         }),
         redeem: sts.enumStruct({
@@ -11284,14 +11613,23 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
             ids: sts.array(() => DocumentId),
             ticker: Ticker,
         }),
+        remove_local_metadata_key: sts.enumStruct({
+            ticker: Ticker,
+            localKey: AssetMetadataLocalKey,
+        }),
+        remove_metadata_value: sts.enumStruct({
+            ticker: Ticker,
+            metadataKey: AssetMetadataKey,
+        }),
+        remove_ticker_affirmation_exemption: sts.enumStruct({
+            ticker: Ticker,
+        }),
+        remove_ticker_pre_approval: sts.enumStruct({
+            ticker: Ticker,
+        }),
         rename_asset: sts.enumStruct({
             ticker: Ticker,
             name: AssetName,
-        }),
-        reserve_classic_ticker: sts.enumStruct({
-            classicTickerImport: ClassicTickerImport,
-            contractDid: IdentityId,
-            config: TickerRegistrationConfig,
         }),
         set_asset_metadata: sts.enumStruct({
             ticker: Ticker,
@@ -11311,41 +11649,16 @@ export const AssetCall: sts.Type<AssetCall> = sts.closedEnum(() => {
         unfreeze: sts.enumStruct({
             ticker: Ticker,
         }),
+        update_asset_type: sts.enumStruct({
+            ticker: Ticker,
+            assetType: AssetType,
+        }),
         update_identifiers: sts.enumStruct({
             ticker: Ticker,
             identifiers: sts.array(() => AssetIdentifier),
         }),
     }
 })
-
-export const AssetMetadataKey: sts.Type<AssetMetadataKey> = sts.closedEnum(() => {
-    return  {
-        Global: AssetMetadataGlobalKey,
-        Local: AssetMetadataLocalKey,
-    }
-})
-
-export const AssetMetadataLocalKey = sts.bigint()
-
-export const AssetMetadataGlobalKey = sts.bigint()
-
-export const TickerRegistrationConfig: sts.Type<TickerRegistrationConfig> = sts.struct(() => {
-    return  {
-        maxTickerLength: sts.number(),
-        registrationLength: sts.option(() => sts.bigint()),
-    }
-})
-
-export const ClassicTickerImport: sts.Type<ClassicTickerImport> = sts.struct(() => {
-    return  {
-        ethOwner: EthereumAddress,
-        ticker: Ticker,
-        isContract: sts.boolean(),
-        isCreated: sts.boolean(),
-    }
-})
-
-export const EthereumAddress = sts.bytes()
 
 export const AssetMetadataValueDetail: sts.Type<AssetMetadataValueDetail> = sts.struct(() => {
     return  {
@@ -11361,8 +11674,6 @@ export const AssetMetadataLockStatus: sts.Type<AssetMetadataLockStatus> = sts.cl
         Unlocked: sts.unit(),
     }
 })
-
-export const AssetMetadataValue = sts.bytes()
 
 export const AssetMetadataSpec: sts.Type<AssetMetadataSpec> = sts.struct(() => {
     return  {
@@ -11397,6 +11708,7 @@ export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
         EquityPreferred: sts.unit(),
         FixedIncome: sts.unit(),
         Fund: sts.unit(),
+        NonFungible: NonFungibleType,
         REIT: sts.unit(),
         RevenueShareAgreement: sts.unit(),
         StableCoin: sts.unit(),
@@ -11404,11 +11716,7 @@ export const AssetType: sts.Type<AssetType> = sts.closedEnum(() => {
     }
 })
 
-export const CustomAssetTypeId = sts.number()
-
 export const AssetName = sts.bytes()
-
-export const EcdsaSignature = sts.bytes()
 
 export const Document: sts.Type<Document> = sts.struct(() => {
     return  {

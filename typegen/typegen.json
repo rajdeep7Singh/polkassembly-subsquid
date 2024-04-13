@@ -1,20 +1,17 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://polymesh.archive.subsquid.io/graphql",
+  "specVersions": "https://v2.archive.subsquid.io/metadata/polymesh",
   "typesBundle": "./typesBundle.json",
-  "storage": [
-    "Identity.DidKeys",
-    "Pips.Proposals"
-  ],
-  "events": [
-    "Pips.ProposalCreated",
-    "Pips.Voted",
-    "Pips.ProposalStateUpdated",
-    "Pips.PipClosed",
-    "Pips.PipSkipped",
-    "PolymeshCommittee.VoteRetracted",
-    "PolymeshCommittee.Voted",
-    "PolymeshCommittee.FinalVotes",
-    "PolymeshCommittee.Proposed"
-  ]
+  "pallets": {
+    "Pips": {
+      "events": ["ProposalCreated", "Voted", "ProposalStateUpdated", "PipClosed", "PipSkipped"],
+      "storage": ["Proposals"]
+    },
+    "PolymeshCommittee": {
+      "events": ["VoteRetracted", "Voted", "FinalVotes", "Proposed"]
+    },
+    "Identity": {
+      "storage": ["DidKeys"]
+    }
+  }
 }

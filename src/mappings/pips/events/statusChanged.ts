@@ -1,16 +1,13 @@
-import { EventHandlerContext } from '../../types/contexts'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { updateProposalStatus } from '../../utils/proposals'
 import { getStatusData } from './getters'
-
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleStatusChange(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Pips.ProposalStateUpdated', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const {index, status} = getStatusData(ctx, item.event)
+export async function handleStatusChange(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const {index, status} = getStatusData(item)
 
     await updateProposalStatus(ctx, header, index, {
         status,

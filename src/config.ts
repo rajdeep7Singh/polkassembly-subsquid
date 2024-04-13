@@ -1,8 +1,5 @@
-import {lookupArchive} from "@subsquid/archive-registry"
-import { ProcessorConfig } from './common/processorConfig'
-import { Store } from '@subsquid/typeorm-store'
 
-const config: ProcessorConfig<Store> = {
+const config = {
     chain: {
         name: 'polymesh',
         prefix: 12,

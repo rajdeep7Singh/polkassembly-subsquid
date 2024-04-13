@@ -1,21 +1,18 @@
-import { IdentityDidKeysStorage } from '../../types/storage'
-import { BlockContext } from '../../types/support'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
+import { didKeys } from '../../types/identity/storage'
 import { Store } from '@subsquid/typeorm-store'
 import { UnknownVersionError } from '../../common/errors'
+import { ProcessorContext } from '../../processor'
 
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export async function getSubstrateAddressOfDid(
-    ctx: BatchContext<Store, unknown>, did: Uint8Array, block: SubstrateBlock
-): Promise<Uint8Array | undefined> {
-    const storage = new IdentityDidKeysStorage(ctx, block)
-    if (!storage.isExists) return undefined
-    if(storage.isV5000003){
-        const data = await storage.asV5000003.getKeys(did)
+    ctx: ProcessorContext<Store>, did: string, block: any
+): Promise<string | undefined> {
+    if(didKeys.v5000003.is(block)){
+        const data = await didKeys.v5000003.getKeys(block, did)
         return data[0][1]
     }
     else{
-        throw new UnknownVersionError(storage.constructor.name)
+        console.log("no relevant version for Identity.DidKeys")
     }
 }

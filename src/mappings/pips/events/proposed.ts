@@ -1,24 +1,21 @@
-import { toHex } from '@subsquid/substrate-processor'
 import { ss58codec } from '../../../common/tools'
 import { getPipCreatedEvent, getPolymeshCommitteeProposedEvent } from './getters'
-import { BatchContext, SubstrateBlock } from '@subsquid/substrate-processor'
-import { EventItem } from '@subsquid/substrate-processor/lib/interfaces/dataSelection'
 import { Store } from '@subsquid/typeorm-store'
 import { storage } from '../../../storage'
 import { createPip, getDecodedCall } from '../../utils/proposals'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
+import { ProcessorContext, Event } from '../../../processor'
 
-export async function handleProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'Pips.ProposalCreated', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
+export async function handleProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
 
-    const { did, pipType, proposerAddress, pipId, deposit, url, description, expiryTime, proposalData } = getPipCreatedEvent(ctx, item.event)
+    const { did, pipType, proposerAddress, pipId, deposit, url, description, expiryTime, proposalData } = getPipCreatedEvent(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index: pipId } })
     
     let decodedProposerAddress = proposerAddress
 
-    const hexDid = toHex(did)
     if(!proposerAddress){
         const didStorageData = await storage.pips.getSubstrateAddressOfDid(ctx, did, header)
         if(didStorageData){
@@ -26,10 +23,10 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
         }
     }
 
-    const decodedCall = await getDecodedCall(ctx, pipId, header)
+    const decodedCall = await getDecodedCall(ctx, pipId, header, item)
 
     if(proposal){
-        proposal.identity = hexDid
+        proposal.identity = did
         proposal.proposer = decodedProposerAddress ? ss58codec.encode(decodedProposerAddress) : undefined
         proposal.url = url ? url.toString() : undefined
         proposal.description = description ? description.toString() : undefined
@@ -41,8 +38,8 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
     }
     else{
         await createPip(ctx, header, {
-            hash: toHex(proposalData),
-            did: hexDid,
+            hash: proposalData,
+            did: did,
             index: pipId,
             url: url ? url.toString() : undefined,
             description: description ? description.toString() : undefined,
@@ -55,10 +52,10 @@ export async function handleProposed(ctx: BatchContext<Store, unknown>,
     }
 }
 
-export async function handlePolymeshCommitteeProposed(ctx: BatchContext<Store, unknown>,
-    item: EventItem<'PolymeshCommittee.Proposed', { event: { args: true; extrinsic: { hash: true } } }>,
-    header: SubstrateBlock) {
-    const { index, identityId, hash } = getPolymeshCommitteeProposedEvent(ctx, item.event)
+export async function handlePolymeshCommitteeProposed(ctx: ProcessorContext<Store>,
+    item: Event,
+    header: any) {
+    const { index, identityId, hash } = getPolymeshCommitteeProposedEvent(item)
 
     const proposal = await ctx.store.get(Proposal, { where: { index: index } })
 
@@ -66,7 +63,7 @@ export async function handlePolymeshCommitteeProposed(ctx: BatchContext<Store, u
         return
     }
 
-    await getDecodedCall(ctx, index, header)
+    await getDecodedCall(ctx, index, header, item)
     let decodedProposerAddress = null
     const didStorageData = await storage.pips.getSubstrateAddressOfDid(ctx, identityId, header)
     if(didStorageData){
@@ -74,12 +71,12 @@ export async function handlePolymeshCommitteeProposed(ctx: BatchContext<Store, u
     }
 
     await createPip(ctx, header, {
-        hash: toHex(hash),
-        did: toHex(identityId),
+        hash,
+        did: identityId,
         index: index,
         proposer: decodedProposerAddress ? ss58codec.encode(decodedProposerAddress) : undefined,
         status: ProposalStatus.Proposed,
-        proposedCall: await getDecodedCall(ctx, index, header),
+        proposedCall: await getDecodedCall(ctx, index, header, item),
     }, ProposalType.TechnicalCommittee
     )
 }
