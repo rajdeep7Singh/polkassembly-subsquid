@@ -571,7 +571,7 @@ export async function createSalaryCycleData(ctx: ProcessorContext<Store>, header
 
 export async function createMetaActions(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: MetaActionsData, salaryCycle?: SalaryCycle) {
     const { who, isActive, evidence, wish, activityType, amount, toRank, rank, evidenceJudged, showClaimButton, params } = data
-    const id = await getMetaActionsCount(ctx)
+    // const id = await getMetaActionsCount(ctx)
     if(activityType == ActivityType.EvidenceJudged){
         const evidenceJudgedObject = await ctx.store.get(MetaActions, {where: {who, evidenceJudged: false, wish: wish, evidence: evidence}})
         if(evidenceJudgedObject){
@@ -581,7 +581,7 @@ export async function createMetaActions(ctx: ProcessorContext<Store>, header: an
     }
     else{
         const metaActionsObject = new MetaActions({
-            id: String(id),
+            id: randomUUID(),
             who,
             isActive,
             amount,
