@@ -21,7 +21,7 @@ export async function handleDemocracySeconds(ctx: ProcessorContext<Store>,
     }
 
     //const count = await getVotesCount(ctx, proposal.id)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await ctx.store.insert(
         new Vote({

@@ -20,7 +20,7 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.TechCommitteeProposal, hash))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     // const count = await getVotesCount(ctx, proposal.id)
 

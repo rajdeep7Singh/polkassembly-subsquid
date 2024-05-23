@@ -8,7 +8,7 @@ export async function handleNotPassed(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const index = getNotPassedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Referendum, extrinsicIndex, {
         isEnded: true,

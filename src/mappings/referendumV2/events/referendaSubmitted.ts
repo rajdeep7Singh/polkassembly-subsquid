@@ -141,7 +141,7 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.ReferendumV2, index))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await createReferendumV2(ctx, header, extrinsicIndex, {
         index,
