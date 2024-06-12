@@ -9,7 +9,7 @@ export async function handleRejected(ctx: ProcessorContext<Store>,
     header: Block) {
     const { index } = getRejectedData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.TreasuryProposal, {
         isEnded: true,

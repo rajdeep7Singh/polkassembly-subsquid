@@ -9,7 +9,7 @@ export async function handleAwarded(ctx: ProcessorContext<Store>,
     header: Block) {
     const { index } = getAwarderData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.TreasuryProposal, {
         isEnded: true,

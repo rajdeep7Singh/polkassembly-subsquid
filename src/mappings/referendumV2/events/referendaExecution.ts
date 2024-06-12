@@ -18,7 +18,7 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
 
         const callData = storageData[0]?.call
 
-        const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+        const extrinsicIndex = `${header.height}-${item.index}`
 
         let preimageHash = null
 

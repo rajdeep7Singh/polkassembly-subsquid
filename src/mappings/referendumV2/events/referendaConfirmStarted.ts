@@ -20,7 +20,7 @@ export async function handleConfirmStarted(ctx: ProcessorContext<Store>,
     })
 
     let deciding = undefined
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
 
     if (proposal && proposal.deciding && proposal.deciding.since) {

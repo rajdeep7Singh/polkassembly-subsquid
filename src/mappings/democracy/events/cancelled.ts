@@ -9,7 +9,7 @@ export async function handleCancelled(ctx: ProcessorContext<Store>,
     header: Block) {
     const index = getCancelledData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Referendum, {
         isEnded: true,

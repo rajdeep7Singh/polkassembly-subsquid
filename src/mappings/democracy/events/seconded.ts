@@ -12,7 +12,7 @@ export async function handleDemocracySeconds(ctx: ProcessorContext<Store>,
     const { accountId, refIndex } = getDemocracySecondedData(ctx, item)
 
     const amount = undefined;
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const proposal = await ctx.store.get(Proposal, { where: { index: refIndex, type: ProposalType.DemocracyProposal } })
     if (!proposal) {

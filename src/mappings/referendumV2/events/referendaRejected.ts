@@ -12,7 +12,7 @@ export async function handleRejected(ctx: ProcessorContext<Store>,
 
     const tallyData = createTally(tally)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
         isEnded: true,

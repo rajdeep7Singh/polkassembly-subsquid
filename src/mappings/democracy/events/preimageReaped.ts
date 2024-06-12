@@ -10,7 +10,7 @@ export async function handlePreimageReaped(ctx: ProcessorContext<Store>,
     header: Block) {
     const { hash } = getPreimageReapedData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updatePreimageStatus(ctx, header, hash, {
         status: ProposalStatus.Reaped,

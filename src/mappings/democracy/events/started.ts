@@ -33,7 +33,7 @@ export async function handleStarted(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { index, threshold } = getEventData(ctx, item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const storageData = await storage.democracy.getReferendumInfoOf(ctx, index, header)
     if (!storageData) {

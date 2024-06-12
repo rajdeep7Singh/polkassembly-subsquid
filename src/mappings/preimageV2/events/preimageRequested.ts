@@ -14,7 +14,7 @@ export async function handlePreimageV2Requested(ctx: ProcessorContext<Store>,
     const { hash } = getPreimageRequestedData(ctx, item)
 
     // const hexHash = toHex(hash)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const hexHash = hash
 

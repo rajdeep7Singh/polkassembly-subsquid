@@ -12,7 +12,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
     header: Block) {
     const { index } = getProposedData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const storageData = await storage.treasury.getProposals(ctx, index, header)
     if (!storageData) {
@@ -38,7 +38,7 @@ export async function handleSpendApproved(ctx: ProcessorContext<Store>,
     header: Block) {
     const { proposalIndex, amount, beneficiary } = getSpendApprovedData(ctx, item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await createTreasury(ctx, header, {
         index: proposalIndex,

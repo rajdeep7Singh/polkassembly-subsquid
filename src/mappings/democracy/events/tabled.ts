@@ -41,7 +41,7 @@ export async function handleTabled(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { index } = getEventData(ctx,  item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.DemocracyProposal, {
         status: ProposalStatus.Tabled,

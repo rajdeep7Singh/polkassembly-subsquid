@@ -61,7 +61,7 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
     }
 
     // const hexHash = toHex(hash)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await createReferendumV2(ctx, header, {
         index,

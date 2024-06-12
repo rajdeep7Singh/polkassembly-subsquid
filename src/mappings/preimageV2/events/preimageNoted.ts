@@ -100,7 +100,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     if(!item.call.args?.bytes) return;
 
     const hexHash = hash
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const storageData = await getPreimageStatusData(ctx, hash, header) || await getPreimageRequestStatusData(ctx, hash, header)
     if (!storageData) {
@@ -112,7 +112,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
         args = item.block._runtime.decodeCall(item?.call.args.bytes);
     }
     catch (e) {
-        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.extrinsicIndex} ${e}`)
+        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.index} ${e}`)
         return
     }
 

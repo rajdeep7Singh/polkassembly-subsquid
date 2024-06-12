@@ -55,7 +55,7 @@ export async function handlePreimageNoted(ctx: ProcessorContext<Store>,
 
     if(!item.call.args?.encodedProposal) return;
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { hash, provider, deposit } = getPreimageNotedData(ctx, item)
 
@@ -70,7 +70,7 @@ export async function handlePreimageNoted(ctx: ProcessorContext<Store>,
         args = item.block._runtime.decodeCall(item.call.args?.encodedProposal);
     }
     catch (e) {
-        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.extrinsicIndex} ${e}`)
+        console.log(`Error decoding call ${header.height}, extrinsicIndex: ${item.index} ${e}`)
         return;
     }
 

@@ -36,7 +36,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { index, deposit } = getEventData(ctx, item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const storageData = await storage.democracy.getProposals(ctx, header)
     if (!storageData) {

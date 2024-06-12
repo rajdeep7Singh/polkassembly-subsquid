@@ -9,7 +9,7 @@ export async function handlePreimageMissing(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { hash } = getPreimageMissingData(ctx, item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updatePreimageStatus(ctx, header, hash, {
         status: ProposalStatus.Missing,

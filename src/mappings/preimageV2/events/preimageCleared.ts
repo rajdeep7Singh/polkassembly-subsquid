@@ -14,7 +14,7 @@ export async function handlePreimageV2Cleared(ctx: ProcessorContext<Store>,
     const { hash } = getPreimageClearedData(ctx, item)
 
     // const hexHash = toHex(hash)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const hexHash = hash
 
