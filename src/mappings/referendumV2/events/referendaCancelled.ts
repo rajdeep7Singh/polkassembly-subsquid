@@ -10,7 +10,7 @@ export async function handleCancelled(ctx: ProcessorContext<Store>, item: Event,
 
     const tallyData = createTally(tally)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {

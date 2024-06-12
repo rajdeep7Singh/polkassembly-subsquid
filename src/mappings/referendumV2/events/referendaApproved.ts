@@ -8,7 +8,7 @@ export async function handleApproved(ctx: ProcessorContext<Store>,
     item: Event,
     header: Block) {
     const { index } = getApprovedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, {
