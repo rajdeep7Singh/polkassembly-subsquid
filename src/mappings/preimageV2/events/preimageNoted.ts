@@ -29,7 +29,7 @@ interface PreimageStorageData {
 
 async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<PreimageStorageData | undefined> {
     const preimageStatus: PreimageStatusStorageData | undefined = await getPreimageRequestStatusData(ctx, hash, block) || await getPreimageStatusData(ctx, hash, block)
-    if(preimageFor.v2000.is(block)) {
+    if (preimageFor.v2000.is(block)) {
         if(preimageStatus && preimageStatus.len){
             const storageData = await preimageFor.v2000.get(block, [hash, preimageStatus.len])
             if (!storageData) return undefined
@@ -43,7 +43,7 @@ async function getStorageData(ctx: ProcessorContext<Store>, hash: string, block:
         }
     }
     else {
-        throw new UnknownVersionError('preimage.PreimageFor')
+        return
     }
 }
 
