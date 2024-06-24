@@ -1,7 +1,7 @@
 import { getOriginAccountId } from '../../../common/tools'
 import { NoDelegationFound, TooManyOpenDelegations, TooManyOpenVotes } from '../../../common/errors'
 import { IsNull } from 'typeorm'
-import { ConvictionVote, DelegationType, Proposal, ProposalType, VoteType } from '../../../model'
+import { ConvictionDelegatedVotes, ConvictionVote, DelegationType, Proposal, ProposalType, VoteType } from '../../../model'
 import { getUndelegateData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import {
@@ -39,21 +39,21 @@ export async function handleUndelegate(ctx: ProcessorContext<Store>,
             continue
         }
         if(delegation && referendum){
-            const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 },
-                relations: {
-                    delegatedVotes: true
-                }
-            })
+            const votes = await ctx.store.find(ConvictionVote, { where: { voter: delegation.to, proposalIndex: referendum.index, removedAtBlock: IsNull(), type: VoteType.ReferendumV2 }})
             if(votes){
                 if (votes.length > 1) {
                     ctx.log.warn(TooManyOpenVotes(header.height, referendum.index, from))
                 }
                 if(votes.length > 0){
                     const vote = votes[0]
-                    if (vote.delegatedVotes){
-                        for(let j = 0; j < vote?.delegatedVotes?.length; j++){
-                            const delegatedVote = vote.delegatedVotes[j]
-                            if(delegatedVote && delegatedVote.voter == from){
+                    const delegatedVotes = await ctx.store.find(ConvictionDelegatedVotes, { where: { delegatedTo: {
+                            id: vote.id
+                        }, voter: from
+                    }})
+                    if (delegatedVotes){
+                        for(let j = 0; j < delegatedVotes?.length; j++){
+                            const delegatedVote = delegatedVotes[j]
+                            if(delegatedVote){
                                 delegatedVote.removedAtBlock = header.height
                                 delegatedVote.removedAt = new Date(header.timestamp)
                                 if (delegatedVote.voter){
