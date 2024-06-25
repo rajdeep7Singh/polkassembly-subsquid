@@ -8,6 +8,7 @@ import * as v35 from '../v35'
 import * as v37 from '../v37'
 import * as v41 from '../v41'
 import * as v42 from '../v42'
+import * as v520 from '../v520'
 
 export const proposalOf =  {
     /**
@@ -46,6 +47,10 @@ export const proposalOf =  {
      *  Actual proposal for a given hash, if it's current.
      */
     v42: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v42.H256], v42.Call) as ProposalOfV42,
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    v520: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v520.H256], v520.Call) as ProposalOfV520,
 }
 
 /**
@@ -199,4 +204,21 @@ export interface ProposalOfV42  {
     getPairs(block: Block, key: v42.H256): Promise<[k: v42.H256, v: (v42.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v42.H256, v: (v42.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v42.H256): AsyncIterable<[k: v42.H256, v: (v42.Call | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface ProposalOfV520  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v520.H256): Promise<(v520.Call | undefined)>
+    getMany(block: Block, keys: v520.H256[]): Promise<(v520.Call | undefined)[]>
+    getKeys(block: Block): Promise<v520.H256[]>
+    getKeys(block: Block, key: v520.H256): Promise<v520.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v520.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v520.H256): AsyncIterable<v520.H256[]>
+    getPairs(block: Block): Promise<[k: v520.H256, v: (v520.Call | undefined)][]>
+    getPairs(block: Block, key: v520.H256): Promise<[k: v520.H256, v: (v520.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v520.H256, v: (v520.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v520.H256): AsyncIterable<[k: v520.H256, v: (v520.Call | undefined)][]>
 }
