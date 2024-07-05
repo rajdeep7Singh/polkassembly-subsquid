@@ -19,7 +19,7 @@ const processor = new SubstrateBatchProcessor()
     ]
     })
     .addEvent({
-        name: [ 'Referenda.Submitted', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
+        name: [ 'Referenda.Submitted', 'Referenda.Cancelled', 'Referenda.DecisionDepositPlaced', 'Referenda.Rejected', 'Referenda.TimedOut', 'Referenda.Approved', 'Referenda.DecisionStarted', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Referenda.Killed', 'Referenda.Confirmed', 'Preimage.Requested', 'Preimage.Noted', 'Preimage.Cleared', 'Preimage.Cleared', 'Referenda.ConfirmStarted', 
         'Referenda.ConfirmAborted', 'Democracy.Proposed', 'Democracy.Tabled', 'Democracy.Started', 'Democracy.Passed', 'Democracy.NotPassed', 'Democracy.Cancelled', 'Democracy.Executed', 
         'Democracy.PreimageNoted', 'Democracy.PreimageUsed', 'Democracy.PreimageInvalid', 'Democracy.PreimageMissing', 'Democracy.PreimageReaped', 'DemocracySeconded', 'Treasury.Proposed', 
@@ -29,7 +29,6 @@ const processor = new SubstrateBatchProcessor()
         extrinsic: true
     })
     .addEthereumTransaction({to: PRECOMPILES})
-
     processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let block of ctx.blocks) {
             for (let event of block.events) {
