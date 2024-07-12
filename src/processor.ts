@@ -7,7 +7,7 @@ import { events, calls } from './types'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://polkadot-collectives-rpc.dwellir.com/',
+        chain: 'wss://sys.ibp.network/collectives-polkadot',
         archive: lookupArchive('collectives-polkadot',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({from: 0})

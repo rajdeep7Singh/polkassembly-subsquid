@@ -613,7 +613,7 @@ export async function createSalaryPayouts(ctx: ProcessorContext<Store>, header: 
     const payoutId = await getSalaryPayoutCount(ctx)
 
     const payoutObject = new Payout({
-        id: String(payoutId),
+        id: randomUUID(),
         cycleIndex: salaryCycle,
         who,
         rank,
