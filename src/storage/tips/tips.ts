@@ -12,8 +12,8 @@ interface TipStorageData {
 
 
 async function getTipsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<TipStorageData | undefined> {
-    if (tips.v295.is(block)) {
-        return await tips.v295.get(block, hash)
+    if (tips.v283.is(block)) {
+        return await tips.v283.get(block, hash)
     } else {
         throw new UnknownVersionError("Tips.tips")
     }
@@ -28,8 +28,8 @@ async function getTreasuryStorageData(ctx: ProcessorContext<Store>, hash: string
 }
 
 async function getTipsReasonsStorageData(ctx: ProcessorContext<Store>, hash: string, block: any): Promise<string | undefined> {
-    if (reasons.v295.is(block)) {
-        return await reasons.v295.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (reasons.v283.is(block)) {
+        return await reasons.v283.get(block, hash).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Tips.Reasons")
     }

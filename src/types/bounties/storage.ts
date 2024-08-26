@@ -51,7 +51,7 @@ export const bountyDescriptions =  {
     /**
      *  The description of each bounty.
      */
-    v295: new StorageType('Bounties.BountyDescriptions', 'Optional', [v283.BountyIndex], sts.bytes()) as BountyDescriptionsV283,
+    v283: new StorageType('Bounties.BountyDescriptions', 'Optional', [v283.BountyIndex], sts.bytes()) as BountyDescriptionsV283,
 }
 
 /**

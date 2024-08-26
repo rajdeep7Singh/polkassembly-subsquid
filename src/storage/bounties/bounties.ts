@@ -50,8 +50,8 @@ export async function getBounties(ctx: ProcessorContext<Store>, index: number, b
 }
 
 async function getBountyDescriptionStorageData(ctx: ProcessorContext<Store>, index: number, block: any): Promise<string | undefined> {
-    if (bountyDescriptions.v295.is(block)) {
-        return await bountyDescriptions.v295.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
+    if (bountyDescriptions.v283.is(block)) {
+        return await bountyDescriptions.v283.get(block, index).then((r) => Buffer.from(r || []).toString('utf8'))
     } else {
         throw new UnknownVersionError("Bounties.descriptions")
     }

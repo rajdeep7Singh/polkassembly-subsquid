@@ -10,6 +10,9 @@ interface ScheduledData {
 }
 
 export function getDispatchedEventData(itemEvent: Event): ScheduledData | undefined {
+    console.log('itemEvent', itemEvent)
+    console.log('block', itemEvent.block.height)
+
     if (dispatched.v266.is(itemEvent)) {
         const [[block, number], hash, result] = dispatched.v266.decode(itemEvent)
         return {
@@ -42,6 +45,18 @@ export function getDispatchedEventData(itemEvent: Event): ScheduledData | undefi
         }
     } else if (dispatched.v48300.is(itemEvent)) {
         const { task, id, result } = dispatched.v48300.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    } else if (dispatched.v48902.is(itemEvent)) {
+        const { task, id, result } = dispatched.v48902.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    }else if (dispatched.v50000.is(itemEvent)) {
+        const { task, id, result } = dispatched.v50000.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind

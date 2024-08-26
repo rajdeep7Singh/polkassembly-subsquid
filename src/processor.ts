@@ -10,7 +10,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://archive.mainnet.cere.network/ws',
         archive: lookupArchive('cere',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
-    .setBlockRange({ from: 0})
+    .setBlockRange({ from: 11448500})
     .setTypesBundle({
         "types": {},
         "versions": [
@@ -156,6 +156,21 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Democracy.undelegate') {
                 await modules.democracy.extrinsics.handleUndelegate(ctx, item, block.header)
+            }
+            if (item.name == 'ConvictionVoting.vote'){
+                await modules.referendumV2.extrinsics.handleConvictionVote(ctx, item, block.header)
+            }
+            if (item.name == 'ConvictionVoting.delegate'){
+                await modules.referendumV2.extrinsics.handleDelegate(ctx, item, block.header)
+            }
+            if (item.name == 'ConvictionVoting.undelegate'){
+                await modules.referendumV2.extrinsics.handleUndelegate(ctx, item, block.header)
+            }
+            if (item.name == 'ConvictionVoting.remove_vote'){
+                await modules.referendumV2.extrinsics.handleRemoveVote(ctx, item, block.header)
+            }
+            if (item.name == 'ConvictionVoting.remove_other_vote'){
+                await modules.referendumV2.extrinsics.handleRemoveOtherVote(ctx, item, block.header)
             }
             if (item.name == 'Bounties.accept_curator'){
                 await modules.bounties.extrinsic.handleAcceptCurator(ctx, item, block.header)
@@ -359,6 +374,48 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
             }
             if (item.name == 'Preimage.Requested'){
                 await modules.preimageV2.events.handlePreimageV2Requested(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Submitted'){
+                await modules.referendumV2.events.handleSubmitted(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Approved'){
+                await modules.referendumV2.events.handleApproved(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Cancelled'){
+                await modules.referendumV2.events.handleCancelled(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.ConfirmAborted'){
+                await modules.referendumV2.events.handleConfirmAborted(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Confirmed'){
+                await modules.referendumV2.events.handleConfirmed(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.ConfirmStarted'){
+                await modules.referendumV2.events.handleConfirmStarted(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.DecisionDepositPlaced'){
+                await modules.referendumV2.events.handleDecisionDepositPlaced(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.DecisionStarted'){
+                await modules.referendumV2.events.handleDecisionStarted(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Killed'){
+                await modules.referendumV2.events.handleKilled(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.Rejected'){
+                await modules.referendumV2.events.handleRejected(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.TimedOut'){
+                await modules.referendumV2.events.handleTimedOut(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.MetadataSet'){
+                await modules.referendumV2.events.handleMetadataSet(ctx, item, block.header)
+            }
+            if (item.name == 'Referenda.MetadataCleared'){
+                await modules.referendumV2.events.handleMetadataCleared(ctx, item, block.header)
+            }
+            if(item.name == 'Scheduler.Dispatched'){
+                await modules.referendumV2.events.handleReferendumV2Execution(ctx, item, block.header)
             }
         }
     }
