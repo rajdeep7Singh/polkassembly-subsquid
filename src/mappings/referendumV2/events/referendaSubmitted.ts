@@ -33,6 +33,7 @@ export async function getStorageData(ctx: ProcessorContext<Store>, index: number
         else if(storageData.value.enactment.__kind === 'After') {
             enactmentAfter = storageData.value.enactment.value
         }
+
         return {
             index,
             trackNumber: storageData.value.track,
@@ -134,7 +135,7 @@ export async function getStorageData(ctx: ProcessorContext<Store>, index: number
 export async function handleSubmitted(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
-    const { index, hash } = getEventData(item)
+    const { index, hash, proposalKind } = getEventData(item)
 
     const storageData = await getStorageData(ctx, index, header)
     if (!storageData) {
@@ -142,6 +143,32 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
         return
     }
     const extrinsicIndex = `${header.height}-${item.index}`
+
+    let proposedCall;
+
+    if(proposalKind == 'Inline'){
+        try {
+            proposedCall = item.block._runtime.decodeCall(hash)
+            if (proposedCall) {
+                const section = proposedCall.__kind as string
+                const method = proposedCall.value.__kind as string
+                const desc = (item.block._runtime.calls.get(`${section}.${method}`).docs as string[]).join('\n');
+            
+                const { __kind, ...argsValue } = proposedCall.value;
+            
+                const decodedCall = {
+                    section,
+                    method,
+                    description: desc,
+                    args: argsValue,
+                }
+                proposedCall = decodedCall
+            }
+        }
+        catch{
+            ctx.log.warn(`Unable to decode inline call ${hash} at block ${header.height}`)
+        }
+    }
 
     await createReferendumV2(ctx, header, extrinsicIndex, {
         index,
@@ -157,5 +184,6 @@ export async function handleSubmitted(ctx: ProcessorContext<Store>,
         submittedAt: storageData.submittedAt,
         enactmentAt: storageData.enactmentAt,
         enactmentAfter: storageData.enactmentAfter,
+        proposedCall
     }, ProposalType.ReferendumV2)
 }
