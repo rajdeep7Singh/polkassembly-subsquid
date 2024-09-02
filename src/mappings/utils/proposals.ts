@@ -1018,7 +1018,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
     if (decisionDeposit) {
         decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
     }
-
+    const proposalArguments = data.proposedCall? createProposedCall(data.proposedCall) : null
     const proposal = new Proposal({
         id,
         index,
@@ -1037,6 +1037,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
         group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
+        proposalArguments,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),
