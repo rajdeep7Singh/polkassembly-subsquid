@@ -10,7 +10,7 @@ export async function handleAwardedOld(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index, beneficiary } = getBountyAwardedDataOld(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex,
         {
@@ -26,7 +26,7 @@ export async function handleAwarded(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index, beneficiary } = getBountyAwardedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex,
         {

@@ -9,7 +9,7 @@ export async function handleAwarded(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { childIndex, beneficiary } = getChildBountyAwardedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, childIndex, ProposalType.ChildBounty, extrinsicIndex, {
         isEnded: true,

@@ -8,7 +8,7 @@ export async function handleRejectedOld(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index } = getBountyRejectedDataOld(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Rejected,
@@ -20,7 +20,7 @@ export async function handleRejected(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index } = getBountyRejectedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Rejected,

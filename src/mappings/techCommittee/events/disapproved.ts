@@ -8,7 +8,7 @@ export async function handleDisapproved(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const hash = getDisapprovedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, hash, ProposalType.TechCommitteeProposal, extrinsicIndex, {
         isEnded: true,

@@ -20,7 +20,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
         return
     }
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const section = storageData.__kind as string
     const method = storageData.value.__kind as string

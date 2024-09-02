@@ -12,7 +12,7 @@ export async function handleTimedOut(ctx: ProcessorContext<Store>,
     const { index, tally } = getTimedOutData(item)
 
     const tallyData = createTally(tally)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         isEnded: true,

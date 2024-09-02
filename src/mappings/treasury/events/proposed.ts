@@ -18,7 +18,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.TreasuryProposal, index))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { proposer, beneficiary, value, bond } = storageData
 
@@ -36,7 +36,7 @@ export async function handleSpendApproved(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { proposalIndex, amount, beneficiary } = getSpendApprovedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await createTreasury(ctx, header, extrinsicIndex, {
         index: proposalIndex,

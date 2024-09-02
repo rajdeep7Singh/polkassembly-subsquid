@@ -12,7 +12,7 @@ export async function handleDecisionStarted(ctx: ProcessorContext<Store>,
     const tallyData = createTally(tally)
 
     const deciding = createDeciding({confirming: undefined, since: header.height})
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.Deciding,

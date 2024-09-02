@@ -76,7 +76,7 @@ export async function handlePreimageNoted(ctx: ProcessorContext<Store>,
 
     if(!item.call.args?.encodedProposal) return;
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { hash, provider, deposit } = getPreimageNotedData(item)
 
