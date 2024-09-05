@@ -453,6 +453,7 @@ export async function createDemocracyProposal(
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
         proposalIndex: proposal.index?.toString() || '',
         proposalType: type
     });
@@ -565,6 +566,7 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer || '',
         proposalIndex: proposal.index?.toString() || '',
         proposalType: type
     });
@@ -774,6 +776,7 @@ export async function createTip( ctx: ProcessorContext<Store>, header: any, extr
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
         proposalIndex: proposal.index?.toString() || '',
         proposalType: type
     });
@@ -823,6 +826,7 @@ export async function createBounty( ctx: ProcessorContext<Store>, header: any, e
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
         proposalIndex: proposal.index?.toString(),
         proposalType: ProposalType.Bounty,
     })
@@ -872,6 +876,7 @@ export async function createChildBounty( ctx: ProcessorContext<Store>, header: a
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
         proposalIndex: proposal.index?.toString(),
         proposalType: ProposalType.ChildBounty,
     })
@@ -1122,6 +1127,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
         proposalIndex: proposal.index?.toString() || '',
         proposalType: type
     });
