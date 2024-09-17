@@ -432,9 +432,11 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
 
     let preimage = null;
     let proposer = null;
+    let proposalArguments = null;
+    let associatedProposal = null;
 
     if(hash){
-        const associatedProposal = await ctx.store.get(Proposal, {
+        associatedProposal = await ctx.store.get(Proposal, {
             where: {
                 hash: hash,
                 status: ProposalStatus.Executed,
@@ -475,6 +477,10 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
         }
     }
 
+    if(!proposer && associatedProposal && associatedProposal.proposer){
+        proposer = associatedProposal.proposer
+    }
+
     if (!preimage) {
         preimage = await ctx.store.get(Preimage, {
             where: {
@@ -489,7 +495,7 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
     if (!proposer && preimage && preimage.proposer) {
         proposer = preimage.proposer
     }
-    
+
     const proposal = new Proposal({
         id,
         index,
@@ -500,6 +506,7 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
             type: threshold as ReferendumThresholdType,
         }),
         preimage,
+        proposalArguments,
         status,
         end: end,
         delay: delay,
