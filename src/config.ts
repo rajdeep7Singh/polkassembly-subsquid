@@ -2,17 +2,16 @@ import {lookupArchive} from "@subsquid/archive-registry"
 
 const config: any = {
     chain: {
-        name: 'polkadot',
-        prefix: 'polkadot',
+        name: 'laossigma',
+        prefix: 42,
     },
     dataSource: {
-        archive: 'https://v2.archive.subsquid.io/network/polkadot',
-        chain: 'wss://rpc.polkadot.io',
+        chain: 'wss://rpc.laossigma.laosfoundation.io',
     },
-    typesBundle: 'polkadot',
+    typesBundle: 'laossigma',
     batchSize: 500,
     blockRange: {
-        from: 0,
+        from: 380411,
     },
 }
 

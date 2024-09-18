@@ -1,33 +1,17 @@
 manifestVersion: subsquid.io/v0.1
-name: polkadot-polkassembly
+name: laos-polkassembly
 version: 1
 description: |-
-  Polkadot's governance proposals
+  Laos's governance proposals
 
 build:
 
 deploy:
   addons:
     postgres:
-        config:
-          statement_timeout: 100000
-          max_pred_locks_per_transaction: 512
-          max_locks_per_transaction: 512
   secrets:
     - NOTIFICATION_API_KEY
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
     cmd: [ "npx", "squid-graphql-server", "--subscriptions" ]
-
-scale:
-  dedicated: true
-  addons:
-     postgres:
-         storage: 20Gi
-         profile: medium
-  processor:
-     profile: medium
-  api:
-     profile: medium
-     replicas: 1
