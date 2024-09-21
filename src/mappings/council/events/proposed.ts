@@ -31,7 +31,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
     await createCoucilMotion(ctx, header, extrinsicIndex, {
         index,
         hash: hash,
-        proposer: ss58codec.encode(proposer),
+        proposer: proposer,
         status: ProposalStatus.Proposed,
         threshold,
         call: {

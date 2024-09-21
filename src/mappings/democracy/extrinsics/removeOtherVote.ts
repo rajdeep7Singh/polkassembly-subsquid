@@ -23,6 +23,6 @@ export async function handleRemoveOtherVote(ctx: ProcessorContext<Store>,
         return
     } 
 
-    const wallet = ss58codec.encode(target)
+    const wallet = target
     await removeVote(ctx, wallet, index, header.height, referendum.index, true)
 }

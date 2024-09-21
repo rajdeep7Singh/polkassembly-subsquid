@@ -132,7 +132,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
 
     const value = storageData.value as [string, bigint]
 
-    const proposer =  storageData.value ? ss58codec.encode(decodeHex(value[0])) : undefined
+    const proposer =  storageData.value ? value[0] : undefined
     const deposit = storageData.value ? value[1] : undefined
 
     await createPreimageV2(ctx, header, extrinsicIndex, {

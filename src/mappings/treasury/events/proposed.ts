@@ -24,11 +24,11 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
 
     await createTreasury(ctx, header, extrinsicIndex, {
         index,
-        proposer: ss58codec.encode(proposer),
+        proposer: proposer,
         status: ProposalStatus.Proposed,
         reward: value,
         deposit: bond,
-        payee: ss58codec.encode(beneficiary),
+        payee: beneficiary,
     })
 }
 
@@ -40,10 +40,10 @@ export async function handleSpendApproved(ctx: ProcessorContext<Store>,
 
     await createTreasury(ctx, header, extrinsicIndex, {
         index: proposalIndex,
-        proposer: ss58codec.encode(beneficiary),
+        proposer: beneficiary,
         status: ProposalStatus.Approved,
         reward: amount,
         deposit: 0 as unknown as bigint,
-        payee: ss58codec.encode(beneficiary),
+        payee: beneficiary,
     })
 }

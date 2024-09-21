@@ -30,7 +30,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
     await createTechCommitteeMotion(ctx, header, extrinsicIndex, {
         index,
         hash: hash,
-        proposer: ss58codec.encode(proposer),
+        proposer: proposer,
         status: ProposalStatus.Proposed,
         threshold,
         call: {

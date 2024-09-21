@@ -26,7 +26,7 @@ export async function handleDemocracySeconds(ctx: ProcessorContext<Store>,
     await ctx.store.insert(
         new Vote({
             id: randomUUID(),
-            voter: ss58codec.encode(accountId),
+            voter: accountId,
             blockNumber: header.height,
             decision: VoteDecision.yes,
             proposal,

@@ -45,6 +45,7 @@ import {
 import { randomUUID } from 'crypto'
 import config from '../../config'
 import { ProcessorContext } from '../../processor'
+import { toHex } from '@subsquid/substrate-processor'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -1016,12 +1017,12 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
     //     }
     // }
 
-    const subDeposit = {who: ss58codec.encode(submissionDeposit.who), amount: submissionDeposit.amount}
+    const subDeposit = {who: toHex(submissionDeposit.who), amount: submissionDeposit.amount}
 
     let decDeposit = undefined
 
     if (decisionDeposit) {
-        decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
+        decDeposit = {who: toHex(decisionDeposit.who), amount: decisionDeposit.amount}
     }
     const proposalArguments = data.proposedCall? createProposedCall(data.proposedCall) : null
     const proposal = new Proposal({

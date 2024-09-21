@@ -27,7 +27,7 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
     await ctx.store.insert(
         new Vote({
             id: randomUUID(),
-            voter: ss58codec.encode(voter),
+            voter: voter,
             blockNumber: header.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
             proposal,
