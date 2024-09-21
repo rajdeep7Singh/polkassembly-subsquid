@@ -2,6 +2,7 @@ import { UnknownVersionError } from '../../common/errors'
 import { ProcessorContext } from '../../processor'
 import { referendumInfoOf } from '../../types/democracy/storage'
 import * as v9 from '../../types/v9'
+import * as v32 from '../../types/v32'
 import { Store } from '@subsquid/typeorm-store'
 
 type Threshold = 'SuperMajorityApprove' | 'SuperMajorityAgainst' | 'SimpleMajority'
@@ -34,6 +35,29 @@ async function getStorageData(ctx: ProcessorContext<Store>, index: number, block
             return {
                 status,
                 hash,
+                end,
+                delay,
+                threshold: threshold.__kind,
+            }
+        } else {
+            const { end, approved } = storageData as v9.ReferendumInfo_Finished
+            return {
+                status,
+                end,
+                approved,
+            }
+        }
+    }
+    else if (referendumInfoOf.v32.is(block)) {
+        const storageData = await referendumInfoOf.v32.get(block, index)
+        if (!storageData) return undefined
+
+        const { __kind: status } = storageData
+        if (status === 'Ongoing') {
+            const { proposal, end, delay, threshold } = (storageData as v32.ReferendumInfo_Ongoing).value
+            return {
+                status,
+                hash: proposal.__kind != 'Inline' ? proposal.hash : proposal.value,
                 end,
                 delay,
                 threshold: threshold.__kind,

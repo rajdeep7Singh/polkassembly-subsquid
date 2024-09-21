@@ -19,6 +19,13 @@ function getEventData(itemEvent: Event): TabledEventData {
             deposit,
         }
     }
+    else if (tabled.v32.is(itemEvent)) {
+        const { proposalIndex: index, deposit } = tabled.v32.decode(itemEvent)
+        return {
+            index,
+            deposit,
+        }
+    }
      else {
         throw new UnknownVersionError(itemEvent.name)
     }

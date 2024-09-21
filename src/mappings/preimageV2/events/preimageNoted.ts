@@ -2,7 +2,7 @@
 import { StorageNotExistsWarn, UnknownVersionError } from '../../../common/errors'
 import {
     statusFor,
-    preimageFor
+    preimageFor,
 } from '../../../types/preimage/storage'
 
 import { ProposalStatus } from '../../../model'
@@ -79,6 +79,15 @@ export async function getPreimageStatusData(ctx: ProcessorContext<Store>, hash: 
             status: storageData.__kind,
             value: storageData.value,
             len: undefined
+        }
+    }
+    else if(statusFor.v32.is(block)) {
+        const storageData = await statusFor.v32.get(block, hash)
+        if (!storageData) return undefined
+        return {
+            status: storageData.__kind,
+            value: storageData.deposit,
+            len: storageData.len
         }
     }
     else {

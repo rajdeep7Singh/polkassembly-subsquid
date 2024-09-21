@@ -11,6 +11,7 @@ import * as v23 from '../v23'
 import * as v28 from '../v28'
 import * as v30 from '../v30'
 import * as v31 from '../v31'
+import * as v32 from '../v32'
 import * as kusamaV9280 from '../kusamaV9280'
 
 export const proposalOf =  {
@@ -66,6 +67,10 @@ export const proposalOf =  {
      *  Actual proposal for a given hash, if it's current.
      */
     v31: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v31.H256], v31.Call) as ProposalOfV31,
+    /**
+     *  Actual proposal for a given hash, if it's current.
+     */
+    v32: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v32.H256], v32.Call) as ProposalOfV32,
 }
 
 /**
@@ -287,4 +292,21 @@ export interface ProposalOfV31  {
     getPairs(block: Block, key: v31.H256): Promise<[k: v31.H256, v: (v31.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v31.H256, v: (v31.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v31.H256): AsyncIterable<[k: v31.H256, v: (v31.Call | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given hash, if it's current.
+ */
+export interface ProposalOfV32  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v32.H256): Promise<(v32.Call | undefined)>
+    getMany(block: Block, keys: v32.H256[]): Promise<(v32.Call | undefined)[]>
+    getKeys(block: Block): Promise<v32.H256[]>
+    getKeys(block: Block, key: v32.H256): Promise<v32.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v32.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v32.H256): AsyncIterable<v32.H256[]>
+    getPairs(block: Block): Promise<[k: v32.H256, v: (v32.Call | undefined)][]>
+    getPairs(block: Block, key: v32.H256): Promise<[k: v32.H256, v: (v32.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v32.H256, v: (v32.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v32.H256): AsyncIterable<[k: v32.H256, v: (v32.Call | undefined)][]>
 }

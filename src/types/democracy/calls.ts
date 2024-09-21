@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
 import * as v9 from '../v9'
+import * as v32 from '../v32'
 
 export const vote =  {
     name: 'Democracy.vote',
@@ -52,6 +53,17 @@ export const delegate =  {
         sts.struct({
             to: v9.AccountId32,
             conviction: v9.Conviction,
+            balance: sts.bigint(),
+        })
+    ),
+    /**
+     * See [`Pallet::delegate`].
+     */
+    v32: new CallType(
+        'Democracy.delegate',
+        sts.struct({
+            to: v32.MultiAddress,
+            conviction: v32.Conviction,
             balance: sts.bigint(),
         })
     ),
@@ -141,6 +153,16 @@ export const removeOtherVote =  {
         'Democracy.remove_other_vote',
         sts.struct({
             target: v9.AccountId32,
+            index: sts.number(),
+        })
+    ),
+    /**
+     * See [`Pallet::remove_other_vote`].
+     */
+    v32: new CallType(
+        'Democracy.remove_other_vote',
+        sts.struct({
+            target: v32.MultiAddress,
             index: sts.number(),
         })
     ),
