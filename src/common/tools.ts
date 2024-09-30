@@ -62,3 +62,19 @@ export function getOriginAccountId(origin: any) {
 export function encodeId(id: string | Uint8Array) {
     return ss58codec.encode(typeof id === 'string' ? decodeHex(id) : id)
 }
+
+export function unwrapData(data: {__kind: string; value?: Uint8Array | string}) {
+    switch (data.__kind) {
+        case 'None':
+            return null
+        case 'BlakeTwo256':
+        case 'Sha256':
+        case 'Keccak256':
+        case 'ShaThree256':
+            return Buffer.from(data.value!).toString('hex')
+        default:
+            return Buffer.from(data.value!)
+                .toString('utf-8')
+                .replace(/\u0000/g, '')
+    }
+}

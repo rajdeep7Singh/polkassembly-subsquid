@@ -9338,18 +9338,6 @@ export const VoterListCall: sts.Type<VoterListCall> = sts.closedEnum(() => {
     }
 })
 
-export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
-    return  {
-        Address20: sts.bytes(),
-        Address32: sts.bytes(),
-        Id: AccountId32,
-        Index: sts.unit(),
-        Raw: sts.bytes(),
-    }
-})
-
-export const AccountId32 = sts.bytes()
-
 /**
  * Contains one variant per dispatchable that can be called by an extrinsic.
  */
@@ -9426,6 +9414,8 @@ export const RawOrigin: sts.Type<RawOrigin> = sts.closedEnum(() => {
         Signed: AccountId32,
     }
 })
+
+export const AccountId32 = sts.bytes()
 
 export const Type_261: sts.Type<Type_261> = sts.closedEnum(() => {
     return  {
@@ -10539,18 +10529,6 @@ export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
 
 export const BitFlags = sts.bigint()
 
-export const Judgement: sts.Type<Judgement> = sts.closedEnum(() => {
-    return  {
-        Erroneous: sts.unit(),
-        FeePaid: sts.bigint(),
-        KnownGood: sts.unit(),
-        LowQuality: sts.unit(),
-        OutOfDate: sts.unit(),
-        Reasonable: sts.unit(),
-        Unknown: sts.unit(),
-    }
-})
-
 export const Data: sts.Type<Data> = sts.closedEnum(() => {
     return  {
         BlakeTwo256: sts.bytes(),
@@ -11405,3 +11383,25 @@ export const AuctionsCall: sts.Type<AuctionsCall> = sts.closedEnum(() => {
 })
 
 export const H256 = sts.bytes()
+
+export const Judgement: sts.Type<Judgement> = sts.closedEnum(() => {
+    return  {
+        Erroneous: sts.unit(),
+        FeePaid: sts.bigint(),
+        KnownGood: sts.unit(),
+        LowQuality: sts.unit(),
+        OutOfDate: sts.unit(),
+        Reasonable: sts.unit(),
+        Unknown: sts.unit(),
+    }
+})
+
+export const MultiAddress: sts.Type<MultiAddress> = sts.closedEnum(() => {
+    return  {
+        Address20: sts.bytes(),
+        Address32: sts.bytes(),
+        Id: AccountId32,
+        Index: sts.unit(),
+        Raw: sts.bytes(),
+    }
+})

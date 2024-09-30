@@ -5149,10 +5149,6 @@ export const VestingInfo: sts.Type<VestingInfo> = sts.struct(() => {
 
 export const BlockNumber = sts.number()
 
-export const Balance = sts.bigint()
-
-export const LookupSource = sts.bytes()
-
 export const UtilityCall: sts.Type<UtilityCall> = sts.closedEnum(() => {
     return  {
         as_derivative: sts.enumStruct({
@@ -5238,8 +5234,6 @@ export const TreasuryCall: sts.Type<TreasuryCall> = sts.closedEnum(() => {
 })
 
 export const BalanceOf = sts.bigint()
-
-export const AccountId = sts.bytes()
 
 export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
     return  {
@@ -6059,51 +6053,6 @@ export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() 
 
 export const RegistrarIndex = sts.number()
 
-export const Data: sts.Type<Data> = sts.closedEnum(() => {
-    return  {
-        BlakeTwo256: H256,
-        Keccak256: H256,
-        None: sts.unit(),
-        Raw0: sts.bytes(),
-        Raw1: sts.bytes(),
-        Raw10: sts.bytes(),
-        Raw11: sts.bytes(),
-        Raw12: sts.bytes(),
-        Raw13: sts.bytes(),
-        Raw14: sts.bytes(),
-        Raw15: sts.bytes(),
-        Raw16: sts.bytes(),
-        Raw17: sts.bytes(),
-        Raw18: sts.bytes(),
-        Raw19: sts.bytes(),
-        Raw2: sts.bytes(),
-        Raw20: sts.bytes(),
-        Raw21: sts.bytes(),
-        Raw22: sts.bytes(),
-        Raw23: sts.bytes(),
-        Raw24: sts.bytes(),
-        Raw25: sts.bytes(),
-        Raw26: sts.bytes(),
-        Raw27: sts.bytes(),
-        Raw28: sts.bytes(),
-        Raw29: sts.bytes(),
-        Raw3: sts.bytes(),
-        Raw30: sts.bytes(),
-        Raw31: sts.bytes(),
-        Raw32: sts.bytes(),
-        Raw4: sts.bytes(),
-        Raw5: sts.bytes(),
-        Raw6: sts.bytes(),
-        Raw7: sts.bytes(),
-        Raw8: sts.bytes(),
-        Raw9: sts.bytes(),
-        Sha256: H256,
-        ShaThree256: H256,
-    }
-})
-
-export const H256 = sts.bytes()
-
 export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
     return  {
         report_equivocation: sts.enumStruct({
@@ -6510,3 +6459,54 @@ export const AttestationsCall: sts.Type<AttestationsCall> = sts.closedEnum(() =>
 })
 
 export const Hash = sts.bytes()
+
+export const Data: sts.Type<Data> = sts.closedEnum(() => {
+    return  {
+        BlakeTwo256: H256,
+        Keccak256: H256,
+        None: sts.unit(),
+        Raw0: sts.bytes(),
+        Raw1: sts.bytes(),
+        Raw10: sts.bytes(),
+        Raw11: sts.bytes(),
+        Raw12: sts.bytes(),
+        Raw13: sts.bytes(),
+        Raw14: sts.bytes(),
+        Raw15: sts.bytes(),
+        Raw16: sts.bytes(),
+        Raw17: sts.bytes(),
+        Raw18: sts.bytes(),
+        Raw19: sts.bytes(),
+        Raw2: sts.bytes(),
+        Raw20: sts.bytes(),
+        Raw21: sts.bytes(),
+        Raw22: sts.bytes(),
+        Raw23: sts.bytes(),
+        Raw24: sts.bytes(),
+        Raw25: sts.bytes(),
+        Raw26: sts.bytes(),
+        Raw27: sts.bytes(),
+        Raw28: sts.bytes(),
+        Raw29: sts.bytes(),
+        Raw3: sts.bytes(),
+        Raw30: sts.bytes(),
+        Raw31: sts.bytes(),
+        Raw32: sts.bytes(),
+        Raw4: sts.bytes(),
+        Raw5: sts.bytes(),
+        Raw6: sts.bytes(),
+        Raw7: sts.bytes(),
+        Raw8: sts.bytes(),
+        Raw9: sts.bytes(),
+        Sha256: H256,
+        ShaThree256: H256,
+    }
+})
+
+export const H256 = sts.bytes()
+
+export const LookupSource = sts.bytes()
+
+export const Balance = sts.bigint()
+
+export const AccountId = sts.bytes()
