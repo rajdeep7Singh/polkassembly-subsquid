@@ -9,6 +9,8 @@ import {
 } from '../../../model'
 import { removeFlattenedVotes } from './utils'
 import { Call, ProcessorContext } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export async function handleUndelegate(ctx: ProcessorContext<Store>,
     item: Call,
@@ -76,4 +78,10 @@ export async function handleUndelegate(ctx: ProcessorContext<Store>,
         }
         await removeFlattenedVotes(ctx, wallets, referendum.index, header.height, header.timestamp)
     }
+
+    //send gov event
+    await sendGovEvent(ctx, {
+        event: EGovEvent.UNDELEGATED,
+        address: from
+    })
 }

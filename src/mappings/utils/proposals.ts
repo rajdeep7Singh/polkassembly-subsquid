@@ -1279,11 +1279,13 @@ export async function sendGovEvent(
         address = '',
         proposalIndex = '',
         proposalType,
+        addressTo = ''
     } : {
         event: EGovEvent,
         address?: string,
         proposalIndex?: string
-        proposalType?: ProposalType
+        proposalType?: ProposalType,
+        addressTo?: string
     }
 ){
     if(!process.env.GOV_EVENT_API_KEY){
@@ -1305,6 +1307,7 @@ export async function sendGovEvent(
             address,
             proposalIndex,
             proposalType: proposalType || '',
+            addressTo
         }),
     })
 
