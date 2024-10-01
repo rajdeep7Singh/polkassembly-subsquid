@@ -2,9 +2,11 @@ import { In, IsNull } from 'typeorm'
 import { Store } from '@subsquid/typeorm-store'
 
 import { NoOpenVoteFound, TooManyOpenVotes } from '../../../common/errors'
-import { ConvictionDelegatedVotes, ConvictionVote, StandardVoteBalance, VoteType, VotingDelegation, FlattenedConvictionVotes, DelegationType } from '../../../model'
+import { ConvictionDelegatedVotes, ConvictionVote, StandardVoteBalance, VoteType, VotingDelegation, FlattenedConvictionVotes, DelegationType, ProposalType } from '../../../model'
 import { randomUUID } from 'crypto'
 import { ProcessorContext } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export function convictionToLockPeriod(conviction: string): number {
     return conviction === 'None' ? 0 : Number(conviction[conviction.search(/\d/)])
@@ -136,6 +138,13 @@ export async function removeVote(ctx: ProcessorContext<Store>, wallet: string, p
         }
     }
     await removeFlattenedVotes(ctx, [wallet], proposalIndex, block, blockTime)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.REMOVED_VOTE,
+        address: wallet,
+        proposalIndex: proposalIndex.toString(),
+        proposalType: ProposalType.DemocracyProposal,
+    })
 }
 
 export async function removeFlattenedVotes(ctx: ProcessorContext<Store>, wallet: string[], proposalIndex: number, block: number, blockTime: number): Promise<void> {

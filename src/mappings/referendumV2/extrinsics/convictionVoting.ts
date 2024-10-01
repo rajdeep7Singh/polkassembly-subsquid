@@ -20,6 +20,8 @@ import { IsNull } from 'typeorm'
 import { updateCurveData } from '../../../common/curveData'
 import { randomUUID } from 'crypto'
 import { Call, ProcessorContext } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export async function handleConvictionVote(ctx: ProcessorContext<Store>,
     item: Call,
@@ -166,5 +168,12 @@ export async function handleConvictionVote(ctx: ProcessorContext<Store>,
     await ctx.store.insert(convictionDelegatedVotes)
 
     await updateCurveData(ctx, header, proposal)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.VOTED,
+        address: item.origin ? getOriginAccountId(item.origin) : '',
+        proposalIndex: index.toString(),
+        proposalType: ProposalType.ReferendumV2,
+    })
 
 }

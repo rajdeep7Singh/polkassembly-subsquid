@@ -6,6 +6,8 @@ import { getVotedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto'
 import { ProcessorContext, Event } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 
 export async function handleVoted(ctx: ProcessorContext<Store>,
@@ -25,10 +27,12 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
 
     // const count = await getVotesCount(ctx, proposal.id)
 
+    const voterAddress = ss58codec.encode(voter);
+
     await ctx.store.insert(
         new Vote({
             id: randomUUID(),
-            voter: ss58codec.encode(voter),
+            voter: voterAddress,
             blockNumber: header.height,
             decision: decision ? VoteDecision.yes : VoteDecision.no,
             proposal,
@@ -37,4 +41,11 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
             extrinsicIndex
         })
     )
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.VOTED,
+        address: voterAddress,
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.CouncilMotion,
+    })
 }
