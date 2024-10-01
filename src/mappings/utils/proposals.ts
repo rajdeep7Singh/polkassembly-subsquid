@@ -847,6 +847,7 @@ export async function createTreasury( ctx: ProcessorContext<Store>, header: any,
             if(group) {
                 referendumV2.group = group
                 await ctx.store.save(referendumV2)
+                await updateRedis(ctx, referendumV2)
             }
 
         }
