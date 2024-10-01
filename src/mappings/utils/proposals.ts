@@ -3,7 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import fetch from 'node-fetch'
-import { NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
+import { GOV_EVENT_URL, NOTIFICATION_URL, REDIS_CF_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
@@ -46,6 +46,7 @@ import { randomUUID } from 'crypto'
 import config from '../../config'
 import referendumV2 from '../referendumV2'
 import { ProcessorContext } from '../../processor'
+import { EGovEvent } from '../../common/types'
 
 type ProposalUpdateData = Partial<
     Omit<
@@ -218,6 +219,37 @@ export async function updateProposalStatus(
     )
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
     await updateRedis(ctx, proposal)
+
+    if(options.isEnded) {
+        await sendGovEvent(
+            ctx,
+            {
+                event: EGovEvent.PROPOSAL_ENDED,
+                proposalIndex: proposal.index?.toString() || '',
+                proposalType: type
+            }
+        )
+    }
+
+    // child bounty claimed
+    if(type == ProposalType.ChildBounty && options.status == ProposalStatus.Claimed && options.data?.payee) {
+        await sendGovEvent(ctx, {
+            event: EGovEvent.BOUNTY_CLAIMED,
+            address: options.data?.payee,
+            proposalIndex: proposal.index?.toString(),
+            proposalType: ProposalType.ChildBounty,
+        })
+    }
+
+    // decision deposit placed
+    if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.DecisionDepositPlaced && options.data?.decisionDeposit?.who) {
+        await sendGovEvent(ctx, {
+            event: EGovEvent.DECISION_DEPOSIT_PLACED,
+            address: options.data?.decisionDeposit.who,
+            proposalIndex: proposal.index?.toString(),
+            proposalType: ProposalType.ReferendumV2,
+        })
+    }
 }
 
 async function getOrCreateProposalGroup(
@@ -419,6 +451,13 @@ export async function createDemocracyProposal(
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
 
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
+        proposalIndex: proposal.index?.toString() || '',
+        proposalType: type
+    });
+
     return proposal
 }
 
@@ -524,6 +563,13 @@ export async function createReferendum( ctx: ProcessorContext<Store>, header: an
     )
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer || '',
+        proposalIndex: proposal.index?.toString() || '',
+        proposalType: type
+    });
 
     return proposal
 }
@@ -728,6 +774,13 @@ export async function createTip( ctx: ProcessorContext<Store>, header: any, extr
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
 
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
+        proposalIndex: proposal.index?.toString() || '',
+        proposalType: type
+    });
+
     return proposal
 }
 
@@ -771,6 +824,13 @@ export async function createBounty( ctx: ProcessorContext<Store>, header: any, e
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
 
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.Bounty,
+    })
+
     return proposal
 }
 
@@ -813,6 +873,13 @@ export async function createChildBounty( ctx: ProcessorContext<Store>, header: a
     )
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.ChildBounty,
+    })
 
     return proposal
 }
@@ -1058,6 +1125,13 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
     await sendNotification(ctx, proposal, 'newProposalCreated')
     await updateRedis(ctx, proposal)
 
+    await sendGovEvent(ctx, {
+        event: EGovEvent.PROPOSAL_CREATED,
+        address: proposer,
+        proposalIndex: proposal.index?.toString() || '',
+        proposalType: type
+    });
+
     return proposal
 }
 
@@ -1195,5 +1269,52 @@ export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Propos
     catch(e){
         ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
         return
+    }
+}
+
+export async function sendGovEvent(
+    ctx: ProcessorContext<Store>,
+    {
+        event,
+        address = '',
+        proposalIndex = '',
+        proposalType,
+        addressTo = ''
+    } : {
+        event: EGovEvent,
+        address?: string,
+        proposalIndex?: string
+        proposalType?: ProposalType,
+        addressTo?: string
+    }
+){
+    if(!process.env.GOV_EVENT_API_KEY){
+        ctx.log.error(`GOV_EVENT_API_KEY enviroment variable not set`)
+        return
+    }
+
+    ctx.log.info(`Sending gov event: ${event} for proposal index: ${proposalIndex} and proposal type: ${proposalType || ''} with address: ${address}`);
+
+    const response = await fetch(GOV_EVENT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.GOV_EVENT_API_KEY || '',
+            'x-network': 'polkadot'
+        },
+        body: JSON.stringify({
+            event,
+            address,
+            proposalIndex,
+            proposalType: proposalType || '',
+            addressTo
+        }),
+    })
+
+    ctx.log.info(`gov event api response: ${JSON.stringify(response)}`)
+
+    if (response.status !== 200) {
+        ctx.log.error(`Failed to send gov event: ${event} for proposal index: ${proposalIndex} and proposal type: ${proposalType || ''} with address ${address}`)
+        return;
     }
 }
