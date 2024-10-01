@@ -5,6 +5,8 @@ import { getTipsTipData, getTreasuryTipData } from './getters'
 import { randomUUID } from 'crypto'
 import { Store } from '@subsquid/typeorm-store'
 import { ProcessorContext, Call } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export async function handleNewTipValue(ctx: ProcessorContext<Store>,
     item: Call,
@@ -38,6 +40,13 @@ export async function handleNewTipValue(ctx: ProcessorContext<Store>,
     })
 
     await ctx.store.save(tipper)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.TIPPED,
+        address: origin,
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.Tip,
+    })
 }
 
 export async function handleNewTipValueOld(ctx: ProcessorContext<Store>,
@@ -72,4 +81,11 @@ export async function handleNewTipValueOld(ctx: ProcessorContext<Store>,
     })
 
     await ctx.store.save(tipper)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.TIPPED,
+        address: origin,
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.Tip,
+    })
 }

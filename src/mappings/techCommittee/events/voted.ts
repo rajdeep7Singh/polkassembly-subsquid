@@ -5,6 +5,8 @@ import { getVotedData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
 import { randomUUID } from 'crypto'
 import { ProcessorContext, Event } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 
 export async function handleVoted(ctx: ProcessorContext<Store>,
@@ -36,4 +38,11 @@ export async function handleVoted(ctx: ProcessorContext<Store>,
             extrinsicIndex
         })
     )
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.VOTED,
+        address: ss58codec.encode(voter),
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.TechCommitteeProposal,
+    })
 }
