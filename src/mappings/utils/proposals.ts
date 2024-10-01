@@ -13,6 +13,8 @@ import {
 import {AddSubData, ProvideJudgementData, SetIdentityData} from '../types/data';
 import { randomUUID } from 'crypto'
 import { ProcessorContext } from '../../processor'
+import { EGovEvent } from '../../common/types';
+import { GOV_EVENT_URL } from '../../consts/consts';
 
 export async function clearIdentity(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, who: string) {
     const identity = await ctx.store.get(Identity, {
@@ -30,6 +32,11 @@ export async function clearIdentity(ctx: ProcessorContext<Store>, header: any, e
         removeSubs(identity, header, extrinsicIndex)
 
         await ctx.store.save(identity)
+
+        await sendGovEvent(ctx, {
+            event: EGovEvent.IDENTITY_CLEARED,
+            address: identity.id
+        })
     }
 }
 
@@ -49,6 +56,11 @@ export async function killIdentity(ctx: ProcessorContext<Store>, header: any, ex
         setCommonFields(identity, header, extrinsicIndex)
         removeSubs(identity, header, extrinsicIndex)
         await ctx.store.save(identity)
+
+        await sendGovEvent(ctx, {
+            event: EGovEvent.IDENTITY_KILLED,
+            address: who
+        })
     }
 }
 
@@ -127,6 +139,11 @@ export async function setIdentity(ctx: ProcessorContext<Store>, header: any, ext
     account.identity = identity
     await ctx.store.save(account)
     await ctx.store.upsert(identity)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.IDENTITY_VERIFICATION_SIGN_UP,
+        address: origin
+    })
 }
 async function upsertSubs(
     ctx: ProcessorContext<Store>, 
@@ -268,6 +285,11 @@ export async function provideJudgement(ctx: ProcessorContext<Store>, header: any
         identity.judgement = data.judgement as Judgement
         await ctx.store.save(request)
         await ctx.store.save(identity)
+
+        await sendGovEvent(ctx, {
+            event: EGovEvent.COMPLETE_JUDGEMENT,
+            address: identity.id
+        })
     }
 }
 
@@ -293,4 +315,42 @@ function clearIdentityFields(identity: Identity) {
     identity.legal = null
     identity.additional = null
     identity.judgement = Judgement.Unknown
+}
+
+export async function sendGovEvent(
+    ctx: ProcessorContext<Store>,
+    {
+        event,
+        address = ''
+    } : {
+        event: EGovEvent,
+        address: string
+    }
+){
+    if(!process.env.GOV_EVENT_API_KEY){
+        ctx.log.error(`GOV_EVENT_API_KEY enviroment variable not set`)
+        return
+    }
+
+    ctx.log.info(`Sending gov event: ${event} for address: ${address}`);
+
+    const response = await fetch(GOV_EVENT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.GOV_EVENT_API_KEY || '',
+            'x-network': 'polkadot'
+        },
+        body: JSON.stringify({
+            event,
+            address
+        }),
+    })
+
+    ctx.log.info(`gov event api response: ${JSON.stringify(response)}`)
+
+    if (response.status !== 200) {
+        ctx.log.error(`Failed to send gov event: ${event} for address ${address}`)
+        return;
+    }
 }
