@@ -81,6 +81,7 @@ export async function handleUndelegate(ctx: ProcessorContext<Store>,
 
     await sendGovEvent(ctx, {
         event: EGovEvent.UNDELEGATED,
-        address: from
+        address: from,
+        addressTo: delegation?.to || ''
     })
 }
