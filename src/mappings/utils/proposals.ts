@@ -1300,7 +1300,7 @@ export async function sendGovEvent(
         headers: {
             'Content-Type': 'application/json',
             'x-api-key': process.env.GOV_EVENT_API_KEY || '',
-            'x-network': 'polkadot'
+            'x-network': 'kusama'
         },
         body: JSON.stringify({
             event,
