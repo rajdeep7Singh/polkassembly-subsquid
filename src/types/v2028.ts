@@ -1,37 +1,60 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type AccountId32 = Bytes
+export const Data: sts.Type<Data> = sts.closedEnum(() => {
+    return  {
+        BlakeTwo256: H256,
+        Keccak256: H256,
+        None: sts.unit(),
+        Raw0: sts.bytes(),
+        Raw1: sts.bytes(),
+        Raw10: sts.bytes(),
+        Raw11: sts.bytes(),
+        Raw12: sts.bytes(),
+        Raw13: sts.bytes(),
+        Raw14: sts.bytes(),
+        Raw15: sts.bytes(),
+        Raw16: sts.bytes(),
+        Raw17: sts.bytes(),
+        Raw18: sts.bytes(),
+        Raw19: sts.bytes(),
+        Raw2: sts.bytes(),
+        Raw20: sts.bytes(),
+        Raw21: sts.bytes(),
+        Raw22: sts.bytes(),
+        Raw23: sts.bytes(),
+        Raw24: sts.bytes(),
+        Raw25: sts.bytes(),
+        Raw26: sts.bytes(),
+        Raw27: sts.bytes(),
+        Raw28: sts.bytes(),
+        Raw29: sts.bytes(),
+        Raw3: sts.bytes(),
+        Raw30: sts.bytes(),
+        Raw31: sts.bytes(),
+        Raw32: sts.bytes(),
+        Raw4: sts.bytes(),
+        Raw5: sts.bytes(),
+        Raw6: sts.bytes(),
+        Raw7: sts.bytes(),
+        Raw8: sts.bytes(),
+        Raw9: sts.bytes(),
+        Sha256: H256,
+        ShaThree256: H256,
+    }
+})
 
-export type BoundedVec = Bytes
-
-export interface Registration {
-    judgements: [number, Judgement][]
-    deposit: bigint
-    info: IdentityInfo
-}
-
-export interface IdentityInfo {
-    additional: [Data, Data][]
-    display: Data
-    legal: Data
-    web: Data
-    riot: Data
-    email: Data
-    pgpFingerprint?: (Bytes | undefined)
-    image: Data
-    twitter: Data
-}
+export const H256 = sts.bytes()
 
 export type Data = Data_BlakeTwo256 | Data_Keccak256 | Data_None | Data_Raw0 | Data_Raw1 | Data_Raw10 | Data_Raw11 | Data_Raw12 | Data_Raw13 | Data_Raw14 | Data_Raw15 | Data_Raw16 | Data_Raw17 | Data_Raw18 | Data_Raw19 | Data_Raw2 | Data_Raw20 | Data_Raw21 | Data_Raw22 | Data_Raw23 | Data_Raw24 | Data_Raw25 | Data_Raw26 | Data_Raw27 | Data_Raw28 | Data_Raw29 | Data_Raw3 | Data_Raw30 | Data_Raw31 | Data_Raw32 | Data_Raw4 | Data_Raw5 | Data_Raw6 | Data_Raw7 | Data_Raw8 | Data_Raw9 | Data_Sha256 | Data_ShaThree256
 
 export interface Data_BlakeTwo256 {
     __kind: 'BlakeTwo256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_Keccak256 {
     __kind: 'Keccak256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_None {
@@ -205,116 +228,20 @@ export interface Data_Raw9 {
 
 export interface Data_Sha256 {
     __kind: 'Sha256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_ShaThree256 {
     __kind: 'ShaThree256'
-    value: Bytes
+    value: H256
 }
 
-export type Judgement = Judgement_Erroneous | Judgement_FeePaid | Judgement_KnownGood | Judgement_LowQuality | Judgement_OutOfDate | Judgement_Reasonable | Judgement_Unknown
+export type H256 = Bytes
 
-export interface Judgement_Erroneous {
-    __kind: 'Erroneous'
-}
-
-export interface Judgement_FeePaid {
-    __kind: 'FeePaid'
-    value: bigint
-}
-
-export interface Judgement_KnownGood {
-    __kind: 'KnownGood'
-}
-
-export interface Judgement_LowQuality {
-    __kind: 'LowQuality'
-}
-
-export interface Judgement_OutOfDate {
-    __kind: 'OutOfDate'
-}
-
-export interface Judgement_Reasonable {
-    __kind: 'Reasonable'
-}
-
-export interface Judgement_Unknown {
-    __kind: 'Unknown'
-}
-
-export const BoundedVec = sts.bytes()
-
-export const Registration: sts.Type<Registration> = sts.struct(() => {
-    return  {
-        judgements: sts.array(() => sts.tuple(() => [sts.number(), Judgement])),
-        deposit: sts.bigint(),
-        info: IdentityInfo,
-    }
-})
-
-export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
-    return  {
-        additional: sts.array(() => sts.tuple(() => [Data, Data])),
-        display: Data,
-        legal: Data,
-        web: Data,
-        riot: Data,
-        email: Data,
-        pgpFingerprint: sts.option(() => sts.bytes()),
-        image: Data,
-        twitter: Data,
-    }
-})
-
-export const Data: sts.Type<Data> = sts.closedEnum(() => {
-    return  {
-        BlakeTwo256: sts.bytes(),
-        Keccak256: sts.bytes(),
-        None: sts.unit(),
-        Raw0: sts.bytes(),
-        Raw1: sts.bytes(),
-        Raw10: sts.bytes(),
-        Raw11: sts.bytes(),
-        Raw12: sts.bytes(),
-        Raw13: sts.bytes(),
-        Raw14: sts.bytes(),
-        Raw15: sts.bytes(),
-        Raw16: sts.bytes(),
-        Raw17: sts.bytes(),
-        Raw18: sts.bytes(),
-        Raw19: sts.bytes(),
-        Raw2: sts.bytes(),
-        Raw20: sts.bytes(),
-        Raw21: sts.bytes(),
-        Raw22: sts.bytes(),
-        Raw23: sts.bytes(),
-        Raw24: sts.bytes(),
-        Raw25: sts.bytes(),
-        Raw26: sts.bytes(),
-        Raw27: sts.bytes(),
-        Raw28: sts.bytes(),
-        Raw29: sts.bytes(),
-        Raw3: sts.bytes(),
-        Raw30: sts.bytes(),
-        Raw31: sts.bytes(),
-        Raw32: sts.bytes(),
-        Raw4: sts.bytes(),
-        Raw5: sts.bytes(),
-        Raw6: sts.bytes(),
-        Raw7: sts.bytes(),
-        Raw8: sts.bytes(),
-        Raw9: sts.bytes(),
-        Sha256: sts.bytes(),
-        ShaThree256: sts.bytes(),
-    }
-})
-
-export const Judgement: sts.Type<Judgement> = sts.closedEnum(() => {
+export const IdentityJudgement: sts.Type<IdentityJudgement> = sts.closedEnum(() => {
     return  {
         Erroneous: sts.unit(),
-        FeePaid: sts.bigint(),
+        FeePaid: Balance,
         KnownGood: sts.unit(),
         LowQuality: sts.unit(),
         OutOfDate: sts.unit(),
@@ -323,4 +250,82 @@ export const Judgement: sts.Type<Judgement> = sts.closedEnum(() => {
     }
 })
 
-export const AccountId32 = sts.bytes()
+export const Balance = sts.bigint()
+
+export type IdentityJudgement = IdentityJudgement_Erroneous | IdentityJudgement_FeePaid | IdentityJudgement_KnownGood | IdentityJudgement_LowQuality | IdentityJudgement_OutOfDate | IdentityJudgement_Reasonable | IdentityJudgement_Unknown
+
+export interface IdentityJudgement_Erroneous {
+    __kind: 'Erroneous'
+}
+
+export interface IdentityJudgement_FeePaid {
+    __kind: 'FeePaid'
+    value: Balance
+}
+
+export interface IdentityJudgement_KnownGood {
+    __kind: 'KnownGood'
+}
+
+export interface IdentityJudgement_LowQuality {
+    __kind: 'LowQuality'
+}
+
+export interface IdentityJudgement_OutOfDate {
+    __kind: 'OutOfDate'
+}
+
+export interface IdentityJudgement_Reasonable {
+    __kind: 'Reasonable'
+}
+
+export interface IdentityJudgement_Unknown {
+    __kind: 'Unknown'
+}
+
+export type Balance = bigint
+
+export const LookupSource: sts.Type<LookupSource> = sts.closedEnum(() => {
+    return  {
+        Address20: H160,
+        Address32: H256,
+        Id: AccountId,
+        Index: sts.number(),
+        Raw: sts.bytes(),
+    }
+})
+
+export const AccountId = sts.bytes()
+
+export const H160 = sts.bytes()
+
+export type LookupSource = LookupSource_Address20 | LookupSource_Address32 | LookupSource_Id | LookupSource_Index | LookupSource_Raw
+
+export interface LookupSource_Address20 {
+    __kind: 'Address20'
+    value: H160
+}
+
+export interface LookupSource_Address32 {
+    __kind: 'Address32'
+    value: H256
+}
+
+export interface LookupSource_Id {
+    __kind: 'Id'
+    value: AccountId
+}
+
+export interface LookupSource_Index {
+    __kind: 'Index'
+    value: number
+}
+
+export interface LookupSource_Raw {
+    __kind: 'Raw'
+    value: Bytes
+}
+
+export type AccountId = Bytes
+
+export type H160 = Bytes

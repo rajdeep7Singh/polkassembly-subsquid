@@ -6,8 +6,8 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://rpc.ibp.network/polkadot',
-        archive: 'https://v2.archive.subsquid.io/network/polkadot',
+        chain: 'wss://rpc.ibp.network/kusama',
+        archive: 'https://v2.archive.subsquid.io/network/kusama',
     })
     .setBlockRange({ from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

@@ -1,14 +1,18 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
-import * as v5 from '../v5'
+import * as v1030 from '../v1030'
+import * as v1031 from '../v1031'
+import * as v1032 from '../v1032'
 import * as v1002000 from '../v1002000'
 
 export const identityOf =  {
     /**
      *  Information that is pertinent to identify the entity behind an account.
-     * 
-     *  TWOX-NOTE: OK ― `AccountId` is a secure hash.
      */
-    v5: new StorageType('Identity.IdentityOf', 'Optional', [v5.AccountId], v5.Registration) as IdentityOfV5,
+    v1030: new StorageType('Identity.IdentityOf', 'Optional', [v1030.AccountId], v1030.Registration) as IdentityOfV1030,
+    /**
+     *  Information that is pertinent to identify the entity behind an account.
+     */
+    v1032: new StorageType('Identity.IdentityOf', 'Optional', [v1032.AccountId], v1032.Registration) as IdentityOfV1032,
     /**
      *  Information that is pertinent to identify the entity behind an account. First item is the
      *  registration, second is the account's primary username.
@@ -20,21 +24,20 @@ export const identityOf =  {
 
 /**
  *  Information that is pertinent to identify the entity behind an account.
- * 
- *  TWOX-NOTE: OK ― `AccountId` is a secure hash.
  */
-export interface IdentityOfV5  {
+export interface IdentityOfV1030  {
     is(block: RuntimeCtx): boolean
-    get(block: Block, key: v5.AccountId): Promise<(v5.Registration | undefined)>
-    getMany(block: Block, keys: v5.AccountId[]): Promise<(v5.Registration | undefined)[]>
-    getKeys(block: Block): Promise<v5.AccountId[]>
-    getKeys(block: Block, key: v5.AccountId): Promise<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<v5.AccountId[]>
-    getPairs(block: Block): Promise<[k: v5.AccountId, v: (v5.Registration | undefined)][]>
-    getPairs(block: Block, key: v5.AccountId): Promise<[k: v5.AccountId, v: (v5.Registration | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v5.AccountId, v: (v5.Registration | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<[k: v5.AccountId, v: (v5.Registration | undefined)][]>
+    get(block: Block, key: v1030.AccountId): Promise<(v1030.Registration | undefined)>
+    getMany(block: Block, keys: v1030.AccountId[]): Promise<(v1030.Registration | undefined)[]>
+}
+
+/**
+ *  Information that is pertinent to identify the entity behind an account.
+ */
+export interface IdentityOfV1032  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1032.AccountId): Promise<(v1032.Registration | undefined)>
+    getMany(block: Block, keys: v1032.AccountId[]): Promise<(v1032.Registration | undefined)[]>
 }
 
 /**
@@ -57,61 +60,61 @@ export interface IdentityOfV1002000  {
     getPairsPaged(pageSize: number, block: Block, key: v1002000.AccountId32): AsyncIterable<[k: v1002000.AccountId32, v: ([v1002000.Registration, (v1002000.BoundedVec | undefined)] | undefined)][]>
 }
 
-export const superOf =  {
-    /**
-     *  The super-identity of an alternative "sub" identity together with its name, within that
-     *  context. If the account is not some other account's sub-identity, then just `None`.
-     */
-    v5: new StorageType('Identity.SuperOf', 'Optional', [v5.AccountId], sts.tuple(() => [v5.AccountId, v5.Data])) as SuperOfV5,
-}
-
-/**
- *  The super-identity of an alternative "sub" identity together with its name, within that
- *  context. If the account is not some other account's sub-identity, then just `None`.
- */
-export interface SuperOfV5  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v5.AccountId): Promise<([v5.AccountId, v5.Data] | undefined)>
-    getMany(block: Block, keys: v5.AccountId[]): Promise<([v5.AccountId, v5.Data] | undefined)[]>
-    getKeys(block: Block): Promise<v5.AccountId[]>
-    getKeys(block: Block, key: v5.AccountId): Promise<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<v5.AccountId[]>
-    getPairs(block: Block): Promise<[k: v5.AccountId, v: ([v5.AccountId, v5.Data] | undefined)][]>
-    getPairs(block: Block, key: v5.AccountId): Promise<[k: v5.AccountId, v: ([v5.AccountId, v5.Data] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v5.AccountId, v: ([v5.AccountId, v5.Data] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<[k: v5.AccountId, v: ([v5.AccountId, v5.Data] | undefined)][]>
-}
-
 export const subsOf =  {
     /**
      *  Alternative "sub" identities of this account.
      * 
-     *  The first item is the deposit, the second is a vector of the accounts.
-     * 
-     *  TWOX-NOTE: OK ― `AccountId` is a secure hash.
+     *  The first item is the deposit, the second is a vector of the accounts together with
+     *  their "local" name (i.e. in the context of the identity).
      */
-    v5: new StorageType('Identity.SubsOf', 'Default', [v5.AccountId], sts.tuple(() => [v5.BalanceOf, sts.array(() => v5.AccountId)])) as SubsOfV5,
+    v1030: new StorageType('Identity.SubsOf', 'Default', [v1030.AccountId], sts.tuple(() => [v1030.BalanceOf, sts.array(() => sts.tuple(() => [v1030.AccountId, v1030.Data]))])) as SubsOfV1030,
+    /**
+     *  Alternative "sub" identities of this account.
+     * 
+     *  The first item is the deposit, the second is a vector of the accounts.
+     */
+    v1031: new StorageType('Identity.SubsOf', 'Default', [v1031.AccountId], sts.tuple(() => [v1031.BalanceOf, sts.array(() => v1031.AccountId)])) as SubsOfV1031,
+}
+
+/**
+ *  Alternative "sub" identities of this account.
+ * 
+ *  The first item is the deposit, the second is a vector of the accounts together with
+ *  their "local" name (i.e. in the context of the identity).
+ */
+export interface SubsOfV1030  {
+    is(block: RuntimeCtx): boolean
+    getDefault(block: Block): [v1030.BalanceOf, [v1030.AccountId, v1030.Data][]]
+    get(block: Block, key: v1030.AccountId): Promise<([v1030.BalanceOf, [v1030.AccountId, v1030.Data][]] | undefined)>
+    getMany(block: Block, keys: v1030.AccountId[]): Promise<([v1030.BalanceOf, [v1030.AccountId, v1030.Data][]] | undefined)[]>
 }
 
 /**
  *  Alternative "sub" identities of this account.
  * 
  *  The first item is the deposit, the second is a vector of the accounts.
- * 
- *  TWOX-NOTE: OK ― `AccountId` is a secure hash.
  */
-export interface SubsOfV5  {
+export interface SubsOfV1031  {
     is(block: RuntimeCtx): boolean
-    getDefault(block: Block): [v5.BalanceOf, v5.AccountId[]]
-    get(block: Block, key: v5.AccountId): Promise<([v5.BalanceOf, v5.AccountId[]] | undefined)>
-    getMany(block: Block, keys: v5.AccountId[]): Promise<([v5.BalanceOf, v5.AccountId[]] | undefined)[]>
-    getKeys(block: Block): Promise<v5.AccountId[]>
-    getKeys(block: Block, key: v5.AccountId): Promise<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v5.AccountId[]>
-    getKeysPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<v5.AccountId[]>
-    getPairs(block: Block): Promise<[k: v5.AccountId, v: ([v5.BalanceOf, v5.AccountId[]] | undefined)][]>
-    getPairs(block: Block, key: v5.AccountId): Promise<[k: v5.AccountId, v: ([v5.BalanceOf, v5.AccountId[]] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v5.AccountId, v: ([v5.BalanceOf, v5.AccountId[]] | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v5.AccountId): AsyncIterable<[k: v5.AccountId, v: ([v5.BalanceOf, v5.AccountId[]] | undefined)][]>
+    getDefault(block: Block): [v1031.BalanceOf, v1031.AccountId[]]
+    get(block: Block, key: v1031.AccountId): Promise<([v1031.BalanceOf, v1031.AccountId[]] | undefined)>
+    getMany(block: Block, keys: v1031.AccountId[]): Promise<([v1031.BalanceOf, v1031.AccountId[]] | undefined)[]>
+}
+
+export const superOf =  {
+    /**
+     *  The super-identity of an alternative "sub" identity together with its name, within that
+     *  context. If the account is not some other account's sub-identity, then just `None`.
+     */
+    v1031: new StorageType('Identity.SuperOf', 'Optional', [v1031.AccountId], sts.tuple(() => [v1031.AccountId, v1031.Data])) as SuperOfV1031,
+}
+
+/**
+ *  The super-identity of an alternative "sub" identity together with its name, within that
+ *  context. If the account is not some other account's sub-identity, then just `None`.
+ */
+export interface SuperOfV1031  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1031.AccountId): Promise<([v1031.AccountId, v1031.Data] | undefined)>
+    getMany(block: Block, keys: v1031.AccountId[]): Promise<([v1031.AccountId, v1031.Data] | undefined)[]>
 }

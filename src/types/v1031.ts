@@ -1,37 +1,15 @@
 import {sts, Result, Option, Bytes, BitSequence} from './support'
 
-export type AccountId32 = Bytes
-
-export type BoundedVec = Bytes
-
-export interface Registration {
-    judgements: [number, Judgement][]
-    deposit: bigint
-    info: IdentityInfo
-}
-
-export interface IdentityInfo {
-    additional: [Data, Data][]
-    display: Data
-    legal: Data
-    web: Data
-    riot: Data
-    email: Data
-    pgpFingerprint?: (Bytes | undefined)
-    image: Data
-    twitter: Data
-}
-
 export type Data = Data_BlakeTwo256 | Data_Keccak256 | Data_None | Data_Raw0 | Data_Raw1 | Data_Raw10 | Data_Raw11 | Data_Raw12 | Data_Raw13 | Data_Raw14 | Data_Raw15 | Data_Raw16 | Data_Raw17 | Data_Raw18 | Data_Raw19 | Data_Raw2 | Data_Raw20 | Data_Raw21 | Data_Raw22 | Data_Raw23 | Data_Raw24 | Data_Raw25 | Data_Raw26 | Data_Raw27 | Data_Raw28 | Data_Raw29 | Data_Raw3 | Data_Raw30 | Data_Raw31 | Data_Raw32 | Data_Raw4 | Data_Raw5 | Data_Raw6 | Data_Raw7 | Data_Raw8 | Data_Raw9 | Data_Sha256 | Data_ShaThree256
 
 export interface Data_BlakeTwo256 {
     __kind: 'BlakeTwo256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_Keccak256 {
     __kind: 'Keccak256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_None {
@@ -205,73 +183,20 @@ export interface Data_Raw9 {
 
 export interface Data_Sha256 {
     __kind: 'Sha256'
-    value: Bytes
+    value: H256
 }
 
 export interface Data_ShaThree256 {
     __kind: 'ShaThree256'
-    value: Bytes
+    value: H256
 }
 
-export type Judgement = Judgement_Erroneous | Judgement_FeePaid | Judgement_KnownGood | Judgement_LowQuality | Judgement_OutOfDate | Judgement_Reasonable | Judgement_Unknown
-
-export interface Judgement_Erroneous {
-    __kind: 'Erroneous'
-}
-
-export interface Judgement_FeePaid {
-    __kind: 'FeePaid'
-    value: bigint
-}
-
-export interface Judgement_KnownGood {
-    __kind: 'KnownGood'
-}
-
-export interface Judgement_LowQuality {
-    __kind: 'LowQuality'
-}
-
-export interface Judgement_OutOfDate {
-    __kind: 'OutOfDate'
-}
-
-export interface Judgement_Reasonable {
-    __kind: 'Reasonable'
-}
-
-export interface Judgement_Unknown {
-    __kind: 'Unknown'
-}
-
-export const BoundedVec = sts.bytes()
-
-export const Registration: sts.Type<Registration> = sts.struct(() => {
-    return  {
-        judgements: sts.array(() => sts.tuple(() => [sts.number(), Judgement])),
-        deposit: sts.bigint(),
-        info: IdentityInfo,
-    }
-})
-
-export const IdentityInfo: sts.Type<IdentityInfo> = sts.struct(() => {
-    return  {
-        additional: sts.array(() => sts.tuple(() => [Data, Data])),
-        display: Data,
-        legal: Data,
-        web: Data,
-        riot: Data,
-        email: Data,
-        pgpFingerprint: sts.option(() => sts.bytes()),
-        image: Data,
-        twitter: Data,
-    }
-})
+export type H256 = Bytes
 
 export const Data: sts.Type<Data> = sts.closedEnum(() => {
     return  {
-        BlakeTwo256: sts.bytes(),
-        Keccak256: sts.bytes(),
+        BlakeTwo256: H256,
+        Keccak256: H256,
         None: sts.unit(),
         Raw0: sts.bytes(),
         Raw1: sts.bytes(),
@@ -306,21 +231,17 @@ export const Data: sts.Type<Data> = sts.closedEnum(() => {
         Raw7: sts.bytes(),
         Raw8: sts.bytes(),
         Raw9: sts.bytes(),
-        Sha256: sts.bytes(),
-        ShaThree256: sts.bytes(),
+        Sha256: H256,
+        ShaThree256: H256,
     }
 })
 
-export const Judgement: sts.Type<Judgement> = sts.closedEnum(() => {
-    return  {
-        Erroneous: sts.unit(),
-        FeePaid: sts.bigint(),
-        KnownGood: sts.unit(),
-        LowQuality: sts.unit(),
-        OutOfDate: sts.unit(),
-        Reasonable: sts.unit(),
-        Unknown: sts.unit(),
-    }
-})
+export const H256 = sts.bytes()
 
-export const AccountId32 = sts.bytes()
+export type AccountId = Bytes
+
+export type BalanceOf = bigint
+
+export const BalanceOf = sts.bigint()
+
+export const AccountId = sts.bytes()

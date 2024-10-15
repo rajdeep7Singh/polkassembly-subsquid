@@ -4,11 +4,11 @@ import { identityCleared, identityKilled, subIdentityRemoved, subIdentityRevoked
 import {UnknownVersionError} from '../../../common/errors';
 
 export function getIdentityClearedData(item: Event) {
-    if (identityCleared.v5.is(item)) {
-        const [who, deposit] = identityCleared.v5.decode(item)
+    if (identityCleared.v1030.is(item)) {
+        const [who, deposit] = identityCleared.v1030.decode(item)
         return { who: ss58codec.encode(who), deposit }
-    }else if (identityCleared.v9140.is(item)) {
-        const { who, deposit } = identityCleared.v9140.decode(item)
+    }else if (identityCleared.v9130.is(item)) {
+        const { who, deposit } = identityCleared.v9130.decode(item)
         return { who: ss58codec.encode(who), deposit }
     } else {
         throw new UnknownVersionError(item.name)
@@ -16,11 +16,11 @@ export function getIdentityClearedData(item: Event) {
 }
 
 export function getIdentityKilledData(item: Event) {
-    if (identityKilled.v5.is(item)) {
-        const [who, deposit] = identityKilled.v5.decode(item)
+    if (identityKilled.v1030.is(item)) {
+        const [who, deposit] = identityKilled.v1030.decode(item)
         return { who: ss58codec.encode(who), deposit }
-    } else if (identityKilled.v9140.is(item)) {
-        const { who, deposit } = identityKilled.v9140.decode(item)
+    } else if (identityKilled.v9130.is(item)) {
+        const { who, deposit } = identityKilled.v9130.decode(item)
         return { who: ss58codec.encode(who), deposit }
     } else {
         throw new UnknownVersionError(item.name)
@@ -28,11 +28,11 @@ export function getIdentityKilledData(item: Event) {
 }
 
 export function getIdentitySubRemovedData(item: Event) {
-    if (subIdentityRemoved.v15.is(item)) {
-        const [who, deposit] = subIdentityRemoved.v15.decode(item)
+    if (subIdentityRemoved.v2015.is(item)) {
+        const [who, deposit] = subIdentityRemoved.v2015.decode(item)
         return { who: ss58codec.encode(who), deposit }
-    } else if (subIdentityRemoved.v9140.is(item)) {
-        const { sub, main, deposit } = subIdentityRemoved.v9140.decode(item)
+    } else if (subIdentityRemoved.v9130.is(item)) {
+        const { sub, main, deposit } = subIdentityRemoved.v9130.decode(item)
         return { main: ss58codec.encode(main), who: ss58codec.encode(sub), deposit }
     } else {
         throw new UnknownVersionError(item.name)
@@ -40,11 +40,11 @@ export function getIdentitySubRemovedData(item: Event) {
 }
 
 export function getIdentitySubRevokedData(item: Event) {
-    if (subIdentityRevoked.v15.is(item)) {
-        const [who, deposit] = subIdentityRevoked.v15.decode(item)
+    if (subIdentityRevoked.v2015.is(item)) {
+        const [who, deposit] = subIdentityRevoked.v2015.decode(item)
         return { who: ss58codec.encode(who), deposit }
-    } else if (subIdentityRevoked.v9140.is(item)) {
-        const { sub, main, deposit } = subIdentityRevoked.v9140.decode(item)
+    } else if (subIdentityRevoked.v9130.is(item)) {
+        const { sub, main, deposit } = subIdentityRevoked.v9130.decode(item)
         return { main: ss58codec.encode(main), who: ss58codec.encode(sub), deposit }
     } else {
         throw new UnknownVersionError(item.name)

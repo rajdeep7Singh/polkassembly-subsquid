@@ -1,8 +1,10 @@
 import {sts, Block, Bytes, Option, Result, CallType, RuntimeCtx} from '../support'
-import * as v5 from '../v5'
-import * as v15 from '../v15'
-import * as v28 from '../v28'
-import * as v9110 from '../v9110'
+import * as v1030 from '../v1030'
+import * as v1032 from '../v1032'
+import * as v1050 from '../v1050'
+import * as v2015 from '../v2015'
+import * as v2028 from '../v2028'
+import * as v9111 from '../v9111'
 import * as v9300 from '../v9300'
 
 export const setIdentity =  {
@@ -13,25 +15,50 @@ export const setIdentity =  {
      *  If the account already has identity information, the deposit is taken as part payment
      *  for the new deposit.
      * 
-     *  The dispatch origin for this call must be _Signed_.
+     *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+     *  identity.
      * 
      *  - `info`: The identity information.
      * 
      *  Emits `IdentitySet` if successful.
      * 
      *  # <weight>
-     *  - `O(X + X' + R)`
-     *    - where `X` additional-field-count (deposit-bounded and code-bounded)
-     *    - where `R` judgements-count (registrar-count-bounded)
-     *  - One balance reserve operation.
-     *  - One storage mutation (codec-read `O(X' + R)`, codec-write `O(X + R)`).
+     *  - `O(X + R)` where `X` additional-field-count (deposit-bounded).
+     *  - At most two balance operations.
+     *  - One storage mutation (codec `O(X + R)`).
      *  - One event.
      *  # </weight>
      */
-    v5: new CallType(
+    v1030: new CallType(
         'Identity.set_identity',
         sts.struct({
-            info: v5.IdentityInfo,
+            info: v1030.IdentityInfo,
+        })
+    ),
+    /**
+     *  Set an account's identity information and reserve the appropriate deposit.
+     * 
+     *  If the account already has identity information, the deposit is taken as part payment
+     *  for the new deposit.
+     * 
+     *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
+     *  identity.
+     * 
+     *  - `info`: The identity information.
+     * 
+     *  Emits `IdentitySet` if successful.
+     * 
+     *  # <weight>
+     *  - `O(X + R)` where `X` additional-field-count (deposit-bounded).
+     *  - At most two balance operations.
+     *  - One storage mutation (codec `O(X + R)`).
+     *  - One event.
+     *  # </weight>
+     */
+    v1032: new CallType(
+        'Identity.set_identity',
+        sts.struct({
+            info: v1032.IdentityInfo,
         })
     ),
 }
@@ -47,53 +74,19 @@ export const setSubs =  {
      *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
      *  identity.
      * 
-     *  - `subs`: The identity's (new) sub-accounts.
+     *  - `subs`: The identity's sub-accounts.
      * 
      *  # <weight>
-     *  - `O(P + S)`
-     *    - where `P` old-subs-count (hard- and deposit-bounded).
-     *    - where `S` subs-count (hard- and deposit-bounded).
-     *  - At most one balance operations.
-     *  - DB:
-     *    - `P + S` storage mutations (codec complexity `O(1)`)
-     *    - One storage read (codec complexity `O(P)`).
-     *    - One storage write (codec complexity `O(S)`).
-     *    - One storage-exists (`IdentityOf::contains_key`).
+     *  - `O(S)` where `S` subs-count (hard- and deposit-bounded).
+     *  - At most two balance operations.
+     *  - One storage mutation (codec `O(S)`); one storage-exists.
      *  # </weight>
      */
-    v5: new CallType(
+    v1030: new CallType(
         'Identity.set_subs',
         sts.struct({
-            subs: sts.array(() => sts.tuple(() => [v5.AccountId, v5.Data])),
+            subs: sts.array(() => sts.tuple(() => [v1030.AccountId, v1030.Data])),
         })
-    ),
-}
-
-export const clearIdentity =  {
-    name: 'Identity.clear_identity',
-    /**
-     *  Clear an account's identity info and all sub-accounts and return all deposits.
-     * 
-     *  Payment: All reserved balances on the account are returned.
-     * 
-     *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
-     *  identity.
-     * 
-     *  Emits `IdentityCleared` if successful.
-     * 
-     *  # <weight>
-     *  - `O(R + S + X)`
-     *    - where `R` registrar-count (governance-bounded).
-     *    - where `S` subs-count (hard- and deposit-bounded).
-     *    - where `X` additional-field-count (deposit-bounded and code-bounded).
-     *  - One balance-unreserve operation.
-     *  - `2` storage reads and `S + 2` storage deletions.
-     *  - One event.
-     *  # </weight>
-     */
-    v5: new CallType(
-        'Identity.clear_identity',
-        sts.unit()
     ),
 }
 
@@ -112,7 +105,7 @@ export const requestJudgement =  {
      *  - `max_fee`: The maximum fee that may be paid. This should just be auto-populated as:
      * 
      *  ```nocompile
-     *  Self::registrars().get(reg_index).unwrap().fee
+     *  Self::registrars(reg_index).uwnrap().fee
      *  ```
      * 
      *  Emits `JudgementRequested` if successful.
@@ -124,7 +117,7 @@ export const requestJudgement =  {
      *  - One event.
      *  # </weight>
      */
-    v5: new CallType(
+    v1030: new CallType(
         'Identity.request_judgement',
         sts.struct({
             regIndex: sts.number(),
@@ -151,13 +144,13 @@ export const cancelRequest =  {
      *  - `O(R + X)`.
      *  - One balance-reserve operation.
      *  - One storage mutation `O(R + X)`.
-     *  - One event
+     *  - One event.
      *  # </weight>
      */
-    v5: new CallType(
+    v1030: new CallType(
         'Identity.cancel_request',
         sts.struct({
-            regIndex: v5.RegistrarIndex,
+            regIndex: v1030.RegistrarIndex,
         })
     ),
 }
@@ -185,12 +178,12 @@ export const provideJudgement =  {
      *  - One event.
      *  # </weight>
      */
-    v5: new CallType(
+    v1030: new CallType(
         'Identity.provide_judgement',
         sts.struct({
             regIndex: sts.number(),
-            target: v5.LookupSource,
-            judgement: v5.IdentityJudgement,
+            target: v1030.LookupSource,
+            judgement: v1030.IdentityJudgement,
         })
     ),
     /**
@@ -214,12 +207,41 @@ export const provideJudgement =  {
      *  - One event.
      *  # </weight>
      */
-    v28: new CallType(
+    v1050: new CallType(
         'Identity.provide_judgement',
         sts.struct({
             regIndex: sts.number(),
-            target: v28.LookupSource,
-            judgement: v28.IdentityJudgement,
+            target: v1050.LookupSource,
+            judgement: v1050.IdentityJudgement,
+        })
+    ),
+    /**
+     *  Provide a judgement for an account's identity.
+     * 
+     *  The dispatch origin for this call must be _Signed_ and the sender must be the account
+     *  of the registrar whose index is `reg_index`.
+     * 
+     *  - `reg_index`: the index of the registrar whose judgement is being made.
+     *  - `target`: the account whose identity the judgement is upon. This must be an account
+     *    with a registered identity.
+     *  - `judgement`: the judgement of the registrar of index `reg_index` about `target`.
+     * 
+     *  Emits `JudgementGiven` if successful.
+     * 
+     *  # <weight>
+     *  - `O(R + X)`.
+     *  - One balance-transfer operation.
+     *  - Up to one account-lookup operation.
+     *  - Storage: 1 read `O(R)`, 1 mutate `O(R + X)`.
+     *  - One event.
+     *  # </weight>
+     */
+    v2028: new CallType(
+        'Identity.provide_judgement',
+        sts.struct({
+            regIndex: sts.number(),
+            target: v2028.LookupSource,
+            judgement: v2028.IdentityJudgement,
         })
     ),
     /**
@@ -243,12 +265,12 @@ export const provideJudgement =  {
      * - One event.
      * # </weight>
      */
-    v9110: new CallType(
+    v9111: new CallType(
         'Identity.provide_judgement',
         sts.struct({
             regIndex: sts.number(),
-            target: v9110.MultiAddress,
-            judgement: v9110.Judgement,
+            target: v9111.MultiAddress,
+            judgement: v9111.Judgement,
         })
     ),
     /**
@@ -284,91 +306,6 @@ export const provideJudgement =  {
     ),
 }
 
-export const killIdentity =  {
-    name: 'Identity.kill_identity',
-    /**
-     *  Remove an account's identity and sub-account information and slash the deposits.
-     * 
-     *  Payment: Reserved balances from `set_subs` and `set_identity` are slashed and handled by
-     *  `Slash`. Verification request deposits are not returned; they should be cancelled
-     *  manually using `cancel_request`.
-     * 
-     *  The dispatch origin for this call must be _Root_ or match `T::ForceOrigin`.
-     * 
-     *  - `target`: the account whose identity the judgement is upon. This must be an account
-     *    with a registered identity.
-     * 
-     *  Emits `IdentityKilled` if successful.
-     * 
-     *  # <weight>
-     *  - `O(R + S + X)`.
-     *  - One balance-reserve operation.
-     *  - `S + 2` storage mutations.
-     *  - One event.
-     *  # </weight>
-     */
-    v5: new CallType(
-        'Identity.kill_identity',
-        sts.struct({
-            target: v5.LookupSource,
-        })
-    ),
-    /**
-     *  Remove an account's identity and sub-account information and slash the deposits.
-     * 
-     *  Payment: Reserved balances from `set_subs` and `set_identity` are slashed and handled by
-     *  `Slash`. Verification request deposits are not returned; they should be cancelled
-     *  manually using `cancel_request`.
-     * 
-     *  The dispatch origin for this call must match `T::ForceOrigin`.
-     * 
-     *  - `target`: the account whose identity the judgement is upon. This must be an account
-     *    with a registered identity.
-     * 
-     *  Emits `IdentityKilled` if successful.
-     * 
-     *  # <weight>
-     *  - `O(R + S + X)`.
-     *  - One balance-reserve operation.
-     *  - `S + 2` storage mutations.
-     *  - One event.
-     *  # </weight>
-     */
-    v28: new CallType(
-        'Identity.kill_identity',
-        sts.struct({
-            target: v28.LookupSource,
-        })
-    ),
-    /**
-     * Remove an account's identity and sub-account information and slash the deposits.
-     * 
-     * Payment: Reserved balances from `set_subs` and `set_identity` are slashed and handled by
-     * `Slash`. Verification request deposits are not returned; they should be cancelled
-     * manually using `cancel_request`.
-     * 
-     * The dispatch origin for this call must match `T::ForceOrigin`.
-     * 
-     * - `target`: the account whose identity the judgement is upon. This must be an account
-     *   with a registered identity.
-     * 
-     * Emits `IdentityKilled` if successful.
-     * 
-     * # <weight>
-     * - `O(R + S + X)`.
-     * - One balance-reserve operation.
-     * - `S + 2` storage mutations.
-     * - One event.
-     * # </weight>
-     */
-    v9110: new CallType(
-        'Identity.kill_identity',
-        sts.struct({
-            target: v9110.MultiAddress,
-        })
-    ),
-}
-
 export const addSub =  {
     name: 'Identity.add_sub',
     /**
@@ -380,11 +317,11 @@ export const addSub =  {
      *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
      *  sub identity of `sub`.
      */
-    v15: new CallType(
+    v2015: new CallType(
         'Identity.add_sub',
         sts.struct({
-            sub: v15.LookupSource,
-            data: v15.Data,
+            sub: v2015.LookupSource,
+            data: v2015.Data,
         })
     ),
     /**
@@ -396,11 +333,11 @@ export const addSub =  {
      *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
      *  sub identity of `sub`.
      */
-    v28: new CallType(
+    v2028: new CallType(
         'Identity.add_sub',
         sts.struct({
-            sub: v28.LookupSource,
-            data: v28.Data,
+            sub: v2028.LookupSource,
+            data: v2028.Data,
         })
     ),
     /**
@@ -412,11 +349,11 @@ export const addSub =  {
      * The dispatch origin for this call must be _Signed_ and the sender must have a registered
      * sub identity of `sub`.
      */
-    v9110: new CallType(
+    v9111: new CallType(
         'Identity.add_sub',
         sts.struct({
-            sub: v9110.MultiAddress,
-            data: v9110.Data,
+            sub: v9111.MultiAddress,
+            data: v9111.Data,
         })
     ),
 }
@@ -429,11 +366,11 @@ export const renameSub =  {
      *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
      *  sub identity of `sub`.
      */
-    v15: new CallType(
+    v2015: new CallType(
         'Identity.rename_sub',
         sts.struct({
-            sub: v15.LookupSource,
-            data: v15.Data,
+            sub: v2015.LookupSource,
+            data: v2015.Data,
         })
     ),
     /**
@@ -442,11 +379,11 @@ export const renameSub =  {
      *  The dispatch origin for this call must be _Signed_ and the sender must have a registered
      *  sub identity of `sub`.
      */
-    v28: new CallType(
+    v2028: new CallType(
         'Identity.rename_sub',
         sts.struct({
-            sub: v28.LookupSource,
-            data: v28.Data,
+            sub: v2028.LookupSource,
+            data: v2028.Data,
         })
     ),
     /**
@@ -455,11 +392,11 @@ export const renameSub =  {
      * The dispatch origin for this call must be _Signed_ and the sender must have a registered
      * sub identity of `sub`.
      */
-    v9110: new CallType(
+    v9111: new CallType(
         'Identity.rename_sub',
         sts.struct({
-            sub: v9110.MultiAddress,
-            data: v9110.Data,
+            sub: v9111.MultiAddress,
+            data: v9111.Data,
         })
     ),
 }
