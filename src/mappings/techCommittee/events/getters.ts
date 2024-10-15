@@ -64,6 +64,8 @@ export function getExecutedData(itemEvent: Event): string {
             return executed.v10700.decode(itemEvent).proposalHash
         } else if (executed.v10890.is(itemEvent)) {
             return executed.v10890.decode(itemEvent).proposalHash
+        } else if (executed.v11210.is(itemEvent)) {
+            return executed.v11210.decode(itemEvent).proposalHash
         } else {
             throw new UnknownVersionError(itemEvent.name)
         }
