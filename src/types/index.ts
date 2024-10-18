@@ -1,6 +1,7 @@
 export * as v1 from './v1'
 export * as v7 from './v7'
 export * as v15 from './v15'
+export * as v19 from './v19'
 export * as v3 from './v3'
 export * as v2 from './v2'
 export * as v4 from './v4'
