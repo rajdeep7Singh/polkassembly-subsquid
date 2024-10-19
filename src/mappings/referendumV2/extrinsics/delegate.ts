@@ -8,6 +8,8 @@ import { addDelegatedVotesReferendumV2, getDelegations, removeVote } from './uti
 import { StandardVoteBalance, ConvictionVote, VoteType, VotingDelegation, Proposal, ProposalType, ConvictionDelegatedVotes, DelegationType, FlattenedConvictionVotes, VoteDecision } from '../../../model'
 import { randomUUID } from 'crypto'
 import { Call, ProcessorContext } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export async function handleDelegate(ctx: ProcessorContext<Store>,
     item: Call,
@@ -144,4 +146,10 @@ export async function handleDelegate(ctx: ProcessorContext<Store>,
     await ctx.store.save(convictionVotes)
     await ctx.store.insert(delegatedVotes)
     await ctx.store.insert(flattenedVotes)
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.DELEGATED,
+        address: from,
+        addressTo: toWallet
+    })
 }

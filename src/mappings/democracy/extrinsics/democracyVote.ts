@@ -18,6 +18,8 @@ import { getDelegations, removeDelegatedVotesReferendum, addDelegatedVotesRefere
 import { IsNull } from 'typeorm'
 import { randomUUID } from 'crypto'
 import { Call, ProcessorContext } from '../../../processor'
+import { sendGovEvent } from '../../utils/proposals'
+import { EGovEvent } from '../../../common/types'
 
 export async function handleVote(ctx: ProcessorContext<Store>,
     item: Call,
@@ -150,4 +152,11 @@ export async function handleVote(ctx: ProcessorContext<Store>,
     await ctx.store.insert(convictionVote)
     await ctx.store.insert(convictionDelegatedVotes)
     await ctx.store.insert([flattened, ...flattenedVotes])
+
+    await sendGovEvent(ctx, {
+        event: EGovEvent.VOTED,
+        address: item.origin ? getOriginAccountId(item.origin) : '',
+        proposalIndex: proposal.index?.toString(),
+        proposalType: ProposalType.DemocracyProposal,
+    })
 }

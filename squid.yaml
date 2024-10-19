@@ -15,6 +15,7 @@ deploy:
           max_locks_per_transaction: 128
   secrets:
     - NOTIFICATION_API_KEY
+    - GOV_EVENT_API_KEY
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
