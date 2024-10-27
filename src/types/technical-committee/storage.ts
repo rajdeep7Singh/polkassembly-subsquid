@@ -7,6 +7,10 @@ import * as v26 from '../v26'
 import * as v28 from '../v28'
 import * as v44 from '../v44'
 import * as v48 from '../v48'
+import * as v64 from '../v64'
+import * as v74 from '../v74'
+import * as v78 from '../v78'
+import * as v116 from '../v116'
 
 export const proposalOf =  {
     /**
@@ -20,6 +24,10 @@ export const proposalOf =  {
     v28: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v28.H256], v28.Call) as ProposalOfV28,
     v44: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v44.H256], v44.Call) as ProposalOfV44,
     v48: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v48.H256], v48.Call) as ProposalOfV48,
+    v64: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v64.H256], v64.Call) as ProposalOfV64,
+    v74: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v74.H256], v74.Call) as ProposalOfV74,
+    v78: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v78.H256], v78.Call) as ProposalOfV78,
+    v116: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v116.H256], v116.Call) as ProposalOfV116,
 }
 
 /**
@@ -135,4 +143,60 @@ export interface ProposalOfV48  {
     getPairs(block: Block, key: v48.H256): Promise<[k: v48.H256, v: (v48.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v48.H256, v: (v48.Call | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v48.H256): AsyncIterable<[k: v48.H256, v: (v48.Call | undefined)][]>
+}
+
+export interface ProposalOfV64  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v64.H256): Promise<(v64.Call | undefined)>
+    getMany(block: Block, keys: v64.H256[]): Promise<(v64.Call | undefined)[]>
+    getKeys(block: Block): Promise<v64.H256[]>
+    getKeys(block: Block, key: v64.H256): Promise<v64.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v64.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v64.H256): AsyncIterable<v64.H256[]>
+    getPairs(block: Block): Promise<[k: v64.H256, v: (v64.Call | undefined)][]>
+    getPairs(block: Block, key: v64.H256): Promise<[k: v64.H256, v: (v64.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v64.H256, v: (v64.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v64.H256): AsyncIterable<[k: v64.H256, v: (v64.Call | undefined)][]>
+}
+
+export interface ProposalOfV74  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v74.H256): Promise<(v74.Call | undefined)>
+    getMany(block: Block, keys: v74.H256[]): Promise<(v74.Call | undefined)[]>
+    getKeys(block: Block): Promise<v74.H256[]>
+    getKeys(block: Block, key: v74.H256): Promise<v74.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v74.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v74.H256): AsyncIterable<v74.H256[]>
+    getPairs(block: Block): Promise<[k: v74.H256, v: (v74.Call | undefined)][]>
+    getPairs(block: Block, key: v74.H256): Promise<[k: v74.H256, v: (v74.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v74.H256, v: (v74.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v74.H256): AsyncIterable<[k: v74.H256, v: (v74.Call | undefined)][]>
+}
+
+export interface ProposalOfV78  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v78.H256): Promise<(v78.Call | undefined)>
+    getMany(block: Block, keys: v78.H256[]): Promise<(v78.Call | undefined)[]>
+    getKeys(block: Block): Promise<v78.H256[]>
+    getKeys(block: Block, key: v78.H256): Promise<v78.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v78.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v78.H256): AsyncIterable<v78.H256[]>
+    getPairs(block: Block): Promise<[k: v78.H256, v: (v78.Call | undefined)][]>
+    getPairs(block: Block, key: v78.H256): Promise<[k: v78.H256, v: (v78.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v78.H256, v: (v78.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v78.H256): AsyncIterable<[k: v78.H256, v: (v78.Call | undefined)][]>
+}
+
+export interface ProposalOfV116  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v116.H256): Promise<(v116.Call | undefined)>
+    getMany(block: Block, keys: v116.H256[]): Promise<(v116.Call | undefined)[]>
+    getKeys(block: Block): Promise<v116.H256[]>
+    getKeys(block: Block, key: v116.H256): Promise<v116.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v116.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v116.H256): AsyncIterable<v116.H256[]>
+    getPairs(block: Block): Promise<[k: v116.H256, v: (v116.Call | undefined)][]>
+    getPairs(block: Block, key: v116.H256): Promise<[k: v116.H256, v: (v116.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v116.H256, v: (v116.Call | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v116.H256): AsyncIterable<[k: v116.H256, v: (v116.Call | undefined)][]>
 }

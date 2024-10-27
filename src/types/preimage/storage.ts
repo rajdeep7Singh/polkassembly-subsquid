@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v1 from '../v1'
 import * as v11 from '../v11'
+import * as v116 from '../v116'
 
 export const statusFor =  {
     /**
@@ -78,4 +79,22 @@ export interface PreimageForV11  {
     getPairs(block: Block, key: [v11.H256, number]): Promise<[k: [v11.H256, number], v: (v11.BoundedVec | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [v11.H256, number], v: (v11.BoundedVec | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: [v11.H256, number]): AsyncIterable<[k: [v11.H256, number], v: (v11.BoundedVec | undefined)][]>
+}
+
+export const requestStatusFor =  {
+    v116: new StorageType('Preimage.RequestStatusFor', 'Optional', [v116.H256], v116.RequestStatus) as RequestStatusForV116,
+}
+
+export interface RequestStatusForV116  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v116.H256): Promise<(v116.RequestStatus | undefined)>
+    getMany(block: Block, keys: v116.H256[]): Promise<(v116.RequestStatus | undefined)[]>
+    getKeys(block: Block): Promise<v116.H256[]>
+    getKeys(block: Block, key: v116.H256): Promise<v116.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v116.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v116.H256): AsyncIterable<v116.H256[]>
+    getPairs(block: Block): Promise<[k: v116.H256, v: (v116.RequestStatus | undefined)][]>
+    getPairs(block: Block, key: v116.H256): Promise<[k: v116.H256, v: (v116.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v116.H256, v: (v116.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v116.H256): AsyncIterable<[k: v116.H256, v: (v116.RequestStatus | undefined)][]>
 }
