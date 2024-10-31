@@ -22,6 +22,14 @@ async function getStorageData(ctx: ProcessorContext<Store>, block: any): Promise
                 proposer,
             }
         })
+    } else if (publicProps.v32.is(block)) {
+        const storageData = await publicProps.v32.get(block)
+        if (!storageData) return undefined
+        return storageData.map((proposal): DemocracyProposalStorageData => {
+            const [index, hash, proposer] = proposal
+
+            return { index, hash: hash.__kind === 'Inline' ? hash.value : hash.hash, proposer }
+        })
     } else {
         throw new UnknownVersionError("Democracy.publicProps")
     }
