@@ -40,59 +40,59 @@ export const proposalOf =  {
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v266: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v266.Hash], v266.Proposal) as ProposalOfV266,
+    v266: new StorageType('Council.ProposalOf', 'Optional', [v266.Hash], v266.Proposal) as ProposalOfV266,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v278: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v278.Hash], v278.Proposal) as ProposalOfV278,
+    v278: new StorageType('Council.ProposalOf', 'Optional', [v278.Hash], v278.Proposal) as ProposalOfV278,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v280: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v280.Hash], v280.Proposal) as ProposalOfV280,
+    v280: new StorageType('Council.ProposalOf', 'Optional', [v280.Hash], v280.Proposal) as ProposalOfV280,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v281: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v281.Hash], v281.Proposal) as ProposalOfV281,
+    v281: new StorageType('Council.ProposalOf', 'Optional', [v281.Hash], v281.Proposal) as ProposalOfV281,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v282: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v282.Hash], v282.Proposal) as ProposalOfV282,
+    v282: new StorageType('Council.ProposalOf', 'Optional', [v282.Hash], v282.Proposal) as ProposalOfV282,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v283: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v283.Hash], v283.Proposal) as ProposalOfV283,
+    v283: new StorageType('Council.ProposalOf', 'Optional', [v283.Hash], v283.Proposal) as ProposalOfV283,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v284: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v284.Hash], v284.Proposal) as ProposalOfV284,
+    v284: new StorageType('Council.ProposalOf', 'Optional', [v284.Hash], v284.Proposal) as ProposalOfV284,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v285: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v285.Hash], v285.Proposal) as ProposalOfV285,
+    v285: new StorageType('Council.ProposalOf', 'Optional', [v285.Hash], v285.Proposal) as ProposalOfV285,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v288: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v288.Hash], v288.Proposal) as ProposalOfV288,
+    v288: new StorageType('Council.ProposalOf', 'Optional', [v288.Hash], v288.Proposal) as ProposalOfV288,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v290: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v290.Hash], v290.Proposal) as ProposalOfV290,
+    v290: new StorageType('Council.ProposalOf', 'Optional', [v290.Hash], v290.Proposal) as ProposalOfV290,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v291: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v291.Hash], v291.Proposal) as ProposalOfV291,
+    v291: new StorageType('Council.ProposalOf', 'Optional', [v291.Hash], v291.Proposal) as ProposalOfV291,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v292: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v292.Hash], v292.Proposal) as ProposalOfV292,
+    v292: new StorageType('Council.ProposalOf', 'Optional', [v292.Hash], v292.Proposal) as ProposalOfV292,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v293: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v293.Hash], v293.Proposal) as ProposalOfV293,
+    v293: new StorageType('Council.ProposalOf', 'Optional', [v293.Hash], v293.Proposal) as ProposalOfV293,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v294: new StorageType('Instance1Collective.ProposalOf', 'Optional', [v294.Hash], v294.Proposal) as ProposalOfV294,
+    v294: new StorageType('Council.ProposalOf', 'Optional', [v294.Hash], v294.Proposal) as ProposalOfV294,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
@@ -799,7 +799,7 @@ export const proposalCount =  {
     /**
      *  Proposals so far.
      */
-    v266: new StorageType('Instance1Collective.ProposalCount', 'Default', [], sts.number()) as ProposalCountV266,
+    v266: new StorageType('Council.ProposalCount', 'Default', [], sts.number()) as ProposalCountV266,
 }
 
 /**
@@ -815,7 +815,7 @@ export const members =  {
     /**
      *  The current members of the collective. This is stored sorted (just by value).
      */
-    v266: new StorageType('Instance1Collective.Members', 'Default', [], sts.array(() => v266.AccountId)) as MembersV266,
+    v266: new StorageType('Council.Members', 'Default', [], sts.array(() => v266.AccountId)) as MembersV266,
 }
 
 /**
