@@ -65,8 +65,8 @@ export function getPipCreatedEvent(itemEvent: Event): PipCreatedData {
             proposalData,
 
         }
-    }else if(proposalCreated.v5000003.is(itemEvent)){
-        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = proposalCreated.v5000003.decode(itemEvent)
+    }else if(proposalCreated.v5000002.is(itemEvent)){
+        const [did, proposer, pipId, deposit, url, description, maybeBlock, proposalDataValue] = proposalCreated.v5000002.decode(itemEvent)
         proposalData = proposalDataValue.value
         if(maybeBlock.__kind == "Some"){
             expiryTime = maybeBlock.value
@@ -268,8 +268,8 @@ export function getPolymeshCommitteeFinalVotesDataEvent(itemEvent: Event): polym
             nays
         }
     }
-    else if (finalVotes.v7000005.is(itemEvent)) {
-        const [identityId, pipId, hash, ayes, nays] = finalVotes.v7000005.decode(itemEvent)
+    else if (finalVotes.v7000003.is(itemEvent)) {
+        const [identityId, pipId, hash, ayes, nays] = finalVotes.v7000003.decode(itemEvent)
         return {
             index: pipId,
             identityId,

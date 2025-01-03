@@ -8,8 +8,8 @@ import { ProcessorContext } from '../../processor'
 export async function getSubstrateAddressOfDid(
     ctx: ProcessorContext<Store>, did: string, block: any
 ): Promise<string | undefined> {
-    if(didKeys.v5000003.is(block)){
-        const data = await didKeys.v5000003.getKeys(block, did)
+    if(didKeys.v5000002.is(block)){
+        const data = await didKeys.v5000002.getKeys(block, did)
         return data?.[0]?.[1] ?? '0x0400000000000000000000000000000000000000000000000000000000000000'
     }
     else{

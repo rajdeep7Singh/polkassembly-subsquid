@@ -59,7 +59,7 @@ export interface ProposalState_Scheduled {
     __kind: 'Scheduled'
 }
 
-export type Type_145 = Type_145_Asset | Type_145_AuthorityDiscovery | Type_145_Authorship | Type_145_Babe | Type_145_Balances | Type_145_Base | Type_145_Bridge | Type_145_CapitalDistribution | Type_145_CddServiceProviders | Type_145_Checkpoint | Type_145_CommitteeMembership | Type_145_ComplianceManager | Type_145_CorporateAction | Type_145_CorporateBallot | Type_145_ExternalAgents | Type_145_Grandpa | Type_145_Identity | Type_145_ImOnline | Type_145_Indices | Type_145_MultiSig | Type_145_Offences | Type_145_Pips | Type_145_PolymeshCommittee | Type_145_Portfolio | Type_145_ProtocolFee | Type_145_RandomnessCollectiveFlip | Type_145_Relayer | Type_145_Rewards | Type_145_Scheduler | Type_145_Session | Type_145_Settlement | Type_145_Staking | Type_145_Statistics | Type_145_Sto | Type_145_Sudo | Type_145_System | Type_145_TechnicalCommittee | Type_145_TechnicalCommitteeMembership | Type_145_Timestamp | Type_145_Treasury | Type_145_UpgradeCommittee | Type_145_UpgradeCommitteeMembership | Type_145_Utility
+export type Type_145 = Type_145_Asset | Type_145_AuthorityDiscovery | Type_145_Authorship | Type_145_Babe | Type_145_Balances | Type_145_Base | Type_145_Bridge | Type_145_CapitalDistribution | Type_145_CddServiceProviders | Type_145_Checkpoint | Type_145_CommitteeMembership | Type_145_ComplianceManager | Type_145_CorporateAction | Type_145_CorporateBallot | Type_145_ExternalAgents | Type_145_Grandpa | Type_145_Identity | Type_145_ImOnline | Type_145_Indices | Type_145_MultiSig | Type_145_Offences | Type_145_Pips | Type_145_PolymeshCommittee | Type_145_Portfolio | Type_145_ProtocolFee | Type_145_RandomnessCollectiveFlip | Type_145_Relayer | Type_145_Rewards | Type_145_Scheduler | Type_145_Session | Type_145_Settlement | Type_145_Staking | Type_145_Statistics | Type_145_Sto | Type_145_Sudo | Type_145_System | Type_145_TechnicalCommittee | Type_145_TechnicalCommitteeMembership | Type_145_TestUtils | Type_145_Timestamp | Type_145_Treasury | Type_145_UpgradeCommittee | Type_145_UpgradeCommitteeMembership | Type_145_Utility
 
 export interface Type_145_Asset {
     __kind: 'Asset'
@@ -249,6 +249,11 @@ export interface Type_145_TechnicalCommittee {
 export interface Type_145_TechnicalCommitteeMembership {
     __kind: 'TechnicalCommitteeMembership'
     value: TechnicalCommitteeMembershipCall
+}
+
+export interface Type_145_TestUtils {
+    __kind: 'TestUtils'
+    value: TestUtilsCall
 }
 
 export interface Type_145_Timestamp {
@@ -670,6 +675,178 @@ export interface TimestampCall_set {
     __kind: 'set'
     now: bigint
 }
+
+export type TestUtilsCall = TestUtilsCall_get_cdd_of | TestUtilsCall_get_my_did | TestUtilsCall_mock_cdd_register_did | TestUtilsCall_register_did
+
+/**
+ *  Emits an event with caller's identity and CDD status.
+ */
+export interface TestUtilsCall_get_cdd_of {
+    __kind: 'get_cdd_of'
+    of: AccountId
+}
+
+/**
+ *  Emits an event with caller's identity.
+ */
+export interface TestUtilsCall_get_my_did {
+    __kind: 'get_my_did'
+}
+
+/**
+ *  Registers a new Identity for the `target_account` and issues a CDD claim to it.
+ *  The Investor UID is generated deterministically by the hash of the generated DID and
+ *  then we fix it to be compliant with UUID v4.
+ * 
+ *  # See
+ *  - [RFC 4122: UUID](https://tools.ietf.org/html/rfc4122)
+ * 
+ *  # Failure
+ *  - `origin` has to be an active CDD provider. Inactive CDD providers cannot add new
+ *  claims.
+ *  - `target_account` (primary key of the new Identity) can be linked to just one and only
+ *  one identity.
+ */
+export interface TestUtilsCall_mock_cdd_register_did {
+    __kind: 'mock_cdd_register_did'
+    targetAccount: AccountId
+}
+
+/**
+ *  Generates a new `IdentityID` for the caller, and issues a self-generated CDD claim.
+ * 
+ *  The caller account will be the primary key of that identity.
+ *  For each account of `secondary_keys`, a new `JoinIdentity` authorization is created, so
+ *  each of them will need to accept it before become part of this new `IdentityID`.
+ * 
+ *  # Errors
+ *  - `AlreadyLinked` if the caller account or if any of the given `secondary_keys` has already linked to an `IdentityID`
+ *  - `SecondaryKeysContainPrimaryKey` if `secondary_keys` contains the caller account.
+ *  - `DidAlreadyExists` if auto-generated DID already exists.
+ */
+export interface TestUtilsCall_register_did {
+    __kind: 'register_did'
+    uid: InvestorUid
+    secondaryKeys: SecondaryKey[]
+}
+
+export interface SecondaryKey {
+    signer: Signatory
+    permissions: Permissions
+}
+
+export interface Permissions {
+    asset: AssetPermissions
+    extrinsic: ExtrinsicPermissions
+    portfolio: PortfolioPermissions
+}
+
+export type PortfolioPermissions = PortfolioPermissions_Except | PortfolioPermissions_These | PortfolioPermissions_Whole
+
+export interface PortfolioPermissions_Except {
+    __kind: 'Except'
+    value: PortfolioId[]
+}
+
+export interface PortfolioPermissions_These {
+    __kind: 'These'
+    value: PortfolioId[]
+}
+
+export interface PortfolioPermissions_Whole {
+    __kind: 'Whole'
+}
+
+export interface PortfolioId {
+    did: IdentityId
+    kind: PortfolioKind
+}
+
+export type PortfolioKind = PortfolioKind_Default | PortfolioKind_User
+
+export interface PortfolioKind_Default {
+    __kind: 'Default'
+}
+
+export interface PortfolioKind_User {
+    __kind: 'User'
+    value: PortfolioNumber
+}
+
+export type PortfolioNumber = bigint
+
+export type ExtrinsicPermissions = ExtrinsicPermissions_Except | ExtrinsicPermissions_These | ExtrinsicPermissions_Whole
+
+export interface ExtrinsicPermissions_Except {
+    __kind: 'Except'
+    value: PalletPermissions[]
+}
+
+export interface ExtrinsicPermissions_These {
+    __kind: 'These'
+    value: PalletPermissions[]
+}
+
+export interface ExtrinsicPermissions_Whole {
+    __kind: 'Whole'
+}
+
+export interface PalletPermissions {
+    palletName: PalletName
+    dispatchableNames: DispatchableNames
+}
+
+export type DispatchableNames = DispatchableNames_Except | DispatchableNames_These | DispatchableNames_Whole
+
+export interface DispatchableNames_Except {
+    __kind: 'Except'
+    value: DispatchableName[]
+}
+
+export interface DispatchableNames_These {
+    __kind: 'These'
+    value: DispatchableName[]
+}
+
+export interface DispatchableNames_Whole {
+    __kind: 'Whole'
+}
+
+export type DispatchableName = string
+
+export type PalletName = string
+
+export type AssetPermissions = AssetPermissions_Except | AssetPermissions_These | AssetPermissions_Whole
+
+export interface AssetPermissions_Except {
+    __kind: 'Except'
+    value: Ticker[]
+}
+
+export interface AssetPermissions_These {
+    __kind: 'These'
+    value: Ticker[]
+}
+
+export interface AssetPermissions_Whole {
+    __kind: 'Whole'
+}
+
+export type Ticker = Bytes
+
+export type Signatory = Signatory_Account | Signatory_Identity
+
+export interface Signatory_Account {
+    __kind: 'Account'
+    value: AccountId
+}
+
+export interface Signatory_Identity {
+    __kind: 'Identity'
+    value: IdentityId
+}
+
+export type InvestorUid = Bytes
 
 export type TechnicalCommitteeMembershipCall = TechnicalCommitteeMembershipCall_abdicate_membership | TechnicalCommitteeMembershipCall_add_member | TechnicalCommitteeMembershipCall_disable_member | TechnicalCommitteeMembershipCall_remove_member | TechnicalCommitteeMembershipCall_reset_members | TechnicalCommitteeMembershipCall_set_active_members_limit | TechnicalCommitteeMembershipCall_swap_member
 
@@ -1264,26 +1441,6 @@ export interface PriceTier {
     total: Balance
     price: Balance
 }
-
-export type Ticker = Bytes
-
-export interface PortfolioId {
-    did: IdentityId
-    kind: PortfolioKind
-}
-
-export type PortfolioKind = PortfolioKind_Default | PortfolioKind_User
-
-export interface PortfolioKind_Default {
-    __kind: 'Default'
-}
-
-export interface PortfolioKind_User {
-    __kind: 'User'
-    value: PortfolioNumber
-}
-
-export type PortfolioNumber = bigint
 
 export type StatisticsCall = StatisticsCall_add_exempted_entities | StatisticsCall_add_transfer_manager | StatisticsCall_remove_exempted_entities | StatisticsCall_remove_transfer_manager
 
@@ -3325,7 +3482,7 @@ export type PipDescription = string
 
 export type Url = string
 
-export type Proposal = Proposal_Asset | Proposal_AuthorityDiscovery | Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Base | Proposal_Bridge | Proposal_CapitalDistribution | Proposal_CddServiceProviders | Proposal_Checkpoint | Proposal_CommitteeMembership | Proposal_ComplianceManager | Proposal_CorporateAction | Proposal_CorporateBallot | Proposal_ExternalAgents | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_MultiSig | Proposal_Offences | Proposal_Pips | Proposal_PolymeshCommittee | Proposal_Portfolio | Proposal_ProtocolFee | Proposal_RandomnessCollectiveFlip | Proposal_Relayer | Proposal_Rewards | Proposal_Scheduler | Proposal_Session | Proposal_Settlement | Proposal_Staking | Proposal_Statistics | Proposal_Sto | Proposal_Sudo | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalCommitteeMembership | Proposal_Timestamp | Proposal_Treasury | Proposal_UpgradeCommittee | Proposal_UpgradeCommitteeMembership | Proposal_Utility
+export type Proposal = Proposal_Asset | Proposal_AuthorityDiscovery | Proposal_Authorship | Proposal_Babe | Proposal_Balances | Proposal_Base | Proposal_Bridge | Proposal_CapitalDistribution | Proposal_CddServiceProviders | Proposal_Checkpoint | Proposal_CommitteeMembership | Proposal_ComplianceManager | Proposal_CorporateAction | Proposal_CorporateBallot | Proposal_ExternalAgents | Proposal_Grandpa | Proposal_Identity | Proposal_ImOnline | Proposal_Indices | Proposal_MultiSig | Proposal_Offences | Proposal_Pips | Proposal_PolymeshCommittee | Proposal_Portfolio | Proposal_ProtocolFee | Proposal_RandomnessCollectiveFlip | Proposal_Relayer | Proposal_Rewards | Proposal_Scheduler | Proposal_Session | Proposal_Settlement | Proposal_Staking | Proposal_Statistics | Proposal_Sto | Proposal_Sudo | Proposal_System | Proposal_TechnicalCommittee | Proposal_TechnicalCommitteeMembership | Proposal_TestUtils | Proposal_Timestamp | Proposal_Treasury | Proposal_UpgradeCommittee | Proposal_UpgradeCommitteeMembership | Proposal_Utility
 
 export interface Proposal_Asset {
     __kind: 'Asset'
@@ -3515,6 +3672,11 @@ export interface Proposal_TechnicalCommittee {
 export interface Proposal_TechnicalCommitteeMembership {
     __kind: 'TechnicalCommitteeMembership'
     value: TechnicalCommitteeMembershipCall
+}
+
+export interface Proposal_TestUtils {
+    __kind: 'TestUtils'
+    value: TestUtilsCall
 }
 
 export interface Proposal_Timestamp {
@@ -3825,18 +3987,6 @@ export interface MultiSigCall_remove_multisig_signers_via_creator {
     __kind: 'remove_multisig_signers_via_creator'
     multisig: AccountId
     signers: Signatory[]
-}
-
-export type Signatory = Signatory_Account | Signatory_Identity
-
-export interface Signatory_Account {
-    __kind: 'Account'
-    value: AccountId
-}
-
-export interface Signatory_Identity {
-    __kind: 'Identity'
-    value: IdentityId
 }
 
 export type IndicesCall = IndicesCall_claim | IndicesCall_force_transfer | IndicesCall_free | IndicesCall_freeze | IndicesCall_transfer
@@ -4277,85 +4427,6 @@ export interface IdentityCall_unfreeze_secondary_keys {
     __kind: 'unfreeze_secondary_keys'
 }
 
-export interface Permissions {
-    asset: AssetPermissions
-    extrinsic: ExtrinsicPermissions
-    portfolio: PortfolioPermissions
-}
-
-export type PortfolioPermissions = PortfolioPermissions_Except | PortfolioPermissions_These | PortfolioPermissions_Whole
-
-export interface PortfolioPermissions_Except {
-    __kind: 'Except'
-    value: PortfolioId[]
-}
-
-export interface PortfolioPermissions_These {
-    __kind: 'These'
-    value: PortfolioId[]
-}
-
-export interface PortfolioPermissions_Whole {
-    __kind: 'Whole'
-}
-
-export type ExtrinsicPermissions = ExtrinsicPermissions_Except | ExtrinsicPermissions_These | ExtrinsicPermissions_Whole
-
-export interface ExtrinsicPermissions_Except {
-    __kind: 'Except'
-    value: PalletPermissions[]
-}
-
-export interface ExtrinsicPermissions_These {
-    __kind: 'These'
-    value: PalletPermissions[]
-}
-
-export interface ExtrinsicPermissions_Whole {
-    __kind: 'Whole'
-}
-
-export interface PalletPermissions {
-    palletName: PalletName
-    dispatchableNames: DispatchableNames
-}
-
-export type DispatchableNames = DispatchableNames_Except | DispatchableNames_These | DispatchableNames_Whole
-
-export interface DispatchableNames_Except {
-    __kind: 'Except'
-    value: DispatchableName[]
-}
-
-export interface DispatchableNames_These {
-    __kind: 'These'
-    value: DispatchableName[]
-}
-
-export interface DispatchableNames_Whole {
-    __kind: 'Whole'
-}
-
-export type DispatchableName = string
-
-export type PalletName = string
-
-export type AssetPermissions = AssetPermissions_Except | AssetPermissions_These | AssetPermissions_Whole
-
-export interface AssetPermissions_Except {
-    __kind: 'Except'
-    value: Ticker[]
-}
-
-export interface AssetPermissions_These {
-    __kind: 'These'
-    value: Ticker[]
-}
-
-export interface AssetPermissions_Whole {
-    __kind: 'Whole'
-}
-
 export type ClaimType = ClaimType_Accredited | ClaimType_Affiliate | ClaimType_Blocked | ClaimType_BuyLockup | ClaimType_CustomerDueDiligence | ClaimType_Exempted | ClaimType_InvestorUniqueness | ClaimType_InvestorUniquenessV2 | ClaimType_Jurisdiction | ClaimType_KnowYourCustomer | ClaimType_NoData | ClaimType_SellLockup
 
 export interface ClaimType_Accredited {
@@ -4416,11 +4487,6 @@ export interface LegacyPalletPermissions {
     palletName: PalletName
     total: boolean
     dispatchableNames: DispatchableName[]
-}
-
-export interface SecondaryKey {
-    signer: Signatory
-    permissions: Permissions
 }
 
 export interface SecondaryKeyWithAuth {
@@ -7978,6 +8044,7 @@ export const Type_145: sts.Type<Type_145> = sts.closedEnum(() => {
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalCommitteeMembership: TechnicalCommitteeMembershipCall,
+        TestUtils: TestUtilsCall,
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         UpgradeCommittee: UpgradeCommitteeCall,
@@ -8102,6 +8169,107 @@ export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
         }),
     }
 })
+
+export const TestUtilsCall: sts.Type<TestUtilsCall> = sts.closedEnum(() => {
+    return  {
+        get_cdd_of: sts.enumStruct({
+            of: AccountId,
+        }),
+        get_my_did: sts.unit(),
+        mock_cdd_register_did: sts.enumStruct({
+            targetAccount: AccountId,
+        }),
+        register_did: sts.enumStruct({
+            uid: InvestorUid,
+            secondaryKeys: sts.array(() => SecondaryKey),
+        }),
+    }
+})
+
+export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
+    return  {
+        signer: Signatory,
+        permissions: Permissions,
+    }
+})
+
+export const Permissions: sts.Type<Permissions> = sts.struct(() => {
+    return  {
+        asset: AssetPermissions,
+        extrinsic: ExtrinsicPermissions,
+        portfolio: PortfolioPermissions,
+    }
+})
+
+export const PortfolioPermissions: sts.Type<PortfolioPermissions> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => PortfolioId),
+        These: sts.array(() => PortfolioId),
+        Whole: sts.unit(),
+    }
+})
+
+export const PortfolioId: sts.Type<PortfolioId> = sts.struct(() => {
+    return  {
+        did: IdentityId,
+        kind: PortfolioKind,
+    }
+})
+
+export const PortfolioKind: sts.Type<PortfolioKind> = sts.closedEnum(() => {
+    return  {
+        Default: sts.unit(),
+        User: PortfolioNumber,
+    }
+})
+
+export const PortfolioNumber = sts.bigint()
+
+export const ExtrinsicPermissions: sts.Type<ExtrinsicPermissions> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => PalletPermissions),
+        These: sts.array(() => PalletPermissions),
+        Whole: sts.unit(),
+    }
+})
+
+export const PalletPermissions: sts.Type<PalletPermissions> = sts.struct(() => {
+    return  {
+        palletName: PalletName,
+        dispatchableNames: DispatchableNames,
+    }
+})
+
+export const DispatchableNames: sts.Type<DispatchableNames> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => DispatchableName),
+        These: sts.array(() => DispatchableName),
+        Whole: sts.unit(),
+    }
+})
+
+export const DispatchableName = sts.string()
+
+export const PalletName = sts.string()
+
+export const AssetPermissions: sts.Type<AssetPermissions> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => Ticker),
+        These: sts.array(() => Ticker),
+        Whole: sts.unit(),
+    }
+})
+
+export const Ticker = sts.bytes()
+
+export const Signatory: sts.Type<Signatory> = sts.closedEnum(() => {
+    return  {
+        Account: AccountId,
+        Identity: IdentityId,
+    }
+})
+
+export const InvestorUid = sts.bytes()
 
 export const TechnicalCommitteeMembershipCall: sts.Type<TechnicalCommitteeMembershipCall> = sts.closedEnum(() => {
     return  {
@@ -8303,24 +8471,6 @@ export const PriceTier: sts.Type<PriceTier> = sts.struct(() => {
         price: Balance,
     }
 })
-
-export const Ticker = sts.bytes()
-
-export const PortfolioId: sts.Type<PortfolioId> = sts.struct(() => {
-    return  {
-        did: IdentityId,
-        kind: PortfolioKind,
-    }
-})
-
-export const PortfolioKind: sts.Type<PortfolioKind> = sts.closedEnum(() => {
-    return  {
-        Default: sts.unit(),
-        User: PortfolioNumber,
-    }
-})
-
-export const PortfolioNumber = sts.bigint()
 
 export const StatisticsCall: sts.Type<StatisticsCall> = sts.closedEnum(() => {
     return  {
@@ -8951,6 +9101,7 @@ export const Proposal: sts.Type<Proposal> = sts.closedEnum(() => {
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalCommitteeMembership: TechnicalCommitteeMembershipCall,
+        TestUtils: TestUtilsCall,
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         UpgradeCommittee: UpgradeCommitteeCall,
@@ -9054,13 +9205,6 @@ export const MultiSigCall: sts.Type<MultiSigCall> = sts.closedEnum(() => {
             multisig: AccountId,
             signers: sts.array(() => Signatory),
         }),
-    }
-})
-
-export const Signatory: sts.Type<Signatory> = sts.closedEnum(() => {
-    return  {
-        Account: AccountId,
-        Identity: IdentityId,
     }
 })
 
@@ -9210,57 +9354,6 @@ export const IdentityCall: sts.Type<IdentityCall> = sts.closedEnum(() => {
     }
 })
 
-export const Permissions: sts.Type<Permissions> = sts.struct(() => {
-    return  {
-        asset: AssetPermissions,
-        extrinsic: ExtrinsicPermissions,
-        portfolio: PortfolioPermissions,
-    }
-})
-
-export const PortfolioPermissions: sts.Type<PortfolioPermissions> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => PortfolioId),
-        These: sts.array(() => PortfolioId),
-        Whole: sts.unit(),
-    }
-})
-
-export const ExtrinsicPermissions: sts.Type<ExtrinsicPermissions> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => PalletPermissions),
-        These: sts.array(() => PalletPermissions),
-        Whole: sts.unit(),
-    }
-})
-
-export const PalletPermissions: sts.Type<PalletPermissions> = sts.struct(() => {
-    return  {
-        palletName: PalletName,
-        dispatchableNames: DispatchableNames,
-    }
-})
-
-export const DispatchableNames: sts.Type<DispatchableNames> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => DispatchableName),
-        These: sts.array(() => DispatchableName),
-        Whole: sts.unit(),
-    }
-})
-
-export const DispatchableName = sts.string()
-
-export const PalletName = sts.string()
-
-export const AssetPermissions: sts.Type<AssetPermissions> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => Ticker),
-        These: sts.array(() => Ticker),
-        Whole: sts.unit(),
-    }
-})
-
 export const ClaimType: sts.Type<ClaimType> = sts.closedEnum(() => {
     return  {
         Accredited: sts.unit(),
@@ -9291,13 +9384,6 @@ export const LegacyPalletPermissions: sts.Type<LegacyPalletPermissions> = sts.st
         palletName: PalletName,
         total: sts.boolean(),
         dispatchableNames: sts.array(() => DispatchableName),
-    }
-})
-
-export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
-    return  {
-        signer: Signatory,
-        permissions: Permissions,
     }
 })
 

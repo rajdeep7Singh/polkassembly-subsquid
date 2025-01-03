@@ -32,7 +32,7 @@ export interface Committee_Upgrade {
     __kind: 'Upgrade'
 }
 
-export type Call = Call_Asset | Call_Babe | Call_Balances | Call_Base | Call_Bridge | Call_CapitalDistribution | Call_CddServiceProviders | Call_Checkpoint | Call_CommitteeMembership | Call_ComplianceManager | Call_Contracts | Call_CorporateAction | Call_CorporateBallot | Call_ExternalAgents | Call_Grandpa | Call_Identity | Call_ImOnline | Call_Indices | Call_MultiSig | Call_Nft | Call_Pips | Call_PolymeshCommittee | Call_PolymeshContracts | Call_Portfolio | Call_Preimage | Call_ProtocolFee | Call_Relayer | Call_Scheduler | Call_Session | Call_Settlement | Call_Staking | Call_StateTrieMigration | Call_Statistics | Call_Sto | Call_System | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_Timestamp | Call_Treasury | Call_UpgradeCommittee | Call_UpgradeCommitteeMembership | Call_Utility
+export type Call = Call_Asset | Call_Babe | Call_Balances | Call_Base | Call_Bridge | Call_CapitalDistribution | Call_CddServiceProviders | Call_Checkpoint | Call_CommitteeMembership | Call_ComplianceManager | Call_Contracts | Call_CorporateAction | Call_CorporateBallot | Call_ExternalAgents | Call_Grandpa | Call_Identity | Call_ImOnline | Call_Indices | Call_MultiSig | Call_Nft | Call_Pips | Call_PolymeshCommittee | Call_PolymeshContracts | Call_Portfolio | Call_Preimage | Call_ProtocolFee | Call_Relayer | Call_Scheduler | Call_Session | Call_Settlement | Call_Staking | Call_StateTrieMigration | Call_Statistics | Call_Sto | Call_System | Call_TechnicalCommittee | Call_TechnicalCommitteeMembership | Call_TestUtils | Call_Timestamp | Call_Treasury | Call_UpgradeCommittee | Call_UpgradeCommitteeMembership | Call_Utility
 
 export interface Call_Asset {
     __kind: 'Asset'
@@ -217,6 +217,11 @@ export interface Call_TechnicalCommittee {
 export interface Call_TechnicalCommitteeMembership {
     __kind: 'TechnicalCommitteeMembership'
     value: TechnicalCommitteeMembershipCall
+}
+
+export interface Call_TestUtils {
+    __kind: 'TestUtils'
+    value: TestUtilsCall
 }
 
 export interface Call_Timestamp {
@@ -494,17 +499,17 @@ export type OriginCaller = OriginCaller_PolymeshCommittee | OriginCaller_Technic
 
 export interface OriginCaller_PolymeshCommittee {
     __kind: 'PolymeshCommittee'
-    value: Type_531
+    value: Type_532
 }
 
 export interface OriginCaller_TechnicalCommittee {
     __kind: 'TechnicalCommittee'
-    value: Type_532
+    value: Type_533
 }
 
 export interface OriginCaller_UpgradeCommittee {
     __kind: 'UpgradeCommittee'
-    value: Type_533
+    value: Type_534
 }
 
 export interface OriginCaller_Void {
@@ -534,6 +539,12 @@ export interface RawOrigin_Signed {
 
 export type Void = never
 
+export type Type_534 = Type_534_Endorsed
+
+export interface Type_534_Endorsed {
+    __kind: 'Endorsed'
+}
+
 export type Type_533 = Type_533_Endorsed
 
 export interface Type_533_Endorsed {
@@ -543,12 +554,6 @@ export interface Type_533_Endorsed {
 export type Type_532 = Type_532_Endorsed
 
 export interface Type_532_Endorsed {
-    __kind: 'Endorsed'
-}
-
-export type Type_531 = Type_531_Endorsed
-
-export interface Type_531_Endorsed {
     __kind: 'Endorsed'
 }
 
@@ -827,6 +832,163 @@ export interface TimestampCall_set {
     __kind: 'set'
     now: bigint
 }
+
+/**
+ * Dispatchable calls.
+ * 
+ * Each variant of this enum maps to a dispatchable function from the associated module.
+ */
+export type TestUtilsCall = TestUtilsCall_get_cdd_of | TestUtilsCall_get_my_did | TestUtilsCall_mock_cdd_register_did | TestUtilsCall_register_did
+
+/**
+ * Emits an event with caller's identity and CDD status.
+ */
+export interface TestUtilsCall_get_cdd_of {
+    __kind: 'get_cdd_of'
+    of: AccountId32
+}
+
+/**
+ * Emits an event with caller's identity.
+ */
+export interface TestUtilsCall_get_my_did {
+    __kind: 'get_my_did'
+}
+
+/**
+ * Registers a new Identity for the `target_account` and issues a CDD claim to it.
+ * 
+ * # Failure
+ * - `origin` has to be an active CDD provider. Inactive CDD providers cannot add new
+ * claims.
+ * - `target_account` (primary key of the new Identity) can be linked to just one and only
+ * one identity.
+ */
+export interface TestUtilsCall_mock_cdd_register_did {
+    __kind: 'mock_cdd_register_did'
+    targetAccount: AccountId32
+}
+
+/**
+ * Generates a new `IdentityID` for the caller, and issues a self-generated CDD claim.
+ * 
+ * The caller account will be the primary key of that identity.
+ * For each account of `secondary_keys`, a new `JoinIdentity` authorization is created, so
+ * each of them will need to accept it before become part of this new `IdentityID`.
+ * 
+ * # Errors
+ * - `AlreadyLinked` if the caller account or if any of the given `secondary_keys` has already linked to an `IdentityID`
+ * - `SecondaryKeysContainPrimaryKey` if `secondary_keys` contains the caller account.
+ * - `DidAlreadyExists` if auto-generated DID already exists.
+ */
+export interface TestUtilsCall_register_did {
+    __kind: 'register_did'
+    secondaryKeys: SecondaryKey[]
+}
+
+export interface SecondaryKey {
+    key: AccountId32
+    permissions: Permissions
+}
+
+export interface Permissions {
+    asset: SubsetRestriction
+    extrinsic: Type_46
+    portfolio: Type_55
+}
+
+export type Type_55 = Type_55_Except | Type_55_These | Type_55_Whole
+
+export interface Type_55_Except {
+    __kind: 'Except'
+    value: PortfolioId[]
+}
+
+export interface Type_55_These {
+    __kind: 'These'
+    value: PortfolioId[]
+}
+
+export interface Type_55_Whole {
+    __kind: 'Whole'
+}
+
+export interface PortfolioId {
+    did: IdentityId
+    kind: PortfolioKind
+}
+
+export type PortfolioKind = PortfolioKind_Default | PortfolioKind_User
+
+export interface PortfolioKind_Default {
+    __kind: 'Default'
+}
+
+export interface PortfolioKind_User {
+    __kind: 'User'
+    value: PortfolioNumber
+}
+
+export type PortfolioNumber = bigint
+
+export type Type_46 = Type_46_Except | Type_46_These | Type_46_Whole
+
+export interface Type_46_Except {
+    __kind: 'Except'
+    value: PalletPermissions[]
+}
+
+export interface Type_46_These {
+    __kind: 'These'
+    value: PalletPermissions[]
+}
+
+export interface Type_46_Whole {
+    __kind: 'Whole'
+}
+
+export interface PalletPermissions {
+    palletName: PalletName
+    dispatchableNames: Type_49
+}
+
+export type Type_49 = Type_49_Except | Type_49_These | Type_49_Whole
+
+export interface Type_49_Except {
+    __kind: 'Except'
+    value: DispatchableName[]
+}
+
+export interface Type_49_These {
+    __kind: 'These'
+    value: DispatchableName[]
+}
+
+export interface Type_49_Whole {
+    __kind: 'Whole'
+}
+
+export type DispatchableName = Bytes
+
+export type PalletName = Bytes
+
+export type SubsetRestriction = SubsetRestriction_Except | SubsetRestriction_These | SubsetRestriction_Whole
+
+export interface SubsetRestriction_Except {
+    __kind: 'Except'
+    value: Ticker[]
+}
+
+export interface SubsetRestriction_These {
+    __kind: 'These'
+    value: Ticker[]
+}
+
+export interface SubsetRestriction_Whole {
+    __kind: 'Whole'
+}
+
+export type Ticker = Bytes
 
 /**
  * Dispatchable calls.
@@ -1270,26 +1432,6 @@ export interface PriceTier {
     total: bigint
     price: bigint
 }
-
-export type Ticker = Bytes
-
-export interface PortfolioId {
-    did: IdentityId
-    kind: PortfolioKind
-}
-
-export type PortfolioKind = PortfolioKind_Default | PortfolioKind_User
-
-export interface PortfolioKind_Default {
-    __kind: 'Default'
-}
-
-export interface PortfolioKind_User {
-    __kind: 'User'
-    value: PortfolioNumber
-}
-
-export type PortfolioNumber = bigint
 
 /**
  * Dispatchable calls.
@@ -4572,85 +4714,6 @@ export interface Api {
 
 export type ExtrinsicId = [number, number]
 
-export interface Permissions {
-    asset: SubsetRestriction
-    extrinsic: Type_46
-    portfolio: Type_55
-}
-
-export type Type_55 = Type_55_Except | Type_55_These | Type_55_Whole
-
-export interface Type_55_Except {
-    __kind: 'Except'
-    value: PortfolioId[]
-}
-
-export interface Type_55_These {
-    __kind: 'These'
-    value: PortfolioId[]
-}
-
-export interface Type_55_Whole {
-    __kind: 'Whole'
-}
-
-export type Type_46 = Type_46_Except | Type_46_These | Type_46_Whole
-
-export interface Type_46_Except {
-    __kind: 'Except'
-    value: PalletPermissions[]
-}
-
-export interface Type_46_These {
-    __kind: 'These'
-    value: PalletPermissions[]
-}
-
-export interface Type_46_Whole {
-    __kind: 'Whole'
-}
-
-export interface PalletPermissions {
-    palletName: PalletName
-    dispatchableNames: Type_49
-}
-
-export type Type_49 = Type_49_Except | Type_49_These | Type_49_Whole
-
-export interface Type_49_Except {
-    __kind: 'Except'
-    value: DispatchableName[]
-}
-
-export interface Type_49_These {
-    __kind: 'These'
-    value: DispatchableName[]
-}
-
-export interface Type_49_Whole {
-    __kind: 'Whole'
-}
-
-export type DispatchableName = Bytes
-
-export type PalletName = Bytes
-
-export type SubsetRestriction = SubsetRestriction_Except | SubsetRestriction_These | SubsetRestriction_Whole
-
-export interface SubsetRestriction_Except {
-    __kind: 'Except'
-    value: Ticker[]
-}
-
-export interface SubsetRestriction_These {
-    __kind: 'These'
-    value: Ticker[]
-}
-
-export interface SubsetRestriction_Whole {
-    __kind: 'Whole'
-}
-
 /**
  * Dispatchable calls.
  * 
@@ -5960,11 +6023,6 @@ export interface CreateChildIdentityWithAuth {
 
 export type H512 = Bytes
 
-export interface SecondaryKey {
-    key: AccountId32
-    permissions: Permissions
-}
-
 export interface SecondaryKeyWithAuth {
     secondaryKey: SecondaryKey
     authSignature: H512
@@ -6133,7 +6191,7 @@ export interface GrandpaCall_note_stalled {
  */
 export interface GrandpaCall_report_equivocation {
     __kind: 'report_equivocation'
-    equivocationProof: Type_461
+    equivocationProof: Type_462
     keyOwnerProof: MembershipProof
 }
 
@@ -6150,7 +6208,7 @@ export interface GrandpaCall_report_equivocation {
  */
 export interface GrandpaCall_report_equivocation_unsigned {
     __kind: 'report_equivocation_unsigned'
-    equivocationProof: Type_461
+    equivocationProof: Type_462
     keyOwnerProof: MembershipProof
 }
 
@@ -6160,7 +6218,7 @@ export interface MembershipProof {
     validatorCount: number
 }
 
-export interface Type_461 {
+export interface Type_462 {
     setId: bigint
     equivocation: Equivocation
 }
@@ -6169,15 +6227,15 @@ export type Equivocation = Equivocation_Precommit | Equivocation_Prevote
 
 export interface Equivocation_Precommit {
     __kind: 'Precommit'
-    value: Type_468
+    value: Type_469
 }
 
 export interface Equivocation_Prevote {
     __kind: 'Prevote'
-    value: Type_463
+    value: Type_464
 }
 
-export interface Type_463 {
+export interface Type_464 {
     roundNumber: bigint
     identity: Public
     first: [Prevote, Signature]
@@ -6191,7 +6249,7 @@ export interface Prevote {
     targetNumber: number
 }
 
-export interface Type_468 {
+export interface Type_469 {
     roundNumber: bigint
     identity: Public
     first: [Precommit, Signature]
@@ -9072,6 +9130,7 @@ export const Call: sts.Type<Call> = sts.closedEnum(() => {
         System: SystemCall,
         TechnicalCommittee: TechnicalCommitteeCall,
         TechnicalCommitteeMembership: TechnicalCommitteeMembershipCall,
+        TestUtils: TestUtilsCall,
         Timestamp: TimestampCall,
         Treasury: TreasuryCall,
         UpgradeCommittee: UpgradeCommitteeCall,
@@ -9147,9 +9206,9 @@ export const MultiSignature: sts.Type<MultiSignature> = sts.closedEnum(() => {
 
 export const OriginCaller: sts.Type<OriginCaller> = sts.closedEnum(() => {
     return  {
-        PolymeshCommittee: Type_531,
-        TechnicalCommittee: Type_532,
-        UpgradeCommittee: Type_533,
+        PolymeshCommittee: Type_532,
+        TechnicalCommittee: Type_533,
+        UpgradeCommittee: Type_534,
         Void: Void,
         system: RawOrigin,
     }
@@ -9168,6 +9227,12 @@ export const Void: sts.Type<Void> = sts.closedEnum(() => {
     }
 })
 
+export const Type_534: sts.Type<Type_534> = sts.closedEnum(() => {
+    return  {
+        Endorsed: sts.unit(),
+    }
+})
+
 export const Type_533: sts.Type<Type_533> = sts.closedEnum(() => {
     return  {
         Endorsed: sts.unit(),
@@ -9175,12 +9240,6 @@ export const Type_533: sts.Type<Type_533> = sts.closedEnum(() => {
 })
 
 export const Type_532: sts.Type<Type_532> = sts.closedEnum(() => {
-    return  {
-        Endorsed: sts.unit(),
-    }
-})
-
-export const Type_531: sts.Type<Type_531> = sts.closedEnum(() => {
     return  {
         Endorsed: sts.unit(),
     }
@@ -9286,6 +9345,102 @@ export const TimestampCall: sts.Type<TimestampCall> = sts.closedEnum(() => {
         }),
     }
 })
+
+/**
+ * Dispatchable calls.
+ * 
+ * Each variant of this enum maps to a dispatchable function from the associated module.
+ */
+export const TestUtilsCall: sts.Type<TestUtilsCall> = sts.closedEnum(() => {
+    return  {
+        get_cdd_of: sts.enumStruct({
+            of: AccountId32,
+        }),
+        get_my_did: sts.unit(),
+        mock_cdd_register_did: sts.enumStruct({
+            targetAccount: AccountId32,
+        }),
+        register_did: sts.enumStruct({
+            secondaryKeys: sts.array(() => SecondaryKey),
+        }),
+    }
+})
+
+export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
+    return  {
+        key: AccountId32,
+        permissions: Permissions,
+    }
+})
+
+export const Permissions: sts.Type<Permissions> = sts.struct(() => {
+    return  {
+        asset: SubsetRestriction,
+        extrinsic: Type_46,
+        portfolio: Type_55,
+    }
+})
+
+export const Type_55: sts.Type<Type_55> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => PortfolioId),
+        These: sts.array(() => PortfolioId),
+        Whole: sts.unit(),
+    }
+})
+
+export const PortfolioId: sts.Type<PortfolioId> = sts.struct(() => {
+    return  {
+        did: IdentityId,
+        kind: PortfolioKind,
+    }
+})
+
+export const PortfolioKind: sts.Type<PortfolioKind> = sts.closedEnum(() => {
+    return  {
+        Default: sts.unit(),
+        User: PortfolioNumber,
+    }
+})
+
+export const PortfolioNumber = sts.bigint()
+
+export const Type_46: sts.Type<Type_46> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => PalletPermissions),
+        These: sts.array(() => PalletPermissions),
+        Whole: sts.unit(),
+    }
+})
+
+export const PalletPermissions: sts.Type<PalletPermissions> = sts.struct(() => {
+    return  {
+        palletName: PalletName,
+        dispatchableNames: Type_49,
+    }
+})
+
+export const Type_49: sts.Type<Type_49> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => DispatchableName),
+        These: sts.array(() => DispatchableName),
+        Whole: sts.unit(),
+    }
+})
+
+export const DispatchableName = sts.bytes()
+
+export const PalletName = sts.bytes()
+
+export const SubsetRestriction: sts.Type<SubsetRestriction> = sts.closedEnum(() => {
+    return  {
+        Except: sts.array(() => Ticker),
+        These: sts.array(() => Ticker),
+        Whole: sts.unit(),
+    }
+})
+
+export const Ticker = sts.bytes()
 
 /**
  * Dispatchable calls.
@@ -9459,24 +9614,6 @@ export const PriceTier: sts.Type<PriceTier> = sts.struct(() => {
         price: sts.bigint(),
     }
 })
-
-export const Ticker = sts.bytes()
-
-export const PortfolioId: sts.Type<PortfolioId> = sts.struct(() => {
-    return  {
-        did: IdentityId,
-        kind: PortfolioKind,
-    }
-})
-
-export const PortfolioKind: sts.Type<PortfolioKind> = sts.closedEnum(() => {
-    return  {
-        Default: sts.unit(),
-        User: PortfolioNumber,
-    }
-})
-
-export const PortfolioNumber = sts.bigint()
 
 /**
  * Dispatchable calls.
@@ -10601,57 +10738,6 @@ export const Api: sts.Type<Api> = sts.struct(() => {
 
 export const ExtrinsicId = sts.tuple(() => [sts.number(), sts.number()])
 
-export const Permissions: sts.Type<Permissions> = sts.struct(() => {
-    return  {
-        asset: SubsetRestriction,
-        extrinsic: Type_46,
-        portfolio: Type_55,
-    }
-})
-
-export const Type_55: sts.Type<Type_55> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => PortfolioId),
-        These: sts.array(() => PortfolioId),
-        Whole: sts.unit(),
-    }
-})
-
-export const Type_46: sts.Type<Type_46> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => PalletPermissions),
-        These: sts.array(() => PalletPermissions),
-        Whole: sts.unit(),
-    }
-})
-
-export const PalletPermissions: sts.Type<PalletPermissions> = sts.struct(() => {
-    return  {
-        palletName: PalletName,
-        dispatchableNames: Type_49,
-    }
-})
-
-export const Type_49: sts.Type<Type_49> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => DispatchableName),
-        These: sts.array(() => DispatchableName),
-        Whole: sts.unit(),
-    }
-})
-
-export const DispatchableName = sts.bytes()
-
-export const PalletName = sts.bytes()
-
-export const SubsetRestriction: sts.Type<SubsetRestriction> = sts.closedEnum(() => {
-    return  {
-        Except: sts.array(() => Ticker),
-        These: sts.array(() => Ticker),
-        Whole: sts.unit(),
-    }
-})
-
 /**
  * Dispatchable calls.
  * 
@@ -11094,13 +11180,6 @@ export const CreateChildIdentityWithAuth: sts.Type<CreateChildIdentityWithAuth> 
 
 export const H512 = sts.bytes()
 
-export const SecondaryKey: sts.Type<SecondaryKey> = sts.struct(() => {
-    return  {
-        key: AccountId32,
-        permissions: Permissions,
-    }
-})
-
 export const SecondaryKeyWithAuth: sts.Type<SecondaryKeyWithAuth> = sts.struct(() => {
     return  {
         secondaryKey: SecondaryKey,
@@ -11162,11 +11241,11 @@ export const GrandpaCall: sts.Type<GrandpaCall> = sts.closedEnum(() => {
             bestFinalizedBlockNumber: sts.number(),
         }),
         report_equivocation: sts.enumStruct({
-            equivocationProof: Type_461,
+            equivocationProof: Type_462,
             keyOwnerProof: MembershipProof,
         }),
         report_equivocation_unsigned: sts.enumStruct({
-            equivocationProof: Type_461,
+            equivocationProof: Type_462,
             keyOwnerProof: MembershipProof,
         }),
     }
@@ -11180,7 +11259,7 @@ export const MembershipProof: sts.Type<MembershipProof> = sts.struct(() => {
     }
 })
 
-export const Type_461: sts.Type<Type_461> = sts.struct(() => {
+export const Type_462: sts.Type<Type_462> = sts.struct(() => {
     return  {
         setId: sts.bigint(),
         equivocation: Equivocation,
@@ -11189,12 +11268,12 @@ export const Type_461: sts.Type<Type_461> = sts.struct(() => {
 
 export const Equivocation: sts.Type<Equivocation> = sts.closedEnum(() => {
     return  {
-        Precommit: Type_468,
-        Prevote: Type_463,
+        Precommit: Type_469,
+        Prevote: Type_464,
     }
 })
 
-export const Type_463: sts.Type<Type_463> = sts.struct(() => {
+export const Type_464: sts.Type<Type_464> = sts.struct(() => {
     return  {
         roundNumber: sts.bigint(),
         identity: Public,
@@ -11212,7 +11291,7 @@ export const Prevote: sts.Type<Prevote> = sts.struct(() => {
     }
 })
 
-export const Type_468: sts.Type<Type_468> = sts.struct(() => {
+export const Type_469: sts.Type<Type_469> = sts.struct(() => {
     return  {
         roundNumber: sts.bigint(),
         identity: Public,

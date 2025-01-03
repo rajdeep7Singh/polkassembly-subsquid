@@ -1,6 +1,6 @@
 {
   "outDir": "../src/types",
-  "specVersions": "https://v2.archive.subsquid.io/metadata/polymesh",
+  "specVersions": "./polymeshTestVersions.jsonl",
   "typesBundle": "./typesBundle.json",
   "pallets": {
     "Pips": {

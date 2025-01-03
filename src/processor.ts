@@ -7,8 +7,7 @@ import * as modules from './mappings'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://mainnet-rpc.polymesh.network',
-        archive: 'https://v2.archive.subsquid.io/network/polymesh',
+        chain: 'wss://testnet-rpc.polymesh.live',
     })
     .setBlockRange({from: 0})
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

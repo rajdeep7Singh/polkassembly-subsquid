@@ -1,6 +1,6 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v3000 from '../v3000'
-import * as v5000003 from '../v5000003'
+import * as v5000002 from '../v5000002'
 
 export const proposalCreated =  {
     name: 'Pips.ProposalCreated',
@@ -22,9 +22,9 @@ export const proposalCreated =  {
      * 
      * Caller DID, Proposer, PIP ID, deposit, URL, description, expiry time, proposal data.
      */
-    v5000003: new EventType(
+    v5000002: new EventType(
         'Pips.ProposalCreated',
-        sts.tuple([v5000003.IdentityId, v5000003.Proposer, v5000003.PipId, sts.bigint(), sts.option(() => v5000003.Url), sts.option(() => v5000003.PipDescription), v5000003.MaybeBlock, v5000003.ProposalData])
+        sts.tuple([v5000002.IdentityId, v5000002.Proposer, v5000002.PipId, sts.bigint(), sts.option(() => v5000002.Url), sts.option(() => v5000002.PipDescription), v5000002.MaybeBlock, v5000002.ProposalData])
     ),
 }
 
