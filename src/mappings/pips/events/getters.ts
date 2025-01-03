@@ -251,7 +251,7 @@ export function getPolymeshCommitteeProposedEvent(itemEvent: Event): polymeshCom
 
 interface polymeshCommitteeFinalVotesData {
     index: number
-    identityId: string
+    identityId?: string
     hash: string
     ayes: string[]
     nays: string[]
@@ -260,6 +260,16 @@ interface polymeshCommitteeFinalVotesData {
 export function getPolymeshCommitteeFinalVotesDataEvent(itemEvent: Event): polymeshCommitteeFinalVotesData {
     if (finalVotes.v3000.is(itemEvent)) {
         const [identityId, pipId, hash, ayes, nays] = finalVotes.v3000.decode(itemEvent)
+        return {
+            index: pipId,
+            identityId,
+            hash,
+            ayes,
+            nays
+        }
+    }
+    else if (finalVotes.v7000005.is(itemEvent)) {
+        const [identityId, pipId, hash, ayes, nays] = finalVotes.v7000005.decode(itemEvent)
         return {
             index: pipId,
             identityId,

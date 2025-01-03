@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, EventType, RuntimeCtx} from '../support'
 import * as v3000 from '../v3000'
+import * as v7000005 from '../v7000005'
 
 export const proposed =  {
     name: 'PolymeshCommittee.Proposed',
@@ -47,5 +48,13 @@ export const finalVotes =  {
     v3000: new EventType(
         'PolymeshCommittee.FinalVotes',
         sts.tuple([v3000.IdentityId, v3000.ProposalIndex, v3000.Hash, sts.array(() => v3000.IdentityId), sts.array(() => v3000.IdentityId)])
+    ),
+    /**
+     * Final votes on a motion (given hash)
+     * caller DID, ProposalIndex, Proposal hash, yes voters, no voter
+     */
+    v7000005: new EventType(
+        'PolymeshCommittee.FinalVotes',
+        sts.tuple([sts.option(() => v7000005.IdentityId), sts.number(), v7000005.H256, sts.array(() => v7000005.IdentityId), sts.array(() => v7000005.IdentityId)])
     ),
 }

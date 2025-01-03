@@ -10,7 +10,7 @@ export async function getSubstrateAddressOfDid(
 ): Promise<string | undefined> {
     if(didKeys.v5000003.is(block)){
         const data = await didKeys.v5000003.getKeys(block, did)
-        return data[0][1]
+        return data?.[0]?.[1] ?? '0x0400000000000000000000000000000000000000000000000000000000000000'
     }
     else{
         console.log("no relevant version for Identity.DidKeys")

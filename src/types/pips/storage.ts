@@ -9,6 +9,8 @@ import * as v5004000 from '../v5004000'
 import * as v6000004 from '../v6000004'
 import * as v6001000 from '../v6001000'
 import * as v6002000 from '../v6002000'
+import * as v6003001 from '../v6003001'
+import * as v7000005 from '../v7000005'
 
 export const proposals =  {
     /**
@@ -61,6 +63,16 @@ export const proposals =  {
      *  proposal id -> proposal
      */
     v6002000: new StorageType('Pips.Proposals', 'Optional', [v6002000.PipId], v6002000.Pip) as ProposalsV6002000,
+    /**
+     *  Actual proposal for a given id, if it's current.
+     *  proposal id -> proposal
+     */
+    v6003001: new StorageType('Pips.Proposals', 'Optional', [v6003001.PipId], v6003001.Pip) as ProposalsV6003001,
+    /**
+     *  Actual proposal for a given id, if it's current.
+     *  proposal id -> proposal
+     */
+    v7000005: new StorageType('Pips.Proposals', 'Optional', [v7000005.PipId], v7000005.Pip) as ProposalsV7000005,
 }
 
 /**
@@ -241,4 +253,40 @@ export interface ProposalsV6002000  {
     getPairs(block: Block, key: v6002000.PipId): Promise<[k: v6002000.PipId, v: (v6002000.Pip | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v6002000.PipId, v: (v6002000.Pip | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: v6002000.PipId): AsyncIterable<[k: v6002000.PipId, v: (v6002000.Pip | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given id, if it's current.
+ *  proposal id -> proposal
+ */
+export interface ProposalsV6003001  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v6003001.PipId): Promise<(v6003001.Pip | undefined)>
+    getMany(block: Block, keys: v6003001.PipId[]): Promise<(v6003001.Pip | undefined)[]>
+    getKeys(block: Block): Promise<v6003001.PipId[]>
+    getKeys(block: Block, key: v6003001.PipId): Promise<v6003001.PipId[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v6003001.PipId[]>
+    getKeysPaged(pageSize: number, block: Block, key: v6003001.PipId): AsyncIterable<v6003001.PipId[]>
+    getPairs(block: Block): Promise<[k: v6003001.PipId, v: (v6003001.Pip | undefined)][]>
+    getPairs(block: Block, key: v6003001.PipId): Promise<[k: v6003001.PipId, v: (v6003001.Pip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v6003001.PipId, v: (v6003001.Pip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v6003001.PipId): AsyncIterable<[k: v6003001.PipId, v: (v6003001.Pip | undefined)][]>
+}
+
+/**
+ *  Actual proposal for a given id, if it's current.
+ *  proposal id -> proposal
+ */
+export interface ProposalsV7000005  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v7000005.PipId): Promise<(v7000005.Pip | undefined)>
+    getMany(block: Block, keys: v7000005.PipId[]): Promise<(v7000005.Pip | undefined)[]>
+    getKeys(block: Block): Promise<v7000005.PipId[]>
+    getKeys(block: Block, key: v7000005.PipId): Promise<v7000005.PipId[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v7000005.PipId[]>
+    getKeysPaged(pageSize: number, block: Block, key: v7000005.PipId): AsyncIterable<v7000005.PipId[]>
+    getPairs(block: Block): Promise<[k: v7000005.PipId, v: (v7000005.Pip | undefined)][]>
+    getPairs(block: Block, key: v7000005.PipId): Promise<[k: v7000005.PipId, v: (v7000005.Pip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v7000005.PipId, v: (v7000005.Pip | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v7000005.PipId): AsyncIterable<[k: v7000005.PipId, v: (v7000005.Pip | undefined)][]>
 }
