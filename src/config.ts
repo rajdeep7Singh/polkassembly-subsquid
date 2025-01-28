@@ -1,14 +1,13 @@
 
 const config = {
     chain: {
-        name: 'polymesh',
+        name: 'polymesh-test',
         prefix: 12,
     },
     dataSource: {
-        archive: "https://polymesh.archive.subsquid.io/graphql",
-        chain: 'wss://mainnet-rpc.polymesh.network',
+        chain: 'wss://testnet-rpc.polymesh.live',
     },
-    typesBundle: 'polymesh',
+    typesBundle: 'polymesh-test',
     batchSize: 500,
     blockRange: {
         from: 0,
