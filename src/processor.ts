@@ -10,7 +10,7 @@ const processor = new SubstrateBatchProcessor()
         chain: 'wss://picasso-rpc.composable.finance',
         archive: lookupArchive('picasso',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
-    .setBlockRange({ from: 0 })
+    .setBlockRange({ from: 6718768 })
     .setFields({event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
         name: [ 'ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
