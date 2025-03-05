@@ -1,5 +1,6 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v100 from '../v100'
+import * as v1400 from '../v1400'
 
 export const statusFor =  {
     /**
@@ -41,4 +42,28 @@ export interface PreimageForV100  {
     getPairs(block: Block, key: [v100.H256, number]): Promise<[k: [v100.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [v100.H256, number], v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: [v100.H256, number]): AsyncIterable<[k: [v100.H256, number], v: (Bytes | undefined)][]>
+}
+
+export const requestStatusFor =  {
+    /**
+     *  The request status of a given hash.
+     */
+    v1400: new StorageType('Preimage.RequestStatusFor', 'Optional', [v1400.H256], v1400.RequestStatus) as RequestStatusForV1400,
+}
+
+/**
+ *  The request status of a given hash.
+ */
+export interface RequestStatusForV1400  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: v1400.H256): Promise<(v1400.RequestStatus | undefined)>
+    getMany(block: Block, keys: v1400.H256[]): Promise<(v1400.RequestStatus | undefined)[]>
+    getKeys(block: Block): Promise<v1400.H256[]>
+    getKeys(block: Block, key: v1400.H256): Promise<v1400.H256[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1400.H256[]>
+    getKeysPaged(pageSize: number, block: Block, key: v1400.H256): AsyncIterable<v1400.H256[]>
+    getPairs(block: Block): Promise<[k: v1400.H256, v: (v1400.RequestStatus | undefined)][]>
+    getPairs(block: Block, key: v1400.H256): Promise<[k: v1400.H256, v: (v1400.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1400.H256, v: (v1400.RequestStatus | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: v1400.H256): AsyncIterable<[k: v1400.H256, v: (v1400.RequestStatus | undefined)][]>
 }

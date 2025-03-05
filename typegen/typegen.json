@@ -90,7 +90,7 @@
         "Noted", "Requested", "Cleared"
       ],
       "calls": [],
-      "storage": ["StatusFor", "PreimageFor"],
+      "storage": ["StatusFor", "PreimageFor", "RequestStatusFor"],
       "constants": []
     },
     "Scheduler": {
