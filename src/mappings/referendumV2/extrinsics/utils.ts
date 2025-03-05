@@ -30,7 +30,7 @@ export async function addDelegatedVotesReferendumV2(ctx: ProcessorContext<Store>
         }      
         delegatedVotes.push(
             new ConvictionDelegatedVotes({
-                id: `${convictionVote.proposalIndex}-${count.toString().padStart(8, '0')}-${VoteType.ReferendumV2}`,
+                id: randomUUID(),
                 voter: delegation.from,
                 createdAtBlock: block,
                 proposalIndex: convictionVote.proposalIndex,

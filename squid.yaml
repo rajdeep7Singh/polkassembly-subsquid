@@ -8,6 +8,8 @@ build:
 
 deploy:
   addons:
+    rpc:
+      - moonbeam.http
     postgres:
   processor:
     cmd: [ "node", "lib/processor" ] 

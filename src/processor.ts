@@ -6,9 +6,10 @@ import * as modules from './mappings'
 import { events, calls } from './types'
 import { PRECOMPILES } from './consts/consts'
 //@ts-ignore ts(2589)
+if (!process.env.RPC_MOONBEAM_HTTP) throw new Error('Missing RPC_MOONBEAM_HTTP')
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://wss.api.moonbeam.network',
+        chain: process.env.RPC_MOONBEAM_HTTP,
         archive: lookupArchive('moonbeam',  {type: 'Substrate', release: 'ArrowSquid' }),
     })
     .setBlockRange({ from: 0})
@@ -184,3 +185,7 @@ export type Event = _Event<Fields>
 export type Call = _Call<Fields>
 export type Extrinsic = _Extrinsic<Fields>
 export type ProcessorContext<Store> = DataHandlerContext<Store, Fields>
+
+function assertNotNull(RPC_ETH_GOERLI_HTTP: string | undefined) {
+    throw new Error('Function not implemented.')
+}
