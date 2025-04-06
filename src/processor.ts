@@ -7,8 +7,8 @@ import assert from 'assert'
 //@ts-ignore ts(2589)
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
-        chain: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156',
-        archive: lookupArchive('polkadot', { type: 'Substrate', release: 'ArrowSquid' }),
+        chain: 'wss://rpc.ibp.network/polkadot',
+        archive: 'https://v2.archive.subsquid.io/network/polkadot',
     })
     .setBlockRange({ from: 0 })
     .setFields({ event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })

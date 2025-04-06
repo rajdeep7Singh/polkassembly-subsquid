@@ -48,7 +48,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
         return
     }
     const { hash, proposer } = proposalData
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await createDemocracyProposal(ctx, header, extrinsicIndex, {
         hash,

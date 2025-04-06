@@ -6,7 +6,7 @@ const config: any = {
         prefix: 'polkadot',
     },
     dataSource: {
-        archive: lookupArchive("polkadot", {release: "FireSquid"}),
+        archive: 'https://v2.archive.subsquid.io/network/polkadot',
         chain: 'wss://rpc.polkadot.io',
     },
     typesBundle: 'polkadot',

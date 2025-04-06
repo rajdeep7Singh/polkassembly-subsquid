@@ -122,6 +122,7 @@ export interface ReferendumDataV2 extends BaseProposalData {
     decisionDeposit: {who: Uint8Array, amount: bigint} | undefined
     deciding: {since: number, confirming: number | undefined} | undefined
     tally: {ayes: bigint | number, nays: bigint | number, support?: bigint | number, bareAyegs?: bigint | number}
+    proposedCall?: any 
 }
 
 export interface TallyData {

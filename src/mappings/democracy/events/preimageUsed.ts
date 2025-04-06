@@ -8,7 +8,7 @@ export async function handlePreimageUsed(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { hash } = getPreimageUsedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updatePreimageStatus(ctx, header, hash, extrinsicIndex, {
         status: ProposalStatus.Used,

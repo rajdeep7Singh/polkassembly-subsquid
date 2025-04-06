@@ -11,15 +11,15 @@ deploy:
     postgres:
         config:
           statement_timeout: 100000
-          max_pred_locks_per_transaction: 128
-          max_locks_per_transaction: 128
+          max_pred_locks_per_transaction: 512
+          max_locks_per_transaction: 512
   secrets:
     - NOTIFICATION_API_KEY
     - TOOLS_PASSPHRASE
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:
-    cmd: [ "npx", "squid-graphql-server", "--subscriptions", "--sql-statement-timeout", "3000" ]
+    cmd: [ "npx", "squid-graphql-server", "--subscriptions" ]
 
 scale:
   dedicated: true

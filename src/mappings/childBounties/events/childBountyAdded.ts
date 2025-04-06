@@ -25,7 +25,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
         proposer = getOriginAccountId(origin)
     }
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
 
     const { value, fee, description, curatorDeposit } = storageData

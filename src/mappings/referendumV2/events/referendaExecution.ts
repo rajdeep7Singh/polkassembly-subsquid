@@ -74,7 +74,7 @@ export async function handleReferendumV2Execution(ctx: ProcessorContext<Store>,
             return;
         }
 
-        const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+        const extrinsicIndex = `${header.height}-${item.index}`
 
         await updateProposalStatus(ctx, header, proposal.index, ProposalType.ReferendumV2, extrinsicIndex, {
             isEnded: true,

@@ -9,7 +9,7 @@ export async function handleSlashed(ctx: ProcessorContext<Store>,
     header: any) {
     const { hash } = getSlashedData(item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,

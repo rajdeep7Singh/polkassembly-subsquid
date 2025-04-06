@@ -912,6 +912,7 @@ export async function createTreasury(ctx: ProcessorContext<Store>, header: any, 
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if (group) {
                 referendumV2.group = group
+                await updateRedis(ctx, referendumV2)
                 await ctx.store.save(referendumV2)
             }
 
@@ -1084,7 +1085,7 @@ export async function createReferendumV2(ctx: ProcessorContext<Store>, header: a
     if (decisionDeposit) {
         decDeposit = { who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount }
     }
-
+    const proposalArguments = data.proposedCall? createProposedCall(data.proposedCall) : null
     const proposal = new Proposal({
         id,
         index,
@@ -1103,6 +1104,7 @@ export async function createReferendumV2(ctx: ProcessorContext<Store>, header: a
         group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
+        proposalArguments,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),

@@ -116,7 +116,7 @@ export async function handlePreimageV2Noted(ctx: ProcessorContext<Store>,
     if(!item.call.args?.bytes) return;
 
     const hexHash = hash
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const storageData = await getPreimageStatusData(ctx, hash, header) || await getPreimageRequestStatusData(ctx, hash, header)
     if (!storageData) {

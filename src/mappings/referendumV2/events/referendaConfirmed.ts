@@ -12,7 +12,8 @@ export async function handleConfirmed(ctx: ProcessorContext<Store>,
     const { index, tally } = getConfirmedData(item)
 
     const tallyData = createTally(tally)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.Confirmed,

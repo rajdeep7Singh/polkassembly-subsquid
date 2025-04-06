@@ -16,7 +16,7 @@ export async function handleNewTipOld(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.Tip, hash))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { who, deposit, finder, reason } = storageData
 
@@ -39,7 +39,7 @@ export async function handleNewTip(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.Tip, hash))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { who, deposit, finder, reason } = storageData
 

@@ -9,7 +9,7 @@ export async function handleClaimed(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { parentIndex, childIndex, payout, beneficiary } = getChildBountyClaimedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, childIndex, ProposalType.ChildBounty, extrinsicIndex, {
         status: ProposalStatus.Claimed,
