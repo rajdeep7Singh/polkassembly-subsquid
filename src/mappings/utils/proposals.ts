@@ -220,6 +220,8 @@ export async function updateProposalStatus(
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
     await updateRedis(ctx, proposal)
 
+    let isGovEventSent = false;
+
     if (options.isEnded) {
         await sendGovEvent(
             ctx,
@@ -229,6 +231,7 @@ export async function updateProposalStatus(
                 proposalType: type
             }
         )
+        isGovEventSent = true;
     }
 
     // child bounty claimed
@@ -239,6 +242,7 @@ export async function updateProposalStatus(
             proposalIndex: proposal.index?.toString(),
             proposalType: ProposalType.ChildBounty,
         })
+        isGovEventSent = true;
     }
 
     // decision deposit placed
@@ -248,6 +252,15 @@ export async function updateProposalStatus(
             address: options.data?.decisionDeposit.who,
             proposalIndex: proposal.index?.toString(),
             proposalType: ProposalType.ReferendumV2,
+        })
+        isGovEventSent = true;
+    }
+
+    if (!isGovEventSent) {
+        await sendGovEvent(ctx, {
+            event: EGovEvent.PROPOSAL_STATUS_UPDATED,
+            proposalIndex: proposal.index?.toString() || '',
+            proposalType: type,
         })
     }
 }
@@ -1085,7 +1098,7 @@ export async function createReferendumV2(ctx: ProcessorContext<Store>, header: a
     if (decisionDeposit) {
         decDeposit = { who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount }
     }
-    const proposalArguments = data.proposedCall? createProposedCall(data.proposedCall) : null
+    const proposalArguments = data.proposedCall ? createProposedCall(data.proposedCall) : null
     const proposal = new Proposal({
         id,
         index,

@@ -14,4 +14,5 @@ export enum EGovEvent {
   TIPPED = "tipped",
   DELEGATED = "delegated",
   UNDELEGATED = "undelegated",
+  PROPOSAL_STATUS_UPDATED = "proposal_status_updated",
 }
