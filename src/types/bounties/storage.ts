@@ -1,6 +1,7 @@
 import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
 import * as v2028 from '../v2028'
 import * as v9111 from '../v9111'
+import * as v1005000 from '../v1005000'
 
 export const bounties =  {
     /**
@@ -11,6 +12,10 @@ export const bounties =  {
      *  Bounties that have been made.
      */
     v9111: new StorageType('Bounties.Bounties', 'Optional', [sts.number()], v9111.Bounty) as BountiesV9111,
+    /**
+     *  Bounties that have been made.
+     */
+    v1005000: new StorageType('Bounties.Bounties', 'Optional', [sts.number()], v1005000.Bounty) as BountiesV1005000,
 }
 
 /**
@@ -45,6 +50,23 @@ export interface BountiesV9111  {
     getPairs(block: Block, key: number): Promise<[k: number, v: (v9111.Bounty | undefined)][]>
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v9111.Bounty | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v9111.Bounty | undefined)][]>
+}
+
+/**
+ *  Bounties that have been made.
+ */
+export interface BountiesV1005000  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key: number): Promise<(v1005000.Bounty | undefined)>
+    getMany(block: Block, keys: number[]): Promise<(v1005000.Bounty | undefined)[]>
+    getKeys(block: Block): Promise<number[]>
+    getKeys(block: Block, key: number): Promise<number[]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<number[]>
+    getKeysPaged(pageSize: number, block: Block, key: number): AsyncIterable<number[]>
+    getPairs(block: Block): Promise<[k: number, v: (v1005000.Bounty | undefined)][]>
+    getPairs(block: Block, key: number): Promise<[k: number, v: (v1005000.Bounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (v1005000.Bounty | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (v1005000.Bounty | undefined)][]>
 }
 
 export const bountyDescriptions =  {

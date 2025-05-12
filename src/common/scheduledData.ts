@@ -16,13 +16,13 @@ export function getDispatchedEventData(itemEvent: Event): ScheduledData | undefi
             blockNumber: block,
             result: result.__kind
         }
-    }else if (dispatched.v9111.is(itemEvent)) {
+    } else if (dispatched.v9111.is(itemEvent)) {
         const [[block, number], hash, result] = dispatched.v9111.decode(itemEvent)
         return {
             blockNumber: block,
             result: result.__kind
         }
-    }   else if (dispatched.v9170.is(itemEvent)) {
+    } else if (dispatched.v9170.is(itemEvent)) {
         const { task, id, result } = dispatched.v9170.decode(itemEvent)
         return {
             blockNumber: task[0],
@@ -40,26 +40,32 @@ export function getDispatchedEventData(itemEvent: Event): ScheduledData | undefi
             blockNumber: task[0],
             result: result.__kind
         }
-    }  else if (dispatched.v9420.is(itemEvent)) {
+    } else if (dispatched.v9420.is(itemEvent)) {
         const { task, id, result } = dispatched.v9420.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    }   else if (dispatched.v9320.is(itemEvent)) {
+    } else if (dispatched.v9320.is(itemEvent)) {
         const { task, id, result } = dispatched.v9320.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    }  else if (dispatched.v9420.is(itemEvent)) {
+    } else if (dispatched.v9420.is(itemEvent)) {
         const { task, id, result } = dispatched.v9420.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind
         }
-    }else if (dispatched.v9430.is(itemEvent)) {
+    } else if (dispatched.v9430.is(itemEvent)) {
         const { task, id, result } = dispatched.v9430.decode(itemEvent)
+        return {
+            blockNumber: task[0],
+            result: result.__kind
+        }
+    } else if (dispatched.v1005000.is(itemEvent)) {
+        const { task, id, result } = dispatched.v1005000.decode(itemEvent)
         return {
             blockNumber: task[0],
             result: result.__kind

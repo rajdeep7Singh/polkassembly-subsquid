@@ -58,147 +58,147 @@ export const proposalOf =  {
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1020: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1020.Hash], v1020.Proposal) as ProposalOfV1020,
+    v1020: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1020.Hash], v1020.Proposal) as ProposalOfV1020,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1022: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1022.Hash], v1022.Proposal) as ProposalOfV1022,
+    v1022: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1022.Hash], v1022.Proposal) as ProposalOfV1022,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1024: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1024.Hash], v1024.Proposal) as ProposalOfV1024,
+    v1024: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1024.Hash], v1024.Proposal) as ProposalOfV1024,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1027: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1027.Hash], v1027.Proposal) as ProposalOfV1027,
+    v1027: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1027.Hash], v1027.Proposal) as ProposalOfV1027,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1029: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1029.Hash], v1029.Proposal) as ProposalOfV1029,
+    v1029: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1029.Hash], v1029.Proposal) as ProposalOfV1029,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1030: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1030.Hash], v1030.Proposal) as ProposalOfV1030,
+    v1030: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1030.Hash], v1030.Proposal) as ProposalOfV1030,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1031: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1031.Hash], v1031.Proposal) as ProposalOfV1031,
+    v1031: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1031.Hash], v1031.Proposal) as ProposalOfV1031,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1032: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1032.Hash], v1032.Proposal) as ProposalOfV1032,
+    v1032: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1032.Hash], v1032.Proposal) as ProposalOfV1032,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1038: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1038.Hash], v1038.Proposal) as ProposalOfV1038,
+    v1038: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1038.Hash], v1038.Proposal) as ProposalOfV1038,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1040: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1040.Hash], v1040.Proposal) as ProposalOfV1040,
+    v1040: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1040.Hash], v1040.Proposal) as ProposalOfV1040,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1042: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1042.Hash], v1042.Proposal) as ProposalOfV1042,
+    v1042: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1042.Hash], v1042.Proposal) as ProposalOfV1042,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1050: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1050.Hash], v1050.Proposal) as ProposalOfV1050,
+    v1050: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1050.Hash], v1050.Proposal) as ProposalOfV1050,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1054: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1054.Hash], v1054.Proposal) as ProposalOfV1054,
+    v1054: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1054.Hash], v1054.Proposal) as ProposalOfV1054,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1055: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1055.Hash], v1055.Proposal) as ProposalOfV1055,
+    v1055: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1055.Hash], v1055.Proposal) as ProposalOfV1055,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1058: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1058.Hash], v1058.Proposal) as ProposalOfV1058,
+    v1058: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1058.Hash], v1058.Proposal) as ProposalOfV1058,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v1062: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v1062.Hash], v1062.Proposal) as ProposalOfV1062,
+    v1062: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v1062.Hash], v1062.Proposal) as ProposalOfV1062,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2005: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2005.Hash], v2005.Proposal) as ProposalOfV2005,
+    v2005: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2005.Hash], v2005.Proposal) as ProposalOfV2005,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2007: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2007.Hash], v2007.Proposal) as ProposalOfV2007,
+    v2007: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2007.Hash], v2007.Proposal) as ProposalOfV2007,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2011: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2011.Hash], v2011.Proposal) as ProposalOfV2011,
+    v2011: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2011.Hash], v2011.Proposal) as ProposalOfV2011,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2013: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2013.Hash], v2013.Proposal) as ProposalOfV2013,
+    v2013: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2013.Hash], v2013.Proposal) as ProposalOfV2013,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2015: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2015.Hash], v2015.Proposal) as ProposalOfV2015,
+    v2015: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2015.Hash], v2015.Proposal) as ProposalOfV2015,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2022: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2022.Hash], v2022.Proposal) as ProposalOfV2022,
+    v2022: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2022.Hash], v2022.Proposal) as ProposalOfV2022,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2023: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2023.Hash], v2023.Proposal) as ProposalOfV2023,
+    v2023: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2023.Hash], v2023.Proposal) as ProposalOfV2023,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2024: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2024.Hash], v2024.Proposal) as ProposalOfV2024,
+    v2024: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2024.Hash], v2024.Proposal) as ProposalOfV2024,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2025: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2025.Hash], v2025.Proposal) as ProposalOfV2025,
+    v2025: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2025.Hash], v2025.Proposal) as ProposalOfV2025,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2026: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2026.Hash], v2026.Proposal) as ProposalOfV2026,
+    v2026: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2026.Hash], v2026.Proposal) as ProposalOfV2026,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2028: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2028.Hash], v2028.Proposal) as ProposalOfV2028,
+    v2028: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2028.Hash], v2028.Proposal) as ProposalOfV2028,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2029: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2029.Hash], v2029.Proposal) as ProposalOfV2029,
+    v2029: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2029.Hash], v2029.Proposal) as ProposalOfV2029,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v2030: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v2030.Hash], v2030.Proposal) as ProposalOfV2030,
+    v2030: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v2030.Hash], v2030.Proposal) as ProposalOfV2030,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9010: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9010.Hash], v9010.Proposal) as ProposalOfV9010,
+    v9010: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9010.Hash], v9010.Proposal) as ProposalOfV9010,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9030: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9030.Hash], v9030.Proposal) as ProposalOfV9030,
+    v9030: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9030.Hash], v9030.Proposal) as ProposalOfV9030,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9040: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9040.Hash], v9040.Proposal) as ProposalOfV9040,
+    v9040: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9040.Hash], v9040.Proposal) as ProposalOfV9040,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9050: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9050.Hash], v9050.Proposal) as ProposalOfV9050,
+    v9050: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9050.Hash], v9050.Proposal) as ProposalOfV9050,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9080: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9080.Hash], v9080.Proposal) as ProposalOfV9080,
+    v9080: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9080.Hash], v9080.Proposal) as ProposalOfV9080,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9090: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9090.Hash], v9090.Proposal) as ProposalOfV9090,
+    v9090: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9090.Hash], v9090.Proposal) as ProposalOfV9090,
     /**
      *  Actual proposal for a given hash, if it's current.
      */
-    v9100: new StorageType('Instance2Collective.ProposalOf', 'Optional', [v9100.Hash], v9100.Proposal) as ProposalOfV9100,
+    v9100: new StorageType('TechnicalCommittee.ProposalOf', 'Optional', [v9100.Hash], v9100.Proposal) as ProposalOfV9100,
     /**
      *  Actual proposal for a given hash, if it's current.
      */

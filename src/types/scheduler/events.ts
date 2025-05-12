@@ -7,6 +7,7 @@ import * as v9190 from '../v9190'
 import * as v9320 from '../v9320'
 import * as v9420 from '../v9420'
 import * as v9430 from '../v9430'
+import * as v1005000 from '../v1005000'
 
 export const dispatched =  {
     name: 'Scheduler.Dispatched',
@@ -85,6 +86,17 @@ export const dispatched =  {
             task: sts.tuple(() => [sts.number(), sts.number()]),
             id: sts.option(() => sts.bytes()),
             result: sts.result(() => sts.unit(), () => v9430.DispatchError),
+        })
+    ),
+    /**
+     * Dispatched some task.
+     */
+    v1005000: new EventType(
+        'Scheduler.Dispatched',
+        sts.struct({
+            task: sts.tuple(() => [sts.number(), sts.number()]),
+            id: sts.option(() => sts.bytes()),
+            result: sts.result(() => sts.unit(), () => v1005000.DispatchError),
         })
     ),
 }
