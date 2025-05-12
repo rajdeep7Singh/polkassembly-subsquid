@@ -9,7 +9,7 @@ export async function handleClosedOld(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { hash, reward } = getClosedDataOld(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,
@@ -25,7 +25,7 @@ export async function handleClosed(ctx: ProcessorContext<Store>,
     header: any) {
     const { hash, reward } = getClosedData( item)
 
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, hash, ProposalType.Tip, extrinsicIndex, {
         isEnded: true,

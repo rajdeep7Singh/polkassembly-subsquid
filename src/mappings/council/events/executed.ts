@@ -8,7 +8,7 @@ export async function handleExecuted(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const hash = getExecutedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, hash, ProposalType.CouncilMotion, extrinsicIndex, {
         isEnded: true,

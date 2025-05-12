@@ -18,6 +18,7 @@ interface ReferendumEventData {
     index: number
     track: number
     hash: string
+    proposalKind: string
 }
 
 
@@ -34,7 +35,8 @@ export function getEventData(itemEvent: Event): ReferendumEventData {
         return {
             index,
             track,
-            hash
+            hash,
+            proposalKind: proposal.__kind
         }
     } else {
         throw new UnknownVersionError(itemEvent.name)

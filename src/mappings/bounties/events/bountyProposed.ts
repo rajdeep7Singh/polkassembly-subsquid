@@ -17,7 +17,7 @@ export async function handleProposedOld(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.Bounty, index))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
 
     const { proposer, value, bond, description, curatorDeposit, fee } = storageData
@@ -44,7 +44,7 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
         ctx.log.warn(StorageNotExistsWarn(ProposalType.Bounty, index))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { proposer, value, bond, description, curatorDeposit, fee } = storageData
 

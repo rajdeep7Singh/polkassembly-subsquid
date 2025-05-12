@@ -17,7 +17,7 @@ export async function handleFellowshipVotes(ctx: ProcessorContext<Store>,
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.FellowshipReferendum, index))
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
     //const count = await getVotesCount(ctx, proposal.id)
     proposal.tally = createTally(tally)
     await ctx.store.save(proposal)

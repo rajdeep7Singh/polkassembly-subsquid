@@ -198,12 +198,12 @@ export async function updateProposalStatus(
         proposal.endedAt = proposal.updatedAt
     }
 
-    if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.Confirmed && proposal.origin){
-        proposal.executeAtBlockNumber = header.height + referendumV2EnactmentBlocks[proposal.origin]
-    }
-    if(type == ProposalType.FellowshipReferendum && options.status == ProposalStatus.Confirmed && proposal.trackNumber){
-        proposal.executeAtBlockNumber = header.height + fellowshipEnactmentBlocks[proposal.trackNumber]
-    }
+    // if(type == ProposalType.ReferendumV2 && options.status == ProposalStatus.Confirmed && proposal.origin){
+    //     proposal.executeAtBlockNumber = header.height + referendumV2EnactmentBlocks[proposal.origin]
+    // }
+    // if(type == ProposalType.FellowshipReferendum && options.status == ProposalStatus.Confirmed && proposal.trackNumber){
+    //     proposal.executeAtBlockNumber = header.height + fellowshipEnactmentBlocks[proposal.trackNumber]
+    // }
 
     await ctx.store.save(proposal)
 
@@ -914,6 +914,7 @@ export async function createTreasury( ctx: ProcessorContext<Store>, header: any,
             if(group) {
                 referendumV2.group = group
                 await ctx.store.save(referendumV2)
+                await updateRedis(ctx, referendumV2)
             }
 
         }
@@ -1085,7 +1086,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
     if (decisionDeposit) {
         decDeposit = {who: ss58codec.encode(decisionDeposit.who), amount: decisionDeposit.amount}
     }
-
+    const proposalArguments = data.proposedCall? createProposedCall(data.proposedCall) : null
     const proposal = new Proposal({
         id,
         index,
@@ -1104,6 +1105,7 @@ export async function createReferendumV2( ctx: ProcessorContext<Store>, header: 
         group: group,
         deciding: deciding ? createDeciding(deciding) : undefined,
         decisionDeposit: decDeposit ? createDecisionDeposit(decDeposit) : undefined,
+        proposalArguments,
         createdAtBlock: header.height,
         createdAt: new Date(header.timestamp),
         updatedAt: new Date(header.timestamp),

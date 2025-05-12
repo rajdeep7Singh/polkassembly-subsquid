@@ -8,7 +8,7 @@ export async function handleCanceledOld(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index } = getBountyCanceledDataOld(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Cancelled,
@@ -20,7 +20,7 @@ export async function handleCanceled(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const { index } = getBountyCanceledData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Bounty, extrinsicIndex, {
         status: ProposalStatus.Cancelled,

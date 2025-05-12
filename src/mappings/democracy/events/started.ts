@@ -45,7 +45,7 @@ export async function handleStarted(ctx: ProcessorContext<Store>,
         ctx.log.warn(`Referendum with index ${index} has already finished at block ${header.height}`)
         return
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     const { hash, end, delay } = storageData
 

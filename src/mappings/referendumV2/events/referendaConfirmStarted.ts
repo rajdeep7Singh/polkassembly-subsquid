@@ -28,7 +28,7 @@ export async function handleConfirmStarted(ctx: ProcessorContext<Store>,
     else {
         deciding = createDeciding({confirming: header.height, since: header.height})
     }
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.ReferendumV2, extrinsicIndex, {
         status: ProposalStatus.ConfirmStarted,

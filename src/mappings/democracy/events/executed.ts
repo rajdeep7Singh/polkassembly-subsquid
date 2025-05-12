@@ -8,7 +8,7 @@ export async function handleExecuted(ctx: ProcessorContext<Store>,
     item: Event,
     header: any) {
     const index = getExecutedData(item)
-    const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
+    const extrinsicIndex = `${header.height}-${item.index}`
 
     await updateProposalStatus(ctx, header, index, ProposalType.Referendum, extrinsicIndex, {
         isEnded: true,
