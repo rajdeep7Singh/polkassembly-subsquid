@@ -52,3 +52,35 @@ export interface ChildBountyDescriptionsV9190  {
     getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: number, v: (Bytes | undefined)][]>
     getPairsPaged(pageSize: number, block: Block, key: number): AsyncIterable<[k: number, v: (Bytes | undefined)][]>
 }
+
+export const childBountyDescriptionsV1 =  {
+    /**
+     *  The description of each child-bounty. Indexed by `(parent_id, child_id)`.
+     * 
+     *  This item replaces the `ChildBountyDescriptions` storage item from the V0 storage version.
+     */
+    v1005001: new StorageType('ChildBounties.ChildBountyDescriptionsV1', 'Optional', [sts.number(), sts.number()], sts.bytes()) as ChildBountyDescriptionsV1V1005001,
+}
+
+/**
+ *  The description of each child-bounty. Indexed by `(parent_id, child_id)`.
+ * 
+ *  This item replaces the `ChildBountyDescriptions` storage item from the V0 storage version.
+ */
+export interface ChildBountyDescriptionsV1V1005001  {
+    is(block: RuntimeCtx): boolean
+    get(block: Block, key1: number, key2: number): Promise<(Bytes | undefined)>
+    getMany(block: Block, keys: [number, number][]): Promise<(Bytes | undefined)[]>
+    getKeys(block: Block): Promise<[number, number][]>
+    getKeys(block: Block, key1: number): Promise<[number, number][]>
+    getKeys(block: Block, key1: number, key2: number): Promise<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block): AsyncIterable<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[number, number][]>
+    getKeysPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[number, number][]>
+    getPairs(block: Block): Promise<[k: [number, number], v: (Bytes | undefined)][]>
+    getPairs(block: Block, key1: number): Promise<[k: [number, number], v: (Bytes | undefined)][]>
+    getPairs(block: Block, key1: number, key2: number): Promise<[k: [number, number], v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: [number, number], v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number): AsyncIterable<[k: [number, number], v: (Bytes | undefined)][]>
+    getPairsPaged(pageSize: number, block: Block, key1: number, key2: number): AsyncIterable<[k: [number, number], v: (Bytes | undefined)][]>
+}
