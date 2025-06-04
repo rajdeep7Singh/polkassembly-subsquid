@@ -3,7 +3,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 import { MissingProposalRecordWarn } from '../../common/errors'
 import { ss58codec } from '../../common/tools'
 import fetch from 'node-fetch'
-import { NOTIFICATION_URL, REDIS_CF_URL, GOV_EVENT_WEBHOOK_URL } from '../../consts/consts'
+import { NOTIFICATION_URL, GOV_EVENT_WEBHOOK_URL } from '../../consts/consts'
 import { referendumV2EnactmentBlocks, fellowshipEnactmentBlocks } from '../../common/originEnactBlock'
 
 import {
@@ -218,7 +218,6 @@ export async function updateProposalStatus(
         })
     )
     await sendNotification(ctx, proposal, 'proposalStatusChanged')
-    await updateRedis(ctx, proposal)
 
     let isGovEventSent = false;
 
@@ -925,7 +924,6 @@ export async function createTreasury(ctx: ProcessorContext<Store>, header: any, 
             group = await getOrCreateProposalGroup(ctx, index, ProposalType.TreasuryProposal, referendumV2.index, referendumV2.type)
             if (group) {
                 referendumV2.group = group
-                await updateRedis(ctx, referendumV2)
                 await ctx.store.save(referendumV2)
             }
 
@@ -1137,7 +1135,6 @@ export async function createReferendumV2(ctx: ProcessorContext<Store>, header: a
     )
 
     await sendNotification(ctx, proposal, 'newProposalCreated')
-    await updateRedis(ctx, proposal)
 
     await sendGovEvent(ctx, {
         event: EGovEvent.PROPOSAL_CREATED,
@@ -1247,41 +1244,6 @@ export async function sendNotification(ctx: ProcessorContext<Store>, proposal: P
 
     if (response.status !== 200) {
         ctx.log.error(`Notification failed for proposal ${index || hash} with status ${response.status}`)
-        return
-    }
-}
-
-export async function updateRedis(ctx: ProcessorContext<Store>, proposal: Proposal) {
-    const { hash, type, index, proposer, curator, status, trackNumber } = proposal
-    try {
-        if ([ProposalType.ReferendumV2, ProposalType.FellowshipReferendum].includes(type)) {
-            const redisData = {
-                network: config.chain.name,
-                govType: 'OpenGov',
-                postId: index,
-                track: trackNumber,
-                proposalType: type,
-            }
-            ctx.log.info(`Redis call with data ${JSON.stringify(redisData)}`)
-
-            const response = await fetch(REDIS_CF_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(redisData),
-            })
-
-            ctx.log.info(`Notification response ${JSON.stringify(response)}`)
-
-            if (response.status !== 200) {
-                ctx.log.error(`Redis call failed for proposal ${index || hash} with status ${response.status}`)
-                return
-            }
-        }
-    }
-    catch (e) {
-        ctx.log.error(`Redis call failed for proposal ${index || hash} with error ${e}`)
         return
     }
 }
