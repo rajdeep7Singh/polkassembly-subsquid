@@ -1,17 +1,18 @@
 /**
- * This enum matches Polkassembly BE
+ * This enum matches Polkassembly v2 BE
  *
  * @export
  * @enum {string}
  */
 export enum EGovEvent {
-  PROPOSAL_CREATED = "PROPOSAL_CREATED",
-  PROPOSAL_ENDED = "PROPOSAL_ENDED",
-  VOTED = "VOTED",
-  BOUNTY_CLAIMED = "BOUNTY_CLAIMED",
-  DECISION_DEPOSIT_PLACED = "DECISION_DEPOSIT_PLACED",
-  REMOVED_VOTE = "REMOVED_VOTE",
-  TIPPED = "TIPPED",
-  DELEGATED = "DELEGATED",
-  UNDELEGATED = "UNDELEGATED",
+  PROPOSAL_CREATED = "proposal_created",
+  PROPOSAL_ENDED = "proposal_ended",
+  VOTED = "voted",
+  BOUNTY_CLAIMED = "bounty_claimed",
+  DECISION_DEPOSIT_PLACED = "decision_deposit_placed",
+  REMOVED_VOTE = "removed_vote",
+  TIPPED = "tipped",
+  DELEGATED = "delegated",
+  UNDELEGATED = "undelegated",
+  PROPOSAL_STATUS_UPDATED = "proposal_status_updated",
 }
