@@ -44,6 +44,7 @@ import {
 } from '../types/data'
 import { randomUUID } from 'crypto'
 import config from '../../config'
+import { storage } from '../../storage'
 import referendumV2 from '../referendumV2'
 import { ProcessorContext } from '../../processor'
 import { EGovEvent } from '../../common/types'
@@ -893,6 +894,57 @@ export async function createChildBounty(ctx: ProcessorContext<Store>, header: an
     })
 
     return proposal
+}
+
+/**
+ * Updates a child bounty with storage data when it becomes available
+ */
+export async function enrichChildBountyWithStorageData(
+    ctx: ProcessorContext<Store>,
+    header: any,
+    parentBountyIndex: number,
+    childBountyIndex: number,
+    extrinsicIndex: string
+): Promise<void> {
+    // Find the existing child bounty record
+    const proposal = await ctx.store.get(Proposal, {
+        where: {
+            index: childBountyIndex,
+            parentBountyIndex: parentBountyIndex,
+            type: ProposalType.ChildBounty
+        }
+    })
+
+    if (!proposal) {
+        ctx.log.warn(`Child bounty ${childBountyIndex} not found for enrichment`)
+        return
+    }
+
+    // Try to get storage data
+    const storageData = await storage.childBounties.getChildBounties(ctx, parentBountyIndex, childBountyIndex, header)
+
+    if (storageData) {
+        ctx.log.info(`Enriching child bounty ${childBountyIndex} with storage data`)
+
+        // Update with real storage data
+        proposal.reward = storageData.value
+        proposal.fee = storageData.fee
+        proposal.curatorDeposit = storageData.curatorDeposit
+
+        // Only update description if it was the placeholder
+        if (proposal.description === 'Child bounty pending storage data' || !proposal.description) {
+            proposal.description = storageData.description
+        }
+
+        proposal.updatedAt = new Date(header.timestamp)
+        proposal.updatedAtBlock = header.height
+
+        await ctx.store.save(proposal)
+
+        ctx.log.info(`Successfully enriched child bounty ${childBountyIndex} with storage data`)
+    } else {
+        ctx.log.debug(`Storage data still not available for child bounty ${childBountyIndex}`)
+    }
 }
 
 export async function createTreasury(ctx: ProcessorContext<Store>, header: any, extrinsicIndex: string, data: TreasuryData): Promise<Proposal> {
