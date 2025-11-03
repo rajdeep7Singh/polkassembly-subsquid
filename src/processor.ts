@@ -41,17 +41,22 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
         for (let item of block.events) {
             let multisigAddress: string
             if (item.name == 'Multisig.MultisigExecuted') {
-                if (Array.isArray(item.event.args)) {
-                    assert(item.event.args.length >= 3)
-                    multisigAddress = item.event.args[2]
-                } else if (typeof item.event.args === 'object') {
-                    assert('multisig' in item.event.args)
-                    multisigAddress = item.event.args.multisig
+                const eventPayload = 'event' in item && item.event != null ? item.event : item
+                const eventArgs = eventPayload?.args
+
+                if (Array.isArray(eventArgs)) {
+                    assert(eventArgs.length >= 3)
+                    multisigAddress = eventArgs[2]
+                } else if (eventArgs && typeof eventArgs === 'object') {
+                    assert('multisig' in eventArgs)
+                    multisigAddress = eventArgs.multisig
                 } else {
-                    throw new Error('Unexpected case')
+                    throw new Error('Unexpected Multisig.MultisigExecuted args shape')
                 }
 
-                let extrinsicHash = item.event.extrinsic!.hash
+                const extrinsicHash = eventPayload?.extrinsic?.hash ?? item.extrinsic?.hash
+                assert(extrinsicHash != null, 'Missing extrinsic hash for Multisig.MultisigExecuted event')
+
                 multisigOrigins.set(extrinsicHash, {
                     __kind: 'system',
                     value: {
