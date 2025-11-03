@@ -9,7 +9,7 @@ const processor = new SubstrateBatchProcessor()
     .setGateway('https://v2.archive.subsquid.io/network/polkadot')
     .setRpcEndpoint('wss://rpc.ibp.network/polkadot')
     .setBlockRange({ from: 0 })
-    .setFields({ event: {}, call: { origin: true, success: true, error: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
+    .setFields({ event: { args: true }, call: { origin: true, success: true, error: true, args: true }, extrinsic: { hash: true, fee: true, tip: true }, block: { timestamp: true } })
     .addCall({
         name: ['ConvictionVoting.vote', 'ConvictionVoting.delegate', 'ConvictionVoting.undelegate', 'ConvictionVoting.remove_vote', 'ConvictionVoting.remove_other_vote', 'Democracy.vote',
             'Democracy.remove_vote', 'Democracy.remove_other_vote', 'Democracy.delegate', 'Democracy.undelegate', 'Treasury.accept_curator', 'Treasury.unassign_curator', 'Bounties.accept_curator',
@@ -48,7 +48,7 @@ processor.run(new TypeormDatabase(), async (ctx: any) => {
                     assert('multisig' in item.event.args)
                     multisigAddress = item.event.args.multisig
                 } else {
-                    throw new Error('Unextpected case')
+                    throw new Error('Unexpected case')
                 }
 
                 let extrinsicHash = item.event.extrinsic!.hash
