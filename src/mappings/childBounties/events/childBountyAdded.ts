@@ -13,31 +13,45 @@ export async function handleProposed(ctx: ProcessorContext<Store>,
     header: any) {
     const { parentIndex, childIndex } = getChildBountyAddedData(item)
 
-    const storageData = await storage.childBounties.getChildBounties(ctx, parentIndex, childIndex, header)
-    if (!storageData) {
-        ctx.log.warn(StorageNotExistsWarn(ProposalType.ChildBounty, childIndex))
-        return
-    }
-
     const origin = item.extrinsic?.call?.origin
-    let proposer;
-    if(origin){
+    let proposer
+    if (origin) {
         proposer = getOriginAccountId(origin)
     }
 
     const extrinsicIndex = `${header.height}-${item.index}`
 
+    // Try to get storage data, but handle gracefully if it doesn't exist
+    const storageData = await storage.childBounties.getChildBountyDataWithFallback(ctx, parentIndex, childIndex, header)
 
-    const { value, fee, description, curatorDeposit } = storageData
+    if (storageData.hasStorageData) {
+        // Full data available - create complete record
+        ctx.log.info(`Creating child bounty ${childIndex} with full storage data`)
+        const { value, fee, description, curatorDeposit } = storageData
 
-    await createChildBounty(ctx, header, extrinsicIndex, {
-        index: childIndex,
-        parentBountyIndex: parentIndex,
-        status: ProposalStatus.Added,
-        proposer,
-        reward: value,
-        fee: fee,
-        curatorDeposit: curatorDeposit,
-        description: description,
-    })
+        await createChildBounty(ctx, header, extrinsicIndex, {
+            index: childIndex,
+            parentBountyIndex: parentIndex,
+            status: ProposalStatus.Added,
+            proposer,
+            reward: value!,
+            fee: fee!,
+            curatorDeposit: curatorDeposit!,
+            description: description!,
+        })
+    } else {
+        // Storage not available yet - create minimal record
+        ctx.log.info(`Creating child bounty ${childIndex} with minimal data (storage not available yet)`)
+
+        await createChildBounty(ctx, header, extrinsicIndex, {
+            index: childIndex,
+            parentBountyIndex: parentIndex,
+            status: ProposalStatus.Added,
+            proposer,
+            reward: BigInt(0), // Will be updated when storage becomes available
+            fee: BigInt(0),
+            curatorDeposit: BigInt(0),
+            description: 'Child bounty pending storage data', // Temporary description
+        })
+    }
 }

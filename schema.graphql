@@ -280,7 +280,7 @@ type FlattenedConvictionVotes @entity {
   isDelegated: Boolean
   delegatedTo: String @index
   proposalIndex: Int! @index
-  proposal: Proposal!
+  proposal: Proposal
   createdAtBlock: Int!
   removedAtBlock: Int @index
   createdAt: DateTime!

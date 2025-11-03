@@ -58,7 +58,7 @@
         "Added", "Awarded", "Claimed", "Canceled"
       ],
       "calls": ["accept_curator", "unassign_curator", "propose_curator"],
-      "storage": ["ChildBounties", "ChildBountyDescriptions"],
+      "storage": ["ChildBounties", "ChildBountyDescriptions", "ChildBountyDescriptionsV1"],
       "constants": []
     },
     "Referenda": {

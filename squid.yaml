@@ -1,6 +1,6 @@
 manifestVersion: subsquid.io/v0.1
 name: polkadot-polkassembly
-version: 1
+version: 2
 description: |-
   Polkadot's governance proposals
 
@@ -11,11 +11,11 @@ deploy:
     postgres:
         config:
           statement_timeout: 100000
-          max_pred_locks_per_transaction: 512
-          max_locks_per_transaction: 512
+          max_pred_locks_per_transaction: 1024
+          max_locks_per_transaction: 1024
   secrets:
     - NOTIFICATION_API_KEY
-    - GOV_EVENT_API_KEY
+    - TOOLS_PASSPHRASE
   processor:
     cmd: [ "node", "lib/processor" ] 
   api:

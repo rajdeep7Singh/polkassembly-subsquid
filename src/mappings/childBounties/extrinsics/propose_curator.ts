@@ -3,10 +3,8 @@ import { getOriginAccountId, ss58codec } from '../../../common/tools'
 import { Proposal, ProposalStatus, ProposalType } from '../../../model'
 import { getProposeCuratorData } from './getters'
 import { Store } from '@subsquid/typeorm-store'
-import { updateProposalStatus } from '../../utils/proposals'
+import { updateProposalStatus, enrichChildBountyWithStorageData } from '../../utils/proposals'
 import { ProcessorContext, Call } from '../../../processor'
-
-
 
 export async function handleProposeCurator(ctx: ProcessorContext<Store>,
     item: Call,
@@ -15,11 +13,11 @@ export async function handleProposeCurator(ctx: ProcessorContext<Store>,
 
     const { parentBountyId, childBountyId, curator, fee } = getProposeCuratorData(item)
 
-    if(!curator || typeof curator == 'number'){
+    if (!curator || typeof curator == 'number') {
         return
     }
 
-    const proposal = await ctx.store.get(Proposal, { where: { index: childBountyId, parentBountyIndex: parentBountyId, type: ProposalType.ChildBounty  } })
+    const proposal = await ctx.store.get(Proposal, { where: { index: childBountyId, parentBountyIndex: parentBountyId, type: ProposalType.ChildBounty } })
     if (!proposal) {
         ctx.log.warn(MissingProposalRecordWarn(ProposalType.ChildBounty, childBountyId))
         return
@@ -32,6 +30,8 @@ export async function handleProposeCurator(ctx: ProcessorContext<Store>,
     }
     const extrinsicIndex = `${header.height}-${item.extrinsicIndex}`
 
+    // Try to enrich with storage data if not already available
+    await enrichChildBountyWithStorageData(ctx, header, parentBountyId, childBountyId, extrinsicIndex)
 
     proposal.curator = ss58codec.encode(curator)
     proposal.fee = fee
